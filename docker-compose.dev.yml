@@ -1,0 +1,30 @@
+# Lokal dev: faqat Postgres va Redis. Portlar boshqa loyihalar bilan to'qnashmaydi (5432–5434, 6379–6381 band)
+name: samarqand-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: samarqand-dev-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: samarqand
+      POSTGRES_PASSWORD: samarqand
+      POSTGRES_DB: samarqand_dev
+    ports:
+      - "127.0.0.1:5435:5432"
+    volumes:
+      - samarqand_dev_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U samarqand"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: samarqand-dev-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6383:6379"
+
+volumes:
+  samarqand_dev_pg:

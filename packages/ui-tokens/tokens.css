@@ -1,0 +1,32 @@
+/*
+ * Samarqand matematika: rang tokenlari (yagona manba). Rang boshqa joyda yozilmaydi (ESLint taqiqlaydi).
+ * Format "r g b": Tailwind shaffoflik modifikatorlari (bg-brand/10) ishlashi uchun.
+ * Brend: logodagi toʻq dengiz koʻki #143F63 (oq fonda kontrast 10.9:1).
+ * Neytrallar Mini App'da Telegram themeParams'dan qayta yoziladi (apps/miniapp/src/lib/telegram.ts).
+ */
+:root {
+  --c-bg: 255 255 255;
+  --c-surface: 243 245 248;
+  --c-section: 255 255 255;
+  --c-text: 17 24 39;
+  --c-hint: 107 114 128;
+  --c-link: 20 63 99;
+  --c-danger: 220 38 38;
+  --c-success: 22 163 74;
+  --c-brand: 20 63 99; /* #143F63 */
+  --c-accent: 154 106 15; /* #9A6A0F, oq fonda 4.7:1 */
+  --brand-soft-alpha: 0.08;
+}
+
+/* Tungi rejim: toʻq koʻk qora fonda koʻrinmaydi. #4282C2: oq matn bilan ham, #17212B fon bilan ham 4:1 */
+[data-scheme="dark"] {
+  --c-bg: 23 33 43;
+  --c-surface: 14 22 33;
+  --c-section: 23 33 43;
+  --c-text: 245 245 245;
+  --c-hint: 140 150 160;
+  --c-link: 106 166 230;
+  --c-brand: 66 130 194; /* #4282C2 */
+  --c-accent: 232 184 92; /* #E8B85C */
+  --brand-soft-alpha: 0.18;
+}

@@ -1,0 +1,44 @@
+# 04: Biznes qoidalar (BR)
+
+> Har qoidaga ID beriladi. Qoidaga tegadigan testning nomida shu ID turadi (`BR-W03: ...`).
+> ✅ tasdiqlangan · ⚠️ standart taklif (ustoz tasdig'i kutilmoqda, `10-open-questions.md`)
+
+## Kirish va rollar (A)
+
+| ID     | Qoida                                                                                                                                          | Holat                   |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| BR-A01 | Mini App'ga kirish faqat Telegram `initData` orqali bo'ladi. Imzo serverda HMAC bilan tekshiriladi, initData 24 soatdan eski bo'lmasligi kerak | ✅                      |
+| BR-A02 | `OWNER_USERNAMES` dagi username'lar `TEACHER` bo'ladi. Qolganlar `STUDENT` bo'lib yaratiladi                                                   | ✅                      |
+| BR-A03 | Bloklangan hisobning tokeni keyingi so'rovdayoq kuchini yo'qotadi. Rol har so'rovda bazadan olinadi                                            | ✅                      |
+| BR-A04 | To'liq pullik kirish uchun uchta shart bor: ustoz qabul qilgan, ota-ona tasdiqlagan, to'lov qilingan. Istisnoni ustoz qo'lda belgilaydi        | ✅ (ona tilidagi qoida) |
+
+## Haftalik test (W)
+
+| ID     | Qoida                                                                                                                            | Holat   |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| BR-W01 | Haftalik test oynasi 1 hafta ochiq turadi (masalan dushanba 00:00 dan yakshanba 23:59 gacha, Asia/Tashkent)                      | ✅      |
+| BR-W02 | O'quvchi bitta testni bir marta topshiradi                                                                                       | ✅      |
+| BR-W03 | Javob va yechim rasmi oyna yopilguncha topshirilmagan bo'lsa, ball 0 bo'ladi                                                     | ✅      |
+| BR-W04 | To'g'ri javob belgilangan, lekin yechimi yuklanmagan savol 0 deb hisoblanadi                                                     | ⚠️ Q-04 |
+| BR-W05 | AI "ko'chirishga shubha" desa, bu o'quvchiga **ko'rsatilmaydi**. Savol ustozning navbatiga tushadi va qarorni ustoz qabul qiladi | ✅      |
+| BR-W06 | AI hukmi taklif xolos. Yakuniy ballni ustoz tasdiqlaydi yoki o'zgartiradi                                                        | ✅      |
+| BR-W07 | Oyna yopilishidan 24 va 3 soat oldin topshirmaganlarga eslatma yuboriladi                                                        | ⚠️      |
+| BR-W08 | Natija va reyting oyna yopilgandan keyin ochiladi                                                                                | ⚠️      |
+
+## AI yordamchi (T)
+
+| ID     | Qoida                                                                                                                | Holat   |
+| ------ | -------------------------------------------------------------------------------------------------------------------- | ------- |
+| BR-T01 | Haftalik test yoki Mock ochiq turganda AI yordamchi shu testning savollari bo'yicha yordam bermaydi                  | ✅      |
+| BR-T02 | Mashq rejimida yordamchi avval ishora beradi. To'liq yechimni faqat o'quvchi o'zi urinib ko'rgandan keyin ko'rsatadi | ✅      |
+| BR-T03 | Har o'quvchiga kunlik so'rov limiti qo'yiladi                                                                        | ⚠️ Q-06 |
+| BR-T04 | Barcha suhbatlar saqlanadi, ustoz ko'ra oladi                                                                        | ✅      |
+
+## Imtihon formati (M)
+
+| ID     | Qoida                                                                                                                         | Holat                                 |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| BR-M01 | Mock tuzilmasi (bo'limlar, savol turlari, ballar, daraja chegaralari) kodga yozilmaydi, "imtihon shabloni" sozlamasida turadi | ✅                                    |
+| BR-M02 | Milliy sertifikat darajalari (75 ballik T-shkala): A+ 70+, A 65, B+ 60, B 55, C+ 50, C 46. 46 dan past bo'lsa sertifikat yo'q | ⚠️ Q-09 (rasmiy PDF bilan tekshirish) |
+| BR-M03 | Moslashtirish savolida ball faqat barcha kichik savollar to'g'ri bo'lsa beriladi                                              | ⚠️ Q-09                               |
+| BR-M04 | Son javobi ekvivalentlik bo'yicha tekshiriladi: `3/4`, `0.75` va `0,75` teng hisoblanadi                                      | ✅                                    |

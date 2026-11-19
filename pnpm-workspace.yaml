@@ -1,0 +1,15 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+# Yangi chiqqan versiyalar 3 kun kutiladi (supply-chain xavfi)
+minimumReleaseAge: 4320
+allowBuilds:
+  "@nestjs/core": true
+  "@prisma/client": true
+  "@prisma/engines": true
+  "@swc/core": true
+  esbuild: true
+  prisma: true
+  msgpackr-extract: false
+overrides:
+  fastify: 5.12.8

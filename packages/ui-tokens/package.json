@@ -1,0 +1,14 @@
+{
+  "name": "@samarqand/ui-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./preset": "./preset.js",
+    "./tokens.css": "./tokens.css"
+  },
+  "files": [
+    "preset.js",
+    "tokens.css"
+  ]
+}

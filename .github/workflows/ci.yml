@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: samarqand, POSTGRES_PASSWORD: samarqand, POSTGRES_DB: samarqand }
+        ports: ["5435:5432"]
+        options: --health-cmd "pg_isready -U samarqand" --health-interval 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://samarqand:samarqand@localhost:5435/samarqand
+      BOT_TOKEN: "000000:CI_ONLY"
+      JWT_SECRET: ci-secret-ci-secret-ci-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format
+        run: pnpm format:check
+      - name: Build
+        run: pnpm build
+      - name: Lint
+        run: pnpm lint
+      - name: Migrate
+        run: pnpm --filter @samarqand/db run deploy
+      - name: Prisma drift (sxema va migratsiyalar mos)
+        run: |
+          cd packages/db
+          npx prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --shadow-database-url "$DATABASE_URL" --exit-code
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test
+        run: pnpm test
