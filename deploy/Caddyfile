@@ -1,0 +1,40 @@
+# DOMAIN .env dan keladi. Domen bo'lmaguncha: 13-62-27-178.sslip.io (IP'ga yo'naladi, Let's Encrypt ishlaydi)
+{$DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	handle /api/* {
+		reverse_proxy api:4300 {
+			# API rate limit haqiqiy IP bo'yicha ishlaydi (apps/api/src/setup.ts)
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	# Router "/admin" ga ham o'tadi: sahifa qayta yuklanganda 404 bo'lmasin
+	redir /admin /admin/ 302
+
+	handle_path /admin/* {
+		root * /srv/admin
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		try_files {path} /index.html
+		file_server
+	}
+
+	handle {
+		root * /srv/miniapp
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		# index.html keshlanmaydi: yangi deploydan keyin Telegram eski versiyani ochmasin
+		@html path / /index.html
+		header @html Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}
