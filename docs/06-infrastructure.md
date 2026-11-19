@@ -30,4 +30,11 @@
 
 ## Zaxira
 
-- Kechasi `pg_dump`, S3 ga yoziladi. Faqat shu bucket uchun alohida IAM roli yaratiladi, ona tilining `prod-backup-profile` roli ishlatilmaydi.
+- `scripts/backup.sh`, cron har kuni 03:00 (Toshkent): `pg_dump` qilinadi va `pg_restore --list` bilan tekshiriladi.
+- Serverda 14 kunlik nusxa saqlanadi: `~/samarqand-backups`.
+- S3 bucket: `samarqand-matematika-backups-560418470850` (eu-north-1, versioning, shifrlangan, public yopiq).
+  - `db/daily/`: 90 kun saqlanadi.
+  - `db/monthly/`: 2 yil saqlanadi, 30 kundan keyin Glacier IR'ga o'tkaziladi.
+- IAM: `samarqand-backup-role` (instance profile `samarqand-backup-profile`) faqat `db/*` ga yozadi va o'qiydi. O'chirish huquqi yo'q, shuning uchun server buzilsa ham zaxirani o'chirib bo'lmaydi.
+- Xato bo'lsa, ustozlarga bot orqali xabar boradi.
+- Tiklash: `scripts/restore.sh <fayl | s3://...>` (tasdiq so'raydi).
