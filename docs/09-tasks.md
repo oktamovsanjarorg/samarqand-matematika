@@ -20,7 +20,7 @@
 | T-011 | Production Dockerfile, `docker-compose.yml`, Caddy, backup (Q-01 javobidan keyin). nginx: `/admin` → `/admin/` yo'naltirish | ⬜    |
 | T-012 | Staging: test bot, `scripts/staging.sh`                                                                                     | ⬜    |
 | T-013 | `packages/ui`: umumiy komponentlar (Button, Card, Skeleton, EmptyState, ErrorState, Dialog), `/_kit` sahifasi               | ⬜    |
-| T-014 | `packages/math`: KaTeX ko'rsatish, LaTeX sanitizatsiya, javob ekvivalentligi (BR-M04) va jadvalli testlar                   | ⬜    |
+| T-014 | `packages/math`: KaTeX ko'rsatish, LaTeX sanitizatsiya, son javob ekvivalentligi (BR-M04) va jadvalli testlar (ADR-0003)    | ✅    |
 | T-015 | Hujjatlar: 00-vision, 01-requirements, 02-roles-permissions, 03-architecture, 05-data-model, 11-ux (PLAN.md'dan ajratish)   | ⬜    |
 
 ## 1-bosqich: MVP

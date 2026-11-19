@@ -13,6 +13,7 @@ Reja: [docs/PLAN.md](docs/PLAN.md) · AI agentlar uchun qoidalar: [CLAUDE.md](CL
 | `apps/admin`         | Ustoz va yordamchilar paneli (`/admin`), port 5191          |
 | `packages/db`        | Prisma sxema va migratsiyalar                               |
 | `packages/shared`    | Zod sxemalar, tiplar, initData tekshiruvi (`/server`)       |
+| `packages/math`      | KaTeX (xavfsiz rejim), son javoblarni aniq solishtirish     |
 | `packages/ui-tokens` | Ranglar (logodan olingan ko'k `#143F63`) va Tailwind preset |
 
 ## Lokal ishga tushirish

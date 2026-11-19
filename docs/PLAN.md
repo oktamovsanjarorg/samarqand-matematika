@@ -21,26 +21,26 @@ Lekin kod **noldan** yoziladi. Eski koddan faqat kerakli bo'laklar ko'rib chiqil
 
 ## 2. Texnologiyalar
 
-| Qatlam             | Tanlov                                                                                          | Izoh                                                 |
-| ------------------ | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| Monorepo           | pnpm workspaces + Turborepo                                                                     | ona tilidagidek                                      |
-| Mini App           | React 18, Vite, TS, `@telegram-apps/sdk-react`, TanStack Query, Zustand, React Router, Tailwind |                                                      |
-| Admin              | React, Vite, shadcn/ui, TanStack Table                                                          | telefonda ham ishlaydi (ona tilidagi tajriba)        |
-| UI                 | `packages/ui-tokens` (Tailwind preset) + `packages/ui` (umumiy komponentlar)                    | birinchi kundan umumiy                               |
-| Formula ko'rsatish | **KaTeX**                                                                                       | tez ishlaydi, SSR shart emas                         |
-| Formula kiritish   | **MathLive** (`<math-field>`)                                                                   | admin muharriri va o'quvchining ifoda javobi uchun   |
-| Javobni tekshirish | **CortexJS Compute Engine** (MathLive bilan bitta oiladan)                                      | `3/4 = 0.75`, `2x+2 = 2(x+1)`: serverda tekshiriladi |
-| Backend            | NestJS (Fastify), REST + OpenAPI, Zod                                                           | dev rejimda swc ishlatiladi, tsx emas                |
-| DB                 | PostgreSQL 16 + Prisma                                                                          |                                                      |
-| Navbat / cron      | Redis + BullMQ                                                                                  | AI tekshiruv, haftalik test oynalari, hisobotlar     |
-| Bot                | grammY                                                                                          | bitta bot, bitta nusxa                               |
-| Fayllar            | S3-mos saqlash (R2 yoki MinIO), yoki diskdagi `MEDIA_DIR`                                       | yechim rasmlari ko'p bo'ladi, hajm rejalashtiriladi  |
-| Rasm               | Kliyentda siqish (≤1600px, WebP yoki JPEG), serverda `sharp`                                    |                                                      |
-| Word import        | **pandoc** (docx: OMML formulalari → LaTeX)                                                     | MathType obyektlari: xavf, §9 ga qarang              |
-| AI                 | `AiProvider` interfeysi. Provayder **keyin tanlanadi** (ADR-ochiq)                              | vision kerak: qo'lyozma yechimni o'qiydi             |
-| Video              | ffmpeg, AES-128 HLS, HMAC token, belgi (watermark)                                              | ona tilidagi yechim                                  |
-| Deploy             | Docker Compose, **alohida server va domen**, o'z Caddy'si                                       |                                                      |
-| Test               | Vitest (unit), API e2e, Playwright (smoke, UI audit)                                            |                                                      |
+| Qatlam             | Tanlov                                                                                                          | Izoh                                                              |
+| ------------------ | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Monorepo           | pnpm workspaces + Turborepo                                                                                     | ona tilidagidek                                                   |
+| Mini App           | React 18, Vite, TS, `@telegram-apps/sdk-react`, TanStack Query, Zustand, React Router, Tailwind                 |                                                                   |
+| Admin              | React, Vite, shadcn/ui, TanStack Table                                                                          | telefonda ham ishlaydi (ona tilidagi tajriba)                     |
+| UI                 | `packages/ui-tokens` (Tailwind preset) + `packages/ui` (umumiy komponentlar)                                    | birinchi kundan umumiy                                            |
+| Formula ko'rsatish | **KaTeX**                                                                                                       | tez ishlaydi, SSR shart emas                                      |
+| Formula kiritish   | **MathLive** (`<math-field>`)                                                                                   | admin muharriri va o'quvchining ifoda javobi uchun                |
+| Javobni tekshirish | Son javob: aniq kasr parseri (o'zimizniki). Ifoda javob: mathjs bilan tasodifiy nuqtalarda solishtirish (T-022) | ADR-0003: Compute Engine faqat ESM va 0.x bo'lgani uchun olinmadi |
+| Backend            | NestJS (Fastify), REST + OpenAPI, Zod                                                                           | dev rejimda swc ishlatiladi, tsx emas                             |
+| DB                 | PostgreSQL 16 + Prisma                                                                                          |                                                                   |
+| Navbat / cron      | Redis + BullMQ                                                                                                  | AI tekshiruv, haftalik test oynalari, hisobotlar                  |
+| Bot                | grammY                                                                                                          | bitta bot, bitta nusxa                                            |
+| Fayllar            | S3-mos saqlash (R2 yoki MinIO), yoki diskdagi `MEDIA_DIR`                                                       | yechim rasmlari ko'p bo'ladi, hajm rejalashtiriladi               |
+| Rasm               | Kliyentda siqish (≤1600px, WebP yoki JPEG), serverda `sharp`                                                    |                                                                   |
+| Word import        | **pandoc** (docx: OMML formulalari → LaTeX)                                                                     | MathType obyektlari: xavf, §9 ga qarang                           |
+| AI                 | `AiProvider` interfeysi. Provayder **keyin tanlanadi** (ADR-ochiq)                                              | vision kerak: qo'lyozma yechimni o'qiydi                          |
+| Video              | ffmpeg, AES-128 HLS, HMAC token, belgi (watermark)                                                              | ona tilidagi yechim                                               |
+| Deploy             | Docker Compose, **alohida server va domen**, o'z Caddy'si                                                       |                                                                   |
+| Test               | Vitest (unit), API e2e, Playwright (smoke, UI audit)                                                            |                                                                   |
 
 ## 3. Monorepo tuzilishi
 
