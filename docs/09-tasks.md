@@ -5,23 +5,23 @@
 
 ## 0-bosqich: poydevor
 
-| ID    | Vazifa                                                                                                                    | Holat |
-| ----- | ------------------------------------------------------------------------------------------------------------------------- | ----- |
-| T-001 | Monorepo: pnpm, Turborepo, TS strict, aniq versiyalar, `minimumReleaseAge`                                                | ✅    |
-| T-002 | ESLint strict (≤300/≤60, complexity, paket chegaralari, hex rang taqiqi), Prettier, husky, lint-staged, commitlint        | ✅    |
-| T-003 | `packages/shared`: rollar, auth sxemalari, initData HMAC tekshiruvi va testlari                                           | ✅    |
-| T-004 | `packages/db`: Prisma, boshlang'ich sxema (User, LoginToken, AppSetting, AuditLog)                                        | ✅    |
-| T-005 | `packages/ui-tokens`: logodan olingan ko'k brend, tungi rejim, Tailwind preset                                            | ✅    |
-| T-006 | API: NestJS (Fastify), env Zod bilan, Telegram auth → JWT, global AuthGuard va RBAC, health, rate limit, e2e testlar      | ✅    |
-| T-007 | Bot: `/start` va Mini App tugmasi                                                                                         | ✅    |
-| T-008 | Mini App: Telegram mavzusi, kirish, 3 tab (Darslar, Asosiy, Profil). Admin: skelet                                        | ✅    |
-| T-009 | CI (GitHub Actions): format, lint, typecheck, test (Postgres bilan), build                                                | ✅    |
-| T-010 | Admin kirishi: bot `/admin` → 5 daqiqalik bir martalik havola → admin JWT (12 soat)                                       | ⬜    |
-| T-011 | Production Dockerfile, `docker-compose.yml`, Caddy, backup (Q-01 javobidan keyin)                                         | ⬜    |
-| T-012 | Staging: test bot, `scripts/staging.sh`                                                                                   | ⬜    |
-| T-013 | `packages/ui`: umumiy komponentlar (Button, Card, Skeleton, EmptyState, ErrorState, Dialog), `/_kit` sahifasi             | ⬜    |
-| T-014 | `packages/math`: KaTeX ko'rsatish, LaTeX sanitizatsiya, javob ekvivalentligi (BR-M04) va jadvalli testlar                 | ⬜    |
-| T-015 | Hujjatlar: 00-vision, 01-requirements, 02-roles-permissions, 03-architecture, 05-data-model, 11-ux (PLAN.md'dan ajratish) | ⬜    |
+| ID    | Vazifa                                                                                                                      | Holat |
+| ----- | --------------------------------------------------------------------------------------------------------------------------- | ----- |
+| T-001 | Monorepo: pnpm, Turborepo, TS strict, aniq versiyalar, `minimumReleaseAge`                                                  | ✅    |
+| T-002 | ESLint strict (≤300/≤60, complexity, paket chegaralari, hex rang taqiqi), Prettier, husky, lint-staged, commitlint          | ✅    |
+| T-003 | `packages/shared`: rollar, auth sxemalari, initData HMAC tekshiruvi va testlari                                             | ✅    |
+| T-004 | `packages/db`: Prisma, boshlang'ich sxema (User, LoginToken, AppSetting, AuditLog)                                          | ✅    |
+| T-005 | `packages/ui-tokens`: logodan olingan ko'k brend, tungi rejim, Tailwind preset                                              | ✅    |
+| T-006 | API: NestJS (Fastify), env Zod bilan, Telegram auth → JWT, global AuthGuard va RBAC, health, rate limit, e2e testlar        | ✅    |
+| T-007 | Bot: `/start` va Mini App tugmasi                                                                                           | ✅    |
+| T-008 | Mini App: Telegram mavzusi, kirish, 3 tab (Darslar, Asosiy, Profil). Admin: skelet                                          | ✅    |
+| T-009 | CI (GitHub Actions): format, lint, typecheck, test (Postgres bilan), build                                                  | ✅    |
+| T-010 | Admin kirishi: bot `/admin` → 5 daqiqalik bir martalik havola → admin JWT (12 soat)                                         | ✅    |
+| T-011 | Production Dockerfile, `docker-compose.yml`, Caddy, backup (Q-01 javobidan keyin). nginx: `/admin` → `/admin/` yo'naltirish | ⬜    |
+| T-012 | Staging: test bot, `scripts/staging.sh`                                                                                     | ⬜    |
+| T-013 | `packages/ui`: umumiy komponentlar (Button, Card, Skeleton, EmptyState, ErrorState, Dialog), `/_kit` sahifasi               | ⬜    |
+| T-014 | `packages/math`: KaTeX ko'rsatish, LaTeX sanitizatsiya, javob ekvivalentligi (BR-M04) va jadvalli testlar                   | ⬜    |
+| T-015 | Hujjatlar: 00-vision, 01-requirements, 02-roles-permissions, 03-architecture, 05-data-model, 11-ux (PLAN.md'dan ajratish)   | ⬜    |
 
 ## 1-bosqich: MVP
 

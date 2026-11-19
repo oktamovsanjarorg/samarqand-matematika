@@ -1,8 +1,10 @@
 import { DynamicModule, Global, Module } from "@nestjs/common";
+import { AuditModule } from "./audit/audit.module";
 import { AuthModule } from "./auth/auth.module";
 import { ENV, type Env } from "./config/env";
 import { HealthController } from "./health/health.controller";
 import { PrismaModule } from "./prisma/prisma.module";
+import { StaffModule } from "./staff/staff.module";
 import { UsersModule } from "./users/users.module";
 
 @Global()
@@ -18,7 +20,7 @@ export class AppModule {
   static forRoot(env: Env): DynamicModule {
     return {
       module: AppModule,
-      imports: [EnvModule.forRoot(env), PrismaModule, UsersModule, AuthModule],
+      imports: [EnvModule.forRoot(env), PrismaModule, AuditModule, UsersModule, AuthModule, StaffModule],
       controllers: [HealthController],
     };
   }
