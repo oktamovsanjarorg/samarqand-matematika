@@ -1,0 +1,95 @@
+# Production: docker compose up -d --build (serverda, scripts/deploy.sh orqali)
+# Sozlamalar .env da: DOMAIN, POSTGRES_PASSWORD, BOT_TOKEN, JWT_SECRET, OWNER_USERNAMES
+name: samarqand
+
+x-app: &app
+  image: samarqand-app
+  restart: unless-stopped
+  env_file: .env
+  environment: &app-env
+    NODE_ENV: production
+    DATABASE_URL: postgresql://samarqand:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD kerak}@postgres:5432/samarqand
+    REDIS_URL: redis://redis:6379
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: samarqand-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: samarqand
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD kerak}
+      POSTGRES_DB: samarqand
+    volumes:
+      - pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U samarqand"]
+      interval: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: samarqand-redis
+    restart: unless-stopped
+    volumes:
+      - redis:/data
+
+  api:
+    <<: *app
+    build: { context: ., target: app }
+    container_name: samarqand-api
+    environment:
+      <<: *app-env
+      API_HOST: 0.0.0.0
+      API_PORT: "4300"
+      ADMIN_URL: https://${DOMAIN:?DOMAIN kerak}/admin
+      CORS_ORIGINS: https://${DOMAIN}
+    # Migratsiyalar har ishga tushishda qo'llanadi (allaqachon qo'llanganlari o'tkazib yuboriladi)
+    command: sh -c "cd packages/db && npx prisma migrate deploy && cd /app && node apps/api/dist/main.js"
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:4300/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      start_period: 40s
+      retries: 5
+
+  bot:
+    <<: *app
+    container_name: samarqand-bot
+    environment:
+      <<: *app-env
+      API_INTERNAL_URL: http://api:4300/api
+      MINIAPP_URL: https://${DOMAIN}
+    command: node apps/bot/dist/main.js
+    depends_on:
+      api: { condition: service_healthy }
+
+  web:
+    build: { context: ., target: web }
+    image: samarqand-web
+    container_name: samarqand-web
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api: { condition: service_healthy }
+
+volumes:
+  pg:
+  redis:
+  caddy_data:
+  caddy_config:
