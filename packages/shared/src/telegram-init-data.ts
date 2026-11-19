@@ -1,15 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { z } from "zod";
+import { telegramProfileSchema, type TelegramProfile } from "./telegram-profile";
 
-const initUserSchema = z.object({
-  id: z.number().int().positive(),
-  first_name: z.string(),
-  last_name: z.string().optional(),
-  username: z.string().optional(),
-  language_code: z.string().optional(),
-  photo_url: z.string().optional(),
-});
-export type TelegramInitUser = z.infer<typeof initUserSchema>;
+export type TelegramInitUser = TelegramProfile;
 
 export interface ValidatedInitData {
   user: TelegramInitUser;
@@ -72,7 +64,7 @@ function parseUser(raw: string): TelegramInitUser {
   } catch {
     throw new InitDataError("user JSON emas");
   }
-  const parsed = initUserSchema.safeParse(json);
+  const parsed = telegramProfileSchema.safeParse(json);
   if (!parsed.success) throw new InitDataError("user maydonlari noto'g'ri");
   return parsed.data;
 }

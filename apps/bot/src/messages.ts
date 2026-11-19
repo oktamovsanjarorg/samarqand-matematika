@@ -6,3 +6,13 @@ export function startMessage(opts: { firstName: string; brand: string; miniappUr
   const keyboard = new InlineKeyboard().webApp("📐 Ilovani ochish", opts.miniappUrl);
   return { text, keyboard };
 }
+
+export const ADMIN_NOT_STAFF = "Boshqaruv paneli faqat ustoz va yordamchilar uchun.";
+export const ADMIN_FAILED = "Hozir havola yaratib boʻlmadi, birozdan keyin urinib koʻring.";
+
+/** /admin javobi: bir martalik havola tugmasi */
+export function adminLinkMessage(url: string) {
+  const text =
+    "🔐 Boshqaruv paneliga kirish havolasi.\n\nHavola 5 daqiqa amal qiladi va faqat bir marta ishlaydi. Uni hech kimga yubormang.";
+  return { text, keyboard: new InlineKeyboard().url("Panelni ochish", url) };
+}

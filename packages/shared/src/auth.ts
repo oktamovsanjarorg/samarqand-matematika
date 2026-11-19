@@ -22,3 +22,9 @@ export interface AuthResponse {
 export const ERROR_CODES = {
   BLOCKED: "BLOCKED",
 } as const;
+
+/** Admin panel: bot yuborgan bir martalik havoladagi token */
+export const adminLinkBody = z.object({ token: z.string().min(20).max(200) });
+
+/** Bir martalik admin kirish havolasining amal qilish muddati */
+export const LOGIN_TOKEN_TTL_MS = 5 * 60 * 1000;
