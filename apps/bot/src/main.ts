@@ -35,5 +35,15 @@ bot.command("admin", async (ctx) => {
 
 bot.catch((err) => console.error("Bot xatosi:", err.error));
 
+/** Menyu tugmasi (chap pastda "Ilova") va buyruqlar ro'yxati: har ishga tushishda bir xil holatga keltiriladi */
+async function setupMenu() {
+  await bot.api.setMyCommands([{ command: "start", description: "Ilovani ochish" }]);
+  await bot.api.setChatMenuButton({
+    menu_button: { type: "web_app", text: "Ilova", web_app: { url: env.MINIAPP_URL } },
+  });
+}
+
+setupMenu().catch((e: unknown) => console.error("Menyu sozlanmadi:", e instanceof Error ? e.message : e));
+
 // Bot faqat bitta nusxada ishlaydi: ikkinchi nusxa Telegram'dan 409 oladi
 void bot.start({ onStart: (me) => console.info(`Bot: @${me.username}`) });
