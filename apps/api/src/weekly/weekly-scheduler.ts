@@ -5,6 +5,7 @@ import { weeklyReminderText, weeklyResultText } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { AiReviewService } from "./ai-reviews";
+import { ParentReportService } from "./parent-report";
 
 const HOUR = 60 * 60 * 1000;
 
@@ -23,6 +24,7 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
     private readonly access: AccessService,
     private readonly notify: NotifyService,
     private readonly reviews: AiReviewService,
+    private readonly parents: ParentReportService,
     @Inject(ENV) private readonly env: Env,
   ) {}
 
@@ -80,7 +82,7 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /** Oyna yopildi: topshirganga ball = to'g'rilar, topshirmaganga 0; har ishlaganga natija xabari */
+  /** Oyna yopildi: topshirganga ball = to'g'rilar, topshirmaganga 0; har ishlaganga natija, ota-onaga hisobot */
   async close(now: Date) {
     const due = await this.prisma.weeklyTest.findMany({
       where: { isPublished: true, closedAt: null, closesAt: { lte: now } },
@@ -107,6 +109,7 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
           this.notify.toUser(r.userId, weeklyResultText(t.title, r.score ?? 0, t._count.questions)),
         ),
       );
+      await this.parents.send({ id: t.id, title: t.title, total: t._count.questions });
     }
   }
 }

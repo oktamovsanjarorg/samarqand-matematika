@@ -50,3 +50,13 @@ export const weeklyReminderText = (title: string, hours: number) =>
 /** O'quvchiga: oyna yopildi, natija (BR-W08) */
 export const weeklyResultText = (title: string, score: number, total: number) =>
   `📊 Haftalik test <b>${esc(title)}</b> natijasi: <b>${score}/${total}</b>.\nToʻgʻri javoblarni ilovada koʻring.`;
+
+/** Ota-onaga: haftalik test hisoboti (T-035b). AI shubhasi hech qachon yozilmaydi (BR-W05) */
+export const weeklyParentReport = (
+  child: string,
+  title: string,
+  r: { score: number; total: number; place: number; participants: number } | null,
+) =>
+  r
+    ? `📘 <b>${esc(child)}</b>, haftalik test <b>${esc(title)}</b>:\nBall: <b>${r.score}/${r.total}</b> · oʻrin: ${r.place}/${r.participants}`
+    : `📘 <b>${esc(child)}</b> haftalik test <b>${esc(title)}</b>ni topshirmadi: 0 ball.`;
