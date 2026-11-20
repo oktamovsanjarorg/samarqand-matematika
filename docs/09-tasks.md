@@ -30,7 +30,8 @@
 | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- | ----- |
 | T-020  | O'quvchi profili: onboarding (ism, telefon bot orqali), ustoz qabul qilishi, kirish rejimi AUTO/FREE/CLOSED (BR-S01–S04, BR-A04)          | ✅    |
 | T-020b | Ota-ona ulanishi: bot `/ota` va `p_<kod>`, ustoz tasdig'i, shubhali belgilar (BR-S05, S06, A04)                                           | ✅    |
-| T-020c | Onboarding va admin "O'quvchilar" UI                                                                                                      | ⬜    |
+| T-020c | Admin "O'quvchilar" (yangilar, qidiruv, qabul, kirish rejimi) va "Ota-onalar" (navbat, shubha belgilari, tasdiq/rad)                      | ✅    |
+| T-020d | Mini App onboarding (ism, raqam ulashish)                                                                                                 | ⬜    |
 | T-021  | Kontent backend: kurs → mavzu → dars (CRUD, tartiblash, BR-C01–C04), o'quvchi API                                                         | ✅    |
 | T-021b | Kontent UI: admin daraxt va dars muharriri (MathText preview), Mini App Darslar va dars sahifasi                                          | ⬜    |
 | T-022  | Savollar banki: turlar (SINGLE, MULTIPLE, NUMERIC, EXPRESSION, MATCHING, WRITTEN), MathLive muharriri, namunaviy yechim, ko'nikma teglari | ⬜    |

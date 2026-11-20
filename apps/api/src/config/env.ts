@@ -15,6 +15,8 @@ const schema = z.object({
   // Admin panel manzili: bot yuboradigan bir martalik kirish havolasi uchun
   ADMIN_URL: z.string().url().default("http://127.0.0.1:5191/admin"),
   ADMIN_JWT_TTL: z.string().default("12h"),
+  // Bitta IP'dan daqiqasiga kirish so'rovlari (maktab Wi-Fi'da butun sinf bitta IP'da bo'ladi)
+  RATE_LIMIT_AUTH_PER_MIN: z.coerce.number().int().min(10).default(120),
 });
 
 export type Env = z.infer<typeof schema>;
