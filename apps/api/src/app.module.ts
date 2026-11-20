@@ -10,6 +10,7 @@ import { BillingModule } from "./billing/billing.module";
 import { WeeklyModule } from "./weekly/weekly.module";
 import { TutorModule } from "./tutor/tutor.module";
 import { MockModule } from "./mock/mock.module";
+import { GroupsModule } from "./groups/groups.module";
 import { AiModule } from "./ai/ai.module";
 import { StudentsModule } from "./students/students.module";
 import { ParentsModule } from "./parents/parents.module";
@@ -47,6 +48,7 @@ export class AppModule {
         WeeklyModule,
         TutorModule,
         MockModule,
+        GroupsModule,
         AiModule,
         StudentsModule,
         ParentsModule,

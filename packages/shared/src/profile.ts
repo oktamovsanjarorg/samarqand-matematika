@@ -54,6 +54,8 @@ export interface AdminStudentRow {
   phone: string | null;
   accessMode: StudentAccess;
   acceptedAt: string | null;
+  /** Offline guruh nomi (T-054) */
+  groupName: string | null;
   createdAt: string;
   lastSeenAt: string | null;
 }
