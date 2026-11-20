@@ -4,7 +4,7 @@ import { paymentSubmittedText } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { PlansService } from "./plans.service";
-import { ReceiptStore, sniffImage } from "./receipts";
+import { MediaStore, sniffImage } from "../storage/media-store";
 
 export const MY_PAYMENT_SELECT = {
   id: true,
@@ -38,7 +38,7 @@ export class PaymentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly plans: PlansService,
-    private readonly receipts: ReceiptStore,
+    private readonly receipts: MediaStore,
     private readonly notify: NotifyService,
   ) {}
 
@@ -86,7 +86,7 @@ export class PaymentsService {
       });
     });
     try {
-      const receiptPath = await this.receipts.save(p.id, body, image.ext);
+      const receiptPath = await this.receipts.save("receipts", p.id, body, image.ext);
       await this.prisma.payment.update({ where: { id: p.id }, data: { receiptPath } });
     } catch (e) {
       await this.prisma.payment.delete({ where: { id: p.id } });

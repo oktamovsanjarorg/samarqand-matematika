@@ -17,7 +17,13 @@ import { AccessService } from "../access/access.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { checkAnswer } from "../questions/check";
 import { toDetail } from "../questions/codec";
-import { scoreOf, WEEKLY_ATTEMPT_INCLUDE, weeklyView, type WeeklyAttemptRow } from "./weekly-views";
+import {
+  scoreOf,
+  WEEKLY_ATTEMPT_INCLUDE,
+  weeklyView,
+  withPhotoRule,
+  type WeeklyAttemptRow,
+} from "./weekly-views";
 
 const asJson = (v: unknown) => v as object;
 
@@ -119,11 +125,13 @@ export class WeeklyService {
   /** Topshirish oyna ichida bo'lishi shart (BR-W03); natija oyna yopilgach ochiladi (BR-W08) */
   async submit(userId: string, id: string): Promise<WeeklyAttemptView> {
     const a = await this.ownOpen(userId, id);
+    // Natijada tekshiruvning o'zi saqlanadi; ballga rasmsiz to'g'ri javob kirmaydi (BR-W04)
     const graded = a.answers.map((x) => ({
       questionId: x.question.id,
       result: checkAnswer(toDetail(x.question), x.response),
+      photos: x.photos.length,
     }));
-    const correct = graded.filter((g) => g.result === "CORRECT").length;
+    const correct = graded.filter((g) => withPhotoRule(g.result, g.photos) === "CORRECT").length;
     const done = await this.prisma.$transaction(async (tx) => {
       const closed = await tx.weeklyAttempt.updateMany({
         where: { id, submittedAt: null },
@@ -140,7 +148,7 @@ export class WeeklyService {
     return weeklyView(done as WeeklyAttemptRow, new Date());
   }
 
-  private async own(userId: string, id: string): Promise<WeeklyAttemptRow> {
+  async own(userId: string, id: string): Promise<WeeklyAttemptRow> {
     const a = await this.prisma.weeklyAttempt.findFirst({
       where: { id, userId },
       include: WEEKLY_ATTEMPT_INCLUDE,
@@ -149,7 +157,8 @@ export class WeeklyService {
     return a as WeeklyAttemptRow;
   }
 
-  private async ownOpen(userId: string, id: string): Promise<WeeklyAttemptRow> {
+  /** O'quvchining ochiq (topshirilmagan, oyna ichida) urinishi; aks holda 409 */
+  async ownOpen(userId: string, id: string): Promise<WeeklyAttemptRow> {
     const a = await this.own(userId, id);
     if (a.submittedAt) throw new ConflictException("Test allaqachon topshirilgan");
     if (new Date() >= a.weeklyTest.closesAt)

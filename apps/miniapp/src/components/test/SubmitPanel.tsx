@@ -1,6 +1,7 @@
 /** Topshirishdan oldingi tasdiq: javobsiz savollar soni aytiladi */
 export function SubmitPanel(p: {
   unanswered: number;
+  warning?: string;
   busy: boolean;
   error?: string;
   onSubmit: () => void;
@@ -15,6 +16,7 @@ export function SubmitPanel(p: {
           : "Hamma savolga javob berdingiz. "}
         Topshirilgandan keyin javoblarni oʻzgartirib boʻlmaydi.
       </p>
+      {p.warning && <p className="text-sm font-semibold text-danger">{p.warning}</p>}
       <div className="flex gap-2">
         <button
           type="button"

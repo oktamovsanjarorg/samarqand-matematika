@@ -26,9 +26,11 @@ export function sniffImage(b: Buffer): { ext: string; type: string } | null {
 
 const TYPES: Record<string, string> = { jpg: "image/jpeg", png: "image/png", webp: "image/webp" };
 
-/** Cheklar MEDIA_DIR/receipts ichida. Yo'l faqat server yaratadi, tashqaridan kelmaydi */
+export type MediaFolder = "receipts" | "solutions";
+
+/** Fayllar MEDIA_DIR/<papka> ichida (cheklar, yechim rasmlari). Yo'l faqat server yaratadi, tashqaridan kelmaydi */
 @Injectable()
-export class ReceiptStore {
+export class MediaStore {
   constructor(@Inject(ENV) private readonly env: Env) {}
 
   private abs(rel: string): string {
@@ -38,8 +40,8 @@ export class ReceiptStore {
     return full;
   }
 
-  async save(id: string, body: Buffer, ext: string): Promise<string> {
-    const rel = join("receipts", `${id}.${ext}`);
+  async save(folder: MediaFolder, id: string, body: Buffer, ext: string): Promise<string> {
+    const rel = join(folder, `${id}.${ext}`);
     await mkdir(dirname(this.abs(rel)), { recursive: true });
     await writeFile(this.abs(rel), body);
     return rel;

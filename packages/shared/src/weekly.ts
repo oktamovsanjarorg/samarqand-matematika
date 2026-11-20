@@ -62,13 +62,28 @@ export interface WeeklyWaiting {
   closesAt: string;
 }
 
-export type WeeklyAttemptView =
-  | (Omit<AttemptView, "topicId" | "topicTitle"> & { weeklyTestId: string; title: string; closesAt: string })
-  | WeeklyWaiting
-  | WeeklyResult;
+/** Har savolga yechim rasmi: 1–3 ta (BR-W04) */
+export const MAX_SOLUTION_PHOTOS = 3;
+
+/** Ochiq urinish: savollar, saqlangan javoblar va yuklangan rasmlar (id) */
+export type WeeklyOpen = Omit<AttemptView, "topicId" | "topicTitle" | "questions"> & {
+  weeklyTestId: string;
+  title: string;
+  closesAt: string;
+  questions: (AttemptView["questions"][number] & { photos: string[] })[];
+};
+
+export type WeeklyAttemptView = WeeklyOpen | WeeklyWaiting | WeeklyResult;
+
+/** result: avtomatik tekshiruv; noPhoto: yechim rasmi yo'q, shuning uchun to'g'ri javob ham 0 ball (BR-W04) */
+export type WeeklyResultItem = AttemptResult["items"][number] & { photos: string[]; noPhoto: boolean };
 
 /** Oyna yopilgandan keyin: ball va har savol bo'yicha to'g'ri javob */
-export type WeeklyResult = Omit<AttemptResult, "status" | "topicId" | "topicTitle" | "submittedAt"> & {
+export type WeeklyResult = Omit<
+  AttemptResult,
+  "status" | "topicId" | "topicTitle" | "submittedAt" | "items"
+> & {
+  items: WeeklyResultItem[];
   status: "RESULT";
   weeklyTestId: string;
   title: string;

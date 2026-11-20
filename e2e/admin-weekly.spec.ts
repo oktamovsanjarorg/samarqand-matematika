@@ -69,6 +69,12 @@ test("BR-W01, BR-W09: ustoz haftalik test tuzadi, natijalarni ko'radi, boshlanga
     headers: s.headers,
     data: { response: { optionId: "b" } },
   });
+  // BR-W04: yechim rasmi bilan
+  const png = Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), Buffer.alloc(32)]);
+  await request.post(`${API}/weekly-attempts/${att.id}/answers/${att.questions[0]?.question.id}/photos`, {
+    headers: { ...s.headers, "content-type": "image/png" },
+    data: png,
+  });
   await request.post(`${API}/weekly-attempts/${att.id}/submit`, { headers: s.headers });
 
   await page.reload();

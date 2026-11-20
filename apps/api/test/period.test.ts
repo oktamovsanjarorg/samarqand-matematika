@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { nextPeriod } from "../src/billing/period";
-import { sniffImage } from "../src/billing/receipts";
+import { sniffImage } from "../src/storage/media-store";
 
 describe("BR-B03: obuna davri", () => {
   const now = new Date("2026-11-20T10:00:00Z");

@@ -1,5 +1,6 @@
 import type { AttemptResult, CheckResult } from "@samarqand/shared";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
+import type { ReactNode } from "react";
 import { describe } from "../../lib/answers";
 import { MathText } from "../MathText";
 
@@ -24,8 +25,10 @@ function Line({ label, text }: { label: string; text: string | null }) {
   );
 }
 
-export function ResultItem({ item, n }: { item: Item; n: number }) {
-  const s = STATUS[item.result];
+/** zero: javob to'g'ri bo'lsa ham ball berilmagan sabab (haftalik testda yechim rasmi yo'q) */
+export function ResultItem(p: { item: Item; n: number; zero?: string; children?: ReactNode }) {
+  const { item, n, children } = p;
+  const s = p.zero ? { label: p.zero, icon: XCircle, tone: "text-danger" } : STATUS[item.result];
   const Icon = s.icon;
   return (
     <li className="card space-y-2" data-testid="result-item">
@@ -43,6 +46,7 @@ export function ResultItem({ item, n }: { item: Item; n: number }) {
           <MathText text={item.solution} className="mt-2" />
         </details>
       )}
+      {children}
     </li>
   );
 }

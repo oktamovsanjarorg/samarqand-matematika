@@ -15,6 +15,17 @@ type Method = "GET" | "POST" | "PUT" | "DELETE";
 const call = (method: Method, url: string, headers: Record<string, string>, payload?: object) =>
   app.inject({ method, url: `/api${url}`, headers, ...(payload ? { payload } : {}) });
 const at = (ms: number) => new Date(Date.now() + ms).toISOString();
+const PNG = Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), Buffer.alloc(32)]);
+const photo = (
+  headers: Record<string, string>,
+  p: { attemptId: string; qid: string; body?: Buffer; type?: string },
+) =>
+  app.inject({
+    method: "POST",
+    url: `/api/weekly-attempts/${p.attemptId}/answers/${p.qid}/photos`,
+    headers: { ...headers, "content-type": p.type ?? "image/png" },
+    payload: p.body ?? PNG,
+  });
 
 async function questions() {
   const c = (await call("POST", "/admin/courses", teacher, { title: "Haftalik kurs" })).json();
@@ -144,6 +155,7 @@ describe("Haftalik test", () => {
     await call("PUT", `/weekly-attempts/${a.id}/answers/${qids[0]}`, done.headers, {
       response: { optionId: "b" },
     });
+    expect((await photo(done.headers, { attemptId: a.id, qid: qids[0] ?? "" })).statusCode).toBe(201);
     await call("POST", `/weekly-attempts/${a.id}/submit`, done.headers);
     const b = (await call("POST", `/weekly/${id}/attempts`, late.headers)).json();
     await call("PUT", `/weekly-attempts/${b.id}/answers/${qids[0]}`, late.headers, {
@@ -209,5 +221,56 @@ describe("Haftalik test", () => {
       questionIds: qids,
       status: "OPEN",
     });
+  });
+
+  it("BR-W04: yechim rasmi 1–3 ta, faqat ochiq urinishga; rasmsiz to'g'ri javob 0", async () => {
+    const qids = await questions();
+    const [q0 = "", q1 = ""] = qids;
+    const id = await weekly(qids);
+    const s = await student();
+    const other = await student();
+    const a = (await call("POST", `/weekly/${id}/attempts`, s.headers)).json();
+    expect(
+      (
+        await photo(s.headers, {
+          attemptId: a.id,
+          qid: q0,
+          body: Buffer.from("rasm emas, matn"),
+          type: "image/jpeg",
+        })
+      ).statusCode,
+    ).toBe(400);
+    expect((await photo(other.headers, { attemptId: a.id, qid: q0 })).statusCode).toBe(404);
+    const ids: string[] = [];
+    for (let i = 0; i < 3; i++) ids.push((await photo(s.headers, { attemptId: a.id, qid: q0 })).json().id);
+    expect((await photo(s.headers, { attemptId: a.id, qid: q0 })).statusCode).toBe(409);
+    expect((await call("DELETE", `/weekly-attempts/${a.id}/photos/${ids[2]}`, s.headers)).statusCode).toBe(
+      204,
+    );
+    const view = (await call("GET", `/weekly-attempts/${a.id}`, s.headers)).json();
+    expect(view.questions[0].photos).toEqual(ids.slice(0, 2));
+    expect(view.questions[1].photos).toEqual([]);
+
+    const own = await call("GET", `/weekly-photos/${ids[0]}`, s.headers);
+    expect(own.headers["content-type"]).toBe("image/png");
+    expect((await call("GET", `/weekly-photos/${ids[0]}`, other.headers)).statusCode).toBe(404);
+    expect((await call("GET", `/admin/weekly/photos/${ids[0]}`, s.headers)).statusCode).toBe(403);
+    expect((await call("GET", `/admin/weekly/photos/${ids[0]}`, teacher)).statusCode).toBe(200);
+
+    // Ikkala javob to'g'ri, lekin 2-savolga rasm yo'q: ball 1
+    await call("PUT", `/weekly-attempts/${a.id}/answers/${q0}`, s.headers, { response: { optionId: "b" } });
+    await call("PUT", `/weekly-attempts/${a.id}/answers/${q1}`, s.headers, { response: { value: "0,75" } });
+    await call("POST", `/weekly-attempts/${a.id}/submit`, s.headers);
+    expect((await photo(s.headers, { attemptId: a.id, qid: q1 })).statusCode).toBe(409);
+    expect((await call("DELETE", `/weekly-attempts/${a.id}/photos/${ids[0]}`, s.headers)).statusCode).toBe(
+      409,
+    );
+    await prisma.weeklyTest.update({ where: { id }, data: { closesAt: new Date(Date.now() - 1000) } });
+    const r = (await call("GET", `/weekly-attempts/${a.id}`, s.headers)).json();
+    expect(r.score).toBe(1);
+    expect(r.items.map((i: { result: string; noPhoto: boolean }) => [i.result, i.noPhoto])).toEqual([
+      ["CORRECT", false],
+      ["CORRECT", true],
+    ]);
   });
 });
