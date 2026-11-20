@@ -9,6 +9,7 @@ import {
   Settings,
   UserRound,
   Users,
+  UsersRound,
 } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 import type { Session } from "../lib/session";
@@ -18,6 +19,7 @@ const NAV = [
   { to: "/weekly", label: "Haftalik", Icon: CalendarCheck },
   { to: "/mocks", label: "Mock", Icon: ClipboardList },
   { to: "/students", label: "Oʻquvchilar", Icon: UserRound },
+  { to: "/groups", label: "Guruhlar", Icon: UsersRound },
   { to: "/parents", label: "Ota-onalar", Icon: Users },
   { to: "/payments", label: "Toʻlovlar", Icon: CreditCard },
   { to: "/tutor", label: "Yordamchi", Icon: Bot },
