@@ -1,0 +1,57 @@
+import { z } from "zod";
+import { telegramProfileSchema } from "./telegram-profile";
+
+/** Ota-ona kodi: 8 ta katta harfli hex (t.me/<bot>?start=p_<kod>) */
+export const PARENT_CODE_RE = /^[0-9A-F]{8}$/;
+/** Bitta o'quvchiga ulanishi mumkin bo'lgan faol (kutilayotgan yoki tasdiqlangan) ota-onalar */
+export const MAX_PARENTS = 2;
+
+const contact = z.object({ phone_number: z.string().min(5).max(20), user_id: z.number().int().optional() });
+
+/** Bot: o'quvchi /ota buyrug'ini yubordi */
+export const parentCodeBody = z.object({ from: telegramProfileSchema });
+
+/** Bot: ota-ona havola orqali kirib, o'z raqamini ulashdi */
+export const parentLinkBody = z.object({
+  code: z.string().toUpperCase().regex(PARENT_CODE_RE),
+  from: telegramProfileSchema,
+  contact,
+});
+export type ParentLinkBody = z.infer<typeof parentLinkBody>;
+
+export type ParentLinkResult =
+  | { status: "created" | "exists"; studentName: string }
+  | { status: "invalid_code" | "not_own_contact" | "self" | "limit" | "rejected_before" | "is_student" };
+
+export const PARENT_LINK_STATUSES = ["PENDING", "APPROVED", "REJECTED"] as const;
+export type ParentLinkStatus = (typeof PARENT_LINK_STATUSES)[number];
+
+export const rejectParentBody = z.object({ reason: z.string().trim().min(3, "Sababini yozing").max(300) });
+
+/** Ustoz ko'radigan shubha belgilari */
+export const PARENT_FLAGS = {
+  same_phone: "Raqami oʻquvchi raqami bilan bir xil",
+  parent_activity: "Bu hisob ilovada test ishlagan: oʻquvchining oʻzi boʻlishi mumkin",
+  many_children: "Koʻp oʻquvchiga ulanmoqda",
+} as const;
+export type ParentFlag = keyof typeof PARENT_FLAGS;
+
+export interface AdminParentLink {
+  id: string;
+  status: ParentLinkStatus;
+  phone: string;
+  flags: ParentFlag[];
+  parentName: string;
+  parentUsername: string | null;
+  studentId: string;
+  studentName: string;
+  createdAt: string;
+  reviewedAt: string | null;
+  rejectReason: string | null;
+}
+
+/** Ota-onaning farzandi (faqat tasdiqlangan ulanish) */
+export interface ChildView {
+  studentId: string;
+  name: string;
+}

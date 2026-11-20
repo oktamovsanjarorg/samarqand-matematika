@@ -23,12 +23,14 @@ export class ProfileService {
 
   async my(userId: string, role: RoleName): Promise<MyProfile> {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { phone: true } });
-    if (STAFF_ROLES.includes(role)) {
+    // Xodim va ota-onada o'quvchi profili yo'q: onboarding ham kerak emas
+    if (role !== "STUDENT") {
+      const full = STAFF_ROLES.includes(role);
       return {
         fullName: null,
         hasPhone: !!user.phone,
         needsOnboarding: false,
-        access: { full: true, accepted: true, mode: "AUTO" },
+        access: { full, accepted: full, mode: "AUTO" },
       };
     }
     const profile = await this.prisma.studentProfile.upsert({
