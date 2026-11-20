@@ -45,6 +45,8 @@ model User {
   mockAttempts     MockAttempt[]
   attendance       Attendance[]     @relation("Attendance")
   attendanceMarked Attendance[]     @relation("AttendanceMarker")
+  offlineTests     OfflineTest[]    @relation("OfflineTestCreator")
+  offlineResults   OfflineResult[]  @relation("OfflineResults")
 
   @@index([role])
 }
@@ -563,13 +565,14 @@ model MockAnswer {
 
 /// Offline guruh (T-054): jadval matn ko'rinishida, davomat T-055 da
 model Group {
-  id         String           @id @default(cuid())
-  name       String
-  schedule   String?
-  isActive   Boolean          @default(true)
-  createdAt  DateTime         @default(now()) @db.Timestamptz
-  students   StudentProfile[]
-  attendance Attendance[]
+  id           String           @id @default(cuid())
+  name         String
+  schedule     String?
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now()) @db.Timestamptz
+  students     StudentProfile[]
+  attendance   Attendance[]
+  offlineTests OfflineTest[]
 }
 
 enum AttendanceStatus {
@@ -597,4 +600,37 @@ model Attendance {
 
   @@unique([userId, date])
   @@index([groupId, date])
+}
+
+/// Tashqi (offline) test (T-056): CSV dan import, bo'limlar bo'yicha ball
+model OfflineTest {
+  id          String          @id @default(cuid())
+  title       String
+  date        DateTime        @db.Date
+  groupId     String?
+  group       Group?          @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  sections    String[]
+  createdById String?
+  createdBy   User?           @relation("OfflineTestCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime        @default(now()) @db.Timestamptz
+  results     OfflineResult[]
+
+  @@index([date])
+}
+
+/// CSV qatori: o'quvchiga telefon yoki ism bo'yicha moslanadi, topilmasa ustoz qo'lda biriktiradi
+model OfflineResult {
+  id            String      @id @default(cuid())
+  offlineTestId String
+  offlineTest   OfflineTest @relation(fields: [offlineTestId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?       @relation("OfflineResults", fields: [userId], references: [id], onDelete: SetNull)
+  line          Int
+  name          String
+  phone         String?
+  scores        Float[]
+  total         Float
+
+  @@index([offlineTestId])
+  @@index([userId])
 }
