@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { MockResults } from "../components/mock/MockResults";
 import { SectionPickers } from "../components/mock/SectionPickers";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
 import { WindowFields } from "../components/weekly/WindowFields";
@@ -175,6 +176,7 @@ export function MockEditPage() {
       {m.isError && <ErrorState message={m.error.message} onRetry={() => m.refetch()} />}
       {!id && <Form />}
       {m.data && <Form initial={m.data} />}
+      {m.data && m.data.status !== "UPCOMING" && <MockResults id={m.data.id} />}
     </div>
   );
 }

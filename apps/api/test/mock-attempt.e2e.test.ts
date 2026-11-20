@@ -1,4 +1,4 @@
-import type { MockOpen, MockResult, StudentMockRow } from "@samarqand/shared";
+import type { AdminMockResults, MockOpen, MockResult, StudentMockRow } from "@samarqand/shared";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { MockScheduler } from "../src/mock/mock-scheduler";
 import { testAi } from "./helpers";
@@ -179,5 +179,38 @@ describe("Mock urinishi (T-051b)", () => {
     expect(r).toMatchObject({ scaled: 50, grade: "C", approx: true });
     const sent = f.messagesTo(s.telegramId).filter((t) => t.includes("Sinov mock"));
     expect(sent).toEqual([expect.stringContaining("<b>50/75</b>, daraja <b>C</b>")]);
+  });
+
+  it("T-053b: ustoz natijalarni ko'radi: ball bo'yicha, bo'limlar, usul; o'quvchiga 403", async () => {
+    const m = await mock();
+    const [s1, s2] = [await f.student(), await f.student()];
+    const a1 = (await begin(s1.headers, m.id)).json() as MockOpen;
+    await f.call("PUT", `/mock-attempts/${a1.id}/answers/${m.numeric}`, s1.headers, {
+      response: { value: "3/4" },
+    });
+    await f.call("POST", `/mock-attempts/${a1.id}/submit`, s1.headers);
+    await begin(s2.headers, m.id);
+    const url = `/admin/mocks/${m.id}/results`;
+    const open = (await f.call("GET", url, f.teacher)).json() as AdminMockResults;
+    expect(open).toMatchObject({
+      method: "OPEN",
+      submitted: 1,
+      maxRaw: 4.5,
+      scaleMax: 75,
+      sectionTitles: ["Yopiq", "Ochiq"],
+    });
+    expect(open.rows.map((r) => [r.raw, r.scaled, r.grade, r.sections])).toEqual([
+      [3, 50, "C", [0, 3]],
+      [null, null, null, []],
+    ]);
+    expect((await f.call("GET", url, s1.headers)).statusCode).toBe(403);
+    await f.prisma.mockTest.update({ where: { id: m.id }, data: { closesAt: new Date(Date.now() - 1000) } });
+    await f.prisma.mockAttempt.updateMany({
+      where: { mockTestId: m.id },
+      data: { deadline: new Date(Date.now() - 1000) },
+    });
+    await f.app.get(MockScheduler).close(new Date());
+    const closed = (await f.call("GET", url, f.teacher)).json() as AdminMockResults;
+    expect(closed).toMatchObject({ method: "APPROX", submitted: 2 });
   });
 });

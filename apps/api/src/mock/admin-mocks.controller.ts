@@ -3,12 +3,16 @@ import { mockTestInput } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { AdminMocksService } from "./admin-mocks.service";
+import { MockResultsService } from "./mock-results.service";
 
 /** Mocklar: haftalik test kabi ustoz va yordamchi tuzadi; shablonni faqat ustoz sozlaydi */
 @Roles("TEACHER", "ASSISTANT")
 @Controller("admin/mocks")
 export class AdminMocksController {
-  constructor(private readonly mocks: AdminMocksService) {}
+  constructor(
+    private readonly mocks: AdminMocksService,
+    private readonly results: MockResultsService,
+  ) {}
 
   @Get()
   list() {
@@ -23,6 +27,12 @@ export class AdminMocksController {
   @Get(":id")
   get(@Param("id") id: string) {
     return this.mocks.get(id);
+  }
+
+  /** Natijalar: ball kamayishi bo'yicha, bo'limlar bilan (T-053b) */
+  @Get(":id/results")
+  resultsOf(@Param("id") id: string) {
+    return this.results.results(id);
   }
 
   @Put(":id")
