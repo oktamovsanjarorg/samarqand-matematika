@@ -33,6 +33,9 @@ export async function openAsTelegram(page: Page, user: TgUser, path = "/") {
     initData: ${JSON.stringify(initData)}, colorScheme: "light", themeParams: {},
     ready() {}, expand() {}, setHeaderColor() {}, setBackgroundColor() {},
     isVersionAtLeast() { return true; }, onEvent() {},
+    BackButton: { show() {}, hide() {}, onClick() {}, offClick() {} },
+    requestContact(cb) { window.__contactRequested = true; if (cb) cb(true); },
+    openLink(url) { window.__openedLink = url; },
   } };`;
   await page.route("https://telegram.org/js/telegram-web-app.js", (r) =>
     r.fulfill({ contentType: "text/javascript", body: stub }),

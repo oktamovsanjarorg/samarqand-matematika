@@ -25,6 +25,31 @@ export async function loginAdmin(page: Page, request: APIRequestContext, path = 
   if (path) await page.goto(`http://127.0.0.1:5191/admin/${path}`);
 }
 
+/** Admin JWT (API orqali kontent yaratish uchun) */
+export async function adminHeaders(request: APIRequestContext) {
+  const t = new URL(await adminLink(request)).hash.replace("#t=", "");
+  const res = await request.post(`${API}/auth/admin-link`, { data: { token: t } });
+  return { authorization: `Bearer ${((await res.json()) as { token: string }).token}` };
+}
+
+/** Bot raqamni qabul qilgandagidek (request_contact) */
+export const sharePhone = (request: APIRequestContext, tg: number, phone: string) =>
+  request.post(`${API}/internal/user-phone`, {
+    headers: internal(),
+    data: { from: { id: tg, first_name: "O" }, contact: { phone_number: phone, user_id: tg } },
+  });
+
+export async function apiPost<T>(
+  request: APIRequestContext,
+  path: string,
+  headers: Record<string, string>,
+  data: object,
+) {
+  const res = await request.post(`${API}${path}`, { headers, data });
+  expect(res.ok(), `${path}: ${res.status()}`).toBe(true);
+  return (await res.json()) as T;
+}
+
 /** Ilovani ochgan o'quvchi (API orqali): ism va telefon ixtiyoriy */
 export async function createStudent(
   request: APIRequestContext,
@@ -38,11 +63,7 @@ export async function createStudent(
   };
   const headers = { authorization: `Bearer ${auth.token}` };
   if (opts.fullName) await request.post(`${API}/me/name`, { headers, data: { fullName: opts.fullName } });
-  if (opts.phone)
-    await request.post(`${API}/internal/user-phone`, {
-      headers: internal(),
-      data: { from: { id: tg, first_name: "O" }, contact: { phone_number: opts.phone, user_id: tg } },
-    });
+  if (opts.phone) await sharePhone(request, tg, opts.phone);
   return { tg, headers };
 }
 

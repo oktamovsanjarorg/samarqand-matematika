@@ -18,6 +18,11 @@ interface TgWebApp {
   setBackgroundColor(color: string): void;
   isVersionAtLeast?(v: string): boolean;
   onEvent(event: "themeChanged", cb: () => void): void;
+  /** Bot API 6.1+: tepadagi "orqaga" tugmasi */
+  BackButton?: { show(): void; hide(): void; onClick(cb: () => void): void; offClick(cb: () => void): void };
+  /** Bot API 6.9+: raqamni botga ulashish oynasi. Raqam botga xabar bo'lib boradi */
+  requestContact?(cb?: (shared: boolean) => void): void;
+  openLink?(url: string): void;
 }
 
 declare global {
