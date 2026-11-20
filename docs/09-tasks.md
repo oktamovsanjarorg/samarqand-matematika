@@ -48,15 +48,15 @@
 
 ## 2-bosqich: haftalik test va AI tekshiruvi
 
-| ID     | Vazifa                                                                                                                                                        | Holat |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| T-030  | Haftalik test API: oyna (vaqtdan), bitta urinish, natija yopilgandan keyin, topshirmaganga 0, eslatmalar 24/3 soat, rejalashtiruvchi (BR-W01–W03, W07–W09)    | ✅    |
-| T-030b | Admin "Haftalik": testlar ro'yxati, yaratish (keyingi hafta oynasi standart, Toshkent vaqti), bankdan savol tanlash, natijalar jadvali                        | ✅    |
-| T-030c | Mini App: haftalik testlar ro'yxati va Asosiy'da joriy test, yechish (qolgan vaqt), "topshirildi, natija yopilgach", natija va to'g'ri javoblar               | ✅    |
-| T-031  | Yechim rasmlari: har savolga 1–3 ta (kliyentda siqish, `MEDIA_DIR/solutions`), faqat ochiq urinishga; rasmsiz to'g'ri javob 0 ball (BR-W04); natijada rasmlar | ✅    |
-| T-032  | `AiProvider` interfeysi va baholash to'plami, provayder tanlovi (Q-03, ADR)                                                                                   | ⬜    |
-| T-033  | AI yechim tekshiruvi: hukm sxemasi, ko'chirish signallari, o'quvchilar orasidagi o'xshashlik                                                                  | ⬜    |
-| T-034  | Ustoz navbati: shubhalilar birinchi turadi, tasdiqlash yoki o'zgartirish (BR-W05, W06)                                                                        | ⬜    |
-| T-035  | Reyting va ota-onaga hisobot                                                                                                                                  | ⬜    |
+| ID     | Vazifa                                                                                                                                                                           | Holat |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| T-030  | Haftalik test API: oyna (vaqtdan), bitta urinish, natija yopilgandan keyin, topshirmaganga 0, eslatmalar 24/3 soat, rejalashtiruvchi (BR-W01–W03, W07–W09)                       | ✅    |
+| T-030b | Admin "Haftalik": testlar ro'yxati, yaratish (keyingi hafta oynasi standart, Toshkent vaqti), bankdan savol tanlash, natijalar jadvali                                           | ✅    |
+| T-030c | Mini App: haftalik testlar ro'yxati va Asosiy'da joriy test, yechish (qolgan vaqt), "topshirildi, natija yopilgach", natija va to'g'ri javoblar                                  | ✅    |
+| T-031  | Yechim rasmlari: har savolga 1–3 ta (kliyentda siqish, `MEDIA_DIR/solutions`), faqat ochiq urinishga; rasmsiz to'g'ri javob 0 ball (BR-W04); natijada rasmlar                    | ✅    |
+| T-032  | `AiProvider` interfeysi, hukm sxemasi, Claude provayderi (structured outputs, zaxira model), baholash to'plami skripti, ADR-0004. Provayder tanlovi real to'plamdan keyin (Q-03) | ✅    |
+| T-033  | AI yechim tekshiruvi: hukm sxemasi, ko'chirish signallari, o'quvchilar orasidagi o'xshashlik                                                                                     | ⬜    |
+| T-034  | Ustoz navbati: shubhalilar birinchi turadi, tasdiqlash yoki o'zgartirish (BR-W05, W06)                                                                                           | ⬜    |
+| T-035  | Reyting va ota-onaga hisobot                                                                                                                                                     | ⬜    |
 
 Keyingi bosqichlar (AI yordamchi, Mock, offline, ko'rsatmalar) 2-bosqich oxirida vazifalarga bo'linadi.

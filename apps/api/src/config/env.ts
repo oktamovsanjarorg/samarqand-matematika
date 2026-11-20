@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /** Env Zod bilan tekshiriladi: majburiy qiymat yo'q bo'lsa API ishga tushmaydi */
-const schema = z.object({
+const base = z.object({
   NODE_ENV: z.string().default("development"),
   API_PORT: z.coerce.number().default(4300),
   API_HOST: z.string().default("127.0.0.1"),
@@ -21,6 +21,16 @@ const schema = z.object({
   MEDIA_DIR: z.string().min(1).default("./media"),
   // Haftalik test rejalashtiruvchisi (eslatma va yopish) necha soniyada bir ishlaydi; 0 — o'chiq (testlarda)
   WEEKLY_TICK_SEC: z.coerce.number().int().min(0).default(60),
+  // Yechim tekshiruvi (ADR-0004): off — AI'siz, hamma savol ustoz navbatiga
+  AI_PROVIDER: z.enum(["off", "claude"]).default("off"),
+  ANTHROPIC_API_KEY: z.string().min(1).optional(),
+  // Baholash to'plamida modellarni solishtirish uchun
+  AI_MODEL: z.string().min(1).default("claude-opus-5-5"),
+});
+
+const schema = base.refine((e) => e.AI_PROVIDER !== "claude" || !!e.ANTHROPIC_API_KEY, {
+  message: "AI_PROVIDER=claude uchun ANTHROPIC_API_KEY kerak",
+  path: ["ANTHROPIC_API_KEY"],
 });
 
 export type Env = z.infer<typeof schema>;
