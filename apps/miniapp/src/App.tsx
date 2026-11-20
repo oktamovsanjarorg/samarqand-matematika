@@ -13,6 +13,7 @@ import { LessonsPage } from "./pages/LessonsPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { TopicTestPage } from "./pages/TopicTestPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { TutorPage } from "./pages/TutorPage";
 import { WeeklyListPage } from "./pages/WeeklyListPage";
 import { WeeklyTestPage } from "./pages/WeeklyTestPage";
 
@@ -50,6 +51,7 @@ export function App() {
         <Route path="billing" element={<BillingPage />} />
         <Route path="weekly" element={<WeeklyListPage />} />
         <Route path="weekly/:id" element={<WeeklyTestPage />} />
+        <Route path="tutor" element={<TutorPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
       {import.meta.env.DEV && (

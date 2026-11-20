@@ -1,5 +1,5 @@
 import type { MyStats } from "@samarqand/shared";
-import { PlayCircle } from "lucide-react";
+import { Bot, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AccessCard } from "../components/home/AccessCard";
 import { RecentResults } from "../components/home/RecentResults";
@@ -66,6 +66,19 @@ function WeeklyBlock() {
   );
 }
 
+/** Erkin savol uchun yordamchi (o'quvchiga) */
+function TutorCard() {
+  return (
+    <Link to="/tutor" className="tap card flex items-center gap-3" data-testid="tutor-home">
+      <Bot size={28} className="shrink-0 text-brand" />
+      <div className="min-w-0 flex-1">
+        <p className="font-bold">AI yordamchi</p>
+        <p className="text-sm text-hint">Mavzu boʻyicha savol ber: javobni emas, yoʻlni koʻrsatadi</p>
+      </div>
+    </Link>
+  );
+}
+
 export function HomePage() {
   const user = useAuth((s) => s.user);
   const profile = useProfile();
@@ -85,6 +98,7 @@ export function HomePage() {
       <WeeklyBlock />
       {stats.fetchStatus === "fetching" && !stats.data && <div className="skeleton h-24" aria-busy="true" />}
       {stats.data && <StatsBlock stats={stats.data} />}
+      {user?.role === "STUDENT" && <TutorCard />}
     </div>
   );
 }

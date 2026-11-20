@@ -35,7 +35,7 @@ export interface RunnerProps {
   title: string;
   banner?: ReactNode;
   /** Savol ostidagi qo'shimcha (haftalik testda yechim rasmi) */
-  extra?: (questionId: string) => ReactNode;
+  extra?: (questionId: string, flush: () => Promise<void>) => ReactNode;
   /** Topshirishdan oldin qo'shimcha ogohlantirish */
   warning?: string;
   /** Topshirish: flush() dan keyin serverga yuboradi va keyingi ekranga o'tadi */
@@ -76,7 +76,7 @@ export function Runner(p: RunnerProps) {
           value={answers.values[current.id]}
           onChange={(r, now) => answers.set(current.id, r, now)}
         />
-        {p.extra?.(current.id)}
+        {p.extra?.(current.id, answers.flush)}
       </section>
       {answers.failed && (
         <p className="text-sm text-danger" role="alert">
