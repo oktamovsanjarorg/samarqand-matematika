@@ -8,7 +8,12 @@ if (existsSync(".env")) process.loadEnvFile(".env");
 export const E2E_OWNER = "e2e_browser_owner";
 
 const CI = !!process.env.CI;
-const apiEnv = { OWNER_USERNAMES: E2E_OWNER, ADMIN_URL: "http://127.0.0.1:5191/admin" };
+// Testlar ko'p marta kiradi: kirish limiti ularni to'smasin
+const apiEnv = {
+  OWNER_USERNAMES: E2E_OWNER,
+  ADMIN_URL: "http://127.0.0.1:5191/admin",
+  RATE_LIMIT_AUTH_PER_MIN: "10000",
+};
 
 export default defineConfig({
   testDir: "e2e",
