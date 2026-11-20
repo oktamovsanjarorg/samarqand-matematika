@@ -46,7 +46,7 @@ export class MocksService {
         opensAt: true,
         closesAt: true,
         template: true,
-        attempts: { where: { userId }, select: { submittedAt: true, raw: true } },
+        attempts: { where: { userId }, select: { submittedAt: true, raw: true, scaled: true } },
       },
     });
     return rows.map((m) => {
@@ -54,7 +54,9 @@ export class MocksService {
       const status = weeklyStatus(now, m.opensAt, m.closesAt);
       const a = m.attempts[0];
       const scaled =
-        status === "CLOSED" ? approxScaled(a?.raw ?? 0, examMaxRaw(t.sections), t.scaleMax) : null;
+        status === "CLOSED"
+          ? (a?.scaled ?? approxScaled(a?.raw ?? 0, examMaxRaw(t.sections), t.scaleMax))
+          : null;
       return {
         id: m.id,
         title: m.title,

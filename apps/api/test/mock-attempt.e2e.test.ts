@@ -1,5 +1,6 @@
 import type { MockOpen, MockResult, StudentMockRow } from "@samarqand/shared";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { MockScheduler } from "../src/mock/mock-scheduler";
 import { testAi } from "./helpers";
 import { weeklyFixture } from "./weekly-fixture";
 
@@ -155,5 +156,28 @@ describe("Mock urinishi (T-051b)", () => {
     expect(
       (await f.call("POST", `/tutor/chats/${chat.id}/messages`, s.headers, { text: "Salom" })).statusCode,
     ).toBe(200);
+  });
+
+  it("T-053: oyna yopilganda vaqti o'tgan urinish topshiriladi, ball qo'yiladi va o'quvchiga xabar boradi", async () => {
+    const m = await mock();
+    const s = await f.student();
+    const a = (await begin(s.headers, m.id)).json() as MockOpen;
+    await f.call("PUT", `/mock-attempts/${a.id}/answers/${m.numeric}`, s.headers, {
+      response: { value: "0.75" },
+    });
+    const closesAt = new Date(Date.now() - 1000);
+    await f.prisma.mockTest.update({ where: { id: m.id }, data: { closesAt } });
+    await f.prisma.mockAttempt.update({ where: { id: a.id }, data: { deadline: closesAt } });
+    await f.app.get(MockScheduler).close(new Date());
+    await f.app.get(MockScheduler).close(new Date());
+
+    const saved = await f.prisma.mockAttempt.findUniqueOrThrow({ where: { id: a.id } });
+    expect(saved).toMatchObject({ raw: 3, scaled: 50 });
+    expect(saved.submittedAt?.toISOString()).toBe(closesAt.toISOString());
+    expect((await f.prisma.mockTest.findUniqueOrThrow({ where: { id: m.id } })).raschN).toBeNull();
+    const r = (await f.call("GET", `/mock-attempts/${a.id}`, s.headers)).json() as MockResult;
+    expect(r).toMatchObject({ scaled: 50, grade: "C", approx: true });
+    const sent = f.messagesTo(s.telegramId).filter((t) => t.includes("Sinov mock"));
+    expect(sent).toEqual([expect.stringContaining("<b>50/75</b>, daraja <b>C</b>")]);
   });
 });
