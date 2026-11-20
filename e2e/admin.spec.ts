@@ -14,7 +14,7 @@ test.describe("Admin panel", () => {
   }) => {
     const url = await adminLink(request);
     await page.goto(url);
-    await expect(page).toHaveURL(/\/admin\/?$/);
+    await expect(page).toHaveURL(/\/admin\/content$/);
     await expect(page.getByText("Ustoz").first()).toBeVisible();
     await page.screenshot({ path: "e2e/.results/admin-home.png" });
 
