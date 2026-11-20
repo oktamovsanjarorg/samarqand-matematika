@@ -12,6 +12,15 @@
 | BR-A03 | Bloklangan hisobning tokeni keyingi so'rovdayoq kuchini yo'qotadi. Rol har so'rovda bazadan olinadi                                            | ✅                      |
 | BR-A04 | To'liq pullik kirish uchun uchta shart bor: ustoz qabul qilgan, ota-ona tasdiqlagan, to'lov qilingan. Istisnoni ustoz qo'lda belgilaydi        | ✅ (ona tilidagi qoida) |
 
+## Kontent (C)
+
+| ID     | Qoida                                                                                                                                                                                                                                      | Holat |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- |
+| BR-C01 | O'quvchi faqat nashr qilingan kurs va darslarni ko'radi. Nashr qilinmagan darsni to'g'ridan-to'g'ri havola bilan ham ochib bo'lmaydi (404). Darsi yo'q mavzu ko'rsatilmaydi                                                                | ✅    |
+| BR-C02 | Bepul dars (`isFree`) hammaga ochiq. Pullik dars faqat to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED` qaytadi va matn yuborilmaydi. Obuna (T-025) tayyor bo'lguncha o'quvchida to'liq kirish yo'q, ustoz va yordamchida bor | ✅    |
+| BR-C03 | Ichida mavzu bor kursni yoki ichida dars bor mavzuni o'chirib bo'lmaydi (409 `NOT_EMPTY`)                                                                                                                                                  | ✅    |
+| BR-C04 | Kontentni ustoz ham, yordamchi ham boshqaradi. Har o'zgarish auditga yoziladi, dars matni esa auditga yozilmaydi (faqat o'zgargan maydon nomlari)                                                                                          | ✅    |
+
 ## Haftalik test (W)
 
 | ID     | Qoida                                                                                                                            | Holat   |
