@@ -19,7 +19,7 @@ export function AppLayout() {
           <NavLink
             key={to}
             to={to}
-            end
+            end={to === "/"}
             className={({ isActive }) =>
               `tap flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs font-semibold ${
                 isActive ? "text-brand" : "text-hint"

@@ -6,14 +6,15 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    public code?: string,
   ) {
     super(message);
   }
 }
 
 async function parseError(res: Response): Promise<ApiError> {
-  const body = (await res.json().catch(() => null)) as { message?: string } | null;
-  return new ApiError(res.status, body?.message ?? "Xatolik yuz berdi");
+  const body = (await res.json().catch(() => null)) as { message?: string; code?: string } | null;
+  return new ApiError(res.status, body?.message ?? "Xatolik yuz berdi", body?.code);
 }
 
 /** initData orqali kirish: token va foydalanuvchi store'ga yoziladi */
@@ -47,5 +48,8 @@ export async function api<T>(path: string, init: RequestInit = {}, retried = fal
     return api<T>(path, init, true);
   }
   if (!res.ok) throw await parseError(res);
-  return (await res.json()) as T;
+  return res.status === 204 ? (undefined as T) : ((await res.json()) as T);
 }
+
+export const post = <T>(path: string, body?: object) =>
+  api<T>(path, { method: "POST", ...(body ? { body: JSON.stringify(body) } : {}) });
