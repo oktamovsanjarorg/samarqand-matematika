@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { MediaModule } from "../storage/media.module";
 import { AdminReviewService } from "./admin-review.service";
 import { AiReviewService } from "./ai-reviews";
+import { ParentReportService } from "./parent-report";
 import { RankingService } from "./ranking.service";
 import { AdminWeeklyController } from "./admin-weekly.controller";
 import { AdminWeeklyService } from "./admin-weekly.service";
@@ -17,6 +18,7 @@ import { WeeklyService } from "./weekly.service";
     AdminReviewService,
     AiReviewService,
     RankingService,
+    ParentReportService,
     WeeklyService,
     WeeklyPhotosService,
     AdminWeeklyService,
