@@ -1,13 +1,23 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Put } from "@nestjs/common";
 import { saveAnswerBody } from "@samarqand/shared";
-import { CurrentUser, JwtUser } from "../auth/decorators";
+import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
+import { StatsService } from "./stats.service";
 import { TopicTestsService } from "./topic-tests.service";
 
 /** Mavzu testlari: kirgan har foydalanuvchi faqat o'z urinishlarini ko'radi */
 @Controller()
 export class TopicTestsController {
-  constructor(private readonly tests: TopicTestsService) {}
+  constructor(
+    private readonly tests: TopicTestsService,
+    private readonly stats: StatsService,
+  ) {}
+
+  @Get("me/stats")
+  @Roles("STUDENT")
+  myStats(@CurrentUser() u: JwtUser) {
+    return this.stats.my(u.sub);
+  }
 
   @Post("topics/:id/attempts")
   start(@CurrentUser() u: JwtUser, @Param("id") topicId: string) {

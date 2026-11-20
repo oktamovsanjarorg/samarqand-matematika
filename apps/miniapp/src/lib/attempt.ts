@@ -77,7 +77,7 @@ export function useSubmit(attemptId: string, flush: () => Promise<void>) {
     },
     onSuccess: (r) => {
       qc.setQueryData(["attempt", r.id], r);
-      void qc.invalidateQueries({ queryKey: ["courses"] });
+      void qc.invalidateQueries({ queryKey: ["stats"] });
     },
   });
 }

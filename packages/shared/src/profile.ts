@@ -42,7 +42,8 @@ export interface MyProfile {
   hasPhone: boolean;
   /** Ism yoki telefon yo'q: ilova avval onboarding'ni ko'rsatadi */
   needsOnboarding: boolean;
-  access: { full: boolean; accepted: boolean; mode: StudentAccess };
+  /** BR-A04 qadamlari: Asosiy ekranda nima yetishmayotgani ko'rsatiladi */
+  access: { full: boolean; accepted: boolean; parentApproved: boolean; paid: boolean; mode: StudentAccess };
 }
 
 export interface AdminStudentRow {

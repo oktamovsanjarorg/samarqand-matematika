@@ -145,4 +145,31 @@ describe("Mavzu testi", () => {
       .find((x: { id: string }) => x.id === topicId);
     expect(t).toMatchObject({ questionCount: 3, lessons: [] });
   });
+
+  it("T-024: /me/stats o'z urinishlarini sanaydi, ochiq testni ko'rsatadi; o'quvchi bo'lmaganga 403", async () => {
+    const { topicId, qs } = await setup();
+    const s = await loginAs(app);
+    tgIds.push(s.telegramId);
+    await prisma.studentProfile.upsert({
+      where: { userId: (await prisma.user.findUniqueOrThrow({ where: { telegramId: s.telegramId } })).id },
+      update: { accessMode: "FREE" },
+      create: { user: { connect: { telegramId: s.telegramId } }, accessMode: "FREE" },
+    });
+    const empty = (await call("GET", "/me/stats", s.headers)).json();
+    expect(empty).toMatchObject({ open: null, tests: 0, averagePercent: null, recent: [], topics: [] });
+
+    const att = (await call("POST", `/topics/${topicId}/attempts`, s.headers)).json();
+    await call("PUT", `/attempts/${att.id}/answers/${qs[0]?.id}`, s.headers, { response: { optionId: "b" } });
+    const mid = (await call("GET", "/me/stats", s.headers)).json();
+    expect(mid.open).toMatchObject({ attemptId: att.id, answered: 1, total: 3, topicTitle: "Kasrlar" });
+
+    await call("POST", `/attempts/${att.id}/submit`, s.headers);
+    const after = (await call("GET", "/me/stats", s.headers)).json();
+    expect(after).toMatchObject({ open: null, tests: 1, averagePercent: 50 });
+    expect(after.recent[0]).toMatchObject({ id: att.id, correct: 1, checkable: 2 });
+    expect(after.topics).toEqual([{ topicId, topicTitle: "Kasrlar", attempts: 1, bestPercent: 50 }]);
+
+    expect((await call("GET", "/me/stats", teacher)).statusCode).toBe(403);
+    expect((await call("GET", "/me/stats", {})).statusCode).toBe(401);
+  });
 });

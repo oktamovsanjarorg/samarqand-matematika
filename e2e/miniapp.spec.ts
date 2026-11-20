@@ -33,6 +33,12 @@ test.describe("Mini App", () => {
     await openAsTelegram(page, { id: s.tg, first_name: "Oquvchi" });
     const nav = page.getByRole("navigation");
     await expect(nav.getByRole("link")).toHaveText(["Darslar", "Asosiy", "Profil"]);
+    // BR-A04: qabul qilinmagan o'quvchi nima yetishmayotganini ko'radi
+    const access = page.getByTestId("access");
+    await expect(access).toContainText("Ustoz qabul qildi");
+    await expect(access.getByLabel("Kutilmoqda")).toHaveCount(3);
+    await expect(page.getByTestId("first-step")).toBeVisible();
+    await page.screenshot({ path: "e2e/.results/miniapp-home-new.png" });
     await nav.getByRole("link", { name: "Darslar" }).click();
     await expect(page).toHaveURL(/\/lessons$/);
     await nav.getByRole("link", { name: "Profil" }).click();

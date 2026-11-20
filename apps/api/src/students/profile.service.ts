@@ -33,7 +33,7 @@ export class ProfileService {
         fullName: null,
         hasPhone: !!user.phone,
         needsOnboarding: false,
-        access: { full, accepted: full, mode: "AUTO" },
+        access: { full, accepted: full, parentApproved: full, paid: full, mode: "AUTO" },
       };
     }
     const profile = await this.prisma.studentProfile.upsert({
@@ -47,7 +47,13 @@ export class ProfileService {
       fullName: profile.fullName,
       hasPhone: !!user.phone,
       needsOnboarding: !profile.fullName || !user.phone,
-      access: { full: isFullAccess(facts), accepted: facts.accepted, mode: facts.mode },
+      access: {
+        full: isFullAccess(facts),
+        accepted: facts.accepted,
+        parentApproved: facts.approvedParents > 0,
+        paid: facts.paid,
+        mode: facts.mode,
+      },
     };
   }
 
