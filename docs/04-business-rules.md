@@ -5,12 +5,21 @@
 
 ## Kirish va rollar (A)
 
-| ID     | Qoida                                                                                                                                          | Holat                   |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| BR-A01 | Mini App'ga kirish faqat Telegram `initData` orqali bo'ladi. Imzo serverda HMAC bilan tekshiriladi, initData 24 soatdan eski bo'lmasligi kerak | ✅                      |
-| BR-A02 | `OWNER_USERNAMES` dagi username'lar `TEACHER` bo'ladi. Qolganlar `STUDENT` bo'lib yaratiladi                                                   | ✅                      |
-| BR-A03 | Bloklangan hisobning tokeni keyingi so'rovdayoq kuchini yo'qotadi. Rol har so'rovda bazadan olinadi                                            | ✅                      |
-| BR-A04 | To'liq pullik kirish uchun uchta shart bor: ustoz qabul qilgan, ota-ona tasdiqlagan, to'lov qilingan. Istisnoni ustoz qo'lda belgilaydi        | ✅ (ona tilidagi qoida) |
+| ID     | Qoida                                                                                                                                            | Holat                   |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| BR-A01 | Mini App'ga kirish faqat Telegram `initData` orqali bo'ladi. Imzo serverda HMAC bilan tekshiriladi, initData 24 soatdan eski bo'lmasligi kerak   | ✅                      |
+| BR-A02 | `OWNER_USERNAMES` dagi username'lar `TEACHER` bo'ladi. Qolganlar `STUDENT` bo'lib yaratiladi                                                     | ✅                      |
+| BR-A03 | Bloklangan hisobning tokeni keyingi so'rovdayoq kuchini yo'qotadi. Rol har so'rovda bazadan olinadi                                              | ✅                      |
+| BR-A04 | To'liq pullik kirish uchun uchta shart bor: ustoz qabul qilgan, ota-ona tasdiqlagan, to'lov qilingan. Istisnoni ustoz qo'lda belgilaydi (BR-S03) | ✅ (ona tilidagi qoida) |
+
+## O'quvchi profili (S)
+
+| ID     | Qoida                                                                                                                                                                                          | Holat |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| BR-S01 | Ism-familiyani o'quvchi o'zi kiritadi (kamida ikki so'z, faqat harflar). Ustoz qabul qilgandan keyin ismni faqat ustoz yoki yordamchi o'zgartiradi (409 `NAME_LOCKED`). Ism auditga yozilmaydi | ✅    |
+| BR-S02 | Telefon faqat Telegram'ning "raqamni ulashish" tugmasi orqali, o'z raqami bo'lsa (`contact.user_id` = yuboruvchi) saqlanadi. Qo'lda yozilgan yoki boshqa odamning raqami qabul qilinmaydi      | ✅    |
+| BR-S03 | Ustoz yangi o'quvchini "qabul qiladi". Kirish rejimi: AUTO (BR-A04 shartlari), FREE (ustoz shartlarsiz ochib bergan, masalan ota-onasida Telegram yo'q), CLOSED (yopilgan)                     | ✅    |
+| BR-S04 | Ilova ism yoki telefon yo'q o'quvchiga avval onboarding'ni ko'rsatadi                                                                                                                          | ✅    |
 
 ## Kontent (C)
 

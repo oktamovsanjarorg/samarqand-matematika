@@ -1,7 +1,7 @@
 import { Bot } from "grammy";
 import { loadBotEnv } from "./env";
 import { createInternalApi, profileOf } from "./internal-api";
-import { ADMIN_FAILED, ADMIN_NOT_STAFF, adminLinkMessage, startMessage } from "./messages";
+import { ADMIN_FAILED, ADMIN_NOT_STAFF, PHONE_REPLIES, adminLinkMessage, startMessage } from "./messages";
 
 const env = loadBotEnv();
 const bot = new Bot(env.BOT_TOKEN);
@@ -31,6 +31,20 @@ bot.command("admin", async (ctx) => {
     console.error("admin havola:", e instanceof Error ? e.message : e);
     await ctx.reply(ADMIN_FAILED);
   }
+});
+
+// Raqam ulashish: Mini App (requestContact) yoki bot tugmasi orqali keladi
+bot.on("message:contact", async (ctx) => {
+  if (ctx.chat.type !== "private") return;
+  const { phone_number, user_id } = ctx.message.contact;
+  let reply: string = PHONE_REPLIES.failed;
+  try {
+    const { status } = await api.userPhone({ from: profileOf(ctx.from), contact: { phone_number, user_id } });
+    reply = PHONE_REPLIES[status];
+  } catch (e) {
+    console.error("raqam:", e instanceof Error ? e.message : e);
+  }
+  await ctx.reply(reply, { reply_markup: { remove_keyboard: true } });
 });
 
 bot.catch((err) => console.error("Bot xatosi:", err.error));

@@ -16,3 +16,11 @@ export function adminLinkMessage(url: string) {
     "🔐 Boshqaruv paneliga kirish havolasi.\n\nHavola 5 daqiqa amal qiladi va faqat bir marta ishlaydi. Uni hech kimga yubormang.";
   return { text, keyboard: new InlineKeyboard().url("Panelni ochish", url) };
 }
+
+/** Raqam ulashilgandan keyingi javob (BR-S02: faqat o'z raqami) */
+export const PHONE_REPLIES = {
+  saved: "✅ Raqamingiz saqlandi. Ilovaga qaytishingiz mumkin.",
+  foreign: "Faqat oʻzingizning raqamingizni ulashing: pastdagi tugmani bosing.",
+  unknown: "Avval ilovani bir marta oching, keyin raqamni ulashing.",
+  failed: "Hozir raqamni saqlab boʻlmadi, birozdan keyin urinib koʻring.",
+} as const;

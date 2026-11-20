@@ -25,6 +25,8 @@ export const ERROR_CODES = {
   LOCKED: "LOCKED",
   /** Ichida mavzu yoki dars bor: avval ularni o'chirish kerak */
   NOT_EMPTY: "NOT_EMPTY",
+  /** Ustoz qabul qilgan: ismni endi faqat ustoz o'zgartiradi (BR-S01) */
+  NAME_LOCKED: "NAME_LOCKED",
 } as const;
 
 /** Admin panel: bot yuborgan bir martalik havoladagi token */

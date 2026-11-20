@@ -19,6 +19,8 @@ export function createInternalApi(opts: { baseUrl: string; botToken: string; fet
 
   return {
     adminLoginLink: (p: TelegramProfile) => post<{ url: string | null }>("admin-login-link", p),
+    userPhone: (body: { from: TelegramProfile; contact: { phone_number: string; user_id?: number } }) =>
+      post<{ status: "saved" | "foreign" | "unknown" }>("user-phone", body),
   };
 }
 
