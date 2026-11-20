@@ -83,7 +83,8 @@
 | T-053b | Admin: mock natijalari (ball, daraja, bo'limlar, usul: Rasch yoki taxminiy)                                                                                                                                 | ✅    |
 | T-054  | Offline guruhlar API: guruh (nom, jadval, faol), o'quvchilarni qo'shish (boshqa guruhdan ko'chadi) va olib tashlash; o'quvchilar ro'yxatida guruh                                                           | ✅    |
 | T-054b | Admin: guruhlar sahifasi, guruhga o'quvchi qo'shish                                                                                                                                                         | ✅    |
-| T-055  | Davomat: guruh va sana bo'yicha belgilash, kelmaganda tasdiqlangan ota-onaga xabar                                                                                                                          | ⬜    |
+| T-055  | Davomat API: guruh va sana bo'yicha belgilash, kelmagan yoki kechikkanda tasdiqlangan ota-onaga xabar, tuzatish xabari (BR-G01..G03)                                                                        | ✅    |
+| T-055b | Admin: guruh sahifasida davomat belgilash                                                                                                                                                                   | ⬜    |
 | T-056  | Tashqi test importi (CSV): bo'limlar bo'yicha natija, o'quvchini moslash (Q-12)                                                                                                                             | ⬜    |
 
 5-bosqich (ko'rsatmalar) 4-bosqich oxirida vazifalarga bo'linadi.

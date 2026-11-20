@@ -20,7 +20,7 @@ const create = async (name: string, schedule?: string) => {
 };
 
 describe("offline guruhlar (T-054)", () => {
-  it("ustoz guruh tuzadi, o'quvchi qo'shadi; boshqa guruhga qo'shilsa ko'chadi; olib tashlaydi", async () => {
+  it("BR-G01: ustoz guruh tuzadi, o'quvchi qo'shadi; boshqa guruhga qo'shilsa ko'chadi; olib tashlaydi", async () => {
     const a = await create("Dushanba 14:00 guruhi", "Du/Chor/Ju 14:00");
     const b = await create("Kechki guruh");
     const [s1, s2] = [await f.student(), await f.student()];

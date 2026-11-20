@@ -43,6 +43,8 @@ model User {
   reviewedLinks    ParentLink[]     @relation("LinkReviewer")
   TutorChat        TutorChat[]
   mockAttempts     MockAttempt[]
+  attendance       Attendance[]     @relation("Attendance")
+  attendanceMarked Attendance[]     @relation("AttendanceMarker")
 
   @@index([role])
 }
@@ -561,10 +563,38 @@ model MockAnswer {
 
 /// Offline guruh (T-054): jadval matn ko'rinishida, davomat T-055 da
 model Group {
-  id        String           @id @default(cuid())
-  name      String
-  schedule  String?
-  isActive  Boolean          @default(true)
-  createdAt DateTime         @default(now()) @db.Timestamptz
-  students  StudentProfile[]
+  id         String           @id @default(cuid())
+  name       String
+  schedule   String?
+  isActive   Boolean          @default(true)
+  createdAt  DateTime         @default(now()) @db.Timestamptz
+  students   StudentProfile[]
+  attendance Attendance[]
+}
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  ABSENT
+  EXCUSED
+}
+
+/// Davomat (T-055): o'quvchi va kun bo'yicha bitta yozuv. Kelmagan va kechikkan uchun tasdiqlangan ota-onaga xabar
+model Attendance {
+  id             String            @id @default(cuid())
+  groupId        String
+  group          Group             @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User              @relation("Attendance", fields: [userId], references: [id], onDelete: Cascade)
+  date           DateTime          @db.Date
+  status         AttendanceStatus
+  note           String?
+  markedById     String?
+  markedBy       User?             @relation("AttendanceMarker", fields: [markedById], references: [id], onDelete: SetNull)
+  /// Ota-onaga xabar qilingan holat; o'zgarsa yangi xabar ("tuzatish") boradi
+  notifiedStatus AttendanceStatus?
+  updatedAt      DateTime          @updatedAt @db.Timestamptz
+
+  @@unique([userId, date])
+  @@index([groupId, date])
 }

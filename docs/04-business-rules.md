@@ -95,3 +95,11 @@
 | BR-M05 | Mock yopilganda shkala balli: topshirganlar 30 dan kam bo'lsa taxminiy (xom ball / eng yuqori xom ball × shkala, natijada "taxminiy"), 30 va undan ko'p bo'lsa Rasch (savol qiyinligi bilan og'irlangan mutlaq ball, ADR-0005)      | ✅ standart                           |
 | BR-M06 | Mock: muddat server bo'yicha (shablon vaqti, oyna yopilishidan oshmaydi). Vaqt tugasa saqlangan javoblar bilan avtomatik topshiriladi. Mock yechilayotganda AI yordamchi butunlay o'chiq. Natija va to'g'ri javoblar oyna yopilgach | ✅                                    |
 | BR-M07 | Mockda avtomatik tekshirilmaydigan savollar (ifoda, yozma) hozircha 0 ball: shablonga ochiq javob uchun son turini qo'ying. Ifoda tekshiruvi T-022b dan keyin                                                                       | ⚠️                                    |
+
+## Offline guruh va davomat (G)
+
+| ID     | Qoida                                                                                                                                                                                             |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BR-G01 | O'quvchi bir vaqtda bitta offline guruhda bo'ladi. Boshqa guruhga qo'shilsa eski guruhdan chiqadi                                                                                                 |
+| BR-G02 | Davomat o'quvchi va kun bo'yicha bitta: keldi, kechikdi, kelmadi, sababli. Kelajak sanasiga qo'yilmaydi                                                                                           |
+| BR-G03 | Kelmadi yoki kechikdi belgilansa, faqat tasdiqlangan ota-onaga xabar boradi. Holat o'zgarmasa xabar takrorlanmaydi; yuborilgan xabardan keyin holat tuzatilsa, ota-onaga "Tuzatish" xabari boradi |

@@ -33,3 +33,30 @@ export interface GroupStudent {
 export interface AdminGroupDetail extends AdminGroupRow {
   students: GroupStudent[];
 }
+
+export const ATTENDANCE_STATUSES = ["PRESENT", "LATE", "ABSENT", "EXCUSED"] as const;
+export type AttendanceStatus = (typeof ATTENDANCE_STATUSES)[number];
+
+/** Toshkent sanasi "YYYY-MM-DD" */
+export const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Sana YYYY-MM-DD koʻrinishida");
+
+/** Davomat (T-055): guruh va kun bo'yicha belgilash */
+export const attendanceBody = z.object({
+  date: isoDate,
+  marks: z
+    .array(
+      z.object({
+        userId: z.string().min(1),
+        status: z.enum(ATTENDANCE_STATUSES),
+        note: z.string().trim().max(200).nullable().optional(),
+      }),
+    )
+    .min(1)
+    .max(200),
+});
+export type AttendanceBody = z.infer<typeof attendanceBody>;
+
+export interface AttendanceSheet {
+  date: string;
+  rows: { userId: string; name: string; status: AttendanceStatus | null; note: string | null }[];
+}
