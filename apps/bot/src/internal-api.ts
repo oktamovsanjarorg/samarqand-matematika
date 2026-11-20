@@ -1,3 +1,4 @@
+import type { ParentLinkResult } from "@samarqand/shared";
 import { internalKey, type TelegramProfile } from "@samarqand/shared/server";
 
 /** API'ning faqat bot chaqira oladigan endpoint'lari (x-internal-key: BOT_TOKEN'dan HMAC) */
@@ -21,6 +22,12 @@ export function createInternalApi(opts: { baseUrl: string; botToken: string; fet
     adminLoginLink: (p: TelegramProfile) => post<{ url: string | null }>("admin-login-link", p),
     userPhone: (body: { from: TelegramProfile; contact: { phone_number: string; user_id?: number } }) =>
       post<{ status: "saved" | "foreign" | "unknown" }>("user-phone", body),
+    parentCode: (from: TelegramProfile) => post<{ code: string | null }>("parent-code", { from }),
+    parentLink: (body: {
+      code: string;
+      from: TelegramProfile;
+      contact: { phone_number: string; user_id?: number };
+    }) => post<ParentLinkResult>("parent-link", body),
   };
 }
 

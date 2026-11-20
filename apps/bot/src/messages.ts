@@ -24,3 +24,28 @@ export const PHONE_REPLIES = {
   unknown: "Avval ilovani bir marta oching, keyin raqamni ulashing.",
   failed: "Hozir raqamni saqlab boʻlmadi, birozdan keyin urinib koʻring.",
 } as const;
+
+/** O'quvchi /ota: ota-onaga yuboriladigan havola */
+export function parentInviteMessage(link: string) {
+  const text = `👨‍👩‍👦 Ota-onangizni ulash uchun quyidagi havolani ularga yuboring:\n\n${link}\n\nUlar havolani ochib, raqamini ulashadi. Ustoz qoʻngʻiroq qilib tasdiqlagach, natijalaringiz haqida xabar oladi.`;
+  const share = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
+  return { text, keyboard: new InlineKeyboard().url("📤 Ota-onaga yuborish", share) };
+}
+
+export const PARENT_ONLY_STUDENT = "Bu buyruq oʻquvchilar uchun. Avval ilovani oching.";
+
+/** Ota-ona havolani bosdi: o'z raqamini ulashishni so'raymiz */
+export const PARENT_ASK_CONTACT =
+  "Assalomu alaykum! Farzandingizni ulash uchun pastdagi tugma orqali oʻz raqamingizni ulashing.";
+export const SHARE_CONTACT_BUTTON = "📱 Raqamni ulashish";
+
+export const PARENT_REPLIES: Record<string, string> = {
+  created: "✅ Soʻrov yuborildi. Ustoz qoʻngʻiroq qilib tasdiqlaydi.",
+  exists: "Soʻrovingiz allaqachon bor. Ustoz tasdiqlashini kuting.",
+  invalid_code: "Havola notoʻgʻri. Farzandingizdan yangisini soʻrang.",
+  not_own_contact: "Faqat oʻzingizning raqamingizni ulashing.",
+  self: "Bu havola oʻquvchining oʻzi uchun emas: uni ota-onangizga yuboring.",
+  limit: "Bu oʻquvchiga ota-onalar soni toʻlgan. Ustozga murojaat qiling.",
+  rejected_before: "Oldingi soʻrov rad etilgan. Ustozga murojaat qiling.",
+  is_student: "Siz oʻquvchi sifatida roʻyxatdasiz. Ustozga murojaat qiling.",
+};

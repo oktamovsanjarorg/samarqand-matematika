@@ -34,6 +34,8 @@ model User {
   topicAttempts    TopicAttempt[]
   student          StudentProfile?  @relation("Student")
   acceptedStudents StudentProfile[] @relation("AcceptedBy")
+  children         ParentLink[]     @relation("ParentOf")
+  reviewedLinks    ParentLink[]     @relation("LinkReviewer")
 
   @@index([role])
 }
@@ -210,8 +212,39 @@ model StudentProfile {
   acceptedAt   DateTime?     @db.Timestamptz
   acceptedById String?
   acceptedBy   User?         @relation("AcceptedBy", fields: [acceptedById], references: [id], onDelete: SetNull)
+  /// Ota-ona botga shu kod bilan ulanadi (t.me/<bot>?start=p_<kod>)
+  parentCode   String?       @unique
+  parents      ParentLink[]
   createdAt    DateTime      @default(now()) @db.Timestamptz
   updatedAt    DateTime      @updatedAt @db.Timestamptz
 
   @@index([acceptedAt])
+}
+
+enum ParentLinkStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+/// Ota-ona ulanishi (T-020b). Ustoz qo'ng'iroq qilib tekshiradi va tasdiqlaydi (BR-A04)
+model ParentLink {
+  id           String           @id @default(cuid())
+  parentId     String
+  parent       User             @relation("ParentOf", fields: [parentId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status       ParentLinkStatus @default(PENDING)
+  /// Telegram tasdiqlagan raqam (request_contact)
+  phone        String
+  /// Ustoz uchun shubha belgilari: same_phone, parent_activity, many_children
+  flags        String[]
+  reviewedById String?
+  reviewedBy   User?            @relation("LinkReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt   DateTime?        @db.Timestamptz
+  rejectReason String?
+  createdAt    DateTime         @default(now()) @db.Timestamptz
+
+  @@unique([parentId, studentId])
+  @@index([status])
 }

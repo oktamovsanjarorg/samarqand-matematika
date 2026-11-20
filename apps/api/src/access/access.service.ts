@@ -9,15 +9,24 @@ export class AccessService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * O'quvchi haqidagi faktlar. Ota-ona tasdig'i T-020b da, to'lov T-025 da qo'shiladi:
+   * O'quvchi haqidagi faktlar. To'lov T-025 da qo'shiladi:
    * ungacha AUTO rejimdagi o'quvchi yopiq, ustoz FREE qilib ochib bera oladi.
    */
   async facts(userId: string): Promise<AccessFacts> {
     const p = await this.prisma.studentProfile.findUnique({
       where: { userId },
-      select: { accessMode: true, acceptedAt: true },
+      select: {
+        accessMode: true,
+        acceptedAt: true,
+        _count: { select: { parents: { where: { status: "APPROVED" } } } },
+      },
     });
-    return { mode: p?.accessMode ?? "AUTO", accepted: !!p?.acceptedAt, approvedParents: 0, paid: false };
+    return {
+      mode: p?.accessMode ?? "AUTO",
+      accepted: !!p?.acceptedAt,
+      approvedParents: p?._count.parents ?? 0,
+      paid: false,
+    };
   }
 
   async hasFullAccess(userId: string, role: RoleName): Promise<boolean> {

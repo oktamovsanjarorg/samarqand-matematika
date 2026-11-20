@@ -1,13 +1,36 @@
-import { Bot } from "grammy";
+import { Bot, Keyboard } from "grammy";
 import { loadBotEnv } from "./env";
 import { createInternalApi, profileOf } from "./internal-api";
-import { ADMIN_FAILED, ADMIN_NOT_STAFF, PHONE_REPLIES, adminLinkMessage, startMessage } from "./messages";
+import {
+  ADMIN_FAILED,
+  ADMIN_NOT_STAFF,
+  PARENT_ASK_CONTACT,
+  PARENT_ONLY_STUDENT,
+  PARENT_REPLIES,
+  PHONE_REPLIES,
+  SHARE_CONTACT_BUTTON,
+  adminLinkMessage,
+  parentInviteMessage,
+  startMessage,
+} from "./messages";
+import { createPendingStore } from "./pending";
 
 const env = loadBotEnv();
 const bot = new Bot(env.BOT_TOKEN);
 const api = createInternalApi({ baseUrl: env.API_INTERNAL_URL, botToken: env.BOT_TOKEN });
+const pendingParents = createPendingStore();
+const logError = (where: string, e: unknown) =>
+  console.error(`${where}:`, e instanceof Error ? e.message : e);
 
 bot.command("start", async (ctx) => {
+  // Ota-ona havolasi: t.me/<bot>?start=p_<kod>
+  const code = /^p_([0-9A-Fa-f]{8})$/.exec(ctx.match)?.[1];
+  if (code && ctx.from && ctx.chat.type === "private") {
+    pendingParents.set(ctx.from.id, code.toUpperCase());
+    const keyboard = new Keyboard().requestContact(SHARE_CONTACT_BUTTON).oneTime().resized();
+    await ctx.reply(PARENT_ASK_CONTACT, { reply_markup: keyboard });
+    return;
+  }
   const { text, keyboard } = startMessage({
     firstName: ctx.from?.first_name ?? "",
     brand: env.BRAND_NAME,
@@ -28,21 +51,41 @@ bot.command("admin", async (ctx) => {
     const { text, keyboard } = adminLinkMessage(url);
     await ctx.reply(text, { reply_markup: keyboard });
   } catch (e) {
-    console.error("admin havola:", e instanceof Error ? e.message : e);
+    logError("admin havola", e);
     await ctx.reply(ADMIN_FAILED);
   }
 });
 
-// Raqam ulashish: Mini App (requestContact) yoki bot tugmasi orqali keladi
+// O'quvchi: ota-onaga yuboriladigan havola
+bot.command("ota", async (ctx) => {
+  if (ctx.chat.type !== "private" || !ctx.from) return;
+  try {
+    const { code } = await api.parentCode(profileOf(ctx.from));
+    if (!code) {
+      await ctx.reply(PARENT_ONLY_STUDENT);
+      return;
+    }
+    const { text, keyboard } = parentInviteMessage(`https://t.me/${ctx.me.username}?start=p_${code}`);
+    await ctx.reply(text, { reply_markup: keyboard });
+  } catch (e) {
+    logError("ota kodi", e);
+    await ctx.reply(PHONE_REPLIES.failed);
+  }
+});
+
+// Raqam ulashish: ota-ona havolasidan keyin yoki o'quvchining o'zi (Mini App requestContact)
 bot.on("message:contact", async (ctx) => {
   if (ctx.chat.type !== "private") return;
   const { phone_number, user_id } = ctx.message.contact;
+  const body = { from: profileOf(ctx.from), contact: { phone_number, user_id } };
+  const code = pendingParents.take(ctx.from.id);
   let reply: string = PHONE_REPLIES.failed;
   try {
-    const { status } = await api.userPhone({ from: profileOf(ctx.from), contact: { phone_number, user_id } });
-    reply = PHONE_REPLIES[status];
+    reply = code
+      ? (PARENT_REPLIES[(await api.parentLink({ ...body, code })).status] ?? reply)
+      : PHONE_REPLIES[(await api.userPhone(body)).status];
   } catch (e) {
-    console.error("raqam:", e instanceof Error ? e.message : e);
+    logError("raqam", e);
   }
   await ctx.reply(reply, { reply_markup: { remove_keyboard: true } });
 });
@@ -51,7 +94,10 @@ bot.catch((err) => console.error("Bot xatosi:", err.error));
 
 /** Menyu tugmasi (chap pastda "Ilova") va buyruqlar ro'yxati: har ishga tushishda bir xil holatga keltiriladi */
 async function setupMenu() {
-  await bot.api.setMyCommands([{ command: "start", description: "Ilovani ochish" }]);
+  await bot.api.setMyCommands([
+    { command: "start", description: "Ilovani ochish" },
+    { command: "ota", description: "Ota-onani ulash" },
+  ]);
   await bot.api.setChatMenuButton({
     menu_button: { type: "web_app", text: "Ilova", web_app: { url: env.MINIAPP_URL } },
   });
