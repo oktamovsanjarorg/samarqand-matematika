@@ -1,9 +1,10 @@
 import { ROLE_LABELS } from "@samarqand/shared";
-import { LogOut, UserRound, Users } from "lucide-react";
+import { BookOpen, LogOut, UserRound, Users } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 import type { Session } from "../lib/session";
 
 const NAV = [
+  { to: "/content", label: "Kontent", Icon: BookOpen },
   { to: "/students", label: "Oʻquvchilar", Icon: UserRound },
   { to: "/parents", label: "Ota-onalar", Icon: Users },
 ];

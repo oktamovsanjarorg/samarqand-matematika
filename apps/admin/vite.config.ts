@@ -21,6 +21,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@samarqand/shared": fileURLToPath(new URL("../../packages/shared/src/index.ts", import.meta.url)),
+      "@samarqand/math": fileURLToPath(new URL("../../packages/math/src/index.ts", import.meta.url)),
     },
   },
   server: {

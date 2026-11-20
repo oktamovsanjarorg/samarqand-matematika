@@ -27,3 +27,10 @@
     @apply animate-pulse rounded-lg bg-hint/20;
   }
 }
+
+/* Uzun formula tor ekranda sahifani kengaytirmasin: faqat formulaning o'zi suriladi */
+.math-text .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}

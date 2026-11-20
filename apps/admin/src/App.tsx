@@ -4,6 +4,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminLayout } from "./components/AdminLayout";
 import { setUnauthorizedHandler } from "./lib/api";
 import { clearSession, loadSession } from "./lib/session";
+import { ContentPage } from "./pages/ContentPage";
+import { LessonEditorPage } from "./pages/LessonEditorPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ParentsPage } from "./pages/ParentsPage";
 import { SignInHint } from "./pages/SignInHint";
@@ -30,7 +32,9 @@ export function App() {
           <Route path="/login" element={<LoginPage onLogin={refresh} />} />
           {session ? (
             <Route element={<AdminLayout session={session} onLogout={logout} />}>
-              <Route index element={<Navigate to="/students" replace />} />
+              <Route index element={<Navigate to="/content" replace />} />
+              <Route path="content" element={<ContentPage />} />
+              <Route path="content/lessons/:id" element={<LessonEditorPage />} />
               <Route path="students" element={<StudentsPage />} />
               <Route path="parents" element={<ParentsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />

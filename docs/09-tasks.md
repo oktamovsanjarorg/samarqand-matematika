@@ -33,7 +33,8 @@
 | T-020c | Admin "O'quvchilar" (yangilar, qidiruv, qabul, kirish rejimi) va "Ota-onalar" (navbat, shubha belgilari, tasdiq/rad)                      | ✅    |
 | T-020d | Mini App onboarding (ism, raqam ulashish)                                                                                                 | ⬜    |
 | T-021  | Kontent backend: kurs → mavzu → dars (CRUD, tartiblash, BR-C01–C04), o'quvchi API                                                         | ✅    |
-| T-021b | Kontent UI: admin daraxt va dars muharriri (MathText preview), Mini App Darslar va dars sahifasi                                          | ⬜    |
+| T-021b | Admin kontent: kurs → mavzu → dars daraxti, tartiblash, nashr, dars muharriri (formula jonli ko'rinishi)                                  | ✅    |
+| T-021c | Mini App: Darslar ro'yxati va dars sahifasi                                                                                               | ⬜    |
 | T-022  | Savollar banki: turlar (SINGLE, MULTIPLE, NUMERIC, EXPRESSION, MATCHING, WRITTEN), MathLive muharriri, namunaviy yechim, ko'nikma teglari | ⬜    |
 | T-023  | Mavzu testlari: yechish, natija, tushuntirish                                                                                             | ⬜    |
 | T-024  | Asosiy va Profil ekranlari: statistika                                                                                                    | ⬜    |
