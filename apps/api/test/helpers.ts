@@ -4,11 +4,21 @@ import { FastifyAdapter, type NestFastifyApplication } from "@nestjs/platform-fa
 import { Test } from "@nestjs/testing";
 import { signInitData } from "@samarqand/shared/server";
 import { AppModule } from "../src/app.module";
+import { TELEGRAM_TRANSPORT, type TelegramTransport } from "../src/notify/telegram-transport";
 import { loadEnv } from "../src/config/env";
 import { configureApp } from "../src/setup";
 
 export const BOT_TOKEN = "123456:E2E_TEST_TOKEN";
 export const OWNER = "e2e_owner";
+
+/** Testlar Telegram'ga chiqmaydi: yuborilgan xabarlar shu ro'yxatga yoziladi */
+export const sentMessages: { chatId: bigint; html: string; button?: { text: string; url: string } }[] = [];
+const fakeTransport: TelegramTransport = {
+  send: async (chatId, html, button) => {
+    sentMessages.push({ chatId, html, ...(button ? { button } : {}) });
+    return true;
+  },
+};
 
 export async function createApp(extraControllers: Type[] = []) {
   const env = loadEnv({
@@ -20,7 +30,10 @@ export async function createApp(extraControllers: Type[] = []) {
   const mod = await Test.createTestingModule({
     imports: [AppModule.forRoot(env)],
     controllers: extraControllers,
-  }).compile();
+  })
+    .overrideProvider(TELEGRAM_TRANSPORT)
+    .useValue(fakeTransport)
+    .compile();
   const app = mod.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
   await configureApp(app, { rateLimit: false });
   await app.init();

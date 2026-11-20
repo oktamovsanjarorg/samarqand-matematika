@@ -212,6 +212,8 @@ model StudentProfile {
   acceptedAt   DateTime?     @db.Timestamptz
   acceptedById String?
   acceptedBy   User?         @relation("AcceptedBy", fields: [acceptedById], references: [id], onDelete: SetNull)
+  /// Ustozga "yangi o'quvchi" xabari yuborilgan vaqt (bir marta)
+  announcedAt  DateTime?     @db.Timestamptz
   /// Ota-ona botga shu kod bilan ulanadi (t.me/<bot>?start=p_<kod>)
   parentCode   String?       @unique
   parents      ParentLink[]

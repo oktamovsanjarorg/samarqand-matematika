@@ -37,7 +37,7 @@
 | T-024  | Asosiy va Profil ekranlari: statistika                                                                                                    | ⬜    |
 | T-025  | Qo'lda to'lov va obuna                                                                                                                    | ⬜    |
 | T-026  | Word/Excel'dan savol import (pandoc, OMML → LaTeX)                                                                                        | ⬜    |
-| T-027  | Bot xabarnomalari: ustozga yangi o'quvchi va ota-ona so'rovi, ota-onaga tasdiq xabari                                                     | ⬜    |
+| T-027  | Bot xabarnomalari: ustozga yangi o'quvchi va ota-ona so'rovi, ota-onaga va o'quvchiga natija (NotifyService)                              | ✅    |
 
 ## 2-bosqich: haftalik test va AI tekshiruvi
 

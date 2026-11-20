@@ -9,6 +9,8 @@ import {
   type TelegramProfile,
 } from "@samarqand/shared";
 import { randomBytes } from "node:crypto";
+import { parentRequestText, parentRequestToStudent } from "../notify/messages";
+import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { normalizePhone } from "../students/profile.service";
 import { UsersService } from "../users/users.service";
@@ -24,6 +26,7 @@ export class ParentLinkService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly users: UsersService,
+    private readonly notify: NotifyService,
   ) {}
 
   /** O'quvchining ota-ona kodi: birinchi so'ralganda yaratiladi */
@@ -84,6 +87,12 @@ export class ParentLinkService {
         },
       }),
     ]);
+    const parentName = nameOf(parent);
+    await this.notify.toStaff(
+      parentRequestText({ parent: parentName, student: studentName, phone, flags }),
+      this.notify.adminButton("Koʻrib chiqish", "parents"),
+    );
+    await this.notify.toUser(student.userId, parentRequestToStudent(parentName));
     return { status: "created", studentName };
   }
 

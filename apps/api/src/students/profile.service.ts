@@ -8,6 +8,8 @@ import {
 } from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
 import { isFullAccess } from "../access/access-rules";
+import { newStudentText } from "../notify/messages";
+import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 
 /** Telegram raqami "998901234567" yoki "+998 90..." ko'rinishida keladi: "+" va raqamlar qoladi */
@@ -19,6 +21,7 @@ export class ProfileService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly access: AccessService,
+    private readonly notify: NotifyService,
   ) {}
 
   async my(userId: string, role: RoleName): Promise<MyProfile> {
@@ -75,6 +78,32 @@ export class ProfileService {
       where: { telegramId: BigInt(from.id) },
       data: { phone: normalizePhone(contact.phone_number) },
     });
-    return { status: res.count ? "saved" : "unknown" };
+    if (!res.count) return { status: "unknown" };
+    const user = await this.prisma.user.findUnique({
+      where: { telegramId: BigInt(from.id) },
+      select: { id: true },
+    });
+    if (user) await this.announce(user.id);
+    return { status: "saved" };
+  }
+
+  /** Ism ham, telefon ham bo'lgach ustozga bir marta xabar boradi (BR-S04) */
+  private async announce(userId: string): Promise<void> {
+    const u = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true, phone: true, student: { select: { fullName: true, acceptedAt: true } } },
+    });
+    const name = u?.student?.fullName;
+    if (u?.role !== "STUDENT" || !u.phone || !name || u.student?.acceptedAt) return;
+    // Faqat birinchi marta: parallel so'rovlardan bittasigina announcedAt ni o'rnatadi
+    const first = await this.prisma.studentProfile.updateMany({
+      where: { userId, announcedAt: null },
+      data: { announcedAt: new Date() },
+    });
+    if (first.count)
+      await this.notify.toStaff(
+        newStudentText(name, u.phone),
+        this.notify.adminButton("Panelni ochish", "students"),
+      );
   }
 }

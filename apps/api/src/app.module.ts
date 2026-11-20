@@ -8,6 +8,7 @@ import { QuestionsModule } from "./questions/questions.module";
 import { TopicTestsModule } from "./topic-tests/topic-tests.module";
 import { StudentsModule } from "./students/students.module";
 import { ParentsModule } from "./parents/parents.module";
+import { NotifyModule } from "./notify/notify.module";
 import { HealthController } from "./health/health.controller";
 import { PrismaModule } from "./prisma/prisma.module";
 import { StaffModule } from "./staff/staff.module";
@@ -39,6 +40,7 @@ export class AppModule {
         TopicTestsModule,
         StudentsModule,
         ParentsModule,
+        NotifyModule,
       ],
       controllers: [HealthController],
     };
