@@ -36,6 +36,7 @@ model User {
   reviewedPayments Payment[]        @relation("PaymentReviewer")
   subscriptions    Subscription[]
   weeklyAttempts   WeeklyAttempt[]
+  weeklyReviews    WeeklyAnswer[]   @relation("WeeklyReviewer")
   student          StudentProfile?  @relation("Student")
   acceptedStudents StudentProfile[] @relation("AcceptedBy")
   children         ParentLink[]     @relation("ParentOf")
@@ -365,16 +366,22 @@ model WeeklyAttempt {
 }
 
 model WeeklyAnswer {
-  attemptId  String
-  attempt    WeeklyAttempt   @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  questionId String
-  question   Question        @relation(fields: [questionId], references: [id], onDelete: Restrict)
-  order      Int
-  response   Json?
-  result     CheckResult?
-  updatedAt  DateTime        @updatedAt @db.Timestamptz
-  photos     SolutionPhoto[]
-  aiReview   AiReview?
+  attemptId     String
+  attempt       WeeklyAttempt   @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question        @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  order         Int
+  response      Json?
+  result        CheckResult?
+  updatedAt     DateTime        @updatedAt @db.Timestamptz
+  photos        SolutionPhoto[]
+  aiReview      AiReview?
+  /// Ustoz qarori (BR-W06): ball (0/1) avtomatik va AI natijasidan ustun
+  teacherPoints Int?
+  teacherNote   String?
+  reviewedById  String?
+  reviewedBy    User?           @relation("WeeklyReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt    DateTime?       @db.Timestamptz
 
   @@id([attemptId, questionId])
 }

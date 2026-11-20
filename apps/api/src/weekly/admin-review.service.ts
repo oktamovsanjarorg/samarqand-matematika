@@ -1,0 +1,194 @@
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  percentOf,
+  type CheckResult,
+  suggestedPoints,
+  type GradeInput,
+  type ReviewItem,
+  type ReviewQueue,
+  type SolutionVerdict,
+} from "@samarqand/shared";
+import type { Prisma } from "@samarqand/db";
+import { AuditService } from "../audit/audit.service";
+import { PrismaService } from "../prisma/prisma.service";
+import { toDetail, toView } from "../questions/codec";
+import { averagePercent } from "../topic-tests/stats";
+import { historyJump, sameWrongAnswers } from "./signals";
+import { answerPoints } from "./weekly-views";
+
+const personName = (u: {
+  firstName: string;
+  lastName: string | null;
+  student: { fullName: string | null } | null;
+}) => u.student?.fullName ?? [u.firstName, u.lastName].filter(Boolean).join(" ");
+
+const ANSWER_INCLUDE = {
+  question: true,
+  photos: { select: { id: true }, orderBy: { createdAt: "asc" } },
+  aiReview: { select: { status: true, suspected: true, verdict: true } },
+  reviewedBy: { select: { firstName: true, lastName: true } },
+} as const;
+
+/** Navbat tartibi: shubhali va hal qilinmagan birinchi, keyin hal qilinmagan, keyin hal qilingan */
+const rank = (i: ReviewItem) =>
+  i.decision ? 2 : i.ai?.suspected || i.signals.sameWrong > 0 || i.signals.historyJump ? 0 : 1;
+
+type AttemptRow = {
+  id: string;
+  userId: string;
+  user: { firstName: string; lastName: string | null; student: { fullName: string | null } | null };
+};
+type AnswerRow = Prisma.WeeklyAnswerGetPayload<{ include: typeof ANSWER_INCLUDE }>;
+
+function toItem(a: AttemptRow, x: AnswerRow, sig: { group?: string[]; jump: boolean }): ReviewItem {
+  const verdict = x.aiReview?.status === "DONE" ? (x.aiReview.verdict as SolutionVerdict) : null;
+  const detail = toDetail(x.question);
+  return {
+    attemptId: a.id,
+    questionId: x.questionId,
+    order: x.order,
+    student: { userId: a.userId, name: personName(a.user) },
+    question: toView(x.question),
+    response: x.response,
+    correctAnswer: "answer" in detail ? detail.answer : null,
+    autoResult: x.result,
+    autoPoints: answerPoints({ teacherPoints: null, result: x.result, photos: x.photos.length }),
+    photos: x.photos.map((p) => p.id),
+    ai: x.aiReview && {
+      status: x.aiReview.status,
+      suspected: x.aiReview.suspected,
+      verdict,
+      suggested: verdict ? suggestedPoints(verdict) : null,
+    },
+    signals: { sameWrong: sig.group ? sig.group.length - 1 : 0, historyJump: sig.jump },
+    decision:
+      x.teacherPoints === null || !x.reviewedAt
+        ? null
+        : {
+            points: x.teacherPoints,
+            note: x.teacherNote,
+            reviewedAt: x.reviewedAt.toISOString(),
+            reviewer: x.reviewedBy?.firstName ?? "",
+          },
+  };
+}
+
+/** Ustoz navbati (T-034, BR-W05, W06): AI hukmi va signallar faqat shu yerda ko'rinadi */
+@Injectable()
+export class AdminReviewService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+  ) {}
+
+  async queue(testId: string): Promise<ReviewQueue> {
+    const t = await this.prisma.weeklyTest.findUnique({
+      where: { id: testId },
+      select: { id: true, title: true, closesAt: true },
+    });
+    if (!t) throw new NotFoundException("Test topilmadi");
+    const attempts = await this.prisma.weeklyAttempt.findMany({
+      where: { weeklyTestId: testId, submittedAt: { not: null } },
+      select: {
+        id: true,
+        userId: true,
+        user: { select: { firstName: true, lastName: true, student: { select: { fullName: true } } } },
+        answers: { orderBy: { order: "asc" }, include: ANSWER_INCLUDE },
+      },
+    });
+    const same = sameWrongAnswers(
+      attempts.flatMap((a) =>
+        a.answers.map((x) => ({
+          userId: a.userId,
+          questionId: x.questionId,
+          response: x.response,
+          result: x.result,
+        })),
+      ),
+    );
+    const jumps = await this.jumps(attempts);
+    const items = attempts.flatMap((a) =>
+      a.answers.map((x) =>
+        toItem(a, x, {
+          group: same.get(x.questionId)?.find((g) => g.includes(a.userId)),
+          jump: jumps.has(a.userId),
+        }),
+      ),
+    );
+    items.sort(
+      (p, q) => rank(p) - rank(q) || p.student.name.localeCompare(q.student.name) || p.order - q.order,
+    );
+    return { testId: t.id, title: t.title, closesAt: t.closesAt.toISOString(), items };
+  }
+
+  /** Ustoz bali: urinish bali qayta hisoblanadi (o'quvchi oyna yopilgach ko'radi) */
+  async grade(actorId: string, attemptId: string, questionId: string, input: GradeInput) {
+    const a = await this.prisma.weeklyAttempt.findUnique({
+      where: { id: attemptId },
+      select: { submittedAt: true, weeklyTestId: true },
+    });
+    const x = await this.prisma.weeklyAnswer.findUnique({
+      where: { attemptId_questionId: { attemptId, questionId } },
+      select: { questionId: true },
+    });
+    if (!a || !x) throw new NotFoundException("Javob topilmadi");
+    if (!a.submittedAt) throw new ConflictException("Test topshirilmagan: ball 0 (BR-W03)");
+    await this.prisma.$transaction(async (tx) => {
+      await tx.weeklyAnswer.update({
+        where: { attemptId_questionId: { attemptId, questionId } },
+        data: {
+          teacherPoints: input.points,
+          teacherNote: input.note || null,
+          reviewedById: actorId,
+          reviewedAt: new Date(),
+        },
+      });
+      const answers = await tx.weeklyAnswer.findMany({
+        where: { attemptId },
+        select: { teacherPoints: true, result: true, _count: { select: { photos: true } } },
+      });
+      const score = answers.reduce(
+        (sum, r) =>
+          sum + answerPoints({ teacherPoints: r.teacherPoints, result: r.result, photos: r._count.photos }),
+        0,
+      );
+      await tx.weeklyAttempt.update({ where: { id: attemptId }, data: { score } });
+    });
+    await this.audit.log({
+      actorId,
+      action: "weekly.grade",
+      entity: "WeeklyAttempt",
+      entityId: attemptId,
+      data: { questionId, points: input.points },
+    });
+    return { ok: true };
+  }
+
+  /** Mavzu testlarida o'rtacha <50% bo'lib, shu haftalikda ≥90% olganlar */
+  private async jumps(
+    attempts: { userId: string; answers: { result: CheckResult | null; photos: unknown[] }[] }[],
+  ) {
+    const userIds = attempts.map((a) => a.userId);
+    const topic = await this.prisma.topicAttempt.findMany({
+      where: { userId: { in: userIds }, submittedAt: { not: null } },
+      select: {
+        userId: true,
+        correct: true,
+        _count: { select: { answers: { where: { result: { in: ["CORRECT", "WRONG"] } } } } },
+      },
+    });
+    const out = new Set<string>();
+    for (const a of attempts) {
+      const mine = topic
+        .filter((t) => t.userId === a.userId)
+        .map((t) => ({ correct: t.correct ?? 0, checkable: t._count.answers }));
+      const pts = a.answers.reduce(
+        (s, x) => s + answerPoints({ teacherPoints: null, result: x.result, photos: x.photos.length }),
+        0,
+      );
+      const weekly = percentOf(pts, a.answers.length) ?? 0;
+      if (historyJump(averagePercent(mine), weekly)) out.add(a.userId);
+    }
+    return out;
+  }
+}

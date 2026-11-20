@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MediaModule } from "../storage/media.module";
+import { AdminReviewService } from "./admin-review.service";
 import { AiReviewService } from "./ai-reviews";
 import { AdminWeeklyController } from "./admin-weekly.controller";
 import { AdminWeeklyService } from "./admin-weekly.service";
@@ -11,6 +12,13 @@ import { WeeklyService } from "./weekly.service";
 @Module({
   imports: [MediaModule],
   controllers: [WeeklyController, AdminWeeklyController],
-  providers: [AiReviewService, WeeklyService, WeeklyPhotosService, AdminWeeklyService, WeeklyScheduler],
+  providers: [
+    AdminReviewService,
+    AiReviewService,
+    WeeklyService,
+    WeeklyPhotosService,
+    AdminWeeklyService,
+    WeeklyScheduler,
+  ],
 })
 export class WeeklyModule {}
