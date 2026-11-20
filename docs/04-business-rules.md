@@ -86,9 +86,10 @@
 
 ## Imtihon formati (M)
 
-| ID     | Qoida                                                                                                                         | Holat                                 |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| BR-M01 | Mock tuzilmasi (bo'limlar, savol turlari, ballar, daraja chegaralari) kodga yozilmaydi, "imtihon shabloni" sozlamasida turadi | ✅                                    |
-| BR-M02 | Milliy sertifikat darajalari (75 ballik T-shkala): A+ 70+, A 65, B+ 60, B 55, C+ 50, C 46. 46 dan past bo'lsa sertifikat yo'q | ⚠️ Q-09 (rasmiy PDF bilan tekshirish) |
-| BR-M03 | Moslashtirish savolida ball faqat barcha kichik savollar to'g'ri bo'lsa beriladi                                              | ⚠️ Q-09                               |
-| BR-M04 | Son javobi ekvivalentlik bo'yicha tekshiriladi: `3/4`, `0.75` va `0,75` teng hisoblanadi                                      | ✅                                    |
+| ID     | Qoida                                                                                                                                                                | Holat                                 |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| BR-M01 | Mock tuzilmasi (bo'limlar, savol turlari, ballar, daraja chegaralari) kodga yozilmaydi, "imtihon shabloni" sozlamasida turadi                                        | ✅                                    |
+| BR-M02 | Milliy sertifikat darajalari (75 ballik T-shkala): A+ 70+, A 65, B+ 60, B 55, C+ 50, C 46. 46 dan past bo'lsa sertifikat yo'q                                        | ⚠️ Q-09 (rasmiy PDF bilan tekshirish) |
+| BR-M03 | Moslashtirish savolida ball faqat barcha kichik savollar to'g'ri bo'lsa beriladi                                                                                     | ⚠️ Q-09                               |
+| BR-M04 | Son javobi ekvivalentlik bo'yicha tekshiriladi: `3/4`, `0.75` va `0,75` teng hisoblanadi                                                                             | ✅                                    |
+| BR-M05 | Ishtirokchi kam bo'lsa (Rasch ishonchsiz) shkala balli taxminiy: xom ball / eng yuqori xom ball × shkala, natijada "taxminiy" deb yoziladi. Rasch chegarasi T-053 da | ✅ standart                           |

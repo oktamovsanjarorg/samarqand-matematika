@@ -9,6 +9,7 @@ import { TopicTestsModule } from "./topic-tests/topic-tests.module";
 import { BillingModule } from "./billing/billing.module";
 import { WeeklyModule } from "./weekly/weekly.module";
 import { TutorModule } from "./tutor/tutor.module";
+import { MockModule } from "./mock/mock.module";
 import { AiModule } from "./ai/ai.module";
 import { StudentsModule } from "./students/students.module";
 import { ParentsModule } from "./parents/parents.module";
@@ -45,6 +46,7 @@ export class AppModule {
         BillingModule,
         WeeklyModule,
         TutorModule,
+        MockModule,
         AiModule,
         StudentsModule,
         ParentsModule,
