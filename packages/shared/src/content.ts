@@ -43,6 +43,8 @@ export interface AdminTopicRow {
   title: string;
   order: number;
   lessons: AdminLessonRow[];
+  /** Mavzu testidagi barcha savollar (qoralama ham) */
+  questionCount: number;
 }
 
 export interface AdminCourseTree {

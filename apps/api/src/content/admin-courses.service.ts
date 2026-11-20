@@ -19,7 +19,7 @@ export class AdminCoursesService {
 
   /** Butun daraxt: kurslar → mavzular → darslar (matnsiz) */
   async tree(): Promise<AdminCourseTree[]> {
-    return this.prisma.course.findMany({
+    const courses = await this.prisma.course.findMany({
       orderBy: { order: "asc" },
       select: {
         id: true,
@@ -37,10 +37,15 @@ export class AdminCoursesService {
               orderBy: { order: "asc" },
               select: { id: true, title: true, order: true, isFree: true, isPublished: true },
             },
+            _count: { select: { questions: true } },
           },
         },
       },
     });
+    return courses.map((c) => ({
+      ...c,
+      topics: c.topics.map(({ _count, ...t }) => ({ ...t, questionCount: _count.questions })),
+    }));
   }
 
   async createCourse(actorId: string, input: CourseInput) {

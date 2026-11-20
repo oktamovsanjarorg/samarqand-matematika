@@ -1,5 +1,5 @@
 import type { AdminLessonRow, AdminTopicRow } from "@samarqand/shared";
-import { FileText } from "lucide-react";
+import { FileText, ListChecks } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
@@ -54,6 +54,17 @@ function useTopicActions(topicId: string) {
   };
 }
 
+function QuestionsLink({ topicId, count }: { topicId: string; count: number }) {
+  return (
+    <Link
+      to={`/content/topics/${topicId}/questions`}
+      className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-link"
+    >
+      <ListChecks size={16} /> Mavzu testi savollari ({count})
+    </Link>
+  );
+}
+
 /** Mavzu: darslar ro'yxati, dars qo'shish, tartiblash */
 export function TopicBlock(p: { topic: AdminTopicRow; siblings: string[]; index: number }) {
   const { topic } = p;
@@ -104,6 +115,7 @@ export function TopicBlock(p: { topic: AdminTopicRow; siblings: string[]; index:
           />
         ))}
       </ul>
+      <QuestionsLink topicId={topic.id} count={topic.questionCount} />
       <InlineForm
         label="Dars"
         placeholder="Yangi dars nomi"
