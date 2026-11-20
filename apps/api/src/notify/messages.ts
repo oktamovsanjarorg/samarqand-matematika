@@ -67,3 +67,20 @@ export const mockResultText = (
   r: { scaled: number; scaleMax: number; grade: string | null },
 ) =>
   `📊 Mock <b>${esc(title)}</b> natijasi: <b>${r.scaled}/${r.scaleMax}</b>${r.grade ? `, daraja <b>${esc(r.grade)}</b>` : ""}.\nBoʻlimlar va toʻgʻri javoblar ilovada.`;
+
+const ATTENDANCE_TEXT = {
+  LATE: "darsga kechikdi",
+  ABSENT: "darsga kelmadi",
+  PRESENT: "darsga keldi",
+  EXCUSED: "sababli kelmadi",
+} as const;
+
+/** Ota-onaga: davomat (T-055). Oldin boshqa holat yuborilgan bo'lsa "Tuzatish" */
+export const attendanceParentText = (p: {
+  child: string;
+  group: string;
+  date: string;
+  status: keyof typeof ATTENDANCE_TEXT;
+  correction: boolean;
+}) =>
+  `${p.correction ? "✏️ Tuzatish: " : "📋 "}<b>${esc(p.child)}</b> ${p.date} kuni ${ATTENDANCE_TEXT[p.status]} (${esc(p.group)}).`;
