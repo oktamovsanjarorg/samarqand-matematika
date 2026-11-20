@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   HttpException,
   HttpStatus,
@@ -10,11 +9,14 @@ import {
 } from "@nestjs/common";
 import type { TutorChat } from "@samarqand/db";
 import { ERROR_CODES, type StartTutorInput, type TutorChatView } from "@samarqand/shared";
-import { AI_PROVIDER, type AiProvider } from "../ai/ai-provider";
+import { AI_PROVIDER, type AiProvider, type SolutionPhotoInput } from "../ai/ai-provider";
+import { photoInputs } from "../ai/photos";
 import { tashkentDayStart } from "../common/time";
 import { ENV, type Env } from "../config/env";
 import { PrismaService } from "../prisma/prisma.service";
+import { MediaStore } from "../storage/media-store";
 import { mentionsOpenQuestion, questionContext } from "./tutor-context";
+import { reviewAnswer, reviewContext } from "./tutor-review";
 
 /** Modelga yuboriladigan oxirgi xabarlar soni (xarajat chegarasi) */
 const HISTORY = 20;
@@ -35,16 +37,16 @@ export class TutorService {
     private readonly prisma: PrismaService,
     @Inject(AI_PROVIDER) private readonly ai: AiProvider,
     @Inject(ENV) private readonly env: Env,
+    private readonly media: MediaStore,
   ) {}
 
   async start(userId: string, input: StartTutorInput, now: Date): Promise<TutorChatView> {
-    if (input.mode === "REVIEW") throw new BadRequestException("Bu rejim hali ishlamaydi");
-    const target =
-      input.mode === "PRACTICE" ? { questionId: input.questionId, attemptId: input.attemptId } : {};
+    const target = input.mode === "FREE" ? {} : { questionId: input.questionId, attemptId: input.attemptId };
     if (input.mode === "PRACTICE") {
-      await this.practiceAnswer(userId, target.attemptId ?? "", target.questionId ?? "");
-      await this.guardWeekly(target.questionId ?? "", now);
+      await this.practiceAnswer(userId, input.attemptId, input.questionId);
+      await this.guardWeekly(input.questionId, now);
     }
+    if (input.mode === "REVIEW") await reviewAnswer(this.prisma, { userId, ...input, now });
     const where = {
       userId,
       mode: input.mode,
@@ -68,7 +70,7 @@ export class TutorService {
         { code: ERROR_CODES.AI_LIMIT, message: "Bugungi savollar tugadi. Ertaga davom etamiz" },
         HttpStatus.TOO_MANY_REQUESTS,
       );
-    const context = await this.context(chat, text, now);
+    const { context, photos } = await this.context(chat, text, now);
     const past = await this.prisma.tutorMessage.findMany({
       where: { chatId },
       orderBy: { createdAt: "desc" },
@@ -80,7 +82,7 @@ export class TutorService {
       role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
       text: m.text,
     }));
-    const reply = await this.ai.tutor({ mode: chat.mode, context, history, photos: [] });
+    const reply = await this.ai.tutor({ mode: chat.mode, context, history, photos });
     if (!reply)
       throw new ServiceUnavailableException({
         code: ERROR_CODES.AI_UNAVAILABLE,
@@ -152,12 +154,31 @@ export class TutorService {
     if (open) throw blocked();
   }
 
-  private async context(chat: TutorChat, text: string, now: Date): Promise<string> {
+  /** Rejimga qarab kontekst va (xato tahlilida) o'quvchining yechim rasmlari */
+  private async context(
+    chat: TutorChat,
+    text: string,
+    now: Date,
+  ): Promise<{ context: string; photos: SolutionPhotoInput[] }> {
+    const ids = { userId: chat.userId, attemptId: chat.attemptId ?? "", questionId: chat.questionId ?? "" };
     if (chat.mode === "PRACTICE") {
-      const a = await this.practiceAnswer(chat.userId, chat.attemptId ?? "", chat.questionId ?? "");
+      const a = await this.practiceAnswer(ids.userId, ids.attemptId, ids.questionId);
       await this.guardWeekly(a.questionId, now);
       const tried = a.attempt.submittedAt ? "bor (test topshirilgan)" : "yo'q";
-      return questionContext(a.question, { response: a.response, lines: [`Urinish: ${tried}`] });
+      return {
+        context: questionContext(a.question, { response: a.response, lines: [`Urinish: ${tried}`] }),
+        photos: [],
+      };
+    }
+    if (chat.mode === "REVIEW") {
+      const a = await reviewAnswer(this.prisma, { ...ids, now });
+      return {
+        context: reviewContext(a),
+        photos: await photoInputs(
+          this.media,
+          a.photos.map((p) => p.path),
+        ),
+      };
     }
     const open = await this.prisma.weeklyQuestion.findMany({
       where: { weeklyTest: { isPublished: true, opensAt: { lte: now }, closesAt: { gt: now } } },
@@ -170,6 +191,6 @@ export class TutorService {
       )
     )
       throw blocked();
-    return "Erkin savol. Aniq masala konteksti yo'q.";
+    return { context: "Erkin savol. Aniq masala konteksti yo'q.", photos: [] };
   }
 }

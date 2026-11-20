@@ -133,4 +133,52 @@ describe("AI yordamchi (T-040)", () => {
     expect((await f.call("GET", "/admin/tutor/chats", s.headers)).statusCode).toBe(403);
     expect((await f.call("GET", "/admin/tutor/chats?mode=X", f.teacher)).statusCode).toBe(400);
   });
+
+  it("BR-T01, BR-W05: xato tahlili faqat yopilgach; o'quvchi rasmi va ustoz izohi boradi, ko'chirish belgilari bormaydi", async () => {
+    const qids = await f.questions();
+    const id = await f.weekly(qids);
+    const s = await f.student();
+    const a = (await f.call("POST", `/weekly/${id}/attempts`, s.headers)).json();
+    await f.call("PUT", `/weekly-attempts/${a.id}/answers/${qids[0]}`, s.headers, {
+      response: { optionId: "a" },
+    });
+    await f.photo(s.headers, { attemptId: a.id, qid: qids[0] ?? "" });
+    await f.call("POST", `/weekly-attempts/${a.id}/submit`, s.headers);
+    const review = { mode: "REVIEW", attemptId: a.id, questionId: qids[0] };
+    expect((await start(s.headers, review)).json()).toMatchObject({ code: "AI_BLOCKED" });
+
+    await f.prisma.aiReview.update({
+      where: { attemptId_questionId: { attemptId: a.id, questionId: qids[0] ?? "" } },
+      data: {
+        status: "DONE",
+        suspected: true,
+        verdict: {
+          verdict: "SUSPECTED_COPY",
+          confidence: "HIGH",
+          answerFollows: false,
+          steps: [{ text: "1+1=3", ok: false, note: "qo'shishda xato" }],
+          copySignals: ["SKIPPED_STEPS", "CHATBOT_STYLE"],
+          teacherNote: "MAXFIY_USTOZGA",
+          studentFeedback: "",
+        },
+      },
+    });
+    await f.call("PUT", `/admin/weekly/attempts/${a.id}/answers/${qids[0]}/grade`, f.teacher, {
+      points: 0,
+      note: "Qo'shishni tekshir",
+    });
+    await f.prisma.weeklyTest.update({ where: { id }, data: { closesAt: new Date(Date.now() - 1000) } });
+    const chat = (await start(s.headers, review)).json();
+    expect(chat.mode).toBe("REVIEW");
+    expect((await say(s.headers, chat.id, "Qayerda xato qildim?")).statusCode).toBe(200);
+    const call = testAi.tutorCalls.at(-1);
+    expect(call?.mode).toBe("REVIEW");
+    expect(call?.photos).toHaveLength(1);
+    expect(call?.context).toContain("Ustoz izohi o'quvchiga: Qo'shishni tekshir");
+    expect(call?.context).toContain("1) xato: 1+1=3 (qo'shishda xato)");
+    for (const secret of ["MAXFIY_USTOZGA", "SKIPPED_STEPS", "CHATBOT_STYLE", "SUSPECTED"])
+      expect(call?.context).not.toContain(secret);
+    const other = await f.student();
+    expect((await start(other.headers, review)).statusCode).toBe(404);
+  });
 });

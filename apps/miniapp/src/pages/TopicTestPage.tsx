@@ -47,7 +47,12 @@ export function TopicTestPage() {
       title={a.topicTitle}
       onSubmit={submit(a.id)}
       extra={(questionId, flush) => (
-        <TutorPanel key={questionId} attemptId={a.id} questionId={questionId} flush={flush} />
+        <TutorPanel
+          key={questionId}
+          label="Yordamchi"
+          input={{ mode: "PRACTICE", attemptId: a.id, questionId }}
+          flush={flush}
+        />
       )}
     />
   );

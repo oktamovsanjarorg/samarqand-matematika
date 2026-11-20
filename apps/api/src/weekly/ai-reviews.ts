@@ -1,8 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { describeResponse, isSuspected, type SolutionVerdict } from "@samarqand/shared";
-import { AI_PROVIDER, type AiProvider, type SolutionPhotoInput } from "../ai/ai-provider";
+import { AI_PROVIDER, type AiProvider } from "../ai/ai-provider";
 import { ENV, type Env } from "../config/env";
 import { tashkentDayStart } from "../common/time";
+import { photoInputs } from "../ai/photos";
 import { PrismaService } from "../prisma/prisma.service";
 import { toDetail, toView } from "../questions/codec";
 import { MediaStore } from "../storage/media-store";
@@ -10,7 +11,6 @@ import { MediaStore } from "../storage/media-store";
 const MAX_TRIES = 3;
 const BATCH = 5;
 const STALE_MS = 10 * 60_000;
-const IMAGE_TYPES = new Set<string>(["image/jpeg", "image/png", "image/webp"]);
 
 const asJson = (v: SolutionVerdict) => v as unknown as object;
 
@@ -74,10 +74,10 @@ export class AiReviewService {
       include: { question: true, photos: { orderBy: { createdAt: "asc" } } },
     });
     if (!a) return false;
-    const files = await Promise.all(a.photos.map((p) => this.media.read(p.path)));
-    const photos = files
-      .filter((f) => IMAGE_TYPES.has(f.type))
-      .map((f) => ({ type: f.type as SolutionPhotoInput["type"], data: f.body }));
+    const photos = await photoInputs(
+      this.media,
+      a.photos.map((p) => p.path),
+    );
     const detail = toDetail(a.question);
     const view = toView(a.question);
     const verdict = await this.ai.checkSolution({

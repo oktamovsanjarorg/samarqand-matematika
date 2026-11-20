@@ -2,6 +2,7 @@ import { expect, test, type APIRequestContext } from "@playwright/test";
 import type { TutorChatView } from "@samarqand/shared";
 import { adminHeaders, apiPost, createStudent, grantFree } from "./api";
 import { E2E_PREFIX, openAsTelegram } from "./telegram";
+import { notebookPng, seedWeekly, solveWeekly } from "./weekly-seed";
 
 /** Nashr qilingan mavzu va bitta savol, to'liq kirishli o'quvchi */
 async function seed(request: APIRequestContext) {
@@ -75,4 +76,23 @@ test("BR-T02: mavzu testi savolida yordamchi; AI javob bermasa matn saqlanadi; j
   await page.getByTestId("tutor-home").click();
   await expect(page.getByRole("heading", { name: "AI yordamchi" })).toBeVisible();
   await expect(page.getByTestId("tutor")).toContainText("Matematikadan savol yoz");
+});
+
+test("BR-T01: haftalik test yopilgach noto'g'ri savol ostida xato tahlili ochiladi", async ({
+  page,
+  request,
+  browser,
+}) => {
+  const { admin, id, close } = await seedWeekly(request);
+  const s = await createStudent(request, { fullName: "Tahlil Sinov", phone: "998901112232" });
+  await grantFree(request, admin, "Tahlil Sinov");
+  await solveWeekly(request, s, { testId: id, png: await notebookPng(browser) });
+  expect((await close()).ok()).toBe(true);
+
+  await openAsTelegram(page, { id: s.tg, first_name: "Tahlil" }, `/weekly/${id}`);
+  // 1-savol to'g'ri: tugma yo'q; 2-savol xato: bitta tugma
+  await expect(page.getByRole("button", { name: "Xatoni tushuntir" })).toHaveCount(1);
+  await page.getByRole("button", { name: "Xatoni tushuntir" }).click();
+  await expect(page.getByTestId("tutor")).toContainText("Xatoni birga koʻrib chiqamiz");
+  await expect(page.getByLabel("Yordamchiga xabar")).toBeVisible();
 });

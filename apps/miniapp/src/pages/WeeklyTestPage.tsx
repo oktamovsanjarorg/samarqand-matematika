@@ -12,6 +12,7 @@ import { Locked } from "../components/Locked";
 import { ErrorState, TestSkeleton } from "../components/states";
 import { ResultItem } from "../components/test/ResultItem";
 import { Runner } from "../components/test/Runner";
+import { TutorPanel } from "../components/tutor/TutorPanel";
 import { RankingCard } from "../components/weekly/RankingCard";
 import { PhotoThumb, SolutionPhotos } from "../components/weekly/SolutionPhotos";
 import { useBackButton } from "../hooks/useBackButton";
@@ -42,7 +43,7 @@ function Waiting({ v }: { v: WeeklyWaiting }) {
 }
 
 /** Rasmlar va ustoz izohi; to'g'ri javob + rasm yo'q bo'lsa sarlavhaning o'zi aytadi */
-function ItemExtras({ item }: { item: WeeklyResult["items"][number] }) {
+function ItemExtras({ item, attemptId }: { item: WeeklyResult["items"][number]; attemptId: string }) {
   return (
     <>
       {item.noPhoto && item.result !== "CORRECT" && (
@@ -60,6 +61,12 @@ function ItemExtras({ item }: { item: WeeklyResult["items"][number] }) {
           <b>Ustoz izohi: </b>
           {item.feedback}
         </p>
+      )}
+      {item.result !== "CORRECT" && (
+        <TutorPanel
+          label="Xatoni tushuntir"
+          input={{ mode: "REVIEW", attemptId, questionId: item.question.id }}
+        />
       )}
     </>
   );
@@ -89,7 +96,7 @@ function Result({ r }: { r: WeeklyResult }) {
                 : undefined
             }
           >
-            <ItemExtras item={item} />
+            <ItemExtras item={item} attemptId={r.id} />
           </ResultItem>
         ))}
       </ol>
