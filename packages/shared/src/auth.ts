@@ -27,6 +27,12 @@ export const ERROR_CODES = {
   NOT_EMPTY: "NOT_EMPTY",
   /** Ustoz qabul qilgan: ismni endi faqat ustoz o'zgartiradi (BR-S01) */
   NAME_LOCKED: "NAME_LOCKED",
+  /** Yordamchi bu savol bo'yicha yordam bermaydi: haftalik test ochiq (BR-T01) */
+  AI_BLOCKED: "AI_BLOCKED",
+  /** Yordamchining kunlik limiti tugadi (BR-T03) */
+  AI_LIMIT: "AI_LIMIT",
+  /** AI o'chiq yoki javob bermadi */
+  AI_UNAVAILABLE: "AI_UNAVAILABLE",
 } as const;
 
 /** Admin panel: bot yuborgan bir martalik havoladagi token */

@@ -92,4 +92,40 @@ describe("AI provayderi (ADR-0004)", () => {
     expect(t).toContain("Viet");
     expect(t).toContain("O'quvchi belgilagan javob: —");
   });
+
+  it("yordamchi: rejim qoidasi keshlanadi, kontekst alohida, rasm birinchi xabarda; rad etilsa null", async () => {
+    const { client, sent } = stubClient("end_turn", "Qaysi formula kerak?");
+    const p = new ClaudeProvider(client);
+    const reply = await p.tutor({
+      mode: "REVIEW",
+      context: "Savol: 2+2",
+      history: [
+        { role: "user", text: "Qayerda xato qildim?" },
+        { role: "assistant", text: "Rasmga qara" },
+        { role: "user", text: "Tushunmadim" },
+      ],
+      photos: input.photos,
+    });
+    expect(reply).toBe("Qaysi formula kerak?");
+    const body = sent[0] as {
+      system: { text: string; cache_control?: object }[];
+      messages: { role: string; content: unknown }[];
+      output_config: object;
+      fallbacks: unknown;
+    };
+    expect(body.system[0]?.cache_control).toEqual({ type: "ephemeral" });
+    expect(body.system[0]?.text).toContain("xatoni tushuntirish");
+    expect(body.system[1]).toEqual({ type: "text", text: "Kontekst:\nSavol: 2+2" });
+    expect(body.output_config).toEqual({ effort: "medium" });
+    expect(body.fallbacks).toBe("default");
+    expect(JSON.stringify(body.messages[0]?.content)).toContain('"type":"image"');
+    expect(body.messages.map((m) => m.role)).toEqual(["user", "assistant", "user"]);
+    expect(body.messages[2]?.content).toBe("Tushunmadim");
+
+    const refused = new ClaudeProvider(stubClient("refusal", "").client);
+    expect(
+      await refused.tutor({ mode: "FREE", context: "", history: [{ role: "user", text: "?" }], photos: [] }),
+    ).toBeNull();
+    expect(await new DisabledAiProvider().tutor()).toBeNull();
+  });
 });

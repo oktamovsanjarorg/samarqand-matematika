@@ -77,12 +77,12 @@
 
 ## AI yordamchi (T)
 
-| ID     | Qoida                                                                                                                | Holat   |
-| ------ | -------------------------------------------------------------------------------------------------------------------- | ------- |
-| BR-T01 | Haftalik test yoki Mock ochiq turganda AI yordamchi shu testning savollari bo'yicha yordam bermaydi                  | ✅      |
-| BR-T02 | Mashq rejimida yordamchi avval ishora beradi. To'liq yechimni faqat o'quvchi o'zi urinib ko'rgandan keyin ko'rsatadi | ✅      |
-| BR-T03 | Har o'quvchiga kunlik so'rov limiti qo'yiladi                                                                        | ⚠️ Q-06 |
-| BR-T04 | Barcha suhbatlar saqlanadi, ustoz ko'ra oladi                                                                        | ✅      |
+| ID     | Qoida                                                                                                                | Holat                                      |
+| ------ | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| BR-T01 | Haftalik test yoki Mock ochiq turganda AI yordamchi shu testning savollari bo'yicha yordam bermaydi                  | ✅                                         |
+| BR-T02 | Mashq rejimida yordamchi avval ishora beradi. To'liq yechimni faqat o'quvchi o'zi urinib ko'rgandan keyin ko'rsatadi | ✅                                         |
+| BR-T03 | Har o'quvchiga kunlik so'rov limiti qo'yiladi                                                                        | ✅ Q-06 standart (`TUTOR_DAILY_LIMIT`, 30) |
+| BR-T04 | Barcha suhbatlar saqlanadi, ustoz ko'ra oladi                                                                        | ✅                                         |
 
 ## Imtihon formati (M)
 

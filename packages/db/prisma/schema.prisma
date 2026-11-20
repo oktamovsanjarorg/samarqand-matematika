@@ -41,6 +41,7 @@ model User {
   acceptedStudents StudentProfile[] @relation("AcceptedBy")
   children         ParentLink[]     @relation("ParentOf")
   reviewedLinks    ParentLink[]     @relation("LinkReviewer")
+  TutorChat        TutorChat[]
 
   @@index([role])
 }
@@ -160,6 +161,7 @@ model Question {
   updatedAt       DateTime         @updatedAt @db.Timestamptz
   weeklyQuestions WeeklyQuestion[]
   weeklyAnswers   WeeklyAnswer[]
+  tutorChats      TutorChat[]
 
   @@index([topicId, order])
 }
@@ -425,4 +427,45 @@ model AiReview {
 
   @@id([attemptId, questionId])
   @@index([status, createdAt])
+}
+
+enum TutorMode {
+  PRACTICE
+  REVIEW
+  FREE
+}
+
+enum TutorRole {
+  USER
+  ASSISTANT
+}
+
+/// O'quvchining AI yordamchi bilan suhbati (PLAN §7). Hammasi saqlanadi, ustoz ko'radi (BR-T04)
+model TutorChat {
+  id         String         @id @default(cuid())
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mode       TutorMode
+  questionId String?
+  question   Question?      @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  /// PRACTICE: TopicAttempt.id, REVIEW: WeeklyAttempt.id
+  attemptId  String?
+  createdAt  DateTime       @default(now()) @db.Timestamptz
+  updatedAt  DateTime       @updatedAt @db.Timestamptz
+  messages   TutorMessage[]
+
+  @@index([userId, updatedAt])
+}
+
+model TutorMessage {
+  id        String    @id @default(cuid())
+  chatId    String
+  chat      TutorChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  role      TutorRole
+  text      String
+  /// Javob bergan provayder (ASSISTANT)
+  provider  String?
+  createdAt DateTime  @default(now()) @db.Timestamptz
+
+  @@index([chatId, createdAt])
 }
