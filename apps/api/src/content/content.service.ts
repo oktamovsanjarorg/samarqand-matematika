@@ -32,16 +32,21 @@ export class ContentService {
               orderBy: { order: "asc" },
               select: { id: true, title: true, isFree: true },
             },
+            _count: { select: { questions: { where: published } } },
           },
         },
       },
     });
     return rows.map((c) => ({
       ...c,
-      // Darsi yo'q mavzu o'quvchiga ko'rsatilmaydi
+      // Darsi ham, testi ham yo'q mavzu o'quvchiga ko'rsatilmaydi (BR-C01)
       topics: c.topics
-        .filter((t) => t.lessons.length > 0)
-        .map((t) => ({ ...t, lessons: t.lessons.map((l) => ({ ...l, locked: !l.isFree && !full })) })),
+        .filter((t) => t.lessons.length > 0 || t._count.questions > 0)
+        .map(({ _count, ...t }) => ({
+          ...t,
+          questionCount: _count.questions,
+          lessons: t.lessons.map((l) => ({ ...l, locked: !l.isFree && !full })),
+        })),
     }));
   }
 

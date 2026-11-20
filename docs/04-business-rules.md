@@ -16,7 +16,7 @@
 
 | ID     | Qoida                                                                                                                                                                                                                                      | Holat |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- |
-| BR-C01 | O'quvchi faqat nashr qilingan kurs va darslarni ko'radi. Nashr qilinmagan darsni to'g'ridan-to'g'ri havola bilan ham ochib bo'lmaydi (404). Darsi yo'q mavzu ko'rsatilmaydi                                                                | ✅    |
+| BR-C01 | O'quvchi faqat nashr qilingan kurs va darslarni ko'radi. Nashr qilinmagan darsni to'g'ridan-to'g'ri havola bilan ham ochib bo'lmaydi (404). Darsi ham, nashr qilingan savoli ham yo'q mavzu ko'rsatilmaydi                                 | ✅    |
 | BR-C02 | Bepul dars (`isFree`) hammaga ochiq. Pullik dars faqat to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED` qaytadi va matn yuborilmaydi. Obuna (T-025) tayyor bo'lguncha o'quvchida to'liq kirish yo'q, ustoz va yordamchida bor | ✅    |
 | BR-C03 | Ichida mavzu bor kursni yoki ichida dars bor mavzuni o'chirib bo'lmaydi (409 `NOT_EMPTY`)                                                                                                                                                  | ✅    |
 | BR-C04 | Kontentni ustoz ham, yordamchi ham boshqaradi. Har o'zgarish auditga yoziladi, dars matni esa auditga yozilmaydi (faqat o'zgargan maydon nomlari)                                                                                          | ✅    |
@@ -28,6 +28,16 @@
 | BR-Q01 | To'g'ri javob va namunaviy yechim alohida ustunda saqlanadi. O'quvchi ko'rinishi uchun bu ustunlar bazadan o'qilmaydi, audit jurnaliga ham yozilmaydi               | ✅    |
 | BR-Q02 | Ko'p tanlovli savol faqat tanlangan to'plam aynan to'g'ri to'plamga teng bo'lsa to'g'ri. Qisman ball yo'q                                                           | ⚠️    |
 | BR-Q03 | Avtomatik tekshiruv: SINGLE, MULTIPLE, NUMERIC (BR-M04), MATCHING (BR-M03). EXPRESSION hozircha ustozga tushadi (ifoda ekvivalentligi T-022b), WRITTEN doim ustozga | ✅    |
+
+## Mavzu testi (P)
+
+| ID     | Qoida                                                                                                                                                | Holat |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| BR-P01 | Mavzu testi mashq: vaqt limiti yo'q, topshirgandan keyin qayta ishlash mumkin. Ochiq urinish bo'lsa, yangisi o'rniga o'sha davom etadi               | ⚠️    |
+| BR-P02 | Testga boshlanganda nashr qilingan savollar muzlatiladi. Keyin qo'shilgan savol shu urinishga kirmaydi                                               | ✅    |
+| BR-P03 | Topshirilguncha to'g'ri javob va yechim yuborilmaydi (BR-Q01). Topshirgandan keyin har savol bo'yicha to'g'ri javob va namunaviy yechim ko'rsatiladi | ✅    |
+| BR-P04 | Mavzu testi to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED`                                                                            | ⚠️    |
+| BR-P05 | O'quvchi faqat o'z urinishini ko'radi; boshqaniki 404. Urinishda ishlatilgan savol o'chirilmaydi (409), nashrdan olinadi                             | ✅    |
 
 ## Haftalik test (W)
 
