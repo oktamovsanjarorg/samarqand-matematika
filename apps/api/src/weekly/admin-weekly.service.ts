@@ -8,7 +8,8 @@ import {
 } from "@samarqand/shared";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
-import { personName, PERSON_SELECT, scoreOf } from "./weekly-views";
+import { personName, PERSON_SELECT } from "../common/person";
+import { scoreOf } from "./weekly-views";
 
 const ROW_SELECT = {
   id: true,

@@ -109,4 +109,28 @@ describe("AI yordamchi (T-040)", () => {
     await f.prisma.user.update({ where: { id: parent.id }, data: { role: "PARENT" } });
     expect((await start(parent.headers, { mode: "FREE" })).statusCode).toBe(403);
   });
+
+  it("BR-T04: ustoz suhbatlarni ko'radi (o'quvchi savollari soni bilan); o'quvchiga 403", async () => {
+    const { s, qids, attemptId } = await practice();
+    const chat = (await start(s.headers, { mode: "PRACTICE", attemptId, questionId: qids[0] })).json();
+    await say(s.headers, chat.id, "Birinchi savol");
+    await say(s.headers, chat.id, "Ikkinchi savol");
+    await start(s.headers, { mode: "FREE" });
+    const list = (await f.call("GET", `/admin/tutor/chats?userId=${s.id}`, f.teacher)).json();
+    // Bo'sh suhbat ro'yxatga chiqmaydi
+    expect(list).toHaveLength(1);
+    expect(list[0]).toMatchObject({ id: chat.id, mode: "PRACTICE", question: "1+1?", asked: 2 });
+    const full = (await f.call("GET", `/admin/tutor/chats/${chat.id}`, f.teacher)).json();
+    expect(full.messages.map((m: { role: string }) => m.role)).toEqual([
+      "USER",
+      "ASSISTANT",
+      "USER",
+      "ASSISTANT",
+    ]);
+    expect((await f.call("GET", "/admin/tutor/chats?mode=FREE&userId=" + s.id, f.teacher)).json()).toEqual(
+      [],
+    );
+    expect((await f.call("GET", "/admin/tutor/chats", s.headers)).statusCode).toBe(403);
+    expect((await f.call("GET", "/admin/tutor/chats?mode=X", f.teacher)).statusCode).toBe(400);
+  });
 });

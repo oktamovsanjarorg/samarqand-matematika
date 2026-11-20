@@ -1,7 +1,8 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { RANKING_TOP, rankRows, shortName, type Ranking } from "@samarqand/shared";
 import { PrismaService } from "../prisma/prisma.service";
-import { personName, PERSON_SELECT, scoreOf } from "./weekly-views";
+import { personName, PERSON_SELECT } from "../common/person";
+import { scoreOf } from "./weekly-views";
 
 type Row = { userId: string; name: string; score: number };
 
