@@ -14,5 +14,5 @@
 | Q-08 | AI yordamchi barcha tariflarga kiradimi?                                             | Ha                                                                                         | ochiq            |
 | Q-09 | Milliy sertifikat (matematika) aniq formati                                          | `docs/PLAN.md` §5.2.1 dagi ikkilamchi ma'lumot. Rasmiy UzBMB PDF bilan tekshiriladi        | ochiq            |
 | Q-10 | Reytingda boshqa o'quvchilar ismi qanday ko'rinadi? Ota-onaga hisobot qachon boradi? | Ism + familiyaning bosh harfi (BR-W10). Hisobot oyna yopilganda, o'sha paytdagi ball bilan | ochiq            |
-| Q-10 | Offline test natijasining bo'limlar bo'yicha formati                                 | Ish davomida aniqlanadi                                                                    | ochiq            |
 | Q-11 | Ikkinchi rang (accent)                                                               | amber `#9A6A0F`                                                                            | ochiq            |
+| Q-12 | Offline test natijasining bo'limlar bo'yicha formati                                 | Ish davomida aniqlanadi                                                                    | ochiq            |

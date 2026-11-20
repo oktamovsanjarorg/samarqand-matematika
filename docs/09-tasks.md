@@ -70,4 +70,16 @@
 | T-042 | Admin "Yordamchi": o'quvchilar suhbatlari (rejim bo'yicha, o'quvchi savollari soni — Q-07 statistikasi), suhbatni o'qish (BR-T04)                               | ✅    |
 | T-043 | Haftalik test yopilgach "Xatoni tushuntir": o'quvchining yechim rasmi, ustoz izohi va tekshiruv qadamlari bilan (ko'chirish belgilari modelga bormaydi, BR-W05) | ✅    |
 
-Keyingi bosqichlar (Mock, offline, ko'rsatmalar) 3-bosqich oxirida vazifalarga bo'linadi.
+### 4-bosqich: Mock va offline
+
+| ID    | Vazifa                                                                                                                                                                                                | Holat |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| T-050 | Imtihon shabloni (BR-M01): bo'limlar (savol turlari, soni, bitta savol bali), vaqt, shkala va daraja chegaralari; admin sozlamalarda; "Milliy sertifikat" taklifi PLAN §5.2.1 qiymatlari bilan (Q-09) | ✅    |
+| T-051 | Mock API: shablondan mock (shablon nusxasi mockda saqlanadi), bo'limlarga savol tanlash, oyna, server vaqti bo'yicha limit va avtomatik topshirish, to'g'ri javoblar yopilguncha yo'q, BR-T01         | ⬜    |
+| T-052 | Mini App: mocklar, yechish (qolgan vaqt), natija: bo'limlar bo'yicha xom ball, taxminiy daraja (BR-M02, M05)                                                                                          | ⬜    |
+| T-053 | Rasch (`packages/math`): kalibrlash va T-ball; ishtirokchi yetarli bo'lsa Rasch, aks holda taxminiy (BR-M05); admin natijalar sahifasi                                                                | ⬜    |
+| T-054 | Offline guruhlar: guruh, jadval, o'quvchilarni biriktirish (admin)                                                                                                                                    | ⬜    |
+| T-055 | Davomat: guruh va sana bo'yicha belgilash, kelmaganda tasdiqlangan ota-onaga xabar                                                                                                                    | ⬜    |
+| T-056 | Tashqi test importi (CSV): bo'limlar bo'yicha natija, o'quvchini moslash (Q-12)                                                                                                                       | ⬜    |
+
+5-bosqich (ko'rsatmalar) 4-bosqich oxirida vazifalarga bo'linadi.
