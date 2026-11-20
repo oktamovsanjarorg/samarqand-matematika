@@ -79,6 +79,8 @@ export type WeeklyAttemptView = WeeklyOpen | WeeklyWaiting | WeeklyResult;
 export type WeeklyResultItem = AttemptResult["items"][number] & {
   photos: string[];
   noPhoto: boolean;
+  /** Shu savol uchun haqiqiy ball (ustoz qarori yoki avtomatik + rasm qoidasi) */
+  points: number;
   /** Ustoz izohi yoki ustoz tasdiqlagan tushuntirish; bo'lmasa null */
   feedback: string | null;
 };
