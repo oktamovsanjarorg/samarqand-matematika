@@ -1,24 +1,13 @@
 import { ERROR_CODES, type LessonView } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
-import { Lock, PlayCircle } from "lucide-react";
+import { PlayCircle } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { Locked } from "../components/Locked";
 import { MathText } from "../components/MathText";
 import { ErrorState } from "../components/states";
 import { useBackButton } from "../hooks/useBackButton";
 import { api, ApiError } from "../lib/api";
 import { tg } from "../lib/telegram";
-
-function Locked() {
-  return (
-    <div className="card flex flex-col items-center gap-3 py-8 text-center" data-testid="locked">
-      <Lock size={32} className="text-hint" />
-      <p className="font-bold">Bu dars obuna bilan ochiladi</p>
-      <p className="text-sm text-hint">
-        Toʻlov va ota-ona tasdigʻidan keyin barcha darslar ochiladi. Savol boʻlsa, ustozga yozing.
-      </p>
-    </div>
-  );
-}
 
 function openVideo(url: string) {
   if (tg?.openLink) tg.openLink(url);
@@ -42,7 +31,8 @@ export function LessonPage() {
         <div className="skeleton h-40" />
       </div>
     );
-  if (err instanceof ApiError && err.code === ERROR_CODES.LOCKED) return <Locked />;
+  if (err instanceof ApiError && err.code === ERROR_CODES.LOCKED)
+    return <Locked title="Bu dars obuna bilan ochiladi" />;
   if (err) return <ErrorState message={err.message} onRetry={() => lesson.refetch()} />;
   const l = lesson.data;
 

@@ -1,6 +1,6 @@
 import type { CourseView } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, FileText, Lock } from "lucide-react";
+import { ChevronRight, FileText, ListChecks, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { EmptyState, ErrorState } from "../components/states";
 import { api } from "../lib/api";
@@ -32,7 +32,15 @@ function TopicCard({ topic }: { topic: Topic }) {
         ))}
       </ul>
       {topic.questionCount > 0 && (
-        <p className="px-1 text-xs text-hint">Mavzu testi: {topic.questionCount} ta savol</p>
+        <Link
+          to={`/topics/${topic.id}/test`}
+          className="tap flex min-h-12 items-center gap-3 rounded-xl bg-brand/5 px-2 font-semibold text-brand"
+        >
+          <ListChecks size={18} className="shrink-0" />
+          <span className="flex-1 text-[15px]">Mavzu testi</span>
+          <span className="text-xs text-hint">{topic.questionCount} ta savol</span>
+          <ChevronRight size={18} className="text-hint" />
+        </Link>
       )}
     </section>
   );

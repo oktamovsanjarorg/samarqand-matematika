@@ -53,3 +53,6 @@ export async function api<T>(path: string, init: RequestInit = {}, retried = fal
 
 export const post = <T>(path: string, body?: object) =>
   api<T>(path, { method: "POST", ...(body ? { body: JSON.stringify(body) } : {}) });
+
+export const put = <T>(path: string, body: object) =>
+  api<T>(path, { method: "PUT", body: JSON.stringify(body) });

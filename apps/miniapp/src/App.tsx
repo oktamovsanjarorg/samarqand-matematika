@@ -6,9 +6,11 @@ import { AppLayout } from "./components/AppLayout";
 import { ErrorState, Splash } from "./components/states";
 import { api, login } from "./lib/api";
 import { HomePage } from "./pages/HomePage";
+import { AttemptResultPage } from "./pages/AttemptResultPage";
 import { LessonPage } from "./pages/LessonPage";
 import { LessonsPage } from "./pages/LessonsPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
+import { TopicTestPage } from "./pages/TopicTestPage";
 import { ProfilePage } from "./pages/ProfilePage";
 
 // Faqat dev: production bundle'ga tushmaydi
@@ -40,6 +42,8 @@ export function App() {
         <Route index element={<HomePage />} />
         <Route path="lessons" element={<LessonsPage />} />
         <Route path="lessons/:id" element={<LessonPage />} />
+        <Route path="topics/:id/test" element={<TopicTestPage />} />
+        <Route path="attempts/:id" element={<AttemptResultPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
       {import.meta.env.DEV && (

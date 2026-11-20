@@ -38,7 +38,7 @@
 | T-022  | Savollar banki: turlar (SINGLE, MULTIPLE, NUMERIC, EXPRESSION, MATCHING, WRITTEN), avtomatik tekshiruv, namunaviy yechim, ko'nikma teglari                    | ✅    |
 | T-022b | Admin savol muharriri: variantlar/juftlar, LaTeX jonli ko'rinishi, brauzerda tekshiruv, tartiblash. EXPRESSION tengligi (mathjs) va MathLive keyin, ADR bilan | ✅    |
 | T-023  | Mavzu testlari API: urinish, javob saqlash, topshirish, natija                                                                                                | ✅    |
-| T-023b | Mini App: mavzu testini yechish, natija va tushuntirish                                                                                                       | ⬜    |
+| T-023b | Mini App: mavzu testini yechish (avtomatik saqlash, qayta ochilganda davom), topshirish tasdig'i, natija, to'g'ri javob va yechim                             | ✅    |
 | T-024  | Asosiy va Profil ekranlari: statistika                                                                                                                        | ⬜    |
 | T-025  | Qo'lda to'lov va obuna                                                                                                                                        | ⬜    |
 | T-026  | Word/Excel'dan savol import (pandoc, OMML → LaTeX)                                                                                                            | ⬜    |

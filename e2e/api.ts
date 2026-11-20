@@ -82,3 +82,17 @@ export async function requestParentLink(request: APIRequestContext, studentTg: n
   });
   expect(((await res.json()) as { status: string }).status).toBe("created");
 }
+
+/** Ustoz o'quvchiga FREE kirish beradi (to'lovsiz to'liq kirish) */
+export async function grantFree(request: APIRequestContext, admin: Record<string, string>, fullName: string) {
+  const res = await request.get(`${API}/admin/students?filter=all&q=${encodeURIComponent(fullName)}`, {
+    headers: admin,
+  });
+  const [row] = (await res.json()) as { id: string }[];
+  expect(row, fullName).toBeTruthy();
+  const patch = await request.patch(`${API}/admin/students/${row?.id}`, {
+    headers: admin,
+    data: { accessMode: "FREE" },
+  });
+  expect(patch.ok()).toBe(true);
+}
