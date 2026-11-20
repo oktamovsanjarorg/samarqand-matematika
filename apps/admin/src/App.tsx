@@ -8,6 +8,8 @@ import { ContentPage } from "./pages/ContentPage";
 import { LessonEditorPage } from "./pages/LessonEditorPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ParentsPage } from "./pages/ParentsPage";
+import { QuestionEditPage } from "./pages/QuestionEditPage";
+import { QuestionsPage } from "./pages/QuestionsPage";
 import { SignInHint } from "./pages/SignInHint";
 import { StudentsPage } from "./pages/StudentsPage";
 
@@ -35,6 +37,9 @@ export function App() {
               <Route index element={<Navigate to="/content" replace />} />
               <Route path="content" element={<ContentPage />} />
               <Route path="content/lessons/:id" element={<LessonEditorPage />} />
+              <Route path="content/topics/:topicId/questions" element={<QuestionsPage />} />
+              <Route path="content/topics/:topicId/questions/new" element={<QuestionEditPage />} />
+              <Route path="content/questions/:id" element={<QuestionEditPage />} />
               <Route path="students" element={<StudentsPage />} />
               <Route path="parents" element={<ParentsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />

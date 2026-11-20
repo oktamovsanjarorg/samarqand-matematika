@@ -26,21 +26,23 @@
 
 ## 1-bosqich: MVP
 
-| ID     | Vazifa                                                                                                                                    | Holat |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| T-020  | O'quvchi profili: onboarding (ism, telefon bot orqali), ustoz qabul qilishi, kirish rejimi AUTO/FREE/CLOSED (BR-S01–S04, BR-A04)          | ✅    |
-| T-020b | Ota-ona ulanishi: bot `/ota` va `p_<kod>`, ustoz tasdig'i, shubhali belgilar (BR-S05, S06, A04)                                           | ✅    |
-| T-020c | Admin "O'quvchilar" (yangilar, qidiruv, qabul, kirish rejimi) va "Ota-onalar" (navbat, shubha belgilari, tasdiq/rad)                      | ✅    |
-| T-020d | Mini App onboarding: ism (shared sxema bilan tekshiruv) va raqamni ulashish (`requestContact`)                                            | ✅    |
-| T-021  | Kontent backend: kurs → mavzu → dars (CRUD, tartiblash, BR-C01–C04), o'quvchi API                                                         | ✅    |
-| T-021b | Admin kontent: kurs → mavzu → dars daraxti, tartiblash, nashr, dars muharriri (formula jonli ko'rinishi)                                  | ✅    |
-| T-021c | Mini App: Darslar ro'yxati (yopiq/bepul belgisi), dars sahifasi (KaTeX, video, Telegram orqaga tugmasi)                                   | ✅    |
-| T-022  | Savollar banki: turlar (SINGLE, MULTIPLE, NUMERIC, EXPRESSION, MATCHING, WRITTEN), MathLive muharriri, namunaviy yechim, ko'nikma teglari | ⬜    |
-| T-023  | Mavzu testlari: yechish, natija, tushuntirish                                                                                             | ⬜    |
-| T-024  | Asosiy va Profil ekranlari: statistika                                                                                                    | ⬜    |
-| T-025  | Qo'lda to'lov va obuna                                                                                                                    | ⬜    |
-| T-026  | Word/Excel'dan savol import (pandoc, OMML → LaTeX)                                                                                        | ⬜    |
-| T-027  | Bot xabarnomalari: ustozga yangi o'quvchi va ota-ona so'rovi, ota-onaga va o'quvchiga natija (NotifyService)                              | ✅    |
+| ID     | Vazifa                                                                                                                                                        | Holat |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| T-020  | O'quvchi profili: onboarding (ism, telefon bot orqali), ustoz qabul qilishi, kirish rejimi AUTO/FREE/CLOSED (BR-S01–S04, BR-A04)                              | ✅    |
+| T-020b | Ota-ona ulanishi: bot `/ota` va `p_<kod>`, ustoz tasdig'i, shubhali belgilar (BR-S05, S06, A04)                                                               | ✅    |
+| T-020c | Admin "O'quvchilar" (yangilar, qidiruv, qabul, kirish rejimi) va "Ota-onalar" (navbat, shubha belgilari, tasdiq/rad)                                          | ✅    |
+| T-020d | Mini App onboarding: ism (shared sxema bilan tekshiruv) va raqamni ulashish (`requestContact`)                                                                | ✅    |
+| T-021  | Kontent backend: kurs → mavzu → dars (CRUD, tartiblash, BR-C01–C04), o'quvchi API                                                                             | ✅    |
+| T-021b | Admin kontent: kurs → mavzu → dars daraxti, tartiblash, nashr, dars muharriri (formula jonli ko'rinishi)                                                      | ✅    |
+| T-021c | Mini App: Darslar ro'yxati (yopiq/bepul belgisi), dars sahifasi (KaTeX, video, Telegram orqaga tugmasi)                                                       | ✅    |
+| T-022  | Savollar banki: turlar (SINGLE, MULTIPLE, NUMERIC, EXPRESSION, MATCHING, WRITTEN), avtomatik tekshiruv, namunaviy yechim, ko'nikma teglari                    | ✅    |
+| T-022b | Admin savol muharriri: variantlar/juftlar, LaTeX jonli ko'rinishi, brauzerda tekshiruv, tartiblash. EXPRESSION tengligi (mathjs) va MathLive keyin, ADR bilan | ✅    |
+| T-023  | Mavzu testlari API: urinish, javob saqlash, topshirish, natija                                                                                                | ✅    |
+| T-023b | Mini App: mavzu testini yechish, natija va tushuntirish                                                                                                       | ⬜    |
+| T-024  | Asosiy va Profil ekranlari: statistika                                                                                                                        | ⬜    |
+| T-025  | Qo'lda to'lov va obuna                                                                                                                                        | ⬜    |
+| T-026  | Word/Excel'dan savol import (pandoc, OMML → LaTeX)                                                                                                            | ⬜    |
+| T-027  | Bot xabarnomalari: ustozga yangi o'quvchi va ota-ona so'rovi, ota-onaga va o'quvchiga natija (NotifyService)                                                  | ✅    |
 
 ## 2-bosqich: haftalik test va AI tekshiruvi
 
