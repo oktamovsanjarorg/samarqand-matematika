@@ -1,5 +1,5 @@
 import { ROLE_LABELS } from "@samarqand/shared";
-import { BookOpen, CalendarCheck, CreditCard, LogOut, Settings, UserRound, Users } from "lucide-react";
+import { Bot, BookOpen, CalendarCheck, CreditCard, LogOut, Settings, UserRound, Users } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 import type { Session } from "../lib/session";
 
@@ -9,6 +9,7 @@ const NAV = [
   { to: "/students", label: "Oʻquvchilar", Icon: UserRound },
   { to: "/parents", label: "Ota-onalar", Icon: Users },
   { to: "/payments", label: "Toʻlovlar", Icon: CreditCard },
+  { to: "/tutor", label: "Yordamchi", Icon: Bot },
 ];
 // BR-B05: tarif va karta faqat ustozda
 const TEACHER_NAV = [{ to: "/settings", label: "Sozlamalar", Icon: Settings }];

@@ -4,7 +4,8 @@ import { AccessService } from "../access/access.service";
 import { weeklyParentReport } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
-import { personName, PERSON_SELECT, scoreOf } from "./weekly-views";
+import { personName, PERSON_SELECT } from "../common/person";
+import { scoreOf } from "./weekly-views";
 
 /**
  * Ota-onaga hisobot (T-035b): oyna yopilganda tasdiqlangan ota-onalarga ball va o'rin.

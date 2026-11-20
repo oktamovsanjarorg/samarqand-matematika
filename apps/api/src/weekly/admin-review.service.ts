@@ -14,7 +14,8 @@ import { PrismaService } from "../prisma/prisma.service";
 import { toDetail, toView } from "../questions/codec";
 import { averagePercent } from "../topic-tests/stats";
 import { historyJump, sameWrongAnswers } from "./signals";
-import { answerPoints, personName, PERSON_SELECT } from "./weekly-views";
+import { personName, PERSON_SELECT } from "../common/person";
+import { answerPoints } from "./weekly-views";
 
 const ANSWER_INCLUDE = {
   question: true,

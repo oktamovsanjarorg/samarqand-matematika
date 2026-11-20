@@ -13,6 +13,8 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { WeeklyEditPage } from "./pages/WeeklyEditPage";
 import { WeeklyListPage } from "./pages/WeeklyListPage";
 import { WeeklyReviewPage } from "./pages/WeeklyReviewPage";
+import { TutorChatPage } from "./pages/TutorChatPage";
+import { TutorChatsPage } from "./pages/TutorChatsPage";
 import { QuestionEditPage } from "./pages/QuestionEditPage";
 import { QuestionsPage } from "./pages/QuestionsPage";
 import { SignInHint } from "./pages/SignInHint";
@@ -53,6 +55,8 @@ export function App() {
               <Route path="weekly/new" element={<WeeklyEditPage />} />
               <Route path="weekly/:id" element={<WeeklyEditPage />} />
               <Route path="weekly/:id/review" element={<WeeklyReviewPage />} />
+              <Route path="tutor" element={<TutorChatsPage />} />
+              <Route path="tutor/:id" element={<TutorChatPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           ) : (

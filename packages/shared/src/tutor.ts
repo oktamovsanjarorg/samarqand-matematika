@@ -34,3 +34,22 @@ export interface TutorChatView {
   /** Bugun qolgan so'rovlar (BR-T03) */
   remaining: number;
 }
+
+/** Ustoz: suhbatlar ro'yxati (BR-T04). messages — o'quvchi so'rovlari soni (ishora statistikasi, Q-07) */
+export interface AdminTutorChatRow {
+  id: string;
+  mode: TutorMode;
+  student: { userId: string; name: string };
+  question: string | null;
+  asked: number;
+  lastAt: string;
+}
+
+export interface AdminTutorChat extends Omit<AdminTutorChatRow, "asked"> {
+  messages: TutorMessageView[];
+}
+
+export const adminTutorQuery = z.object({
+  mode: z.enum(TUTOR_MODES).optional(),
+  userId: z.string().min(1).optional(),
+});
