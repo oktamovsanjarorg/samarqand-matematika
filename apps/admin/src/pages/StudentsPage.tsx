@@ -62,6 +62,7 @@ function StudentCard({ s }: { s: AdminStudentRow }) {
         ) : (
           <span className="text-hint">Telefon yoʻq</span>
         )}
+        {s.groupName && <Badge>{s.groupName}</Badge>}
         <span className="text-xs text-hint">Roʻyxatdan: {formatDate(s.createdAt)}</span>
       </div>
       <div className="flex flex-wrap items-center gap-2">

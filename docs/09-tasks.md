@@ -82,7 +82,7 @@
 | T-053  | Rasch (`packages/math`, ADR-0005): mock yopilganda vaqti o'tganlar topshiriladi, 30+ topshirgan bo'lsa Rasch, aks holda taxminiy (BR-M05); natija o'quvchiga botda                                          | ✅    |
 | T-053b | Admin: mock natijalari (ball, daraja, bo'limlar, usul: Rasch yoki taxminiy)                                                                                                                                 | ✅    |
 | T-054  | Offline guruhlar API: guruh (nom, jadval, faol), o'quvchilarni qo'shish (boshqa guruhdan ko'chadi) va olib tashlash; o'quvchilar ro'yxatida guruh                                                           | ✅    |
-| T-054b | Admin: guruhlar sahifasi, guruhga o'quvchi qo'shish                                                                                                                                                         | ⬜    |
+| T-054b | Admin: guruhlar sahifasi, guruhga o'quvchi qo'shish                                                                                                                                                         | ✅    |
 | T-055  | Davomat: guruh va sana bo'yicha belgilash, kelmaganda tasdiqlangan ota-onaga xabar                                                                                                                          | ⬜    |
 | T-056  | Tashqi test importi (CSV): bo'limlar bo'yicha natija, o'quvchini moslash (Q-12)                                                                                                                             | ⬜    |
 

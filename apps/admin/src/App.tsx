@@ -10,6 +10,8 @@ import { LoginPage } from "./pages/LoginPage";
 import { ParentsPage } from "./pages/ParentsPage";
 import { PaymentsPage } from "./pages/PaymentsPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { GroupPage } from "./pages/GroupPage";
+import { GroupsPage } from "./pages/GroupsPage";
 import { MockEditPage } from "./pages/MockEditPage";
 import { MockListPage } from "./pages/MockListPage";
 import { WeeklyEditPage } from "./pages/WeeklyEditPage";
@@ -58,6 +60,8 @@ export function App() {
               <Route path="weekly/:id" element={<WeeklyEditPage />} />
               <Route path="weekly/:id/review" element={<WeeklyReviewPage />} />
               <Route path="mocks" element={<MockListPage />} />
+              <Route path="groups" element={<GroupsPage />} />
+              <Route path="groups/:id" element={<GroupPage />} />
               <Route path="mocks/new" element={<MockEditPage />} />
               <Route path="mocks/:id" element={<MockEditPage />} />
               <Route path="tutor" element={<TutorChatsPage />} />

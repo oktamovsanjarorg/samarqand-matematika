@@ -19,6 +19,7 @@ export default async function teardown() {
     // To'lovlar foydalanuvchi bilan o'chgan, endi "E2E " tariflari va test kartasi
     await prisma.plan.deleteMany({ where: { name: { startsWith: E2E_PREFIX } } });
     await prisma.examTemplate.deleteMany({ where: { name: { startsWith: E2E_PREFIX } } });
+    await prisma.group.deleteMany({ where: { name: { startsWith: E2E_PREFIX } } });
     const card = await prisma.appSetting.findUnique({ where: { key: "billing.card" } });
     if (JSON.stringify(card?.value ?? {}).includes(`"holder":"${E2E_PREFIX}`))
       await prisma.appSetting.delete({ where: { key: "billing.card" } });
