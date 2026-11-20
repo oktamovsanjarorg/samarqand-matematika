@@ -35,6 +35,7 @@ model User {
   payments         Payment[]
   reviewedPayments Payment[]        @relation("PaymentReviewer")
   subscriptions    Subscription[]
+  weeklyAttempts   WeeklyAttempt[]
   student          StudentProfile?  @relation("Student")
   acceptedStudents StudentProfile[] @relation("AcceptedBy")
   children         ParentLink[]     @relation("ParentOf")
@@ -135,27 +136,29 @@ enum QuestionType {
 
 /// Savollar banki (T-022). To'g'ri javob alohida ustunda: o'quvchiga ko'rinish tuzilganda tanlanmaydi
 model Question {
-  id          String        @id @default(cuid())
-  topicId     String
-  topic       Topic         @relation(fields: [topicId], references: [id], onDelete: Restrict)
-  type        QuestionType
+  id              String           @id @default(cuid())
+  topicId         String
+  topic           Topic            @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  type            QuestionType
   /// Savol matni: Markdown va LaTeX
-  text        String
+  text            String
   /// O'quvchi ko'radigan qism: variantlar (SINGLE, MULTIPLE) yoki ikki ustun (MATCHING)
-  content     Json          @default("{}")
+  content         Json             @default("{}")
   /// To'g'ri javob. WRITTEN uchun null (ustoz qo'lda baholaydi)
-  answer      Json?
+  answer          Json?
   /// Namunaviy yechim: natijadan keyin ko'rsatiladi, AI tekshiruvida asos bo'ladi
-  solution    String        @default("")
+  solution        String           @default("")
   /// 1 oson, 2 o'rta, 3 qiyin
-  difficulty  Int           @default(2)
+  difficulty      Int              @default(2)
   /// Ko'nikma teglari (masalan "kvadrat-tenglama"): ko'rsatmalar uchun
-  skills      String[]
-  answers     TopicAnswer[]
-  order       Int           @default(0)
-  isPublished Boolean       @default(false)
-  createdAt   DateTime      @default(now()) @db.Timestamptz
-  updatedAt   DateTime      @updatedAt @db.Timestamptz
+  skills          String[]
+  answers         TopicAnswer[]
+  order           Int              @default(0)
+  isPublished     Boolean          @default(false)
+  createdAt       DateTime         @default(now()) @db.Timestamptz
+  updatedAt       DateTime         @updatedAt @db.Timestamptz
+  weeklyQuestions WeeklyQuestion[]
+  weeklyAnswers   WeeklyAnswer[]
 
   @@index([topicId, order])
 }
@@ -313,4 +316,63 @@ model Subscription {
   createdAt DateTime @default(now()) @db.Timestamptz
 
   @@index([userId, endsAt])
+}
+
+/// Haftalik test (BR-W01): oyna opensAt..closesAt, savollar bankdan olinadi
+model WeeklyTest {
+  id            String           @id @default(cuid())
+  title         String
+  opensAt       DateTime         @db.Timestamptz
+  closesAt      DateTime         @db.Timestamptz
+  isPublished   Boolean          @default(false)
+  /// Yuborilgan eslatma (BR-W07): 0 yo'q, 1 "24 soat qoldi", 2 "3 soat qoldi"
+  reminderStage Int              @default(0)
+  /// Oyna yopilib ballar qo'yilgan vaqt (BR-W03, W08)
+  closedAt      DateTime?        @db.Timestamptz
+  createdAt     DateTime         @default(now()) @db.Timestamptz
+  questions     WeeklyQuestion[]
+  attempts      WeeklyAttempt[]
+
+  @@index([isPublished, closesAt])
+}
+
+model WeeklyQuestion {
+  weeklyTestId String
+  weeklyTest   WeeklyTest @relation(fields: [weeklyTestId], references: [id], onDelete: Cascade)
+  questionId   String
+  question     Question   @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  order        Int
+
+  @@id([weeklyTestId, questionId])
+}
+
+/// O'quvchining yagona urinishi (BR-W02)
+model WeeklyAttempt {
+  id           String         @id @default(cuid())
+  weeklyTestId String
+  weeklyTest   WeeklyTest     @relation(fields: [weeklyTestId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startedAt    DateTime       @default(now()) @db.Timestamptz
+  submittedAt  DateTime?      @db.Timestamptz
+  /// Avtomatik tekshiruvdagi to'g'ri javoblar
+  correct      Int?
+  /// Ball: oyna yopilganda qo'yiladi, topshirilmagan bo'lsa 0 (BR-W03). Keyin ustoz o'zgartiradi (BR-W06)
+  score        Int?
+  answers      WeeklyAnswer[]
+
+  @@unique([weeklyTestId, userId])
+}
+
+model WeeklyAnswer {
+  attemptId  String
+  attempt    WeeklyAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question      @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  order      Int
+  response   Json?
+  result     CheckResult?
+  updatedAt  DateTime      @updatedAt @db.Timestamptz
+
+  @@id([attemptId, questionId])
 }

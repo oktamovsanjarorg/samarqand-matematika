@@ -31,6 +31,8 @@ export async function createApp(extraControllers: Type[] = []) {
     OWNER_USERNAMES: OWNER,
     // Cheklar vaqtinchalik papkaga: test repoga fayl yozmaydi
     MEDIA_DIR: TEST_MEDIA_DIR,
+    // Rejalashtiruvchi testlarda o'zi ishlamaydi: tick() to'g'ridan-to'g'ri chaqiriladi
+    WEEKLY_TICK_SEC: "0",
   });
   const mod = await Test.createTestingModule({
     imports: [AppModule.forRoot(env)],

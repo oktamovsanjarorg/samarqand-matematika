@@ -42,3 +42,11 @@ export const paymentApprovedText = (until: string) =>
 
 export const paymentRejectedText = (reason: string) =>
   `Toʻlov cheki qabul qilinmadi.\nSabab: ${esc(reason)}\n\nIlovada qayta yuborishingiz mumkin.`;
+
+/** O'quvchiga: haftalik test yopilishiga oz qoldi (BR-W07) */
+export const weeklyReminderText = (title: string, hours: number) =>
+  `⏰ Haftalik test <b>${esc(title)}</b> yopilishiga ${hours} soat qoldi.\nTopshirilmagan test 0 ball boʻladi.`;
+
+/** O'quvchiga: oyna yopildi, natija (BR-W08) */
+export const weeklyResultText = (title: string, score: number, total: number) =>
+  `📊 Haftalik test <b>${esc(title)}</b> natijasi: <b>${score}/${total}</b>.\nToʻgʻri javoblarni ilovada koʻring.`;

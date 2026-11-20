@@ -37,4 +37,33 @@ export class AccessService {
     if (STAFF_ROLES.includes(role)) return true;
     return isFullAccess(await this.facts(userId));
   }
+
+  /** To'liq kirishli faol o'quvchilar (haftalik test eslatmalari uchun, BR-W07) */
+  async fullAccessStudentIds(): Promise<string[]> {
+    const now = new Date();
+    const rows = await this.prisma.user.findMany({
+      where: { role: "STUDENT", isBlocked: false },
+      select: {
+        id: true,
+        student: {
+          select: {
+            accessMode: true,
+            acceptedAt: true,
+            _count: { select: { parents: { where: { status: "APPROVED" } } } },
+          },
+        },
+        _count: { select: { subscriptions: { where: { endsAt: { gt: now } } } } },
+      },
+    });
+    return rows
+      .filter((u) =>
+        isFullAccess({
+          mode: u.student?.accessMode ?? "AUTO",
+          accepted: !!u.student?.acceptedAt,
+          approvedParents: u.student?._count.parents ?? 0,
+          paid: u._count.subscriptions > 0,
+        }),
+      )
+      .map((u) => u.id);
+  }
 }

@@ -8,3 +8,4 @@ export * from "./profile";
 export * from "./parent";
 export * from "./stats";
 export * from "./billing";
+export * from "./weekly";
