@@ -68,6 +68,6 @@
 | T-040 | Yordamchi API: `TutorChat`/`TutorMessage`, rejimlar (mashq, erkin), kontekst serverda, BR-T01 (ochiq haftalik savol), BR-T03 kunlik limit, AI o'chiq bo'lsa 503 | ✅    |
 | T-041 | Mini App: mavzu testi savolida "Yordamchi" paneli (javob avval saqlanadi), Asosiy'da erkin suhbat sahifasi, xato va limit holatlari                             | ✅    |
 | T-042 | Admin "Yordamchi": o'quvchilar suhbatlari (rejim bo'yicha, o'quvchi savollari soni — Q-07 statistikasi), suhbatni o'qish (BR-T04)                               | ✅    |
-| T-043 | Haftalik test yopilgach xatoni tushuntirish (REVIEW, o'quvchining rasmi bilan)                                                                                  | ⬜    |
+| T-043 | Haftalik test yopilgach "Xatoni tushuntir": o'quvchining yechim rasmi, ustoz izohi va tekshiruv qadamlari bilan (ko'chirish belgilari modelga bormaydi, BR-W05) | ✅    |
 
 Keyingi bosqichlar (Mock, offline, ko'rsatmalar) 3-bosqich oxirida vazifalarga bo'linadi.

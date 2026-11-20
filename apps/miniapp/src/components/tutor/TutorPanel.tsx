@@ -1,9 +1,13 @@
+import type { StartTutorInput } from "@samarqand/shared";
 import { Bot, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { TutorChat } from "./TutorChat";
 
-/** Mavzu testi savoli ostida: "Yordamchi" tugmasi va suhbat (BR-T02) */
-export function TutorPanel(p: { attemptId: string; questionId: string; flush: () => Promise<void> }) {
+/**
+ * Savol ostida yordamchi: mavzu testida ishora (BR-T02), haftalik natijada xato tahlili.
+ * flush: mashqda yozilayotgan javob avval saqlanadi.
+ */
+export function TutorPanel(p: { input: StartTutorInput; label: string; flush?: () => Promise<void> }) {
   const [open, setOpen] = useState(false);
   if (!open)
     return (
@@ -12,7 +16,7 @@ export function TutorPanel(p: { attemptId: string; questionId: string; flush: ()
         onClick={() => setOpen(true)}
         className="tap flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-brand/30 font-semibold text-brand"
       >
-        <Bot size={18} /> Yordamchi
+        <Bot size={18} /> {p.label}
       </button>
     );
   return (
@@ -24,11 +28,7 @@ export function TutorPanel(p: { attemptId: string; questionId: string; flush: ()
       >
         <ChevronUp size={16} /> Yordamchini yopish
       </button>
-      <TutorChat
-        key={p.questionId}
-        input={{ mode: "PRACTICE", attemptId: p.attemptId, questionId: p.questionId }}
-        beforeSend={p.flush}
-      />
+      <TutorChat input={p.input} beforeSend={p.flush} />
     </div>
   );
 }

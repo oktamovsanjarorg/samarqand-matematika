@@ -32,3 +32,4 @@ Haftalik testda o'quvchi har savolga daftardagi yechim rasmini yuklaydi (BR-W04)
 - `effort: "medium"` (suhbat; yechim tekshiruvida `high`), `fallbacks: "default"`. Tarix: oxirgi 20 xabar.
 - Etalon yechim va to'g'ri javob modelga boradi (o'quvchi javobini tekshirish uchun), o'quvchiga API orqali qaytmaydi. Mashqda test topshirilmaguncha model to'liq yechimni aytmasligi tizim qoidasida (BR-T02).
 - BR-T01 server tekshiruvi: savol ochiq haftalik testda bo'lsa yoki erkin xabarda ochiq test savoli matni bo'lsa, so'rov modelga yuborilmaydi (403 `AI_BLOCKED`).
+- Xato tahlili (REVIEW, T-043): faqat oyna yopilgach. Kontekstga ustoz bali va o'quvchiga izohi, AI tekshiruvining qadamlari qo'shiladi; o'quvchining yechim rasmlari birinchi xabarga biriktiriladi. Ko'chirish belgilari, shubha va ustozga mo'ljallangan AI izohi modelga yuborilmaydi (BR-W05), aks holda yordamchi o'quvchiga aytib qo'yishi mumkin edi.
