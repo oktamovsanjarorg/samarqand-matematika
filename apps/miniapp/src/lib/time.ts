@@ -26,3 +26,12 @@ export function formatStamp(iso: string): string {
   const p = Object.fromEntries(STAMP.formatToParts(new Date(iso)).map((x) => [x.type, x.value]));
   return `${p.day}.${p.month}, ${p.hour}:${p.minute}`;
 }
+
+/** Teskari sanoq: "1:05:09", "24:59", "0:07" (soniya aniqligida) */
+export function clock(msLeft: number): string {
+  const s = Math.max(0, Math.ceil(msLeft / 1000));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return h > 0 ? `${h}:${pad(m)}:${pad(s % 60)}` : `${m}:${pad(s % 60)}`;
+}
