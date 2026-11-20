@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Locked } from "../components/Locked";
 import { ErrorState, TestSkeleton } from "../components/states";
 import { Runner } from "../components/test/Runner";
+import { TutorPanel } from "../components/tutor/TutorPanel";
 import { useBackButton } from "../hooks/useBackButton";
 import { ApiError, post } from "../lib/api";
 
@@ -39,6 +40,15 @@ export function TopicTestPage() {
   if (!attempt.data) return <TestSkeleton />;
   const a = attempt.data;
   return (
-    <Runner attempt={a} base="/attempts" kicker="Mavzu testi" title={a.topicTitle} onSubmit={submit(a.id)} />
+    <Runner
+      attempt={a}
+      base="/attempts"
+      kicker="Mavzu testi"
+      title={a.topicTitle}
+      onSubmit={submit(a.id)}
+      extra={(questionId, flush) => (
+        <TutorPanel key={questionId} attemptId={a.id} questionId={questionId} flush={flush} />
+      )}
+    />
   );
 }
