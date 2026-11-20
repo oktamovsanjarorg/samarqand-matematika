@@ -76,7 +76,12 @@ export type WeeklyOpen = Omit<AttemptView, "topicId" | "topicTitle" | "questions
 export type WeeklyAttemptView = WeeklyOpen | WeeklyWaiting | WeeklyResult;
 
 /** result: avtomatik tekshiruv; noPhoto: yechim rasmi yo'q, shuning uchun to'g'ri javob ham 0 ball (BR-W04) */
-export type WeeklyResultItem = AttemptResult["items"][number] & { photos: string[]; noPhoto: boolean };
+export type WeeklyResultItem = AttemptResult["items"][number] & {
+  photos: string[];
+  noPhoto: boolean;
+  /** Ustoz izohi yoki ustoz tasdiqlagan tushuntirish; bo'lmasa null */
+  feedback: string | null;
+};
 
 /** Oyna yopilgandan keyin: ball va har savol bo'yicha to'g'ri javob */
 export type WeeklyResult = Omit<

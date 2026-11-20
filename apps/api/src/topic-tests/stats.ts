@@ -21,7 +21,7 @@ export function topicTable(attempts: AttemptSummary[]): TopicRow[] {
 }
 
 /** O'rtacha foiz: faqat avtomatik tekshiriladigan savoli bor urinishlar */
-export function averagePercent(attempts: AttemptSummary[]): number | null {
+export function averagePercent(attempts: Pick<AttemptSummary, "correct" | "checkable">[]): number | null {
   const ps = attempts.map((a) => percentOf(a.correct, a.checkable)).filter((p): p is number => p !== null);
   return ps.length ? Math.round(ps.reduce((s, p) => s + p, 0) / ps.length) : null;
 }

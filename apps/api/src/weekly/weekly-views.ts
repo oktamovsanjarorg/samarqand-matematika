@@ -1,4 +1,4 @@
-import type { CheckResult, WeeklyAttemptView } from "@samarqand/shared";
+import type { CheckResult, SolutionVerdict, WeeklyAttemptView } from "@samarqand/shared";
 import { toView } from "../questions/codec";
 import { resultItems, type AttemptRow } from "../topic-tests/attempt-views";
 
@@ -10,14 +10,25 @@ export interface WeeklyAttemptRow {
   correct: number | null;
   score: number | null;
   weeklyTest: { title: string; closesAt: Date };
-  answers: (AttemptRow["answers"][number] & { photos: { id: string }[] })[];
+  answers: (AttemptRow["answers"][number] & {
+    photos: { id: string }[];
+    teacherPoints: number | null;
+    teacherNote: string | null;
+    aiReview: { status: string; verdict: unknown } | null;
+  })[];
 }
+
+type AnswerRow = WeeklyAttemptRow["answers"][number];
 
 export const WEEKLY_ATTEMPT_INCLUDE = {
   weeklyTest: { select: { title: true, closesAt: true } },
   answers: {
     orderBy: { order: "asc" },
-    include: { question: true, photos: { select: { id: true }, orderBy: { createdAt: "asc" } } },
+    include: {
+      question: true,
+      photos: { select: { id: true }, orderBy: { createdAt: "asc" } },
+      aiReview: { select: { status: true, verdict: true } },
+    },
   },
 } as const;
 
@@ -26,6 +37,31 @@ export const withPhotoRule = (result: CheckResult, photos: number): CheckResult 
   result === "CORRECT" && photos === 0 ? "WRONG" : result;
 
 const ids = (photos: { id: string }[]) => photos.map((p) => p.id);
+
+/** Savol bali: ustoz qarori ustun, aks holda avtomatik tekshiruv va rasm qoidasi (BR-W04, W06) */
+export const answerPoints = (x: {
+  teacherPoints: number | null;
+  result: CheckResult | null;
+  photos: number;
+}) => x.teacherPoints ?? (x.result && withPhotoRule(x.result, x.photos) === "CORRECT" ? 1 : 0);
+
+/**
+ * O'quvchiga tushuntirish faqat ustoz qaror qilgandan keyin: ustoz izohi, bo'lmasa AI'ning
+ * o'quvchiga mo'ljallangan izohi (unda ko'chirish haqida gap yo'q, BR-W05)
+ */
+function feedbackOf(x: AnswerRow | undefined): string | null {
+  if (!x || x.teacherPoints === null) return null;
+  if (x.teacherNote) return x.teacherNote;
+  const v = x.aiReview?.status === "DONE" ? (x.aiReview.verdict as SolutionVerdict | null) : null;
+  return v?.studentFeedback.trim() || null;
+}
+
+/** Natijadagi savol holati: topshirilmagan — xato (BR-W03), ustoz qarori bo'lsa shu */
+function itemResult(a: WeeklyAttemptRow, x: AnswerRow | undefined, auto: CheckResult): CheckResult {
+  if (!a.submittedAt) return "WRONG";
+  if (x && x.teacherPoints !== null) return x.teacherPoints > 0 ? "CORRECT" : "WRONG";
+  return auto;
+}
 
 /** Ball: yopilishda qo'yilgan bo'lsa shu; aks holda topshirgan bo'lsa to'g'rilar soni, topshirmagan bo'lsa 0 (BR-W03) */
 export const scoreOf = (a: Pick<WeeklyAttemptRow, "score" | "submittedAt" | "correct">) =>
@@ -40,12 +76,14 @@ export function weeklyView(a: WeeklyAttemptRow, now: Date): WeeklyAttemptView {
   if (now >= a.weeklyTest.closesAt) {
     // Topshirilmagan test: javob belgilangan bo'lsa ham hammasi 0 (BR-W03)
     const items = resultItems(a.answers).map((i, n) => {
-      const photos = ids(a.answers[n]?.photos ?? []);
+      const x = a.answers[n];
+      const photos = ids(x?.photos ?? []);
       return {
         ...i,
-        result: a.submittedAt ? i.result : ("WRONG" as const),
+        result: itemResult(a, x, i.result),
         photos,
         noPhoto: photos.length === 0,
+        feedback: feedbackOf(x),
       };
     });
     return {
