@@ -3,8 +3,10 @@ import { Bot, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AccessCard } from "../components/home/AccessCard";
 import { RecentResults } from "../components/home/RecentResults";
+import { MockRow } from "../components/mock/MockRow";
 import { WeeklyRow } from "../components/weekly/WeeklyRow";
 import { useProfile, useStats } from "../lib/me";
+import { useMockList } from "../lib/mock";
 import { useWeeklyList } from "../lib/weekly";
 import { useAuth } from "../store/auth";
 
@@ -66,6 +68,26 @@ function WeeklyBlock() {
   );
 }
 
+/** Ochiq yoki yaqin mock (bo'lsa) va barcha mocklarga havola */
+function MockBlock() {
+  const list = useMockList();
+  const current =
+    list.data?.find((t) => t.status === "OPEN" && !t.my.submitted) ??
+    list.data?.find((t) => t.status === "UPCOMING");
+  if (!list.data?.length) return null;
+  return (
+    <section className="space-y-2" data-testid="mock-home">
+      <div className="flex items-center justify-between">
+        <h2 className="font-bold">Mock imtihon</h2>
+        <Link to="/mocks" className="text-sm font-semibold text-link">
+          Barchasi
+        </Link>
+      </div>
+      {current && <MockRow t={current} now={new Date()} />}
+    </section>
+  );
+}
+
 /** Erkin savol uchun yordamchi (o'quvchiga) */
 function TutorCard() {
   return (
@@ -96,6 +118,7 @@ export function HomePage() {
       </div>
       {profile.data && <AccessCard access={profile.data.access} />}
       <WeeklyBlock />
+      <MockBlock />
       {stats.fetchStatus === "fetching" && !stats.data && <div className="skeleton h-24" aria-busy="true" />}
       {stats.data && <StatsBlock stats={stats.data} />}
       {user?.role === "STUDENT" && <TutorCard />}

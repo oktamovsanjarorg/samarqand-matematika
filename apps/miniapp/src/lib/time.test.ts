@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatStamp, timeLeft } from "./time";
+import { clock, formatStamp, timeLeft } from "./time";
 
 describe("haftalik test vaqti", () => {
   const now = new Date("2026-11-20T11:00:00Z");
@@ -12,5 +12,14 @@ describe("haftalik test vaqti", () => {
   });
   it("Toshkent vaqti bilan", () => {
     expect(formatStamp("2026-11-29T18:59:00Z")).toBe("29.11, 23:59");
+  });
+});
+
+describe("clock", () => {
+  it("BR-M06: mock teskari sanog'i", () => {
+    expect(clock(3_909_000)).toBe("1:05:09");
+    expect(clock(1_499_001)).toBe("25:00");
+    expect(clock(7_000)).toBe("0:07");
+    expect(clock(-5)).toBe("0:00");
   });
 });
