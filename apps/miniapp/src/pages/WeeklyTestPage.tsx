@@ -1,6 +1,7 @@
 import {
   ERROR_CODES,
   type WeeklyAttemptView,
+  type WeeklyOpen,
   type WeeklyResult,
   type WeeklyWaiting,
 } from "@samarqand/shared";
@@ -11,8 +12,10 @@ import { Locked } from "../components/Locked";
 import { ErrorState, TestSkeleton } from "../components/states";
 import { ResultItem } from "../components/test/ResultItem";
 import { Runner } from "../components/test/Runner";
+import { PhotoThumb, SolutionPhotos } from "../components/weekly/SolutionPhotos";
 import { useBackButton } from "../hooks/useBackButton";
 import { ApiError, post } from "../lib/api";
+import { usePhotos } from "../lib/photos";
 import { formatStamp, timeLeft } from "../lib/time";
 import { useWeeklySubmit, weeklyKey } from "../lib/weekly";
 
@@ -37,6 +40,20 @@ function Waiting({ v }: { v: WeeklyWaiting }) {
   );
 }
 
+function ItemPhotos({ item }: { item: WeeklyResult["items"][number] }) {
+  // To'g'ri javob + rasm yo'q: sarlavhaning o'zi aytadi
+  if (item.noPhoto && item.result === "CORRECT") return null;
+  if (item.noPhoto)
+    return <p className="text-sm font-semibold text-danger">Yechim rasmi yuklanmagan: 0 ball</p>;
+  return (
+    <div className="flex flex-wrap gap-2">
+      {item.photos.map((id, k) => (
+        <PhotoThumb key={id} id={id} n={k + 1} />
+      ))}
+    </div>
+  );
+}
+
 function Result({ r }: { r: WeeklyResult }) {
   return (
     <div className="space-y-4">
@@ -50,7 +67,14 @@ function Result({ r }: { r: WeeklyResult }) {
       </div>
       <ol className="space-y-3">
         {r.items.map((item, i) => (
-          <ResultItem key={item.question.id} item={item} n={i + 1} />
+          <ResultItem
+            key={item.question.id}
+            item={item}
+            n={i + 1}
+            zero={item.noPhoto && item.result === "CORRECT" ? "Yechim rasmi yoʻq · 0 ball" : undefined}
+          >
+            <ItemPhotos item={item} />
+          </ResultItem>
         ))}
       </ol>
       <Link to="/weekly" className={backLink}>
@@ -69,10 +93,29 @@ function Deadline({ closesAt }: { closesAt: string }) {
   );
 }
 
+/** Yechish: har savol ostida yechim rasmi; rasmsiz savollar topshirishda eslatiladi (BR-W04) */
+function WeeklyRunner({ v, testId }: { v: WeeklyOpen; testId: string }) {
+  const submit = useWeeklySubmit(testId);
+  const photos = usePhotos(v);
+  return (
+    <Runner
+      attempt={v}
+      base="/weekly-attempts"
+      kicker="Haftalik test"
+      title={v.title}
+      banner={<Deadline closesAt={v.closesAt} />}
+      extra={(qid) => <SolutionPhotos qid={qid} photos={photos} />}
+      warning={
+        photos.missing ? `Yechim rasmi yoʻq savollar: ${photos.missing} ta. Ular 0 ball boʻladi.` : undefined
+      }
+      onSubmit={submit(v.id)}
+    />
+  );
+}
+
 export function WeeklyTestPage() {
   const { id = "" } = useParams();
   useBackButton("/weekly");
-  const submit = useWeeklySubmit(id);
   const q = useQuery({
     queryKey: weeklyKey(id),
     queryFn: () => post<WeeklyAttemptView>(`/weekly/${id}/attempts`),
@@ -88,14 +131,5 @@ export function WeeklyTestPage() {
   const v = q.data;
   if (v.status === "WAITING") return <Waiting v={v} />;
   if (v.status === "RESULT") return <Result r={v} />;
-  return (
-    <Runner
-      attempt={v}
-      base="/weekly-attempts"
-      kicker="Haftalik test"
-      title={v.title}
-      banner={<Deadline closesAt={v.closesAt} />}
-      onSubmit={submit(v.id)}
-    />
-  );
+  return <WeeklyRunner v={v} testId={id} />;
 }

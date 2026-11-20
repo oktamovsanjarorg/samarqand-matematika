@@ -34,6 +34,10 @@ export interface RunnerProps {
   kicker: string;
   title: string;
   banner?: ReactNode;
+  /** Savol ostidagi qo'shimcha (haftalik testda yechim rasmi) */
+  extra?: (questionId: string) => ReactNode;
+  /** Topshirishdan oldin qo'shimcha ogohlantirish */
+  warning?: string;
   /** Topshirish: flush() dan keyin serverga yuboradi va keyingi ekranga o'tadi */
   onSubmit: (flush: () => Promise<void>) => Promise<void>;
 }
@@ -72,6 +76,7 @@ export function Runner(p: RunnerProps) {
           value={answers.values[current.id]}
           onChange={(r, now) => answers.set(current.id, r, now)}
         />
+        {p.extra?.(current.id)}
       </section>
       {answers.failed && (
         <p className="text-sm text-danger" role="alert">
@@ -81,6 +86,7 @@ export function Runner(p: RunnerProps) {
       {confirming ? (
         <SubmitPanel
           unanswered={answered.filter((a) => !a).length}
+          warning={p.warning}
           busy={submit.isPending}
           error={submit.error?.message}
           onSubmit={() => submit.mutate()}

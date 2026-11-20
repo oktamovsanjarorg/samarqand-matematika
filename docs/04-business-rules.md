@@ -62,17 +62,17 @@
 
 ## Haftalik test (W)
 
-| ID     | Qoida                                                                                                                            | Holat   |
-| ------ | -------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| BR-W01 | Haftalik test oynasi 1 hafta ochiq turadi (masalan dushanba 00:00 dan yakshanba 23:59 gacha, Asia/Tashkent)                      | ✅      |
-| BR-W02 | O'quvchi bitta testni bir marta topshiradi                                                                                       | ✅      |
-| BR-W03 | Javob va yechim rasmi oyna yopilguncha topshirilmagan bo'lsa, ball 0 bo'ladi                                                     | ✅      |
-| BR-W04 | To'g'ri javob belgilangan, lekin yechimi yuklanmagan savol 0 deb hisoblanadi                                                     | ⚠️ Q-04 |
-| BR-W05 | AI "ko'chirishga shubha" desa, bu o'quvchiga **ko'rsatilmaydi**. Savol ustozning navbatiga tushadi va qarorni ustoz qabul qiladi | ✅      |
-| BR-W06 | AI hukmi taklif xolos. Yakuniy ballni ustoz tasdiqlaydi yoki o'zgartiradi                                                        | ✅      |
-| BR-W07 | Oyna yopilishidan 24 va 3 soat oldin topshirmaganlarga eslatma yuboriladi                                                        | ✅      |
-| BR-W08 | Natija va reyting oyna yopilgandan keyin ochiladi                                                                                | ✅      |
-| BR-W09 | Haftalik test to'liq kirish (BR-A04) bilan ochiladi. Kimdir boshlagan testning savollari o'zgarmaydi va test o'chirilmaydi (409) | ✅      |
+| ID     | Qoida                                                                                                                            | Holat            |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| BR-W01 | Haftalik test oynasi 1 hafta ochiq turadi (masalan dushanba 00:00 dan yakshanba 23:59 gacha, Asia/Tashkent)                      | ✅               |
+| BR-W02 | O'quvchi bitta testni bir marta topshiradi                                                                                       | ✅               |
+| BR-W03 | Javob va yechim rasmi oyna yopilguncha topshirilmagan bo'lsa, ball 0 bo'ladi                                                     | ✅               |
+| BR-W04 | To'g'ri javob belgilangan, lekin yechimi yuklanmagan savol 0 deb hisoblanadi                                                     | ✅ Q-04 standart |
+| BR-W05 | AI "ko'chirishga shubha" desa, bu o'quvchiga **ko'rsatilmaydi**. Savol ustozning navbatiga tushadi va qarorni ustoz qabul qiladi | ✅               |
+| BR-W06 | AI hukmi taklif xolos. Yakuniy ballni ustoz tasdiqlaydi yoki o'zgartiradi                                                        | ✅               |
+| BR-W07 | Oyna yopilishidan 24 va 3 soat oldin topshirmaganlarga eslatma yuboriladi                                                        | ✅               |
+| BR-W08 | Natija va reyting oyna yopilgandan keyin ochiladi                                                                                | ✅               |
+| BR-W09 | Haftalik test to'liq kirish (BR-A04) bilan ochiladi. Kimdir boshlagan testning savollari o'zgarmaydi va test o'chirilmaydi (409) | ✅               |
 
 ## AI yordamchi (T)
 

@@ -56,3 +56,11 @@ export const post = <T>(path: string, body?: object) =>
 
 export const put = <T>(path: string, body: object) =>
   api<T>(path, { method: "PUT", body: JSON.stringify(body) });
+
+/** Himoyalangan fayl (rasm) — blob */
+export async function apiBlob(path: string): Promise<Blob> {
+  const token = useAuth.getState().token;
+  const res = await fetch(`/api${path}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  if (!res.ok) throw await parseError(res);
+  return res.blob();
+}

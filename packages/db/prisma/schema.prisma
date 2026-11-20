@@ -366,13 +366,28 @@ model WeeklyAttempt {
 
 model WeeklyAnswer {
   attemptId  String
-  attempt    WeeklyAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  attempt    WeeklyAttempt   @relation(fields: [attemptId], references: [id], onDelete: Cascade)
   questionId String
-  question   Question      @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  question   Question        @relation(fields: [questionId], references: [id], onDelete: Restrict)
   order      Int
   response   Json?
   result     CheckResult?
-  updatedAt  DateTime      @updatedAt @db.Timestamptz
+  updatedAt  DateTime        @updatedAt @db.Timestamptz
+  photos     SolutionPhoto[]
 
   @@id([attemptId, questionId])
+}
+
+/// Haftalik test savoliga yechim rasmi (1–3 ta). Rasmsiz to'g'ri javob 0 (BR-W04)
+model SolutionPhoto {
+  id         String       @id
+  attemptId  String
+  questionId String
+  answer     WeeklyAnswer @relation(fields: [attemptId, questionId], references: [attemptId, questionId], onDelete: Cascade)
+  /// MEDIA_DIR ichidagi nisbiy yo'l
+  path       String
+  bytes      Int
+  createdAt  DateTime     @default(now()) @db.Timestamptz
+
+  @@index([attemptId, questionId])
 }

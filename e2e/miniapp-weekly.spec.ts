@@ -1,4 +1,4 @@
-import { expect, test, type APIRequestContext } from "@playwright/test";
+import { expect, test, type APIRequestContext, type Browser } from "@playwright/test";
 import { adminHeaders, apiPost, createStudent, grantFree } from "./api";
 import { E2E_PREFIX, openAsTelegram } from "./telegram";
 
@@ -45,11 +45,24 @@ async function seedWeekly(request: APIRequestContext) {
   return { admin, title, close };
 }
 
-test("BR-W02, BR-W08: o'quvchi haftalik testni bir marta topshiradi, natija oyna yopilgach chiqadi", async ({
+/** Daftardagi yechimga o'xshash haqiqiy PNG */
+async function solutionPng(browser: Browser) {
+  const draw = await browser.newPage({ viewport: { width: 360, height: 480 } });
+  await draw.setContent(
+    '<div style="height:100vh;display:grid;place-items:center;background:#fdf6e3;font:bold 64px serif;color:#123">2+2=4</div>',
+  );
+  const png = await draw.screenshot();
+  await draw.close();
+  return png;
+}
+
+test("BR-W02, BR-W04, BR-W08: o'quvchi haftalik testni bir marta topshiradi, natija oyna yopilgach chiqadi", async ({
   page,
   request,
+  browser,
 }) => {
   const { admin, title, close } = await seedWeekly(request);
+  const png = await solutionPng(browser);
   const s = await createStudent(request, { fullName: "Haftalik Oquvchi", phone: "998901112207" });
   await grantFree(request, admin, "Haftalik Oquvchi");
 
@@ -63,10 +76,20 @@ test("BR-W02, BR-W08: o'quvchi haftalik testni bir marta topshiradi, natija oyna
   await expect(page.getByText("Haftalik test · 1/2")).toBeVisible();
   await expect(page.getByTestId("deadline")).toContainText("bir marta topshiriladi");
   await page.getByRole("radio").nth(1).click();
+  await page
+    .getByLabel("Yechim rasmini qoʻshish")
+    .setInputFiles({ name: "yechim.png", mimeType: "image/png", buffer: png });
+  await expect(page.getByTestId("solution-photos")).toContainText("Yechim rasmi (1/3)");
+  await expect(page.getByRole("img", { name: "Yechim rasmi 1" })).toBeVisible();
   await page.screenshot({ path: "e2e/.results/miniapp-weekly-test.png" });
   await page.getByRole("button", { name: "Keyingi" }).click();
-  await page.getByLabel("Javob", { exact: true }).fill("1/2");
+  // To'g'ri javob, lekin yechim rasmi yo'q: BR-W04 bo'yicha 0
+  await page.getByLabel("Javob", { exact: true }).fill("3/4");
   await page.getByRole("button", { name: "Yakunlash" }).click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "Yechim rasmi yoʻq savollar: 1 ta. Ular 0 ball boʻladi.",
+  );
+  await page.screenshot({ path: "e2e/.results/miniapp-weekly-submit.png" });
   await page.getByRole("dialog").getByRole("button", { name: "Topshirish" }).click();
 
   // Topshirildi: oyna ochiq ekan, ball ham, to'g'ri javob ham ko'rinmaydi
@@ -85,7 +108,8 @@ test("BR-W02, BR-W08: o'quvchi haftalik testni bir marta topshiradi, natija oyna
   await expect(page.getByTestId("score")).toContainText("1/2");
   const items = page.getByTestId("result-item");
   await expect(items.nth(0)).toContainText("Toʻgʻri");
-  await expect(items.nth(1)).toContainText("Toʻgʻri javob: 3/4");
+  await expect(items.nth(0).getByRole("img", { name: "Yechim rasmi 1" })).toBeVisible();
+  await expect(items.nth(1)).toContainText("2-savol · Yechim rasmi yoʻq · 0 ball");
   await items.nth(0).getByText("Yechim").click();
   await page.screenshot({ path: "e2e/.results/miniapp-weekly-result.png", fullPage: true });
 });

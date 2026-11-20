@@ -7,7 +7,7 @@ import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { MY_PAYMENT_SELECT, toMyPayment } from "./payments.service";
 import { nextPeriod } from "./period";
-import { ReceiptStore } from "./receipts";
+import { MediaStore } from "../storage/media-store";
 
 const SELECT = {
   ...MY_PAYMENT_SELECT,
@@ -55,7 +55,7 @@ function toAdmin(p: Row): AdminPayment {
 export class AdminPaymentsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly receipts: ReceiptStore,
+    private readonly receipts: MediaStore,
     private readonly audit: AuditService,
     private readonly notify: NotifyService,
   ) {}
