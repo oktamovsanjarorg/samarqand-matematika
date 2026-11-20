@@ -21,9 +21,9 @@ export const lessonInput = z.object({
 });
 export type LessonInput = z.infer<typeof lessonInput>;
 
-/** Ota (kurslar ro'yxati, kurs ichidagi mavzular, mavzu ichidagi darslar) ichida yangi tartib: hamma id'lar, yangi ketma-ketlikda */
+/** Ota (kurslar ro'yxati, kurs ichidagi mavzular, mavzu ichidagi darslar yoki savollar) ichida yangi tartib: hamma id'lar, yangi ketma-ketlikda */
 export const reorderBody = z.object({
-  kind: z.enum(["course", "topic", "lesson"]),
+  kind: z.enum(["course", "topic", "lesson", "question"]),
   ids: z.array(z.string().min(1)).min(1).max(500),
 });
 export type ReorderBody = z.infer<typeof reorderBody>;

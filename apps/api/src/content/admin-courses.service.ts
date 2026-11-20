@@ -81,7 +81,11 @@ export class AdminCoursesService {
 
   async deleteTopic(actorId: string, id: string) {
     await this.mustTopic(id);
-    if (await this.prisma.lesson.count({ where: { topicId: id } })) throw notEmpty("Mavzu");
+    const [lessons, questions] = await Promise.all([
+      this.prisma.lesson.count({ where: { topicId: id } }),
+      this.prisma.question.count({ where: { topicId: id } }),
+    ]);
+    if (lessons + questions) throw notEmpty("Mavzu");
     await this.prisma.topic.delete({ where: { id } });
     await this.audit.log({ actorId, action: "topic.delete", entity: "Topic", entityId: id });
   }

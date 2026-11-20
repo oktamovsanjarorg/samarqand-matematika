@@ -293,6 +293,9 @@ importers:
       '@samarqand/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@samarqand/math':
+        specifier: workspace:*
+        version: link:../../packages/math
       '@samarqand/shared':
         specifier: workspace:*
         version: link:../../packages/shared

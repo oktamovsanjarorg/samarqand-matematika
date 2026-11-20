@@ -89,6 +89,7 @@ model Topic {
   title     String
   order     Int      @default(0)
   lessons   Lesson[]
+  questions Question[]
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
 
@@ -110,6 +111,41 @@ model Lesson {
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now()) @db.Timestamptz
   updatedAt   DateTime @updatedAt @db.Timestamptz
+
+  @@index([topicId, order])
+}
+
+enum QuestionType {
+  SINGLE
+  MULTIPLE
+  NUMERIC
+  EXPRESSION
+  MATCHING
+  WRITTEN
+}
+
+/// Savollar banki (T-022). To'g'ri javob alohida ustunda: o'quvchiga ko'rinish tuzilganda tanlanmaydi
+model Question {
+  id          String       @id @default(cuid())
+  topicId     String
+  topic       Topic        @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  type        QuestionType
+  /// Savol matni: Markdown va LaTeX
+  text        String
+  /// O'quvchi ko'radigan qism: variantlar (SINGLE, MULTIPLE) yoki ikki ustun (MATCHING)
+  content     Json         @default("{}")
+  /// To'g'ri javob. WRITTEN uchun null (ustoz qo'lda baholaydi)
+  answer      Json?
+  /// Namunaviy yechim: natijadan keyin ko'rsatiladi, AI tekshiruvida asos bo'ladi
+  solution    String       @default("")
+  /// 1 oson, 2 o'rta, 3 qiyin
+  difficulty  Int          @default(2)
+  /// Ko'nikma teglari (masalan "kvadrat-tenglama"): ko'rsatmalar uchun
+  skills      String[]
+  order       Int          @default(0)
+  isPublished Boolean      @default(false)
+  createdAt   DateTime     @default(now()) @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @db.Timestamptz
 
   @@index([topicId, order])
 }
