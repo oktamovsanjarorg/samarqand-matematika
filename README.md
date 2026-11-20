@@ -20,7 +20,7 @@ Reja: [docs/PLAN.md](docs/PLAN.md) · AI agentlar uchun qoidalar: [CLAUDE.md](CL
 
 ```bash
 pnpm install                 # pnpm 12.16.1
-cp .env.example .env         # BOT_TOKEN (test bot), JWT_SECRET, OWNER_USERNAMES
+cp .env.example .env         # BOT_TOKEN (test bot), JWT_SECRET, OWNER_TELEGRAM_IDS
 pnpm db:up                   # Postgres :5435, Redis :6383
 pnpm db:migrate
 pnpm dev:init-data           # brauzerda Telegram'siz sinash uchun

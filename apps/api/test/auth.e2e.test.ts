@@ -3,7 +3,8 @@ import type { NestFastifyApplication } from "@nestjs/platform-fastify";
 import { PrismaClient } from "@samarqand/db";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Roles } from "../src/auth/decorators";
-import { createApp, initData, OWNER, tgId } from "./helpers";
+import { loadEnv } from "../src/config/env";
+import { createApp, initData, OWNER, OWNER_ID, tgId } from "./helpers";
 
 @Controller("test-teacher-only")
 class TeacherOnlyController {
@@ -56,6 +57,18 @@ describe("POST /api/auth/telegram", () => {
   it("OWNER_USERNAMES dagi foydalanuvchi TEACHER boʻladi", async () => {
     const res = await login({ id: tgId(), first_name: "Ustoz", username: OWNER });
     expect(res.json().user.role).toBe("TEACHER");
+  });
+
+  it("OWNER_TELEGRAM_IDS dagi foydalanuvchi username'siz ham TEACHER boʻladi", async () => {
+    const res = await login({ id: OWNER_ID, first_name: "Ustoz" });
+    expect(res.json().user.role).toBe("TEACHER");
+    await prisma.user.delete({ where: { telegramId: BigInt(OWNER_ID) } });
+  });
+
+  it("OWNER_TELEGRAM_IDS: raqam bo'lmasa ishga tushmaydi", () => {
+    expect(() =>
+      loadEnv({ BOT_TOKEN: "1:x", JWT_SECRET: "0123456789abcdef", OWNER_TELEGRAM_IDS: "12,@ustoz" }),
+    ).toThrow();
   });
 
   it("bloklangan foydalanuvchi kira olmaydi", async () => {
