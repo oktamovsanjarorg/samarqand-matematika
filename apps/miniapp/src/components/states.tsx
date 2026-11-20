@@ -33,3 +33,12 @@ export function EmptyState({ title, hint }: { title: string; hint: string }) {
     </div>
   );
 }
+
+export function TestSkeleton() {
+  return (
+    <div className="space-y-3" aria-busy="true">
+      <div className="skeleton h-8 w-2/3" />
+      <div className="skeleton h-48" />
+    </div>
+  );
+}
