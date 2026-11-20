@@ -8,7 +8,7 @@
 | ID     | Qoida                                                                                                                                            | Holat                   |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
 | BR-A01 | Mini App'ga kirish faqat Telegram `initData` orqali bo'ladi. Imzo serverda HMAC bilan tekshiriladi, initData 24 soatdan eski bo'lmasligi kerak   | ✅                      |
-| BR-A02 | `OWNER_USERNAMES` dagi username'lar `TEACHER` bo'ladi. Qolganlar `STUDENT` bo'lib yaratiladi                                                     | ✅                      |
+| BR-A02 | `OWNER_TELEGRAM_IDS` dagi Telegram ID'lar va `OWNER_USERNAMES` dagi username'lar `TEACHER` bo'ladi. Qolganlar `STUDENT` bo'lib yaratiladi        | ✅                      |
 | BR-A03 | Bloklangan hisobning tokeni keyingi so'rovdayoq kuchini yo'qotadi. Rol har so'rovda bazadan olinadi                                              | ✅                      |
 | BR-A04 | To'liq pullik kirish uchun uchta shart bor: ustoz qabul qilgan, ota-ona tasdiqlagan, to'lov qilingan. Istisnoni ustoz qo'lda belgilaydi (BR-S03) | ✅ (ona tilidagi qoida) |
 
