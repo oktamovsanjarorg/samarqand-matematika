@@ -72,7 +72,13 @@ export class AttendanceService {
     const notified = new Map(before.map((b) => [b.userId, b.notifiedStatus]));
     await this.prisma.$transaction(
       body.marks.map((m) => {
-        const data = { groupId, status: m.status, note: m.note ?? null, markedById: actorId };
+        // Izoh yuborilmasa eskisi saqlanadi
+        const data = {
+          groupId,
+          status: m.status,
+          markedById: actorId,
+          ...(m.note !== undefined ? { note: m.note } : {}),
+        };
         return this.prisma.attendance.upsert({
           where: { userId_date: { userId: m.userId, date } },
           update: data,

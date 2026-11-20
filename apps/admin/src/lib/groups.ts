@@ -7,3 +7,14 @@ export const useGroups = () =>
 
 export const useGroup = (id: string) =>
   useQuery({ queryKey: ["groups", id], queryFn: () => api.get<AdminGroupDetail>(`/admin/groups/${id}`) });
+
+/** Toshkent bo'yicha bugungi sana "YYYY-MM-DD" */
+export const tashkentToday = (now = new Date()) =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tashkent" }).format(now);
+
+export const ATTENDANCE_LABELS = {
+  PRESENT: "Keldi",
+  LATE: "Kechikdi",
+  ABSENT: "Kelmadi",
+  EXCUSED: "Sababli",
+} as const;
