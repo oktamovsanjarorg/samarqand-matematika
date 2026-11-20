@@ -13,6 +13,8 @@ import { LessonsPage } from "./pages/LessonsPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { TopicTestPage } from "./pages/TopicTestPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { WeeklyListPage } from "./pages/WeeklyListPage";
+import { WeeklyTestPage } from "./pages/WeeklyTestPage";
 
 // Faqat dev: production bundle'ga tushmaydi
 const KitPage = lazy(() => import("./pages/KitPage").then((m) => ({ default: m.KitPage })));
@@ -46,6 +48,8 @@ export function App() {
         <Route path="topics/:id/test" element={<TopicTestPage />} />
         <Route path="attempts/:id" element={<AttemptResultPage />} />
         <Route path="billing" element={<BillingPage />} />
+        <Route path="weekly" element={<WeeklyListPage />} />
+        <Route path="weekly/:id" element={<WeeklyTestPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
       {import.meta.env.DEV && (

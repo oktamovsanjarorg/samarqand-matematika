@@ -52,7 +52,7 @@
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
 | T-030  | Haftalik test API: oyna (vaqtdan), bitta urinish, natija yopilgandan keyin, topshirmaganga 0, eslatmalar 24/3 soat, rejalashtiruvchi (BR-W01–W03, W07–W09) | ✅    |
 | T-030b | Admin "Haftalik": testlar ro'yxati, yaratish (keyingi hafta oynasi standart, Toshkent vaqti), bankdan savol tanlash, natijalar jadvali                     | ✅    |
-| T-030c | Mini App: haftalik test ro'yxati, yechish, "natija yopilgach", natija                                                                                      | ⬜    |
+| T-030c | Mini App: haftalik testlar ro'yxati va Asosiy'da joriy test, yechish (qolgan vaqt), "topshirildi, natija yopilgach", natija va to'g'ri javoblar            | ✅    |
 | T-031  | Yechim rasmlarini yuklash (siqish, saqlash)                                                                                                                | ⬜    |
 | T-032  | `AiProvider` interfeysi va baholash to'plami, provayder tanlovi (Q-03, ADR)                                                                                | ⬜    |
 | T-033  | AI yechim tekshiruvi: hukm sxemasi, ko'chirish signallari, o'quvchilar orasidagi o'xshashlik                                                               | ⬜    |

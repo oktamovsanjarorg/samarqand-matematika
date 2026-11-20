@@ -1,16 +1,21 @@
-import type { AttemptResult, AttemptView } from "@samarqand/shared";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AttemptView } from "@samarqand/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Response } from "./answers";
-import { post, put } from "./api";
+import { put } from "./api";
+
+/** Yechiladigan urinish: mavzu testi yoki haftalik test */
+export interface Answerable {
+  id: string;
+  questions: AttemptView["questions"];
+}
 
 const TYPING_DELAY = 800;
 
 /**
- * Javoblar: ekranda darhol yangilanadi, serverga tanlovda darhol, yozuvda 0.8 soniyadan keyin saqlanadi.
+ * Javoblar (`base` — "/attempts" yoki "/weekly-attempts"): ekranda darhol yangilanadi, serverga tanlovda darhol, yozuvda 0.8 soniyadan keyin saqlanadi.
  * flush() kutilayotgan hamma yozuvni saqlaydi (topshirishdan oldin).
  */
-export function useAnswers(attempt: AttemptView) {
+export function useAnswers(attempt: Answerable, base: string) {
   const [values, setValues] = useState<Record<string, unknown>>(() =>
     Object.fromEntries(attempt.questions.map((x) => [x.question.id, x.response])),
   );
@@ -23,7 +28,7 @@ export function useAnswers(attempt: AttemptView) {
       const r = pending.current.get(qid);
       if (!r) return;
       pending.current.delete(qid);
-      await put(`/attempts/${attempt.id}/answers/${qid}`, { response: r }).then(
+      await put(`${base}/${attempt.id}/answers/${qid}`, { response: r }).then(
         () => setFailed(false),
         (e: unknown) => {
           setFailed(true);
@@ -31,7 +36,7 @@ export function useAnswers(attempt: AttemptView) {
         },
       );
     },
-    [attempt.id],
+    [attempt.id, base],
   );
 
   const set = (qid: string, r: Response, immediate: boolean) => {
@@ -65,19 +70,4 @@ export function useAnswers(attempt: AttemptView) {
   }, [flush]);
 
   return { values, set, flush, failed };
-}
-
-/** Topshirish: avval kutilayotgan javoblar saqlanadi, natija keshga yoziladi */
-export function useSubmit(attemptId: string, flush: () => Promise<void>) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async () => {
-      await flush();
-      return post<AttemptResult>(`/attempts/${attemptId}/submit`);
-    },
-    onSuccess: (r) => {
-      qc.setQueryData(["attempt", r.id], r);
-      void qc.invalidateQueries({ queryKey: ["stats"] });
-    },
-  });
 }

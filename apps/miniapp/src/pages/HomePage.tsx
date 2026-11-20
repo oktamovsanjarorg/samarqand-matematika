@@ -3,7 +3,9 @@ import { PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AccessCard } from "../components/home/AccessCard";
 import { RecentResults } from "../components/home/RecentResults";
+import { WeeklyRow } from "../components/weekly/WeeklyRow";
 import { useProfile, useStats } from "../lib/me";
+import { useWeeklyList } from "../lib/weekly";
 import { useAuth } from "../store/auth";
 
 function ContinueCard({ open }: { open: NonNullable<MyStats["open"]> }) {
@@ -45,6 +47,25 @@ function FirstStep() {
   );
 }
 
+/** Joriy haftalik test (ochiq bo'lsa birinchi) va barcha testlarga havola */
+function WeeklyBlock() {
+  const list = useWeeklyList();
+  const now = new Date();
+  const current = list.data?.find((t) => t.status === "OPEN") ?? list.data?.[0];
+  if (!current) return null;
+  return (
+    <section className="space-y-2" data-testid="weekly-home">
+      <div className="flex items-center justify-between">
+        <h2 className="font-bold">Haftalik test</h2>
+        <Link to="/weekly" className="text-sm font-semibold text-link">
+          Barchasi
+        </Link>
+      </div>
+      <WeeklyRow t={current} now={now} highlight />
+    </section>
+  );
+}
+
 export function HomePage() {
   const user = useAuth((s) => s.user);
   const profile = useProfile();
@@ -61,6 +82,7 @@ export function HomePage() {
         </div>
       </div>
       {profile.data && <AccessCard access={profile.data.access} />}
+      <WeeklyBlock />
       {stats.fetchStatus === "fetching" && !stats.data && <div className="skeleton h-24" aria-busy="true" />}
       {stats.data && <StatsBlock stats={stats.data} />}
     </div>
