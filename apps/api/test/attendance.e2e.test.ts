@@ -71,6 +71,12 @@ describe("davomat (T-055, BR-G02, BR-G03)", () => {
       await f.call("GET", `/admin/groups/${g}/attendance?date=${DATE}`, f.teacher)
     ).json() as AttendanceSheet;
     expect(got.rows.map((r) => r.status).sort()).toEqual(["LATE", "PRESENT", "PRESENT"]);
+    // Izohsiz qayta belgilash izohni o'chirmaydi
+    await put(g, [{ userId: b.id, status: "LATE" }]);
+    const again = (
+      await f.call("GET", `/admin/groups/${g}/attendance?date=${DATE}`, f.teacher)
+    ).json() as AttendanceSheet;
+    expect(again.rows.find((r) => r.userId === b.id)?.note).toBe("10 daqiqa");
   });
 
   it("BR-G02: guruhda bo'lmagan o'quvchi, kelajak sanasi va noto'g'ri sana 400; o'quvchiga 403", async () => {
