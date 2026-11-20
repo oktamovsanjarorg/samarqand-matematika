@@ -54,7 +54,7 @@ describe("Onboarding", () => {
       fullName: null,
       hasPhone: false,
       needsOnboarding: true,
-      access: { full: false, accepted: false, mode: "AUTO" },
+      access: { full: false, accepted: false, parentApproved: false, paid: false, mode: "AUTO" },
     });
   });
 
@@ -134,6 +134,8 @@ describe("Kirish rejimi", () => {
     expect((await call("GET", "/me/profile", s.headers)).json().access).toEqual({
       full: true,
       accepted: true,
+      parentApproved: false,
+      paid: false,
       mode: "FREE",
     });
     await call("PATCH", `/admin/students/${s.id}`, teacher, { accessMode: "CLOSED" });

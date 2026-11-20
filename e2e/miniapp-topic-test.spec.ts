@@ -1,4 +1,4 @@
-import { expect, test, type APIRequestContext } from "@playwright/test";
+import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 import { adminHeaders, apiPost, createStudent, grantFree } from "./api";
 import { E2E_PREFIX, openAsTelegram } from "./telegram";
 
@@ -82,6 +82,11 @@ test("BR-Q01, BR-Q03, BR-P03: o'quvchi mavzu testini yechadi va natijani ko'radi
   await page.getByRole("button", { name: "2-savol, javob berilgan" }).click();
   await expect(page.getByLabel("Javob", { exact: true })).toHaveValue("0,5");
 
+  // T-024: Asosiy ekranda tugallanmagan test
+  await page.getByRole("navigation").last().getByRole("link", { name: "Asosiy" }).click();
+  await expect(page.getByTestId("continue")).toContainText("Kasrlar · 3/4 javob");
+  await page.getByTestId("continue").click();
+
   await page.getByRole("button", { name: "4-savol" }).click();
   await page.getByRole("button", { name: "Yakunlash" }).click();
   await expect(page.getByText("Javob berilmagan savollar: 1 ta.")).toBeVisible();
@@ -95,7 +100,25 @@ test("BR-Q01, BR-Q03, BR-P03: o'quvchi mavzu testini yechadi va natijani ko'radi
   await items.nth(0).getByText("Yechim").click();
   await expect(items.nth(0).getByText(/Umumiy maxraj/)).toBeVisible();
   await page.screenshot({ path: "e2e/.results/miniapp-test-result.png", fullPage: true });
+  await checkStats(page);
 });
+
+/** T-024: natija Asosiy va Profil ekranlarida ko'rinadi */
+async function checkStats(page: Page) {
+  const nav = page.getByRole("navigation").last();
+  await nav.getByRole("link", { name: "Asosiy" }).click();
+  await expect(page.getByTestId("recent")).toContainText("Kasrlar");
+  await expect(page.getByTestId("recent")).toContainText("2/3");
+  await expect(page.getByTestId("recent")).toContainText(/\d{2}\.\d{2}/);
+  await expect(page.getByTestId("continue")).toHaveCount(0);
+  await expect(page.getByTestId("access")).toHaveCount(0);
+  await page.screenshot({ path: "e2e/.results/miniapp-home.png" });
+  await nav.getByRole("link", { name: "Profil" }).click();
+  await expect(page.getByTestId("tiles")).toContainText("1");
+  await expect(page.getByTestId("tiles")).toContainText("67%");
+  await expect(page.getByTestId("topics")).toContainText("Kasrlar");
+  await page.screenshot({ path: "e2e/.results/miniapp-profile.png" });
+}
 
 test("BR-A04: to'liq kirishsiz o'quvchiga mavzu testi yopiq", async ({ page, request }) => {
   const { title } = await seedTopic(request);

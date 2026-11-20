@@ -1,18 +1,68 @@
+import type { MyStats } from "@samarqand/shared";
+import { PlayCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { AccessCard } from "../components/home/AccessCard";
+import { RecentResults } from "../components/home/RecentResults";
+import { useProfile, useStats } from "../lib/me";
 import { useAuth } from "../store/auth";
-import { EmptyState } from "../components/states";
+
+function ContinueCard({ open }: { open: NonNullable<MyStats["open"]> }) {
+  return (
+    <Link
+      to={`/topics/${open.topicId}/test`}
+      className="tap card flex items-center gap-3 border-2 border-brand/30"
+      data-testid="continue"
+    >
+      <PlayCircle size={28} className="shrink-0 text-brand" />
+      <div className="min-w-0 flex-1">
+        <p className="font-bold">Testni davom ettiring</p>
+        <p className="truncate text-sm text-hint">
+          {open.topicTitle} · {open.answered}/{open.total} javob
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+function StatsBlock({ stats }: { stats: MyStats }) {
+  return (
+    <>
+      {stats.open && <ContinueCard open={stats.open} />}
+      {stats.recent.length > 0 && <RecentResults items={stats.recent} />}
+      {!stats.open && stats.tests === 0 && <FirstStep />}
+    </>
+  );
+}
+
+function FirstStep() {
+  return (
+    <Link to="/lessons" className="tap card block text-center" data-testid="first-step">
+      <p className="font-bold">Birinchi mavzu testini ishlang</p>
+      <p className="mt-1 text-sm text-hint">
+        Darslar boʻlimida mavzuni tanlang. Natijalar shu yerda chiqadi.
+      </p>
+    </Link>
+  );
+}
 
 export function HomePage() {
   const user = useAuth((s) => s.user);
+  const profile = useProfile();
+  const stats = useStats();
+  const name = profile.data?.fullName?.split(" ")[0] ?? user?.firstName;
+
   return (
     <div className="space-y-4">
       <div className="card flex items-center gap-3">
         <img src="/logo.jpg" alt="" className="h-12 w-12 rounded-xl" />
         <div>
           <p className="text-sm text-hint">Assalomu alaykum</p>
-          <h1 className="text-lg font-extrabold text-brand">{user?.firstName}</h1>
+          <h1 className="text-lg font-extrabold text-brand">{name}</h1>
         </div>
       </div>
-      <EmptyState title="Bugungi vazifa" hint="Ustoz birinchi darsni joylagach, shu yerda koʻrinadi." />
+      {profile.data && <AccessCard access={profile.data.access} />}
+      {stats.fetchStatus === "fetching" && !stats.data && <div className="skeleton h-24" aria-busy="true" />}
+      {stats.data && <StatsBlock stats={stats.data} />}
     </div>
   );
 }
