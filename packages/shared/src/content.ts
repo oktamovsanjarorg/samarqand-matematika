@@ -70,6 +70,8 @@ export interface CourseView {
   topics: {
     id: string;
     title: string;
+    /** Nashr qilingan savollar soni: 0 bo'lsa mavzu testi yo'q */
+    questionCount: number;
     lessons: { id: string; title: string; isFree: boolean; locked: boolean }[];
   }[];
 }

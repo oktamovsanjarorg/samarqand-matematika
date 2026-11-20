@@ -5,6 +5,7 @@ import { AuthModule } from "./auth/auth.module";
 import { ENV, type Env } from "./config/env";
 import { ContentModule } from "./content/content.module";
 import { QuestionsModule } from "./questions/questions.module";
+import { TopicTestsModule } from "./topic-tests/topic-tests.module";
 import { HealthController } from "./health/health.controller";
 import { PrismaModule } from "./prisma/prisma.module";
 import { StaffModule } from "./staff/staff.module";
@@ -33,6 +34,7 @@ export class AppModule {
         StaffModule,
         ContentModule,
         QuestionsModule,
+        TopicTestsModule,
       ],
       controllers: [HealthController],
     };

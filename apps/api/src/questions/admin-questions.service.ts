@@ -1,6 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { parseNumber } from "@samarqand/math";
-import type { AdminQuestionDetail, AdminQuestionRow, QuestionInput } from "@samarqand/shared";
+import {
+  ERROR_CODES,
+  type AdminQuestionDetail,
+  type AdminQuestionRow,
+  type QuestionInput,
+} from "@samarqand/shared";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { toDetail, toStorage } from "./codec";
@@ -69,6 +74,12 @@ export class AdminQuestionsService {
 
   async remove(actorId: string, id: string): Promise<void> {
     await this.get(id);
+    // Urinishlarda ishlatilgan savol o'chirilmaydi: o'quvchilar natijasi buzilmasin. Nashrdan olish mumkin
+    if (await this.prisma.topicAnswer.count({ where: { questionId: id } }))
+      throw new ConflictException({
+        code: ERROR_CODES.NOT_EMPTY,
+        message: "Savol testlarda ishlatilgan: oʻchirish oʻrniga nashrdan oling",
+      });
     await this.prisma.question.delete({ where: { id } });
     await this.audit.log({ actorId, action: "question.delete", entity: "Question", entityId: id });
   }
