@@ -1,4 +1,4 @@
-import type { SolutionVerdict } from "@samarqand/shared";
+import type { SolutionVerdict, TutorMode } from "@samarqand/shared";
 
 export interface SolutionPhotoInput {
   type: "image/jpeg" | "image/png" | "image/webp";
@@ -14,6 +14,17 @@ export interface SolutionCheckInput {
   photos: SolutionPhotoInput[];
 }
 
+/** Yordamchi so'rovi: kontekstni server tuzadi (kliyent rejim qoidasini o'zgartira olmaydi) */
+export interface TutorInput {
+  mode: TutorMode;
+  /** Savol, etalon, o'quvchi javobi va h.k. — tizim promptiga qo'shiladi */
+  context: string;
+  /** Oxirgisi o'quvchining yangi xabari */
+  history: { role: "user" | "assistant"; text: string }[];
+  /** REVIEW: o'quvchining yechim rasmlari */
+  photos: SolutionPhotoInput[];
+}
+
 /**
  * AI provayderi (ADR-0004). null: AI o'chiq yoki hukm berolmadi — oqim baribir ishlaydi,
  * savol ustoz navbatiga AI hukmisiz tushadi (BR-W06).
@@ -21,6 +32,8 @@ export interface SolutionCheckInput {
 export interface AiProvider {
   readonly name: string;
   checkSolution(input: SolutionCheckInput): Promise<SolutionVerdict | null>;
+  /** null: AI o'chiq yoki javob bermadi */
+  tutor(input: TutorInput): Promise<string | null>;
 }
 
 export const AI_PROVIDER = Symbol("AI_PROVIDER");
@@ -29,6 +42,9 @@ export const AI_PROVIDER = Symbol("AI_PROVIDER");
 export class DisabledAiProvider implements AiProvider {
   readonly name = "off";
   checkSolution(): Promise<null> {
+    return Promise.resolve(null);
+  }
+  tutor(): Promise<null> {
     return Promise.resolve(null);
   }
 }

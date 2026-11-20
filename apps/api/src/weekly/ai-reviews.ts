@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { describeResponse, isSuspected, type SolutionVerdict } from "@samarqand/shared";
 import { AI_PROVIDER, type AiProvider, type SolutionPhotoInput } from "../ai/ai-provider";
 import { ENV, type Env } from "../config/env";
+import { tashkentDayStart } from "../common/time";
 import { PrismaService } from "../prisma/prisma.service";
 import { toDetail, toView } from "../questions/codec";
 import { MediaStore } from "../storage/media-store";
@@ -9,13 +10,9 @@ import { MediaStore } from "../storage/media-store";
 const MAX_TRIES = 3;
 const BATCH = 5;
 const STALE_MS = 10 * 60_000;
-const DAY_MS = 24 * 60 * 60_000;
-const TASHKENT_MS = 5 * 60 * 60_000;
 const IMAGE_TYPES = new Set<string>(["image/jpeg", "image/png", "image/webp"]);
 
 const asJson = (v: SolutionVerdict) => v as unknown as object;
-const tashkentDayStart = (now: Date) =>
-  new Date(Math.floor((now.getTime() + TASHKENT_MS) / DAY_MS) * DAY_MS - TASHKENT_MS);
 
 /**
  * AI yechim tekshiruvi navbati (T-033): topshirilganda rasmli savollar navbatga tushadi,

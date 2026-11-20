@@ -87,6 +87,8 @@ export async function weeklyFixture() {
     await prisma.weeklyTest.deleteMany({
       where: { questions: { some: { question: { topic: { courseId: { in: courseIds } } } } } },
     });
+    // Mavzu testlari mavzu va savolni o'chirishga yo'l qo'ymaydi (Restrict)
+    await prisma.topicAttempt.deleteMany({ where: { userId: { in: userIds } } });
     await prisma.question.deleteMany({ where: { topic: { courseId: { in: courseIds } } } });
     await prisma.topic.deleteMany({ where: { courseId: { in: courseIds } } });
     await prisma.course.deleteMany({ where: { id: { in: courseIds } } });

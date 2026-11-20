@@ -25,3 +25,10 @@ Haftalik testda o'quvchi har savolga daftardagi yechim rasmini yuklaydi (BR-W04)
 - Xarajat: bitta savol — bitta so'rov (1–3 rasm). Kunlik chegara `AI_DAILY_LIMIT` (standart 300).
 - **Navbat (T-033)**: BullMQ o'rniga bazadagi `AiReview` jadvali va haftalik rejalashtiruvchi (har daqiqada 5 tadan). Har yozuv `updateMany` sharti bilan egallab olinadi, 3 martagacha qayta urinadi, 10 daqiqa osilib qolgan `RUNNING` qayta olinadi. Hozirgi hajmda Redis navbati kerak emas; hajm oshsa BullMQ'ga o'tish faqat shu xizmatni almashtiradi.
 - **Shubha** (`suspected`): AI `SUSPECTED_COPY` desa yoki kamida ikki belgi topsa. O'quvchiga hech qayerda qaytmaydi (BR-W05), ustoz navbatida birinchi turadi (T-034). Serverdagi qo'shimcha signallar: bir savolga aynan bir xil noto'g'ri javob bergan o'quvchilar, mavzu testlari <50% bo'lib haftalikda ≥90%.
+
+## Yordamchi (T-040)
+
+- `AiProvider.tutor`: rejim qoidasi tizim promptining keshlanadigan qismida, savol konteksti (etalon bilan) alohida blokda. Kliyent faqat matn yuboradi: rejim va kontekstni server tuzadi, shuning uchun "javobni ayt" qoidani o'zgartirmaydi.
+- `effort: "medium"` (suhbat; yechim tekshiruvida `high`), `fallbacks: "default"`. Tarix: oxirgi 20 xabar.
+- Etalon yechim va to'g'ri javob modelga boradi (o'quvchi javobini tekshirish uchun), o'quvchiga API orqali qaytmaydi. Mashqda test topshirilmaguncha model to'liq yechimni aytmasligi tizim qoidasida (BR-T02).
+- BR-T01 server tekshiruvi: savol ochiq haftalik testda bo'lsa yoki erkin xabarda ochiq test savoli matni bo'lsa, so'rov modelga yuborilmaydi (403 `AI_BLOCKED`).

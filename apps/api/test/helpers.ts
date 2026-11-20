@@ -10,7 +10,7 @@ import { TELEGRAM_TRANSPORT, type TelegramTransport } from "../src/notify/telegr
 import { loadEnv } from "../src/config/env";
 import { configureApp } from "../src/setup";
 import type { SolutionVerdict } from "@samarqand/shared";
-import { AI_PROVIDER, type SolutionCheckInput } from "../src/ai/ai-provider";
+import { AI_PROVIDER, type SolutionCheckInput, type TutorInput } from "../src/ai/ai-provider";
 
 export const BOT_TOKEN = "123456:E2E_TEST_TOKEN";
 export const TEST_MEDIA_DIR = join(tmpdir(), "samarqand-test-media");
@@ -33,6 +33,12 @@ export const testAi = {
   checkSolution(input: SolutionCheckInput): Promise<SolutionVerdict | null> {
     this.calls.push(input);
     return Promise.resolve(this.respond(input));
+  },
+  reply: (_input: TutorInput): string | null => "Qaysi formulani bilasan?",
+  tutorCalls: [] as TutorInput[],
+  tutor(input: TutorInput): Promise<string | null> {
+    this.tutorCalls.push(input);
+    return Promise.resolve(this.reply(input));
   },
 };
 

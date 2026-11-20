@@ -61,4 +61,13 @@
 | T-035  | Reyting: test va umumiy (BR-W10), Mini App'da natija va haftalik ro'yxatda                                                                                                                           | ✅    |
 | T-035b | Ota-onaga haftalik hisobot: oyna yopilganda tasdiqlangan ota-onaga ball va o'rin, ishlamaganga "topshirmadi" (Q-10)                                                                                  | ✅    |
 
-Keyingi bosqichlar (AI yordamchi, Mock, offline, ko'rsatmalar) 2-bosqich oxirida vazifalarga bo'linadi.
+### 3-bosqich: AI yordamchi
+
+| ID    | Vazifa                                                                                                                                                          | Holat |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| T-040 | Yordamchi API: `TutorChat`/`TutorMessage`, rejimlar (mashq, erkin), kontekst serverda, BR-T01 (ochiq haftalik savol), BR-T03 kunlik limit, AI o'chiq bo'lsa 503 | ✅    |
+| T-041 | Mini App: mavzu testi savolida "Yordamchi" va erkin suhbat sahifasi                                                                                             | ⬜    |
+| T-042 | Admin: o'quvchi suhbatlari (BR-T04) va ishora statistikasi (Q-07)                                                                                               | ⬜    |
+| T-043 | Haftalik test yopilgach xatoni tushuntirish (REVIEW, o'quvchining rasmi bilan)                                                                                  | ⬜    |
+
+Keyingi bosqichlar (Mock, offline, ko'rsatmalar) 3-bosqich oxirida vazifalarga bo'linadi.

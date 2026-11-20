@@ -13,3 +13,4 @@ export * from "./ai";
 export * from "./answers";
 export * from "./review";
 export * from "./ranking";
+export * from "./tutor";
