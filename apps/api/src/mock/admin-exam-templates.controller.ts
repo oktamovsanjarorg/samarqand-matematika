@@ -4,13 +4,15 @@ import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { ExamTemplatesService } from "./exam-templates.service";
 
-/** Imtihon shablonlari: sozlama, faqat ustoz (BR-M01) */
+/** Imtihon shablonlari: sozlama, o'zgartirish faqat ustozda (BR-M01) */
 @Controller("admin/exam-templates")
 @Roles("TEACHER")
 export class AdminExamTemplatesController {
   constructor(private readonly templates: ExamTemplatesService) {}
 
+  /** Ro'yxat yordamchiga ham: mock tuzishda shablon tanlanadi */
   @Get()
+  @Roles("TEACHER", "ASSISTANT")
   list() {
     return this.templates.list();
   }

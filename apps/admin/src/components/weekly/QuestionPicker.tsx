@@ -1,4 +1,4 @@
-import type { AdminQuestionRow, WeeklyQuestionRow } from "@samarqand/shared";
+import type { AdminQuestionRow, QuestionType, WeeklyQuestionRow } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useState } from "react";
@@ -13,6 +13,7 @@ function TopicQuestions(p: {
   topicId: string;
   topicTitle: string;
   selected: string[];
+  types?: QuestionType[];
   onAdd: (q: WeeklyQuestionRow) => void;
 }) {
   const list = useQuery({
@@ -20,10 +21,11 @@ function TopicQuestions(p: {
     queryFn: () => api.get<AdminQuestionRow[]>(`/admin/topics/${p.topicId}/questions`),
   });
   if (list.isPending) return <div className="skeleton h-20" />;
-  if (list.data?.length === 0) return <p className="text-sm text-hint">Bu mavzuda savol yoʻq</p>;
+  const rows = list.data?.filter((q) => !p.types || p.types.includes(q.type)) ?? [];
+  if (rows.length === 0) return <p className="text-sm text-hint">Bu mavzuda mos savol yoʻq</p>;
   return (
     <ul className="space-y-1">
-      {list.data?.map((q) => (
+      {rows.map((q) => (
         <li key={q.id}>
           <label
             className="flex min-h-11 cursor-pointer items-start gap-2 rounded-lg p-2 hover:bg-hint/5"
@@ -44,43 +46,63 @@ function TopicQuestions(p: {
   );
 }
 
-/** Savollar bankidan tanlash: mavzu → savollar; tanlanganlar tartibi testdagi tartib */
-export function QuestionPicker({
+/** Tanlangan savollar tartib bilan; olib tashlash mumkin */
+function SelectedList({
   value,
   onChange,
 }: {
   value: WeeklyQuestionRow[];
   onChange: (v: WeeklyQuestionRow[]) => void;
 }) {
+  return (
+    <ol className="space-y-1" data-testid="selected">
+      {value.map((q, i) => (
+        <li key={q.id} className="flex items-start gap-2 rounded-lg border border-hint/15 p-2 text-sm">
+          <b className="w-6 shrink-0">{i + 1}.</b>
+          <div className="min-w-0 flex-1">
+            <MathText text={q.text} className="line-clamp-2" />
+            <p className="text-xs text-hint">
+              {q.topicTitle} · {TYPE_LABELS[q.type]}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onChange(value.filter((x) => x.id !== q.id))}
+            aria-label={`${i + 1}-savolni olib tashlash`}
+            className="flex h-9 w-9 items-center justify-center text-hint"
+          >
+            <X size={16} />
+          </button>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/**
+ * Savollar bankidan tanlash: mavzu → savollar; tanlanganlar tartibi testdagi tartib.
+ * types: faqat shu turlar (mock bo'limi); taken: boshqa bo'limlarda tanlanganlar
+ */
+export function QuestionPicker({
+  value,
+  onChange,
+  types,
+  taken = [],
+}: {
+  value: WeeklyQuestionRow[];
+  onChange: (v: WeeklyQuestionRow[]) => void;
+  types?: QuestionType[];
+  taken?: string[];
+}) {
   const topics =
     useTree().data?.flatMap((c) => c.topics.map((t) => ({ id: t.id, title: `${c.title} · ${t.title}` }))) ??
     [];
   const [topicId, setTopicId] = useState("");
   const topic = topics.find((t) => t.id === topicId);
-  const ids = value.map((q) => q.id);
+  const ids = [...value.map((q) => q.id), ...taken];
   return (
     <div className="space-y-3">
-      <ol className="space-y-1" data-testid="selected">
-        {value.map((q, i) => (
-          <li key={q.id} className="flex items-start gap-2 rounded-lg border border-hint/15 p-2 text-sm">
-            <b className="w-6 shrink-0">{i + 1}.</b>
-            <div className="min-w-0 flex-1">
-              <MathText text={q.text} className="line-clamp-2" />
-              <p className="text-xs text-hint">
-                {q.topicTitle} · {TYPE_LABELS[q.type]}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => onChange(value.filter((x) => x.id !== q.id))}
-              aria-label={`${i + 1}-savolni olib tashlash`}
-              className="flex h-9 w-9 items-center justify-center text-hint"
-            >
-              <X size={16} />
-            </button>
-          </li>
-        ))}
-      </ol>
+      <SelectedList value={value} onChange={onChange} />
       <select
         value={topicId}
         onChange={(e) => setTopicId(e.target.value)}
@@ -99,6 +121,7 @@ export function QuestionPicker({
           topicId={topic.id}
           topicTitle={topic.title}
           selected={ids}
+          types={types}
           onAdd={(q) => onChange([...value, q])}
         />
       )}

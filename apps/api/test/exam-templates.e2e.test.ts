@@ -85,10 +85,14 @@ describe("imtihon shabloni (T-050)", () => {
     expect((await call("PUT", "/admin/exam-templates/yoq", teacher, MILLIY_PRESET)).statusCode).toBe(404);
   });
 
-  it("shablon faqat ustozda: yordamchi va o'quvchiga 403", async () => {
+  it("shablonni faqat ustoz o'zgartiradi: yordamchi faqat ro'yxatni ko'radi, o'quvchiga 403", async () => {
+    expect((await call("GET", "/admin/exam-templates", assistant)).statusCode).toBe(200);
+    expect((await call("GET", "/admin/exam-templates", student)).statusCode).toBe(403);
     for (const h of [assistant, student]) {
-      expect((await call("GET", "/admin/exam-templates", h)).statusCode).toBe(403);
       expect((await call("POST", "/admin/exam-templates", h, MILLIY_PRESET)).statusCode).toBe(403);
+      expect((await call("PATCH", `/admin/exam-templates/${ids[0]}`, h, { isActive: true })).statusCode).toBe(
+        403,
+      );
     }
   });
 });
