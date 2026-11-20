@@ -14,12 +14,14 @@
     "@fontsource-variable/manrope": "5.3.0",
     "@samarqand/ui-tokens": "workspace:*",
     "@tanstack/react-query": "5.105.2",
+    "katex": "0.19.1",
     "lucide-react": "0.456.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-router-dom": "7.18.5"
   },
   "devDependencies": {
+    "@samarqand/math": "workspace:*",
     "@samarqand/shared": "workspace:*",
     "@types/react": "18.3.31",
     "@types/react-dom": "18.3.7",

@@ -10,6 +10,8 @@ export interface TgUser {
 /** Brauzer testlari uchun Telegram ID oralig'i: API e2e testlari bilan to'qnashmaydi, teardown shu oraliqni tozalaydi */
 export const E2E_TG_MIN = 8_000_000_000;
 export const E2E_TG_MAX = 8_900_000_000;
+/** Brauzer testlari yaratgan kurslar nomi shu bilan boshlanadi: teardown ularni o'chiradi */
+export const E2E_PREFIX = "E2E ";
 export const newTgId = () => E2E_TG_MIN + Math.floor(Math.random() * (E2E_TG_MAX - E2E_TG_MIN));
 
 function botToken(): string {
