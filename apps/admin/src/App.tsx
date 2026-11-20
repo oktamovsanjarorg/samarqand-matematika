@@ -13,6 +13,8 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { GroupPage } from "./pages/GroupPage";
 import { GroupsPage } from "./pages/GroupsPage";
 import { MockEditPage } from "./pages/MockEditPage";
+import { OfflineListPage } from "./pages/OfflineListPage";
+import { OfflineTestPage } from "./pages/OfflineTestPage";
 import { MockListPage } from "./pages/MockListPage";
 import { WeeklyEditPage } from "./pages/WeeklyEditPage";
 import { WeeklyListPage } from "./pages/WeeklyListPage";
@@ -62,6 +64,8 @@ export function App() {
               <Route path="mocks" element={<MockListPage />} />
               <Route path="groups" element={<GroupsPage />} />
               <Route path="groups/:id" element={<GroupPage />} />
+              <Route path="offline" element={<OfflineListPage />} />
+              <Route path="offline/:id" element={<OfflineTestPage />} />
               <Route path="mocks/new" element={<MockEditPage />} />
               <Route path="mocks/:id" element={<MockEditPage />} />
               <Route path="tutor" element={<TutorChatsPage />} />
