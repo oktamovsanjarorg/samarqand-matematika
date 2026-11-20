@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "SWC_NODE_PROJECT=./tsconfig.json node --env-file=../../.env --watch -r @swc-node/register src/main.ts",
+    "dev": "SWC_NODE_PROJECT=./tsconfig.json node --env-file-if-exists=../../.env --watch -r @swc-node/register src/main.ts",
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/main.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
