@@ -14,6 +14,7 @@ export * from "./exam";
 export * from "./mock";
 export * from "./mock-attempt";
 export * from "./groups";
+export * from "./offline";
 export * from "./answers";
 export * from "./review";
 export * from "./ranking";
