@@ -14,6 +14,7 @@ import {
   type WeeklyAttemptView,
 } from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
+import { AiReviewService } from "./ai-reviews";
 import { PrismaService } from "../prisma/prisma.service";
 import { checkAnswer } from "../questions/check";
 import { toDetail } from "../questions/codec";
@@ -33,6 +34,7 @@ export class WeeklyService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly access: AccessService,
+    private readonly reviews: AiReviewService,
   ) {}
 
   async list(userId: string): Promise<StudentWeeklyRow[]> {
@@ -145,6 +147,11 @@ export class WeeklyService {
         });
       return tx.weeklyAttempt.findUniqueOrThrow({ where: { id }, include: WEEKLY_ATTEMPT_INCLUDE });
     });
+    // Rasmli savollar AI tekshiruviga (natija o'quvchiga ko'rsatilmaydi, ustoz navbati uchun)
+    await this.reviews.enqueue(
+      id,
+      graded.filter((g) => g.photos > 0).map((g) => g.questionId),
+    );
     return weeklyView(done as WeeklyAttemptRow, new Date());
   }
 
