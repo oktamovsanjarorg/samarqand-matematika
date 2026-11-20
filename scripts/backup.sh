@@ -3,7 +3,8 @@
 #  1. pg_dump (custom format), pg_restore --list bilan butunligi tekshiriladi
 #  2. Serverda 14 kunlik nusxa qoladi
 #  3. S3: db/daily/ (90 kun), oyning 1-kuni db/monthly/ (2 yil, Glacier IR). Server roli faqat yoza oladi, o'chira olmaydi
-#  4. Xato bo'lsa ustoz(lar)ga bot orqali xabar boradi
+#  4. To'lov cheklari (samarqand_media volume) S3 media/ ga sinxronlanadi (o'chirmasdan)
+#  5. Xato bo'lsa ustoz(lar)ga bot orqali xabar boradi
 # Tiklash: scripts/restore.sh <fayl yoki s3://...>
 set -Eeuo pipefail
 
@@ -45,6 +46,10 @@ s3 cp --only-show-errors "/backups/$(basename "$FILE")" "s3://$BUCKET/db/daily/$
 if [[ "$(date +%d)" == "01" ]]; then
   s3 cp --only-show-errors "/backups/$(basename "$FILE")" "s3://$BUCKET/db/monthly/$(basename "$FILE")" || fail "S3 oylik"
 fi
+
+# Cheklar moliyaviy dalil: server yo'qolsa ham saqlanib qolishi kerak. --delete yo'q (rol o'chira olmaydi ham)
+docker run --rm -v samarqand_media:/media:ro amazon/aws-cli:2.27.50 \
+  s3 sync --only-show-errors /media "s3://$BUCKET/media/" || fail "cheklarni S3 ga yuklab bo'lmadi"
 
 find "$ROOT" -name 'db-*.dump' -mtime +14 -delete
 echo "=== $(date -Is) tayyor: $(basename "$FILE") ($(du -h "$FILE" | cut -f1))"

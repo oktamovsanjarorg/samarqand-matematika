@@ -2,44 +2,10 @@ import { PARENT_FLAGS, type AdminParentLink, type ParentLinkStatus } from "@sama
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Phone } from "lucide-react";
 import { useState } from "react";
+import { RejectForm, StatusTabs } from "../components/ReviewParts";
 import { Badge, Button, EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
 import { formatDate } from "../lib/labels";
-
-const TABS: { status: ParentLinkStatus; label: string }[] = [
-  { status: "PENDING", label: "Kutilmoqda" },
-  { status: "APPROVED", label: "Tasdiqlangan" },
-  { status: "REJECTED", label: "Rad etilgan" },
-];
-
-function RejectForm({ id, onDone }: { id: string; onDone: () => void }) {
-  const [reason, setReason] = useState("");
-  const reject = useMutation({
-    mutationFn: () => api.post(`/admin/parent-links/${id}/reject`, { reason }),
-    onSuccess: onDone,
-  });
-  return (
-    <div className="space-y-2">
-      <textarea
-        value={reason}
-        onChange={(e) => setReason(e.target.value)}
-        placeholder="Sabab (ota-onaga yuboriladi)"
-        rows={2}
-        maxLength={300}
-        className="w-full rounded-xl border border-hint/25 bg-section p-3 text-sm"
-      />
-      <Button
-        variant="danger"
-        onClick={() => reject.mutate()}
-        busy={reject.isPending}
-        disabled={reason.trim().length < 3}
-      >
-        Rad etishni tasdiqlash
-      </Button>
-      {reject.error && <p className="text-sm text-danger">{reject.error.message}</p>}
-    </div>
-  );
-}
 
 function LinkCard({ link }: { link: AdminParentLink }) {
   const qc = useQueryClient();
@@ -89,7 +55,13 @@ function LinkCard({ link }: { link: AdminParentLink }) {
               Rad etish
             </Button>
           </div>
-          {rejecting && <RejectForm id={link.id} onDone={done} />}
+          {rejecting && (
+            <RejectForm
+              url={`/admin/parent-links/${link.id}/reject`}
+              placeholder="Sabab (ota-onaga yuboriladi)"
+              onDone={done}
+            />
+          )}
           {approve.error && <p className="text-sm text-danger">{approve.error.message}</p>}
         </div>
       )}
@@ -107,20 +79,7 @@ export function ParentsPage() {
   return (
     <div className="space-y-4">
       <PageTitle title="Ota-onalar" />
-      <div className="flex gap-1 overflow-x-auto rounded-xl bg-section p-1" role="tablist">
-        {TABS.map((t) => (
-          <button
-            key={t.status}
-            type="button"
-            role="tab"
-            aria-selected={status === t.status}
-            onClick={() => setStatus(t.status)}
-            className={`min-h-10 shrink-0 rounded-lg px-3 text-sm font-semibold ${status === t.status ? "bg-brand text-white" : "text-hint"}`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <StatusTabs value={status} onChange={setStatus} />
       {list.isPending && <SkeletonList />}
       {list.isError && <ErrorState message={list.error.message} onRetry={() => list.refetch()} />}
       {list.data?.length === 0 && (
