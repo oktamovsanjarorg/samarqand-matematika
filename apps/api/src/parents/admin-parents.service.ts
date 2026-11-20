@@ -2,10 +2,12 @@ import { ConflictException, Injectable, NotFoundException } from "@nestjs/common
 import type { Prisma } from "@samarqand/db";
 import type { AdminParentLink, ParentFlag, ParentLinkStatus } from "@samarqand/shared";
 import { AuditService } from "../audit/audit.service";
+import { parentApprovedToParent, parentApprovedToStudent, parentRejectedToParent } from "../notify/messages";
+import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 
 const INCLUDE = {
-  parent: { select: { firstName: true, lastName: true, username: true } },
+  parent: { select: { id: true, firstName: true, lastName: true, username: true } },
   student: {
     select: { userId: true, fullName: true, user: { select: { firstName: true, lastName: true } } },
   },
@@ -34,6 +36,7 @@ export class AdminParentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly notify: NotifyService,
   ) {}
 
   async list(status?: ParentLinkStatus): Promise<AdminParentLink[]> {
@@ -74,6 +77,13 @@ export class AdminParentsService {
       entity: "ParentLink",
       entityId: id,
     });
-    return toView(row);
+    const view = toView(row);
+    if (data.status === "APPROVED") {
+      await this.notify.toUser(row.parent.id, parentApprovedToParent(view.studentName));
+      await this.notify.toUser(row.student.userId, parentApprovedToStudent(view.parentName));
+    } else {
+      await this.notify.toUser(row.parent.id, parentRejectedToParent(data.rejectReason ?? ""));
+    }
+    return view;
   }
 }
