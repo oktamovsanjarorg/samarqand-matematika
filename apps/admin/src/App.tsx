@@ -10,6 +10,8 @@ import { LoginPage } from "./pages/LoginPage";
 import { ParentsPage } from "./pages/ParentsPage";
 import { PaymentsPage } from "./pages/PaymentsPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { MockEditPage } from "./pages/MockEditPage";
+import { MockListPage } from "./pages/MockListPage";
 import { WeeklyEditPage } from "./pages/WeeklyEditPage";
 import { WeeklyListPage } from "./pages/WeeklyListPage";
 import { WeeklyReviewPage } from "./pages/WeeklyReviewPage";
@@ -55,6 +57,9 @@ export function App() {
               <Route path="weekly/new" element={<WeeklyEditPage />} />
               <Route path="weekly/:id" element={<WeeklyEditPage />} />
               <Route path="weekly/:id/review" element={<WeeklyReviewPage />} />
+              <Route path="mocks" element={<MockListPage />} />
+              <Route path="mocks/new" element={<MockEditPage />} />
+              <Route path="mocks/:id" element={<MockEditPage />} />
               <Route path="tutor" element={<TutorChatsPage />} />
               <Route path="tutor/:id" element={<TutorChatPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />

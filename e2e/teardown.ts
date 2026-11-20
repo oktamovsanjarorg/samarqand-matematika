@@ -11,6 +11,7 @@ export default async function teardown() {
     await prisma.user.deleteMany({ where });
     const inCourse = { topic: { course: { title: { startsWith: E2E_PREFIX } } } };
     await prisma.weeklyTest.deleteMany({ where: { title: { startsWith: E2E_PREFIX } } });
+    await prisma.mockTest.deleteMany({ where: { title: { startsWith: E2E_PREFIX } } });
     await prisma.question.deleteMany({ where: inCourse });
     await prisma.lesson.deleteMany({ where: inCourse });
     await prisma.topic.deleteMany({ where: { course: { title: { startsWith: E2E_PREFIX } } } });

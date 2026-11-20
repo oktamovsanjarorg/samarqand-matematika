@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
 import { QuestionPicker } from "../components/weekly/QuestionPicker";
+import { WindowFields } from "../components/weekly/WindowFields";
 import { Standings } from "../components/weekly/Standings";
 import { api } from "../lib/api";
 import { fromLocalInput, toLocalInput } from "../lib/weekly";
@@ -64,33 +65,6 @@ function useSave(id: string | undefined) {
       navigate("/weekly");
     },
   });
-}
-
-function WindowFields({ d, set }: { d: Draft; set: (p: Partial<Draft>) => void }) {
-  return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      <label className="space-y-1">
-        <span className="text-xs font-semibold text-hint">Ochiladi (Toshkent vaqti)</span>
-        <input
-          type="datetime-local"
-          value={d.opens}
-          onChange={(e) => set({ opens: e.target.value })}
-          aria-label="Ochiladi"
-          className={field}
-        />
-      </label>
-      <label className="space-y-1">
-        <span className="text-xs font-semibold text-hint">Yopiladi</span>
-        <input
-          type="datetime-local"
-          value={d.closes}
-          onChange={(e) => set({ closes: e.target.value })}
-          aria-label="Yopiladi"
-          className={field}
-        />
-      </label>
-    </div>
-  );
 }
 
 function Form({ initial, id }: { initial?: AdminWeeklyDetail; id?: string }) {

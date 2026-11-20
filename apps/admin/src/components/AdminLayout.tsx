@@ -1,11 +1,22 @@
 import { ROLE_LABELS } from "@samarqand/shared";
-import { Bot, BookOpen, CalendarCheck, CreditCard, LogOut, Settings, UserRound, Users } from "lucide-react";
+import {
+  Bot,
+  BookOpen,
+  CalendarCheck,
+  ClipboardList,
+  CreditCard,
+  LogOut,
+  Settings,
+  UserRound,
+  Users,
+} from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 import type { Session } from "../lib/session";
 
 const NAV = [
   { to: "/content", label: "Kontent", Icon: BookOpen },
   { to: "/weekly", label: "Haftalik", Icon: CalendarCheck },
+  { to: "/mocks", label: "Mock", Icon: ClipboardList },
   { to: "/students", label: "Oʻquvchilar", Icon: UserRound },
   { to: "/parents", label: "Ota-onalar", Icon: Users },
   { to: "/payments", label: "Toʻlovlar", Icon: CreditCard },
