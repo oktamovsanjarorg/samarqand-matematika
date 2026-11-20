@@ -30,9 +30,11 @@ export function openView(a: AttemptRow): AttemptView {
   };
 }
 
-/** Topshirilgan urinish: to'g'ri javob va namunaviy yechim bilan */
-export function resultView(a: AttemptRow): AttemptResult {
-  const items = a.answers.map((x) => {
+type AnswerRow = AttemptRow["answers"][number];
+
+/** Natija qatorlari: to'g'ri javob va namunaviy yechim bilan (mavzu va haftalik test uchun umumiy) */
+export function resultItems(answers: AnswerRow[]): AttemptResult["items"] {
+  return answers.map((x) => {
     const detail = toDetail(x.question);
     return {
       question: toView(x.question),
@@ -42,6 +44,11 @@ export function resultView(a: AttemptRow): AttemptResult {
       solution: detail.solution ?? "",
     };
   });
+}
+
+/** Topshirilgan urinish: to'g'ri javob va namunaviy yechim bilan */
+export function resultView(a: AttemptRow): AttemptResult {
+  const items = resultItems(a.answers);
   return {
     status: "SUBMITTED",
     id: a.id,

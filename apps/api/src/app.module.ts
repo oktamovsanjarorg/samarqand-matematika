@@ -7,6 +7,7 @@ import { ContentModule } from "./content/content.module";
 import { QuestionsModule } from "./questions/questions.module";
 import { TopicTestsModule } from "./topic-tests/topic-tests.module";
 import { BillingModule } from "./billing/billing.module";
+import { WeeklyModule } from "./weekly/weekly.module";
 import { StudentsModule } from "./students/students.module";
 import { ParentsModule } from "./parents/parents.module";
 import { NotifyModule } from "./notify/notify.module";
@@ -40,6 +41,7 @@ export class AppModule {
         QuestionsModule,
         TopicTestsModule,
         BillingModule,
+        WeeklyModule,
         StudentsModule,
         ParentsModule,
         NotifyModule,

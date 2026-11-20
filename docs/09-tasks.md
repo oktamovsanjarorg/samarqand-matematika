@@ -48,13 +48,15 @@
 
 ## 2-bosqich: haftalik test va AI tekshiruvi
 
-| ID    | Vazifa                                                                                       | Holat |
-| ----- | -------------------------------------------------------------------------------------------- | ----- |
-| T-030 | Haftalik test oynasi (BR-W01–W03, W07, W08), cron                                            | ⬜    |
-| T-031 | Yechim rasmlarini yuklash (siqish, saqlash)                                                  | ⬜    |
-| T-032 | `AiProvider` interfeysi va baholash to'plami, provayder tanlovi (Q-03, ADR)                  | ⬜    |
-| T-033 | AI yechim tekshiruvi: hukm sxemasi, ko'chirish signallari, o'quvchilar orasidagi o'xshashlik | ⬜    |
-| T-034 | Ustoz navbati: shubhalilar birinchi turadi, tasdiqlash yoki o'zgartirish (BR-W05, W06)       | ⬜    |
-| T-035 | Reyting va ota-onaga hisobot                                                                 | ⬜    |
+| ID     | Vazifa                                                                                                                                                     | Holat |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| T-030  | Haftalik test API: oyna (vaqtdan), bitta urinish, natija yopilgandan keyin, topshirmaganga 0, eslatmalar 24/3 soat, rejalashtiruvchi (BR-W01–W03, W07–W09) | ✅    |
+| T-030b | Admin: haftalik testlar (yaratish, bankdan savol tanlash, oyna), natijalar jadvali                                                                         | ⬜    |
+| T-030c | Mini App: haftalik test ro'yxati, yechish, "natija yopilgach", natija                                                                                      | ⬜    |
+| T-031  | Yechim rasmlarini yuklash (siqish, saqlash)                                                                                                                | ⬜    |
+| T-032  | `AiProvider` interfeysi va baholash to'plami, provayder tanlovi (Q-03, ADR)                                                                                | ⬜    |
+| T-033  | AI yechim tekshiruvi: hukm sxemasi, ko'chirish signallari, o'quvchilar orasidagi o'xshashlik                                                               | ⬜    |
+| T-034  | Ustoz navbati: shubhalilar birinchi turadi, tasdiqlash yoki o'zgartirish (BR-W05, W06)                                                                     | ⬜    |
+| T-035  | Reyting va ota-onaga hisobot                                                                                                                               | ⬜    |
 
 Keyingi bosqichlar (AI yordamchi, Mock, offline, ko'rsatmalar) 2-bosqich oxirida vazifalarga bo'linadi.

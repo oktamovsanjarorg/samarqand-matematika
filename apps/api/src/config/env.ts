@@ -19,6 +19,8 @@ const schema = z.object({
   RATE_LIMIT_AUTH_PER_MIN: z.coerce.number().int().min(10).default(120),
   // Yuklangan fayllar (to'lov cheklari): production'da docker volume (/app/media)
   MEDIA_DIR: z.string().min(1).default("./media"),
+  // Haftalik test rejalashtiruvchisi (eslatma va yopish) necha soniyada bir ishlaydi; 0 — o'chiq (testlarda)
+  WEEKLY_TICK_SEC: z.coerce.number().int().min(0).default(60),
 });
 
 export type Env = z.infer<typeof schema>;
