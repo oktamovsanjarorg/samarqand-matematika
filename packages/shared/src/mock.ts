@@ -45,3 +45,25 @@ export interface AdminMockDetail extends AdminMockRow {
   template: ExamTemplateInput;
   sections: WeeklyQuestionRow[][];
 }
+
+/** Ustozga mock natijalari: oyna ochiq paytda ham (topshirganlar) */
+export interface AdminMockResultRow {
+  userId: string;
+  name: string;
+  submittedAt: string | null;
+  raw: number | null;
+  scaled: number | null;
+  grade: string | null;
+  /** Bo'limlar bo'yicha xom ball (shablon tartibida) */
+  sections: number[];
+}
+
+export interface AdminMockResults {
+  /** RASCH: yopilgan, 30+ topshirgan; APPROX: yopilgan, kam; OPEN: oyna hali ochiq */
+  method: "RASCH" | "APPROX" | "OPEN";
+  submitted: number;
+  maxRaw: number;
+  scaleMax: number;
+  sectionTitles: string[];
+  rows: AdminMockResultRow[];
+}
