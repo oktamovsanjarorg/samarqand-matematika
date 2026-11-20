@@ -42,6 +42,7 @@ model User {
   children         ParentLink[]     @relation("ParentOf")
   reviewedLinks    ParentLink[]     @relation("LinkReviewer")
   TutorChat        TutorChat[]
+  mockAttempts     MockAttempt[]
 
   @@index([role])
 }
@@ -162,6 +163,8 @@ model Question {
   weeklyQuestions WeeklyQuestion[]
   weeklyAnswers   WeeklyAnswer[]
   tutorChats      TutorChat[]
+  mockQuestions   MockQuestion[]
+  mockAnswers     MockAnswer[]
 
   @@index([topicId, order])
 }
@@ -472,13 +475,76 @@ model TutorMessage {
 
 /// Imtihon shabloni (T-050, BR-M01): bo'limlar va darajalar JSON'da, shared `examTemplateInput` bilan tekshiriladi
 model ExamTemplate {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   name        String
   durationMin Int
   scaleMax    Float
   sections    Json
   grades      Json
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now()) @db.Timestamptz
-  updatedAt   DateTime @updatedAt @db.Timestamptz
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now()) @db.Timestamptz
+  updatedAt   DateTime   @updatedAt @db.Timestamptz
+  mocks       MockTest[]
+}
+
+/// Mock imtihon (T-051). `template`: yaratilgandagi shablon nusxasi, shablon keyin o'zgarsa ham natija o'zgarmaydi
+model MockTest {
+  id           String         @id @default(cuid())
+  title        String
+  templateId   String?
+  examTemplate ExamTemplate?  @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  template     Json
+  opensAt      DateTime       @db.Timestamptz
+  closesAt     DateTime       @db.Timestamptz
+  isPublished  Boolean        @default(false)
+  /// Oyna yopilib natijalar hisoblangan vaqt
+  closedAt     DateTime?      @db.Timestamptz
+  createdAt    DateTime       @default(now()) @db.Timestamptz
+  questions    MockQuestion[]
+  attempts     MockAttempt[]
+
+  @@index([isPublished, closesAt])
+}
+
+model MockQuestion {
+  mockTestId String
+  mockTest   MockTest @relation(fields: [mockTestId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  /// Shablondagi bo'lim tartib raqami (0 dan)
+  section    Int
+  order      Int
+
+  @@id([mockTestId, questionId])
+}
+
+/// Bitta urinish; muddat = boshlash + shablon vaqti, lekin oyna yopilishidan keyin emas (server vaqti)
+model MockAttempt {
+  id          String       @id @default(cuid())
+  mockTestId  String
+  mockTest    MockTest     @relation(fields: [mockTestId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startedAt   DateTime     @default(now()) @db.Timestamptz
+  deadline    DateTime     @db.Timestamptz
+  submittedAt DateTime?    @db.Timestamptz
+  /// Xom ball (bo'lim ballari yig'indisi)
+  raw         Float?
+  answers     MockAnswer[]
+
+  @@unique([mockTestId, userId])
+}
+
+model MockAnswer {
+  attemptId  String
+  attempt    MockAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question     @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  section    Int
+  order      Int
+  response   Json?
+  result     CheckResult?
+  updatedAt  DateTime     @updatedAt @db.Timestamptz
+
+  @@id([attemptId, questionId])
 }
