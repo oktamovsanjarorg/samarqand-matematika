@@ -24,8 +24,11 @@ const HISTORY = 20;
 const blocked = () =>
   new ForbiddenException({
     code: ERROR_CODES.AI_BLOCKED,
-    message: "Bu savol ochiq haftalik testda. Test yopilgach birga koʻrib chiqamiz",
+    message: "Bu savol ochiq testda. Test yopilgach birga koʻrib chiqamiz",
   });
+
+/** Ochiq (nashr qilingan, oyna ichidagi) haftalik test yoki mock (BR-T01) */
+const openWindow = (now: Date) => ({ isPublished: true, opensAt: { lte: now }, closesAt: { gt: now } });
 
 /**
  * AI yordamchi (PLAN §7, BR-T01–T04). Kontekst va rejim qoidasi serverda tuziladi;
@@ -148,10 +151,23 @@ export class TutorService {
 
   /** BR-T01: savol ochiq haftalik testda bo'lsa yordam yo'q */
   private async guardWeekly(questionId: string, now: Date) {
-    const open = await this.prisma.weeklyQuestion.count({
-      where: { questionId, weeklyTest: { isPublished: true, opensAt: { lte: now }, closesAt: { gt: now } } },
+    const [weekly, mock] = await Promise.all([
+      this.prisma.weeklyQuestion.count({ where: { questionId, weeklyTest: openWindow(now) } }),
+      this.prisma.mockQuestion.count({ where: { questionId, mockTest: openWindow(now) } }),
+    ]);
+    if (weekly || mock) throw blocked();
+  }
+
+  /** Mock yechilayotganda yordamchi butunlay o'chiq (PLAN §5.2) */
+  private async guardMock(userId: string, now: Date) {
+    const active = await this.prisma.mockAttempt.count({
+      where: { userId, submittedAt: null, deadline: { gt: now } },
     });
-    if (open) throw blocked();
+    if (active)
+      throw new ForbiddenException({
+        code: ERROR_CODES.AI_BLOCKED,
+        message: "Mock paytida yordamchi oʻchiq",
+      });
   }
 
   /** Rejimga qarab kontekst va (xato tahlilida) o'quvchining yechim rasmlari */
@@ -160,6 +176,7 @@ export class TutorService {
     text: string,
     now: Date,
   ): Promise<{ context: string; photos: SolutionPhotoInput[] }> {
+    await this.guardMock(chat.userId, now);
     const ids = { userId: chat.userId, attemptId: chat.attemptId ?? "", questionId: chat.questionId ?? "" };
     if (chat.mode === "PRACTICE") {
       const a = await this.practiceAnswer(ids.userId, ids.attemptId, ids.questionId);
@@ -180,17 +197,18 @@ export class TutorService {
         ),
       };
     }
-    const open = await this.prisma.weeklyQuestion.findMany({
-      where: { weeklyTest: { isPublished: true, opensAt: { lte: now }, closesAt: { gt: now } } },
-      select: { question: { select: { text: true } } },
-    });
-    if (
-      mentionsOpenQuestion(
-        text,
-        open.map((o) => o.question.text),
-      )
-    )
-      throw blocked();
+    const [weekly, mock] = await Promise.all([
+      this.prisma.weeklyQuestion.findMany({
+        where: { weeklyTest: openWindow(now) },
+        select: { question: { select: { text: true } } },
+      }),
+      this.prisma.mockQuestion.findMany({
+        where: { mockTest: openWindow(now) },
+        select: { question: { select: { text: true } } },
+      }),
+    ]);
+    const open = [...weekly, ...mock].map((o) => o.question.text);
+    if (mentionsOpenQuestion(text, open)) throw blocked();
     return { context: "Erkin savol. Aniq masala konteksti yo'q.", photos: [] };
   }
 }
