@@ -229,10 +229,14 @@ model StudentProfile {
   /// Ota-ona botga shu kod bilan ulanadi (t.me/<bot>?start=p_<kod>)
   parentCode   String?       @unique
   parents      ParentLink[]
+  /// Offline guruh (T-054)
+  groupId      String?
+  group        Group?        @relation(fields: [groupId], references: [id], onDelete: SetNull)
   createdAt    DateTime      @default(now()) @db.Timestamptz
   updatedAt    DateTime      @updatedAt @db.Timestamptz
 
   @@index([acceptedAt])
+  @@index([groupId])
 }
 
 enum ParentLinkStatus {
@@ -553,4 +557,14 @@ model MockAnswer {
   updatedAt  DateTime     @updatedAt @db.Timestamptz
 
   @@id([attemptId, questionId])
+}
+
+/// Offline guruh (T-054): jadval matn ko'rinishida, davomat T-055 da
+model Group {
+  id        String           @id @default(cuid())
+  name      String
+  schedule  String?
+  isActive  Boolean          @default(true)
+  createdAt DateTime         @default(now()) @db.Timestamptz
+  students  StudentProfile[]
 }

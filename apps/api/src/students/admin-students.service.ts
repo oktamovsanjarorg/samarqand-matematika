@@ -12,7 +12,9 @@ const SELECT = {
   phone: true,
   createdAt: true,
   lastSeenAt: true,
-  student: { select: { fullName: true, accessMode: true, acceptedAt: true } },
+  student: {
+    select: { fullName: true, accessMode: true, acceptedAt: true, group: { select: { name: true } } },
+  },
 } as const;
 type Row = Prisma.UserGetPayload<{ select: typeof SELECT }>;
 
@@ -25,6 +27,7 @@ const toRow = (u: Row): AdminStudentRow => ({
   phone: u.phone,
   accessMode: u.student?.accessMode ?? "AUTO",
   acceptedAt: iso(u.student?.acceptedAt),
+  groupName: u.student?.group?.name ?? null,
   createdAt: u.createdAt.toISOString(),
   lastSeenAt: iso(u.lastSeenAt),
 });

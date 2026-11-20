@@ -14,7 +14,7 @@ export async function weeklyFixture() {
   const courseIds: string[] = [];
   const HOUR = 3_600_000;
 
-  type Method = "GET" | "POST" | "PUT" | "DELETE";
+  type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   const call = (method: Method, url: string, headers: Record<string, string>, payload?: object) =>
     app.inject({ method, url: `/api${url}`, headers, ...(payload ? { payload } : {}) });
   const at = (ms: number) => new Date(Date.now() + ms).toISOString();
