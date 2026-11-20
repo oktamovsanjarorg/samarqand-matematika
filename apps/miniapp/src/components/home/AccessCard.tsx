@@ -1,5 +1,6 @@
 import type { MyProfile } from "@samarqand/shared";
 import { CheckCircle2, Circle, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 function Step({ done, title, hint }: { done: boolean; title: string; hint: string }) {
   return (
@@ -44,8 +45,16 @@ export function AccessCard({ access }: { access: MyProfile["access"] }) {
           title="Ota-ona tasdiqladi"
           hint="Botga /ota yuboring va kelgan havolani ota-onangizga joʻnating"
         />
-        <Step done={access.paid} title="Obuna toʻlangan" hint="Toʻlov boʻyicha ustozga murojaat qiling" />
+        <Step done={access.paid} title="Obuna toʻlangan" hint="Kartaga oʻtkazib, chek rasmini yuboring" />
       </ol>
+      {!access.paid && (
+        <Link
+          to="/billing"
+          className="tap flex h-12 items-center justify-center rounded-xl bg-brand font-bold text-white"
+        >
+          Obunani toʻlash
+        </Link>
+      )}
     </section>
   );
 }

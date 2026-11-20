@@ -7,6 +7,7 @@ import { ErrorState, Splash } from "./components/states";
 import { api, login } from "./lib/api";
 import { HomePage } from "./pages/HomePage";
 import { AttemptResultPage } from "./pages/AttemptResultPage";
+import { BillingPage } from "./pages/BillingPage";
 import { LessonPage } from "./pages/LessonPage";
 import { LessonsPage } from "./pages/LessonsPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
@@ -44,6 +45,7 @@ export function App() {
         <Route path="lessons/:id" element={<LessonPage />} />
         <Route path="topics/:id/test" element={<TopicTestPage />} />
         <Route path="attempts/:id" element={<AttemptResultPage />} />
+        <Route path="billing" element={<BillingPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
       {import.meta.env.DEV && (

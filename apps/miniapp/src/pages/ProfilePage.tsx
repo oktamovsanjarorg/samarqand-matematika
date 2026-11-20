@@ -64,6 +64,11 @@ export function ProfilePage() {
         </div>
       )}
       {stats && stats.topics.length > 0 && <Topics topics={stats.topics} />}
+      {user.role === "STUDENT" && (
+        <Link to="/billing" className="tap card flex items-center justify-between font-semibold">
+          Obuna va toʻlovlar <span className="text-hint">›</span>
+        </Link>
+      )}
     </div>
   );
 }

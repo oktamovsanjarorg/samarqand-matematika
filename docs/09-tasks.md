@@ -42,7 +42,7 @@
 | T-024  | Asosiy (kirish qadamlari BR-A04, tugallanmagan test, oxirgi natijalar) va Profil (testlar soni, o'rtacha foiz, mavzular bo'yicha eng yaxshi natija); `GET /me/stats` | ✅    |
 | T-025  | Qo'lda to'lov va obuna (API): tariflar, karta, chek yuklash, tasdiq/rad, obuna uzayishi (BR-B01–B05)                                                                 | ✅    |
 | T-025b | Admin: "To'lovlar" (cheklar navbati, rasm, tasdiq/rad), "Sozlamalar" (tariflar, karta; faqat ustoz). Cheklar kunlik zaxirada (S3 media/)                             | ✅    |
-| T-025c | Mini App: tarif tanlash, karta, chek yuborish, holat                                                                                                                 | ⬜    |
+| T-025c | Mini App "Obuna": tarif tanlash, karta (nusxalash), chek rasmi (1600px JPEG'ga siqiladi), holat, bekor qilish; Asosiy va Profildan havola                            | ✅    |
 | T-026  | Word/Excel'dan savol import (pandoc, OMML → LaTeX)                                                                                                                   | ⬜    |
 | T-027  | Bot xabarnomalari: ustozga yangi o'quvchi va ota-ona so'rovi, ota-onaga va o'quvchiga natija (NotifyService)                                                         | ✅    |
 
