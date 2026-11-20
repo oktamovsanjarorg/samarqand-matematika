@@ -1,5 +1,6 @@
 import rateLimit from "@fastify/rate-limit";
 import type { NestFastifyApplication } from "@nestjs/platform-fastify";
+import { MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "@samarqand/shared";
 import type { FastifyRequest } from "fastify";
 
 /** main.ts va testlar uchun umumiy sozlash */
@@ -8,6 +9,15 @@ export async function configureApp(
   opts: { rateLimit: false } | { authPerMinute: number },
 ) {
   app.setGlobalPrefix("api");
+  // Chek rasmi tanasi xom bayt bo'lib keladi (multipart'siz): turi baytlardan ham tekshiriladi
+  app
+    .getHttpAdapter()
+    .getInstance()
+    .addContentTypeParser(
+      [...RECEIPT_TYPES],
+      { parseAs: "buffer", bodyLimit: MAX_RECEIPT_BYTES },
+      (_req, body, done) => done(null, body),
+    );
   if ("rateLimit" in opts) return;
   // Bitta IP'dan daqiqasiga 600 so'rov, kirish (auth) uchun RATE_LIMIT_AUTH_PER_MIN (maktab Wi-Fi'da butun sinf bitta IP'da).
   // Haqiqiy IP proxy'dan X-Real-IP orqali keladi.

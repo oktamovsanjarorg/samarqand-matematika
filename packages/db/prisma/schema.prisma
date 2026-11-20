@@ -32,6 +32,9 @@ model User {
   createdAt        DateTime         @default(now()) @db.Timestamptz
   updatedAt        DateTime         @updatedAt @db.Timestamptz
   topicAttempts    TopicAttempt[]
+  payments         Payment[]
+  reviewedPayments Payment[]        @relation("PaymentReviewer")
+  subscriptions    Subscription[]
   student          StudentProfile?  @relation("Student")
   acceptedStudents StudentProfile[] @relation("AcceptedBy")
   children         ParentLink[]     @relation("ParentOf")
@@ -249,4 +252,65 @@ model ParentLink {
 
   @@unique([parentId, studentId])
   @@index([status])
+}
+
+/// Obuna tarifi: narx va muddat ustoz tomonidan admin panelda belgilanadi
+model Plan {
+  id            String         @id @default(cuid())
+  name          String
+  priceUzs      Int
+  durationDays  Int
+  description   String?
+  isActive      Boolean        @default(true)
+  order         Int            @default(0)
+  createdAt     DateTime       @default(now()) @db.Timestamptz
+  payments      Payment[]
+  subscriptions Subscription[]
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+/// Qo'lda to'lov: o'quvchi kartaga o'tkazib chek rasmini yuboradi, ustoz tasdiqlaydi (BR-B01)
+model Payment {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId       String
+  plan         Plan          @relation(fields: [planId], references: [id], onDelete: Restrict)
+  /// To'lov paytidagi narx (tarif narxi keyin o'zgarishi mumkin)
+  amountUzs    Int
+  status       PaymentStatus @default(PENDING)
+  /// MEDIA_DIR ichidagi nisbiy yo'l: receipts/<id>.jpg
+  receiptPath  String?
+  payerNote    String?
+  reviewedById String?
+  reviewedBy   User?         @relation("PaymentReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewNote   String?
+  reviewedAt   DateTime?     @db.Timestamptz
+  subscription Subscription?
+  createdAt    DateTime      @default(now()) @db.Timestamptz
+  updatedAt    DateTime      @updatedAt @db.Timestamptz
+
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
+}
+
+/// To'liq kirish davri (BR-A04 "to'lov qilingan"): endsAt > hozir bo'lsa faol
+model Subscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId    String
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Restrict)
+  paymentId String?  @unique
+  payment   Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  startsAt  DateTime @db.Timestamptz
+  endsAt    DateTime @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  @@index([userId, endsAt])
 }

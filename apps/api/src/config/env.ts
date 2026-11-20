@@ -17,6 +17,8 @@ const schema = z.object({
   ADMIN_JWT_TTL: z.string().default("12h"),
   // Bitta IP'dan daqiqasiga kirish so'rovlari (maktab Wi-Fi'da butun sinf bitta IP'da bo'ladi)
   RATE_LIMIT_AUTH_PER_MIN: z.coerce.number().int().min(10).default(120),
+  // Yuklangan fayllar (to'lov cheklari): production'da docker volume (/app/media)
+  MEDIA_DIR: z.string().min(1).default("./media"),
 });
 
 export type Env = z.infer<typeof schema>;

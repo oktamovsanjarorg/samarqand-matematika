@@ -1,4 +1,6 @@
 import "reflect-metadata";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import type { Type } from "@nestjs/common";
 import { FastifyAdapter, type NestFastifyApplication } from "@nestjs/platform-fastify";
 import { Test } from "@nestjs/testing";
@@ -9,6 +11,7 @@ import { loadEnv } from "../src/config/env";
 import { configureApp } from "../src/setup";
 
 export const BOT_TOKEN = "123456:E2E_TEST_TOKEN";
+export const TEST_MEDIA_DIR = join(tmpdir(), "samarqand-test-media");
 export const OWNER = "e2e_owner";
 
 /** Testlar Telegram'ga chiqmaydi: yuborilgan xabarlar shu ro'yxatga yoziladi */
@@ -26,6 +29,8 @@ export async function createApp(extraControllers: Type[] = []) {
     BOT_TOKEN,
     JWT_SECRET: "e2e-secret-e2e-secret",
     OWNER_USERNAMES: OWNER,
+    // Cheklar vaqtinchalik papkaga: test repoga fayl yozmaydi
+    MEDIA_DIR: TEST_MEDIA_DIR,
   });
   const mod = await Test.createTestingModule({
     imports: [AppModule.forRoot(env)],

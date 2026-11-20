@@ -6,6 +6,7 @@ import { ENV, type Env } from "./config/env";
 import { ContentModule } from "./content/content.module";
 import { QuestionsModule } from "./questions/questions.module";
 import { TopicTestsModule } from "./topic-tests/topic-tests.module";
+import { BillingModule } from "./billing/billing.module";
 import { StudentsModule } from "./students/students.module";
 import { ParentsModule } from "./parents/parents.module";
 import { NotifyModule } from "./notify/notify.module";
@@ -38,6 +39,7 @@ export class AppModule {
         ContentModule,
         QuestionsModule,
         TopicTestsModule,
+        BillingModule,
         StudentsModule,
         ParentsModule,
         NotifyModule,
