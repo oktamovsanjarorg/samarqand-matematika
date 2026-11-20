@@ -1,7 +1,7 @@
 import { PrismaClient } from "@samarqand/db";
 import { E2E_PREFIX, E2E_TG_MAX, E2E_TG_MIN } from "./telegram";
 
-/** Brauzer testlari yaratgan foydalanuvchilar (audit yozuvlari bilan) va "E2E " kurslarini o'chiradi */
+/** Brauzer testlari yaratgan foydalanuvchilar (audit yozuvlari bilan), "E2E " kurslari, tariflari va kartasini o'chiradi */
 export default async function teardown() {
   const prisma = new PrismaClient();
   try {
@@ -14,6 +14,11 @@ export default async function teardown() {
     await prisma.lesson.deleteMany({ where: inCourse });
     await prisma.topic.deleteMany({ where: { course: { title: { startsWith: E2E_PREFIX } } } });
     await prisma.course.deleteMany({ where: { title: { startsWith: E2E_PREFIX } } });
+    // To'lovlar foydalanuvchi bilan o'chgan, endi "E2E " tariflari va test kartasi
+    await prisma.plan.deleteMany({ where: { name: { startsWith: E2E_PREFIX } } });
+    const card = await prisma.appSetting.findUnique({ where: { key: "billing.card" } });
+    if (JSON.stringify(card?.value ?? {}).includes(`"holder":"${E2E_PREFIX}`))
+      await prisma.appSetting.delete({ where: { key: "billing.card" } });
   } finally {
     await prisma.$disconnect();
   }

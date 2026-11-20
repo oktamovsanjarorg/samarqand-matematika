@@ -17,7 +17,7 @@ export const setUnauthorizedHandler = (fn: () => void) => {
   onUnauthorized = fn;
 };
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function raw(path: string, init: RequestInit = {}): Promise<Response> {
   const token = loadSession()?.token;
   const res = await fetch(`/api${path}`, {
     ...init,
@@ -35,6 +35,11 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const body = (await res.json().catch(() => null)) as { message?: string; code?: string } | null;
     throw new ApiError(res.status, body?.message ?? "Xatolik yuz berdi", body?.code);
   }
+  return res;
+}
+
+async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const res = await raw(path, init);
   return res.status === 204 ? (undefined as T) : ((await res.json()) as T);
 }
 
@@ -47,6 +52,8 @@ export const api = {
   patch: <T>(path: string, body: object) => send("PATCH")(path, body) as Promise<T>,
   put: <T>(path: string, body: object) => send("PUT")(path, body) as Promise<T>,
   del: (path: string) => send("DELETE")(path) as Promise<void>,
+  /** Token bilan rasm (masalan, to'lov cheki): <img> sarlavha yubora olmaydi */
+  blob: async (path: string) => (await raw(path)).blob(),
 };
 
 export const adminApi = {

@@ -1,5 +1,5 @@
 import { ROLE_LABELS } from "@samarqand/shared";
-import { BookOpen, LogOut, UserRound, Users } from "lucide-react";
+import { BookOpen, CreditCard, LogOut, Settings, UserRound, Users } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 import type { Session } from "../lib/session";
 
@@ -7,7 +7,10 @@ const NAV = [
   { to: "/content", label: "Kontent", Icon: BookOpen },
   { to: "/students", label: "Oʻquvchilar", Icon: UserRound },
   { to: "/parents", label: "Ota-onalar", Icon: Users },
+  { to: "/payments", label: "Toʻlovlar", Icon: CreditCard },
 ];
+// BR-B05: tarif va karta faqat ustozda
+const TEACHER_NAV = [{ to: "/settings", label: "Sozlamalar", Icon: Settings }];
 
 export function AdminLayout({ session, onLogout }: { session: Session; onLogout: () => void }) {
   const { user } = session;
@@ -30,7 +33,7 @@ export function AdminLayout({ session, onLogout }: { session: Session; onLogout:
         </button>
       </header>
       <nav aria-label="Boʻlimlar" className="flex gap-1 overflow-x-auto rounded-xl bg-section p-1">
-        {NAV.map(({ to, label, Icon }) => (
+        {[...NAV, ...(user.role === "TEACHER" ? TEACHER_NAV : [])].map(({ to, label, Icon }) => (
           <NavLink
             key={to}
             to={to}
