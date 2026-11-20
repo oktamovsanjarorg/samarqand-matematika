@@ -4,6 +4,9 @@ import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
 
 const INVALID = "Roʻyxat toʻliq emas yoki boshqa boʻlimga tegishli: sahifani yangilab, qayta urinib koʻring";
+type Kind = ReorderBody["kind"];
+const pick = (rows: { id: string }[]) => rows.map((r) => r.id);
+const ID = { id: true } as const;
 
 /** Ota ichidagi tartibni almashtiradi: ids aynan shu otaning barcha bolalari bo'lishi shart */
 @Injectable()
@@ -24,29 +27,28 @@ export class ReorderService {
   }
 
   /** Birinchi elementning otasidagi barcha bolalar */
-  private async siblingIds(kind: ReorderBody["kind"], firstId: string): Promise<string[]> {
-    const pick = (rows: { id: string }[]) => rows.map((r) => r.id);
-    if (kind === "course") return pick(await this.prisma.course.findMany({ select: { id: true } }));
+  private async siblingIds(kind: Kind, firstId: string): Promise<string[]> {
+    const db = this.prisma;
+    if (kind === "course") return pick(await db.course.findMany({ select: ID }));
     if (kind === "topic") {
-      const first = await this.prisma.topic.findUnique({
-        where: { id: firstId },
-        select: { courseId: true },
-      });
-      if (!first) return [];
-      return pick(
-        await this.prisma.topic.findMany({ where: { courseId: first.courseId }, select: { id: true } }),
-      );
+      const first = await db.topic.findUnique({ where: { id: firstId }, select: { courseId: true } });
+      return first ? pick(await db.topic.findMany({ where: { courseId: first.courseId }, select: ID })) : [];
     }
-    const first = await this.prisma.lesson.findUnique({ where: { id: firstId }, select: { topicId: true } });
-    if (!first) return [];
-    return pick(
-      await this.prisma.lesson.findMany({ where: { topicId: first.topicId }, select: { id: true } }),
-    );
+    const where = { id: firstId };
+    const parent =
+      kind === "lesson"
+        ? await db.lesson.findUnique({ where, select: { topicId: true } })
+        : await db.question.findUnique({ where, select: { topicId: true } });
+    if (!parent) return [];
+    const byTopic = { where: { topicId: parent.topicId }, select: ID };
+    return pick(kind === "lesson" ? await db.lesson.findMany(byTopic) : await db.question.findMany(byTopic));
   }
 
-  private updateOrder(kind: ReorderBody["kind"], id: string, order: number) {
-    if (kind === "course") return this.prisma.course.update({ where: { id }, data: { order } });
-    if (kind === "topic") return this.prisma.topic.update({ where: { id }, data: { order } });
-    return this.prisma.lesson.update({ where: { id }, data: { order } });
+  private updateOrder(kind: Kind, id: string, order: number) {
+    const args = { where: { id }, data: { order } };
+    if (kind === "course") return this.prisma.course.update(args);
+    if (kind === "topic") return this.prisma.topic.update(args);
+    if (kind === "lesson") return this.prisma.lesson.update(args);
+    return this.prisma.question.update(args);
   }
 }

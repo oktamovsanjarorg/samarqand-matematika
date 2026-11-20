@@ -21,6 +21,14 @@
 | BR-C03 | Ichida mavzu bor kursni yoki ichida dars bor mavzuni o'chirib bo'lmaydi (409 `NOT_EMPTY`)                                                                                                                                                  | ✅    |
 | BR-C04 | Kontentni ustoz ham, yordamchi ham boshqaradi. Har o'zgarish auditga yoziladi, dars matni esa auditga yozilmaydi (faqat o'zgargan maydon nomlari)                                                                                          | ✅    |
 
+## Savollar (Q)
+
+| ID     | Qoida                                                                                                                                                               | Holat |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| BR-Q01 | To'g'ri javob va namunaviy yechim alohida ustunda saqlanadi. O'quvchi ko'rinishi uchun bu ustunlar bazadan o'qilmaydi, audit jurnaliga ham yozilmaydi               | ✅    |
+| BR-Q02 | Ko'p tanlovli savol faqat tanlangan to'plam aynan to'g'ri to'plamga teng bo'lsa to'g'ri. Qisman ball yo'q                                                           | ⚠️    |
+| BR-Q03 | Avtomatik tekshiruv: SINGLE, MULTIPLE, NUMERIC (BR-M04), MATCHING (BR-M03). EXPRESSION hozircha ustozga tushadi (ifoda ekvivalentligi T-022b), WRITTEN doim ustozga | ✅    |
+
 ## Haftalik test (W)
 
 | ID     | Qoida                                                                                                                            | Holat   |

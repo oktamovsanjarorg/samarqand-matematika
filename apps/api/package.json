@@ -16,6 +16,7 @@
     "@nestjs/jwt": "11.0.2",
     "@nestjs/platform-fastify": "11.2.8",
     "@samarqand/db": "workspace:*",
+    "@samarqand/math": "workspace:*",
     "@samarqand/shared": "workspace:*",
     "fastify": "5.12.8",
     "reflect-metadata": "0.2.2",
