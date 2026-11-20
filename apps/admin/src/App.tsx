@@ -10,6 +10,8 @@ import { LoginPage } from "./pages/LoginPage";
 import { ParentsPage } from "./pages/ParentsPage";
 import { PaymentsPage } from "./pages/PaymentsPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { WeeklyEditPage } from "./pages/WeeklyEditPage";
+import { WeeklyListPage } from "./pages/WeeklyListPage";
 import { QuestionEditPage } from "./pages/QuestionEditPage";
 import { QuestionsPage } from "./pages/QuestionsPage";
 import { SignInHint } from "./pages/SignInHint";
@@ -46,6 +48,9 @@ export function App() {
               <Route path="parents" element={<ParentsPage />} />
               <Route path="payments" element={<PaymentsPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="weekly" element={<WeeklyListPage />} />
+              <Route path="weekly/new" element={<WeeklyEditPage />} />
+              <Route path="weekly/:id" element={<WeeklyEditPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           ) : (

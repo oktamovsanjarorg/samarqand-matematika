@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { AttemptResult, AttemptView } from "./attempt";
+import type { QuestionType } from "./question";
 
 export type WeeklyStatus = "UPCOMING" | "OPEN" | "CLOSED";
 
@@ -86,8 +87,16 @@ export interface AdminWeeklyRow {
   submitted: number;
 }
 
+export interface WeeklyQuestionRow {
+  id: string;
+  type: QuestionType;
+  text: string;
+  topicTitle: string;
+}
+
 export interface AdminWeeklyDetail extends AdminWeeklyRow {
   questionIds: string[];
+  questions: WeeklyQuestionRow[];
 }
 
 /** Natijalar jadvali: ball bo'yicha, teng bo'lsa erta topshirgan yuqorida */

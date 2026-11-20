@@ -65,10 +65,24 @@ export class AdminWeeklyService {
   async get(id: string): Promise<AdminWeeklyDetail> {
     const t = await this.prisma.weeklyTest.findUnique({
       where: { id },
-      select: { ...ROW_SELECT, questions: { orderBy: { order: "asc" }, select: { questionId: true } } },
+      select: {
+        ...ROW_SELECT,
+        questions: {
+          orderBy: { order: "asc" },
+          select: {
+            question: { select: { id: true, type: true, text: true, topic: { select: { title: true } } } },
+          },
+        },
+      },
     });
     if (!t) throw new NotFoundException("Test topilmadi");
-    return { ...toRow(t, new Date()), questionIds: t.questions.map((q) => q.questionId) };
+    const questions = t.questions.map(({ question: q }) => ({
+      id: q.id,
+      type: q.type,
+      text: q.text,
+      topicTitle: q.topic.title,
+    }));
+    return { ...toRow(t, new Date()), questionIds: questions.map((q) => q.id), questions };
   }
 
   async create(actorId: string, input: WeeklyTestInput) {
