@@ -1,5 +1,5 @@
 # Production: docker compose up -d --build (serverda, scripts/deploy.sh orqali)
-# Sozlamalar .env da: DOMAIN, POSTGRES_PASSWORD, BOT_TOKEN, JWT_SECRET, OWNER_USERNAMES
+# Sozlamalar .env da: DOMAIN, ADMIN_HOST, REDIRECT_HOSTS, POSTGRES_PASSWORD, BOT_TOKEN, JWT_SECRET, OWNER_USERNAMES
 name: samarqand
 
 x-app: &app
@@ -81,6 +81,8 @@ services:
     restart: unless-stopped
     environment:
       DOMAIN: ${DOMAIN}
+      ADMIN_HOST: ${ADMIN_HOST:?ADMIN_HOST kerak}
+      REDIRECT_HOSTS: ${REDIRECT_HOSTS:?REDIRECT_HOSTS kerak}
     ports:
       - "80:80"
       - "443:443"

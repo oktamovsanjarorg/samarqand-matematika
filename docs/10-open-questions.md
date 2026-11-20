@@ -4,7 +4,7 @@
 
 | ID   | Savol                                                                                | Standart taklif                                                                            | Holat            |
 | ---- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ---------------- |
-| Q-01 | Domen (server tayyor: AWS Stockholm, 13.62.27.178; bot @samarqandmatematikabot)      | Lokal va staging bilan boshlanadi                                                          | ochiq            |
+| Q-01 | Domen                                                                                | `samarqandmatematika.uz`: `app.` asosiy, `admin.` admin panel (2026-11-20)                 | ✅ hal qilindi   |
 | Q-02 | Paket prefiksi                                                                       | `@samarqand/*`                                                                             | ✅ qabul qilindi |
 | Q-03 | AI provayderi (vision kerak)                                                         | Interfeys va Claude tayyor (ADR-0004). Ustozdan real yechimlar to'plami kerak (`ai:eval`)  | ochiq            |
 | Q-04 | Haftalik testda 0 ball butun testga qo'yiladimi yoki faqat yechimi yo'q savolga?     | Faqat savolga (BR-W04)                                                                     | ochiq            |

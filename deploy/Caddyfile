@@ -1,4 +1,16 @@
-# DOMAIN .env dan keladi. Domen bo'lmaguncha: 13-62-27-178.sslip.io (IP'ga yo'naladi, Let's Encrypt ishlaydi)
+# Hostlar .env dan keladi:
+#   DOMAIN         — asosiy: Mini App, /api, /admin (app.samarqandmatematika.uz)
+#   ADMIN_HOST     — admin panel uchun qisqa manzil, DOMAIN/admin/ ga yo'naltiriladi
+#   REDIRECT_HOSTS — boshqa manzillar (asosiy domen, www, eski sslip.io), DOMAIN ga yo'naltiriladi
+{$ADMIN_HOST} {
+	redir https://{$DOMAIN}/admin{uri} 302
+}
+
+{$REDIRECT_HOSTS} {
+	# Eski havolalar (bot xabarlari) va Telegram initData (#...) yo'qolmaydi
+	redir https://{$DOMAIN}{uri} 302
+}
+
 {$DOMAIN} {
 	encode zstd gzip
 
