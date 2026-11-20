@@ -6,6 +6,7 @@ import { ENV, type Env } from "./config/env";
 import { ContentModule } from "./content/content.module";
 import { QuestionsModule } from "./questions/questions.module";
 import { TopicTestsModule } from "./topic-tests/topic-tests.module";
+import { StudentsModule } from "./students/students.module";
 import { HealthController } from "./health/health.controller";
 import { PrismaModule } from "./prisma/prisma.module";
 import { StaffModule } from "./staff/staff.module";
@@ -35,6 +36,7 @@ export class AppModule {
         ContentModule,
         QuestionsModule,
         TopicTestsModule,
+        StudentsModule,
       ],
       controllers: [HealthController],
     };

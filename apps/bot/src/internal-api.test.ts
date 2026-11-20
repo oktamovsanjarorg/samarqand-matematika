@@ -16,6 +16,21 @@ describe("createInternalApi", () => {
     expect((seen?.init.headers as Record<string, string>)["x-internal-key"]).toBe(internalKey("1:T"));
   });
 
+  it("raqamni o'z endpoint'iga yuboradi", async () => {
+    let url = "";
+    const fetchFn = (async (u: string) => {
+      url = u;
+      return new Response(JSON.stringify({ status: "saved" }));
+    }) as unknown as typeof fetch;
+    const api = createInternalApi({ baseUrl: "http://api", botToken: "1:T", fetchFn });
+    const res = await api.userPhone({
+      from: { id: 5, first_name: "U" },
+      contact: { phone_number: "998", user_id: 5 },
+    });
+    expect(res.status).toBe("saved");
+    expect(url).toBe("http://api/internal/user-phone");
+  });
+
   it("API xato qaytarsa, xato tashlaydi", async () => {
     const fetchFn = (async () => new Response("", { status: 500 })) as unknown as typeof fetch;
     const api = createInternalApi({ baseUrl: "http://api", botToken: "1:T", fetchFn });

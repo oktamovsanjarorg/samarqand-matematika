@@ -17,21 +17,23 @@ enum Role {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  telegramId    BigInt         @unique
-  firstName     String
-  lastName      String?
-  username      String?
-  phone         String?
-  role          Role           @default(STUDENT)
-  isBlocked     Boolean        @default(false)
-  blockedReason String?
-  lastSeenAt    DateTime?      @db.Timestamptz
-  loginTokens   LoginToken[]
-  auditLogs     AuditLog[]
-  createdAt     DateTime       @default(now()) @db.Timestamptz
-  updatedAt     DateTime       @updatedAt @db.Timestamptz
-  topicAttempts TopicAttempt[]
+  id               String           @id @default(cuid())
+  telegramId       BigInt           @unique
+  firstName        String
+  lastName         String?
+  username         String?
+  phone            String?
+  role             Role             @default(STUDENT)
+  isBlocked        Boolean          @default(false)
+  blockedReason    String?
+  lastSeenAt       DateTime?        @db.Timestamptz
+  loginTokens      LoginToken[]
+  auditLogs        AuditLog[]
+  createdAt        DateTime         @default(now()) @db.Timestamptz
+  updatedAt        DateTime         @updatedAt @db.Timestamptz
+  topicAttempts    TopicAttempt[]
+  student          StudentProfile?  @relation("Student")
+  acceptedStudents StudentProfile[] @relation("AcceptedBy")
 
   @@index([role])
 }
@@ -187,4 +189,29 @@ model TopicAnswer {
   updatedAt  DateTime     @updatedAt @db.Timestamptz
 
   @@id([attemptId, questionId])
+}
+
+/// Kirish rejimi: AUTO — BR-A04 shartlari bo'yicha; FREE — ustoz qo'lda ochib bergan; CLOSED — ustoz yopgan
+enum StudentAccess {
+  AUTO
+  FREE
+  CLOSED
+}
+
+/// O'quvchi profili (T-020). User.firstName Telegram'dan har kirishda yangilanadi, haqiqiy ism shu yerda
+model StudentProfile {
+  id           String        @id @default(cuid())
+  userId       String        @unique
+  user         User          @relation("Student", fields: [userId], references: [id], onDelete: Cascade)
+  /// O'quvchi o'zi kiritgan ism-familiya (BR-S01)
+  fullName     String?
+  accessMode   StudentAccess @default(AUTO)
+  /// Ustoz "o'quvchim" deb qabul qilgan vaqt (BR-S03)
+  acceptedAt   DateTime?     @db.Timestamptz
+  acceptedById String?
+  acceptedBy   User?         @relation("AcceptedBy", fields: [acceptedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime      @default(now()) @db.Timestamptz
+  updatedAt    DateTime      @updatedAt @db.Timestamptz
+
+  @@index([acceptedAt])
 }
