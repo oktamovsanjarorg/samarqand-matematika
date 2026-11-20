@@ -499,6 +499,8 @@ model MockTest {
   isPublished  Boolean        @default(false)
   /// Oyna yopilib natijalar hisoblangan vaqt
   closedAt     DateTime?      @db.Timestamptz
+  /// Rasch bilan baholangan bo'lsa topshirganlar soni; null = taxminiy (BR-M05)
+  raschN       Int?
   createdAt    DateTime       @default(now()) @db.Timestamptz
   questions    MockQuestion[]
   attempts     MockAttempt[]
@@ -514,6 +516,8 @@ model MockQuestion {
   /// Shablondagi bo'lim tartib raqami (0 dan)
   section    Int
   order      Int
+  /// Rasch qiyinligi (logit), yopilishda hisoblanadi
+  raschB     Float?
 
   @@id([mockTestId, questionId])
 }
@@ -530,6 +534,8 @@ model MockAttempt {
   submittedAt DateTime?    @db.Timestamptz
   /// Xom ball (bo'lim ballari yig'indisi)
   raw         Float?
+  /// Shkala balli: yopilishda (Rasch yoki taxminiy) qo'yiladi
+  scaled      Float?
   answers     MockAnswer[]
 
   @@unique([mockTestId, userId])

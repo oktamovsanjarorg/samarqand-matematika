@@ -13,7 +13,7 @@ import { resultItems } from "../topic-tests/attempt-views";
 import { snapshotOf } from "./admin-mocks.service";
 
 export const MOCK_ATTEMPT_INCLUDE = {
-  mockTest: { select: { title: true, closesAt: true, template: true } },
+  mockTest: { select: { title: true, closesAt: true, template: true, raschN: true } },
   answers: { orderBy: { order: "asc" }, include: { question: true } },
 } as const;
 export type MockAttemptRow = Prisma.MockAttemptGetPayload<{ include: typeof MOCK_ATTEMPT_INCLUDE }>;
@@ -53,7 +53,7 @@ export function mockView(a: MockAttemptRow, now: Date): MockAttemptView {
   if (now >= a.mockTest.closesAt) {
     const raw = a.submittedAt ? (a.raw ?? 0) : 0;
     const maxRaw = examMaxRaw(t.sections);
-    const scaled = approxScaled(raw, maxRaw, t.scaleMax);
+    const scaled = a.scaled ?? approxScaled(raw, maxRaw, t.scaleMax);
     const graded = a.submittedAt ? a.answers : a.answers.map((x) => ({ ...x, result: "WRONG" as const }));
     const items = resultItems(graded).map((i, n) => {
       const section = a.answers[n]?.section ?? 0;
@@ -68,7 +68,7 @@ export function mockView(a: MockAttemptRow, now: Date): MockAttemptView {
       scaled,
       scaleMax: t.scaleMax,
       grade: gradeOf(scaled, t.grades),
-      approx: true,
+      approx: a.mockTest.raschN === null,
       sections: sectionResults(t, graded),
       items,
     };

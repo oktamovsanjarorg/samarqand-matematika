@@ -60,3 +60,10 @@ export const weeklyParentReport = (
   r
     ? `📘 <b>${esc(child)}</b>, haftalik test <b>${esc(title)}</b>:\nBall: <b>${r.score}/${r.total}</b> · oʻrin: ${r.place}/${r.participants}`
     : `📘 <b>${esc(child)}</b> haftalik test <b>${esc(title)}</b>ni topshirmadi: 0 ball.`;
+
+/** O'quvchiga: mock natijasi (T-053) */
+export const mockResultText = (
+  title: string,
+  r: { scaled: number; scaleMax: number; grade: string | null },
+) =>
+  `📊 Mock <b>${esc(title)}</b> natijasi: <b>${r.scaled}/${r.scaleMax}</b>${r.grade ? `, daraja <b>${esc(r.grade)}</b>` : ""}.\nBoʻlimlar va toʻgʻri javoblar ilovada.`;
