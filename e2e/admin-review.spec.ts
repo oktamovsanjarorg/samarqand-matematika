@@ -1,89 +1,20 @@
-import { expect, test, type APIRequestContext, type Browser } from "@playwright/test";
-import { adminHeaders, apiPost, createStudent, grantFree, loginAdmin } from "./api";
-import { E2E_PREFIX, openAsTelegram } from "./telegram";
-
-const API = "http://127.0.0.1:4300/api";
-const HOUR = 3_600_000;
-const at = (ms: number) => new Date(Date.now() + ms).toISOString();
-type Headers = Record<string, string>;
-
-async function notebookPng(browser: Browser) {
-  const draw = await browser.newPage({ viewport: { width: 360, height: 480 } });
-  await draw.setContent(
-    '<div style="height:100vh;display:grid;place-items:center;background:#fdf6e3;font:bold 56px serif;color:#123">1+1=2</div>',
-  );
-  const png = await draw.screenshot();
-  await draw.close();
-  return png;
-}
-
-/** Ochiq haftalik test va ikki savol; close() oynani yopadi */
-async function seed(request: APIRequestContext) {
-  const admin = await adminHeaders(request);
-  const c = await apiPost<{ id: string }>(request, "/admin/courses", admin, {
-    title: `${E2E_PREFIX}Navbat ${Date.now()}`,
-  });
-  const t = await apiPost<{ id: string }>(request, `/admin/courses/${c.id}/topics`, admin, {
-    title: "Aralash",
-  });
-  const add = async (q: object) =>
-    (await apiPost<{ id: string }>(request, `/admin/topics/${t.id}/questions`, admin, q)).id;
-  const options = [
-    { id: "a", text: "1" },
-    { id: "b", text: "2" },
-  ];
-  const questionIds = [
-    await add({ type: "SINGLE", text: "1+1 = ?", options, answer: { optionId: "b" } }),
-    await add({ type: "NUMERIC", text: "$2^3$ = ?", answer: { value: "8" } }),
-  ];
-  const body = {
-    title: `${E2E_PREFIX}Navbat haftasi ${Date.now()}`,
-    opensAt: at(-HOUR),
-    closesAt: at(48 * HOUR),
-    questionIds,
-    isPublished: true,
-  };
-  const w = await apiPost<{ id: string }>(request, "/admin/weekly", admin, body);
-  const close = () =>
-    request.put(`${API}/admin/weekly/${w.id}`, {
-      headers: admin,
-      data: { ...body, opensAt: at(-2 * HOUR), closesAt: at(-60_000) },
-    });
-  return { admin, id: w.id, questionIds, close };
-}
-
-/** O'quvchi API orqali: 1-savol to'g'ri + rasm, 2-savol "6" (xato, rasmsiz) */
-async function solve(request: APIRequestContext, s: { headers: Headers }, testId: string, png: Buffer) {
-  const att = (await (
-    await request.post(`${API}/weekly/${testId}/attempts`, { headers: s.headers })
-  ).json()) as { id: string; questions: { question: { id: string } }[] };
-  const [q0, q1] = att.questions.map((q) => q.question.id);
-  const put = (qid: string | undefined, response: object) =>
-    request.put(`${API}/weekly-attempts/${att.id}/answers/${qid}`, {
-      headers: s.headers,
-      data: { response },
-    });
-  await put(q0, { optionId: "b" });
-  await put(q1, { value: "6" });
-  await request.post(`${API}/weekly-attempts/${att.id}/answers/${q0}/photos`, {
-    headers: { ...s.headers, "content-type": "image/png" },
-    data: png,
-  });
-  await request.post(`${API}/weekly-attempts/${att.id}/submit`, { headers: s.headers });
-}
+import { expect, test } from "@playwright/test";
+import { createStudent, grantFree, loginAdmin } from "./api";
+import { openAsTelegram } from "./telegram";
+import { notebookPng, seedWeekly, solveWeekly } from "./weekly-seed";
 
 test("BR-W05, BR-W06: ustoz navbatda bir xil xatoni ko'radi, ball qo'yadi, o'quvchi izohni oladi", async ({
   page,
   request,
   browser,
 }) => {
-  const { admin, id, close } = await seed(request);
+  const { admin, id, close } = await seedWeekly(request);
   const png = await notebookPng(browser);
   const a = await createStudent(request, { fullName: "Navbat Birinchi", phone: "998901112209" });
   const b = await createStudent(request, { fullName: "Navbat Ikkinchi", phone: "998901112210" });
   for (const n of ["Navbat Birinchi", "Navbat Ikkinchi"]) await grantFree(request, admin, n);
-  await solve(request, a, id, png);
-  await solve(request, b, id, png);
+  await solveWeekly(request, a, { testId: id, png });
+  await solveWeekly(request, b, { testId: id, png });
 
   await loginAdmin(page, request, `weekly/${id}/review`);
   await expect(page.getByRole("tab", { name: "Tekshirilmagan (4)" })).toBeVisible();

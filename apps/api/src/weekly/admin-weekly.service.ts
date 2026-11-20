@@ -8,7 +8,7 @@ import {
 } from "@samarqand/shared";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
-import { scoreOf } from "./weekly-views";
+import { personName, PERSON_SELECT, scoreOf } from "./weekly-views";
 
 const ROW_SELECT = {
   id: true,
@@ -37,12 +37,6 @@ const toRow = (t: Row, now: Date): AdminWeeklyRow => ({
   questionCount: t._count.questions,
   submitted: t._count.attempts,
 });
-
-const fullName = (u: {
-  firstName: string;
-  lastName: string | null;
-  student: { fullName: string | null } | null;
-}) => u.student?.fullName ?? [u.firstName, u.lastName].filter(Boolean).join(" ");
 
 /** Ustoz: haftalik testlar. Boshlangan testning savollari o'zgarmaydi (urinishlar bir xil savollarda bo'lsin) */
 @Injectable()
@@ -146,13 +140,13 @@ export class AdminWeeklyService {
         submittedAt: true,
         correct: true,
         score: true,
-        user: { select: { firstName: true, lastName: true, student: { select: { fullName: true } } } },
+        user: { select: PERSON_SELECT },
       },
     });
     return rows
       .map((a) => ({
         userId: a.userId,
-        name: fullName(a.user),
+        name: personName(a.user),
         submittedAt: a.submittedAt?.toISOString() ?? null,
         correct: a.correct ?? 0,
         score: scoreOf(a),

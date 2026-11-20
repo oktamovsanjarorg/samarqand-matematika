@@ -12,6 +12,7 @@ import { Locked } from "../components/Locked";
 import { ErrorState, TestSkeleton } from "../components/states";
 import { ResultItem } from "../components/test/ResultItem";
 import { Runner } from "../components/test/Runner";
+import { RankingCard } from "../components/weekly/RankingCard";
 import { PhotoThumb, SolutionPhotos } from "../components/weekly/SolutionPhotos";
 import { useBackButton } from "../hooks/useBackButton";
 import { ApiError, post } from "../lib/api";
@@ -75,6 +76,7 @@ function Result({ r }: { r: WeeklyResult }) {
         </p>
         <p className="text-sm text-hint">{r.submittedAt ? "Ball" : "Test topshirilmagan: 0 ball"}</p>
       </div>
+      <RankingCard path={`/weekly/${r.weeklyTestId}/ranking`} heading="Reyting" />
       <ol className="space-y-3">
         {r.items.map((item, i) => (
           <ResultItem

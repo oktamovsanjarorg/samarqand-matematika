@@ -14,13 +14,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { toDetail, toView } from "../questions/codec";
 import { averagePercent } from "../topic-tests/stats";
 import { historyJump, sameWrongAnswers } from "./signals";
-import { answerPoints } from "./weekly-views";
-
-const personName = (u: {
-  firstName: string;
-  lastName: string | null;
-  student: { fullName: string | null } | null;
-}) => u.student?.fullName ?? [u.firstName, u.lastName].filter(Boolean).join(" ");
+import { answerPoints, personName, PERSON_SELECT } from "./weekly-views";
 
 const ANSWER_INCLUDE = {
   question: true,
@@ -92,7 +86,7 @@ export class AdminReviewService {
       select: {
         id: true,
         userId: true,
-        user: { select: { firstName: true, lastName: true, student: { select: { fullName: true } } } },
+        user: { select: PERSON_SELECT },
         answers: { orderBy: { order: "asc" }, include: ANSWER_INCLUDE },
       },
     });
