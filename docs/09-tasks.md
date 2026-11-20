@@ -58,6 +58,7 @@
 | T-033  | AI yechim tekshiruvi navbati (`AiReview`, bazada; rejalashtiruvchi har daqiqada, 3 urinish, `AI_DAILY_LIMIT`), shubha belgisi, o'quvchilar orasidagi bir xil xato va tarixdan keskin farq signallari | ✅    |
 | T-034  | Ustoz navbati API: shubhali va signalli javoblar birinchi, AI tavsiyasi, ustoz bali (0/1, izoh) urinish balini qayta hisoblaydi; o'quvchi yopilgach ball va izohni ko'radi (BR-W05, W06)             | ✅    |
 | T-034b | Admin: tekshirish navbati sahifasi (rasmlar, AI hukmi, signallar, ball qo'yish); Mini App: natijada ustoz izohi                                                                                      | ✅    |
-| T-035  | Reyting va ota-onaga hisobot                                                                                                                                                                         | ⬜    |
+| T-035  | Reyting: test va umumiy (BR-W10), Mini App'da natija va haftalik ro'yxatda                                                                                                                           | ✅    |
+| T-035b | Ota-onaga haftalik hisobot (oyna yopilganda bot xabari)                                                                                                                                              | ⬜    |
 
 Keyingi bosqichlar (AI yordamchi, Mock, offline, ko'rsatmalar) 2-bosqich oxirida vazifalarga bo'linadi.

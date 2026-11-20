@@ -3,6 +3,7 @@ import type { FastifyReply } from "fastify";
 import { saveAnswerBody } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
+import { RankingService } from "./ranking.service";
 import { WeeklyPhotosService } from "./weekly-photos.service";
 import { WeeklyService } from "./weekly.service";
 
@@ -13,11 +14,24 @@ export class WeeklyController {
   constructor(
     private readonly weekly: WeeklyService,
     private readonly photos: WeeklyPhotosService,
+    private readonly ranking: RankingService,
   ) {}
 
   @Get("weekly")
   list(@CurrentUser() u: JwtUser) {
     return this.weekly.list(u.sub);
+  }
+
+  /** Umumiy reyting (BR-W10) */
+  @Get("weekly-ranking")
+  overall(@CurrentUser() u: JwtUser) {
+    return this.ranking.overall(u.sub, new Date());
+  }
+
+  /** Test reytingi: oyna yopilgach (BR-W08) */
+  @Get("weekly/:id/ranking")
+  rankingOf(@CurrentUser() u: JwtUser, @Param("id") id: string) {
+    return this.ranking.weekly(u.sub, id, new Date());
   }
 
   @Post("weekly/:id/attempts")

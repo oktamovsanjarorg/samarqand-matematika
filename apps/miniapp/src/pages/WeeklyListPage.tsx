@@ -1,4 +1,5 @@
 import { EmptyState, ErrorState } from "../components/states";
+import { RankingCard } from "../components/weekly/RankingCard";
 import { WeeklyRow } from "../components/weekly/WeeklyRow";
 import { useBackButton } from "../hooks/useBackButton";
 import { useWeeklyList } from "../lib/weekly";
@@ -30,6 +31,7 @@ export function WeeklyListPage() {
           </li>
         ))}
       </ul>
+      <RankingCard path="/weekly-ranking" heading="Umumiy reyting" />
     </div>
   );
 }
