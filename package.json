@@ -14,12 +14,15 @@
     "db:migrate": "pnpm --filter @samarqand/db migrate",
     "db:generate": "pnpm --filter @samarqand/db generate",
     "prepare": "husky",
+    "e2e": "playwright test",
     "dev:init-data": "node --env-file=.env -r @swc-node/register scripts/dev-init-data.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
+    "@samarqand/db": "workspace:*",
     "@samarqand/shared": "workspace:*",
     "@swc-node/register": "1.12.1",
     "@swc/core": "1.16.21",

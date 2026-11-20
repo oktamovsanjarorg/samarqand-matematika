@@ -34,7 +34,8 @@ Kodni asosan AI agentlar yozadi. Quyidagi qoidalar **majburiy**. Foydalanuvchi b
 
 ## Buyruqlar
 
-`pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build`. PR ochishdan oldin hammasi yashil bo'lishi kerak.
+`pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm e2e`. PR ochishdan oldin hammasi yashil bo'lishi kerak.
+UI o'zgarsa, `e2e/` ga brauzer testi qo'shiladi va skrinshot ko'zdan kechiriladi (`e2e/.results/`). `pnpm e2e` API, Mini App va adminni o'zi ishga tushiradi (portlar bo'sh bo'lishi kerak).
 Lokal: `pnpm db:up` (Postgres :5435, Redis :6383), API :4300, Mini App :5190, admin :5191.
 
 ## PR
