@@ -42,9 +42,12 @@ services:
       <<: *app-env
       API_HOST: 0.0.0.0
       API_PORT: "4300"
+      MEDIA_DIR: /app/media
       ADMIN_URL: https://${DOMAIN:?DOMAIN kerak}/admin
       CORS_ORIGINS: https://${DOMAIN}
     # Migratsiyalar har ishga tushishda qo'llanadi (allaqachon qo'llanganlari o'tkazib yuboriladi)
+    volumes:
+      - media:/app/media
     command: sh -c "cd packages/db && npx prisma migrate deploy && cd /app && node apps/api/dist/main.js"
     depends_on:
       postgres: { condition: service_healthy }
@@ -90,6 +93,7 @@ services:
 
 volumes:
   pg:
+  media:
   redis:
   caddy_data:
   caddy_config:

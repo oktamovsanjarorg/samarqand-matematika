@@ -13,19 +13,23 @@ export class AccessService {
    * ungacha AUTO rejimdagi o'quvchi yopiq, ustoz FREE qilib ochib bera oladi.
    */
   async facts(userId: string): Promise<AccessFacts> {
-    const p = await this.prisma.studentProfile.findUnique({
-      where: { userId },
-      select: {
-        accessMode: true,
-        acceptedAt: true,
-        _count: { select: { parents: { where: { status: "APPROVED" } } } },
-      },
-    });
+    const [p, paid] = await Promise.all([
+      this.prisma.studentProfile.findUnique({
+        where: { userId },
+        select: {
+          accessMode: true,
+          acceptedAt: true,
+          _count: { select: { parents: { where: { status: "APPROVED" } } } },
+        },
+      }),
+      // BR-A04 "to'lov qilingan": hozir faol obuna bor (BR-B03)
+      this.prisma.subscription.count({ where: { userId, endsAt: { gt: new Date() } } }),
+    ]);
     return {
       mode: p?.accessMode ?? "AUTO",
       accepted: !!p?.acceptedAt,
       approvedParents: p?._count.parents ?? 0,
-      paid: false,
+      paid: paid > 0,
     };
   }
 

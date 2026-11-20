@@ -25,6 +25,7 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=build /app /app
 RUN rm -rf apps/miniapp apps/admin
+RUN mkdir -p /app/media && chown node:node /app/media
 USER node
 
 # --- Statik fayllar + HTTPS ---

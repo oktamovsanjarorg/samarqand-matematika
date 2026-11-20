@@ -25,12 +25,12 @@
 
 ## Kontent (C)
 
-| ID     | Qoida                                                                                                                                                                                                                                      | Holat |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- |
-| BR-C01 | O'quvchi faqat nashr qilingan kurs va darslarni ko'radi. Nashr qilinmagan darsni to'g'ridan-to'g'ri havola bilan ham ochib bo'lmaydi (404). Darsi ham, nashr qilingan savoli ham yo'q mavzu ko'rsatilmaydi                                 | ✅    |
-| BR-C02 | Bepul dars (`isFree`) hammaga ochiq. Pullik dars faqat to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED` qaytadi va matn yuborilmaydi. Obuna (T-025) tayyor bo'lguncha o'quvchida to'liq kirish yo'q, ustoz va yordamchida bor | ✅    |
-| BR-C03 | Ichida mavzu bor kursni yoki ichida dars bor mavzuni o'chirib bo'lmaydi (409 `NOT_EMPTY`)                                                                                                                                                  | ✅    |
-| BR-C04 | Kontentni ustoz ham, yordamchi ham boshqaradi. Har o'zgarish auditga yoziladi, dars matni esa auditga yozilmaydi (faqat o'zgargan maydon nomlari)                                                                                          | ✅    |
+| ID     | Qoida                                                                                                                                                                                                      | Holat |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| BR-C01 | O'quvchi faqat nashr qilingan kurs va darslarni ko'radi. Nashr qilinmagan darsni to'g'ridan-to'g'ri havola bilan ham ochib bo'lmaydi (404). Darsi ham, nashr qilingan savoli ham yo'q mavzu ko'rsatilmaydi | ✅    |
+| BR-C02 | Bepul dars (`isFree`) hammaga ochiq. Pullik dars faqat to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED` qaytadi va matn yuborilmaydi. Ustoz va yordamchida doim bor                           | ✅    |
+| BR-C03 | Ichida mavzu bor kursni yoki ichida dars bor mavzuni o'chirib bo'lmaydi (409 `NOT_EMPTY`)                                                                                                                  | ✅    |
+| BR-C04 | Kontentni ustoz ham, yordamchi ham boshqaradi. Har o'zgarish auditga yoziladi, dars matni esa auditga yozilmaydi (faqat o'zgargan maydon nomlari)                                                          | ✅    |
 
 ## Savollar (Q)
 
@@ -49,6 +49,16 @@
 | BR-P03 | Topshirilguncha to'g'ri javob va yechim yuborilmaydi (BR-Q01). Topshirgandan keyin har savol bo'yicha to'g'ri javob va namunaviy yechim ko'rsatiladi | ✅    |
 | BR-P04 | Mavzu testi to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED`                                                                            | ⚠️    |
 | BR-P05 | O'quvchi faqat o'z urinishini ko'radi; boshqaniki 404. Urinishda ishlatilgan savol o'chirilmaydi (409), nashrdan olinadi                             | ✅    |
+
+## To'lov va obuna (B)
+
+| ID     | Qoida                                                                                                                                                                   | Holat |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| BR-B01 | Qo'lda to'lov: o'quvchi tarifni tanlaydi, ustoz kartasiga o'tkazadi va chek rasmini yuboradi. Karta raqami bazada (admin sozlaydi), repoda emas; auditga oxirgi 4 raqam | ✅    |
+| BR-B02 | Chek faqat JPG, PNG yoki WEBP, 5 MB gacha; turi baytlardan aniqlanadi. Bir o'quvchida bir vaqtda bitta kutilayotgan chek. Tekshirilguncha o'quvchi bekor qila oladi     | ✅    |
+| BR-B03 | Tasdiqlangan chek obuna ochadi: faol obuna bo'lsa uning oxiridan uzayadi, kun yo'qolmaydi. Faol obuna BR-A04 dagi "to'lov qilingan" shartidir                           | ✅    |
+| BR-B04 | Rad etish sababi majburiy va o'quvchiga bot orqali boradi. Bir chek ikki marta tekshirilmaydi (409)                                                                     | ✅    |
+| BR-B05 | Cheklarni ustoz va yordamchi tekshiradi. Tarif va karta sozlamasi faqat ustozda                                                                                         | ✅    |
 
 ## Haftalik test (W)
 

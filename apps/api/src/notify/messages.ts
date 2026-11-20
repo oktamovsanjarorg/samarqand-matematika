@@ -32,3 +32,13 @@ export const parentRejectedToParent = (reason: string) => `Soʻrovingiz rad etil
 /** Ustozga: o'quvchi ism va telefonni kiritdi, qabul qilishni kutmoqda */
 export const newStudentText = (name: string, phone: string) =>
   `🆕 Yangi oʻquvchi: <b>${esc(name)}</b>\nTelefon: ${esc(phone)}\n\nQabul qilish yoki kirish rejimini belgilash uchun panelni oching.`;
+
+/** Ustozga: yangi to'lov cheki */
+export const paymentSubmittedText = (p: { student: string; plan: string; amount: string }) =>
+  `💳 Yangi toʻlov cheki: <b>${esc(p.student)}</b>\n${esc(p.plan)} · ${p.amount} soʻm`;
+
+export const paymentApprovedText = (until: string) =>
+  `✅ Toʻlovingiz tasdiqlandi. Barcha darslar <b>${until}</b> gacha ochiq.`;
+
+export const paymentRejectedText = (reason: string) =>
+  `Toʻlov cheki qabul qilinmadi.\nSabab: ${esc(reason)}\n\nIlovada qayta yuborishingiz mumkin.`;

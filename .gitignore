@@ -11,3 +11,4 @@ coverage
 .ui-audit/
 e2e/.results
 e2e/.report
+media/
