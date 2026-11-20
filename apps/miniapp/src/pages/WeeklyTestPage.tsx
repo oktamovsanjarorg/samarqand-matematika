@@ -40,17 +40,27 @@ function Waiting({ v }: { v: WeeklyWaiting }) {
   );
 }
 
-function ItemPhotos({ item }: { item: WeeklyResult["items"][number] }) {
-  // To'g'ri javob + rasm yo'q: sarlavhaning o'zi aytadi
-  if (item.noPhoto && item.result === "CORRECT") return null;
-  if (item.noPhoto)
-    return <p className="text-sm font-semibold text-danger">Yechim rasmi yuklanmagan: 0 ball</p>;
+/** Rasmlar va ustoz izohi; to'g'ri javob + rasm yo'q bo'lsa sarlavhaning o'zi aytadi */
+function ItemExtras({ item }: { item: WeeklyResult["items"][number] }) {
   return (
-    <div className="flex flex-wrap gap-2">
-      {item.photos.map((id, k) => (
-        <PhotoThumb key={id} id={id} n={k + 1} />
-      ))}
-    </div>
+    <>
+      {item.noPhoto && item.result !== "CORRECT" && (
+        <p className="text-sm font-semibold text-danger">Yechim rasmi yuklanmagan: 0 ball</p>
+      )}
+      {!item.noPhoto && (
+        <div className="flex flex-wrap gap-2">
+          {item.photos.map((id, k) => (
+            <PhotoThumb key={id} id={id} n={k + 1} />
+          ))}
+        </div>
+      )}
+      {item.feedback && (
+        <p className="rounded-xl bg-brand/5 p-3 text-sm" data-testid="feedback">
+          <b>Ustoz izohi: </b>
+          {item.feedback}
+        </p>
+      )}
+    </>
   );
 }
 
@@ -71,9 +81,13 @@ function Result({ r }: { r: WeeklyResult }) {
             key={item.question.id}
             item={item}
             n={i + 1}
-            zero={item.noPhoto && item.result === "CORRECT" ? "Yechim rasmi yoʻq · 0 ball" : undefined}
+            zero={
+              item.noPhoto && item.result === "CORRECT" && item.points === 0
+                ? "Yechim rasmi yoʻq · 0 ball"
+                : undefined
+            }
           >
-            <ItemPhotos item={item} />
+            <ItemExtras item={item} />
           </ResultItem>
         ))}
       </ol>

@@ -1,5 +1,6 @@
 import type { WeeklyStanding } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { formatDate } from "../../lib/labels";
 
@@ -11,7 +12,12 @@ export function Standings({ id, total }: { id: string; total: number }) {
   });
   return (
     <section className="card space-y-2" data-testid="standings">
-      <h2 className="font-bold">Natijalar</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="font-bold">Natijalar</h2>
+        <Link to={`/weekly/${id}/review`} className="text-sm font-semibold text-link">
+          Tekshirish navbati
+        </Link>
+      </div>
       {rows.data?.length === 0 && <p className="text-sm text-hint">Hali hech kim boshlamagan</p>}
       <ol className="divide-y divide-hint/10">
         {rows.data?.map((r, i) => (

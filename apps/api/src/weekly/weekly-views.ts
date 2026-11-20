@@ -83,6 +83,9 @@ export function weeklyView(a: WeeklyAttemptRow, now: Date): WeeklyAttemptView {
         result: itemResult(a, x, i.result),
         photos,
         noPhoto: photos.length === 0,
+        points: a.submittedAt
+          ? answerPoints({ teacherPoints: x?.teacherPoints ?? null, result: i.result, photos: photos.length })
+          : 0,
         feedback: feedbackOf(x),
       };
     });
