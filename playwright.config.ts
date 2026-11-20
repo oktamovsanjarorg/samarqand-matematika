@@ -31,7 +31,8 @@ export default defineConfig({
   projects: [{ name: "chromium" }],
   webServer: [
     {
-      command: "pnpm --filter @samarqand/api dev",
+      // watch'siz: CI'da .env yo'q, --watch esa uni kuzatishga urinib yiqiladi
+      command: "pnpm --filter @samarqand/api serve",
       url: "http://127.0.0.1:4300/api/health",
       env: apiEnv,
       reuseExistingServer: false,
