@@ -35,3 +35,20 @@ export function initData(user: object, botToken = BOT_TOKEN) {
 
 /** Har test uchun noyob Telegram ID: testlar bir-birining yozuvlariga tegmaydi */
 export const tgId = () => 9_000_000_000 + Math.floor(Math.random() * 1_000_000_000);
+
+/** Telegram orqali kirib, Authorization sarlavhasini qaytaradi. owner: true bo'lsa TEACHER (OWNER_USERNAMES) */
+export async function loginAs(app: NestFastifyApplication, opts: { owner?: boolean } = {}) {
+  const id = tgId();
+  const user = {
+    id,
+    first_name: opts.owner ? "Ustoz" : "Oquvchi",
+    ...(opts.owner ? { username: OWNER } : {}),
+  };
+  const res = await app.inject({
+    method: "POST",
+    url: "/api/auth/telegram",
+    payload: { initData: initData(user) },
+  });
+  const { token } = res.json() as { token: string };
+  return { telegramId: BigInt(id), headers: { authorization: `Bearer ${token}` } };
+}

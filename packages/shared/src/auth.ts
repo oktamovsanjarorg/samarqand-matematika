@@ -21,6 +21,10 @@ export interface AuthResponse {
 
 export const ERROR_CODES = {
   BLOCKED: "BLOCKED",
+  /** Pullik dars: to'liq kirish (BR-A04) yo'q */
+  LOCKED: "LOCKED",
+  /** Ichida mavzu yoki dars bor: avval ularni o'chirish kerak */
+  NOT_EMPTY: "NOT_EMPTY",
 } as const;
 
 /** Admin panel: bot yuborgan bir martalik havoladagi token */

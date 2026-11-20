@@ -67,3 +67,49 @@ model AuditLog {
   @@index([entity, entityId])
   @@index([createdAt])
 }
+
+/// Kurs → Mavzu → Dars (docs/05-data-model.md). Tartib `order` bo'yicha, ota ichida 0 dan boshlab
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  order       Int      @default(0)
+  isPublished Boolean  @default(false)
+  topics      Topic[]
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+
+  @@index([order])
+}
+
+model Topic {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  title     String
+  order     Int      @default(0)
+  lessons   Lesson[]
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  @@index([courseId, order])
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  topicId     String
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  title       String
+  /// Konspekt: Markdown va LaTeX ($...$, $$...$$)
+  body        String   @default("")
+  /// Video havola (keyinroq himoyalangan HLS bilan almashtiriladi)
+  videoUrl    String?
+  order       Int      @default(0)
+  /// Bepul dars: obunasiz ham ochiq (sinov uchun)
+  isFree      Boolean  @default(false)
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+
+  @@index([topicId, order])
+}

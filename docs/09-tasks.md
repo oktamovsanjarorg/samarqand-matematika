@@ -25,15 +25,16 @@
 
 ## 1-bosqich: MVP
 
-| ID    | Vazifa                                                                                                                                    | Holat |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| T-020 | O'quvchi profili, onboarding (ism, telefon), ota-ona ulanishi (BR-A04)                                                                    | ⬜    |
-| T-021 | Kontent: kurs → mavzu → dars (CRUD, tartiblash), konspektda LaTeX                                                                         | ⬜    |
-| T-022 | Savollar banki: turlar (SINGLE, MULTIPLE, NUMERIC, EXPRESSION, MATCHING, WRITTEN), MathLive muharriri, namunaviy yechim, ko'nikma teglari | ⬜    |
-| T-023 | Mavzu testlari: yechish, natija, tushuntirish                                                                                             | ⬜    |
-| T-024 | Asosiy va Profil ekranlari: statistika                                                                                                    | ⬜    |
-| T-025 | Qo'lda to'lov va obuna                                                                                                                    | ⬜    |
-| T-026 | Word/Excel'dan savol import (pandoc, OMML → LaTeX)                                                                                        | ⬜    |
+| ID     | Vazifa                                                                                                                                    | Holat |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| T-020  | O'quvchi profili, onboarding (ism, telefon), ota-ona ulanishi (BR-A04)                                                                    | ⬜    |
+| T-021  | Kontent backend: kurs → mavzu → dars (CRUD, tartiblash, BR-C01–C04), o'quvchi API                                                         | ✅    |
+| T-021b | Kontent UI: admin daraxt va dars muharriri (MathText preview), Mini App Darslar va dars sahifasi                                          | ⬜    |
+| T-022  | Savollar banki: turlar (SINGLE, MULTIPLE, NUMERIC, EXPRESSION, MATCHING, WRITTEN), MathLive muharriri, namunaviy yechim, ko'nikma teglari | ⬜    |
+| T-023  | Mavzu testlari: yechish, natija, tushuntirish                                                                                             | ⬜    |
+| T-024  | Asosiy va Profil ekranlari: statistika                                                                                                    | ⬜    |
+| T-025  | Qo'lda to'lov va obuna                                                                                                                    | ⬜    |
+| T-026  | Word/Excel'dan savol import (pandoc, OMML → LaTeX)                                                                                        | ⬜    |
 
 ## 2-bosqich: haftalik test va AI tekshiruvi
 
