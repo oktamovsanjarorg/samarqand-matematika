@@ -374,6 +374,7 @@ model WeeklyAnswer {
   result     CheckResult?
   updatedAt  DateTime        @updatedAt @db.Timestamptz
   photos     SolutionPhoto[]
+  aiReview   AiReview?
 
   @@id([attemptId, questionId])
 }
@@ -390,4 +391,31 @@ model SolutionPhoto {
   createdAt  DateTime     @default(now()) @db.Timestamptz
 
   @@index([attemptId, questionId])
+}
+
+enum AiReviewStatus {
+  PENDING
+  RUNNING
+  DONE
+  FAILED
+}
+
+/// AI yechim tekshiruvi navbati (T-033). Hukm taklif xolos (BR-W06); shubha o'quvchiga ko'rsatilmaydi (BR-W05)
+model AiReview {
+  attemptId  String
+  questionId String
+  answer     WeeklyAnswer   @relation(fields: [attemptId, questionId], references: [attemptId, questionId], onDelete: Cascade)
+  status     AiReviewStatus @default(PENDING)
+  tries      Int            @default(0)
+  /// SolutionVerdict (packages/shared/src/ai.ts)
+  verdict    Json?
+  /// Ko'chirishga shubha: ustoz navbatida birinchi turadi
+  suspected  Boolean        @default(false)
+  provider   String?
+  createdAt  DateTime       @default(now()) @db.Timestamptz
+  updatedAt  DateTime       @updatedAt @db.Timestamptz
+  doneAt     DateTime?      @db.Timestamptz
+
+  @@id([attemptId, questionId])
+  @@index([status, createdAt])
 }

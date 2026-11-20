@@ -26,6 +26,8 @@ const base = z.object({
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
   // Baholash to'plamida modellarni solishtirish uchun
   AI_MODEL: z.string().min(1).default("claude-opus-5-5"),
+  // Kuniga ko'pi bilan nechta AI tekshiruvi (xarajat chegarasi)
+  AI_DAILY_LIMIT: z.coerce.number().int().min(0).default(300),
 });
 
 const schema = base.refine((e) => e.AI_PROVIDER !== "claude" || !!e.ANTHROPIC_API_KEY, {

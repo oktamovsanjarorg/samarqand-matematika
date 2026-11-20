@@ -9,6 +9,8 @@ import { AppModule } from "../src/app.module";
 import { TELEGRAM_TRANSPORT, type TelegramTransport } from "../src/notify/telegram-transport";
 import { loadEnv } from "../src/config/env";
 import { configureApp } from "../src/setup";
+import type { SolutionVerdict } from "@samarqand/shared";
+import { AI_PROVIDER, type SolutionCheckInput } from "../src/ai/ai-provider";
 
 export const BOT_TOKEN = "123456:E2E_TEST_TOKEN";
 export const TEST_MEDIA_DIR = join(tmpdir(), "samarqand-test-media");
@@ -20,6 +22,17 @@ const fakeTransport: TelegramTransport = {
   send: async (chatId, html, button) => {
     sentMessages.push({ chatId, html, ...(button ? { button } : {}) });
     return true;
+  },
+};
+
+/** Testdagi AI: hukmni test o'zi beradi (savol matni bo'yicha), chaqiruvlar yoziladi, tarmoq yo'q */
+export const testAi = {
+  name: "test",
+  respond: (_input: SolutionCheckInput): SolutionVerdict | null => null,
+  calls: [] as SolutionCheckInput[],
+  checkSolution(input: SolutionCheckInput): Promise<SolutionVerdict | null> {
+    this.calls.push(input);
+    return Promise.resolve(this.respond(input));
   },
 };
 
@@ -40,6 +53,8 @@ export async function createApp(extraControllers: Type[] = []) {
   })
     .overrideProvider(TELEGRAM_TRANSPORT)
     .useValue(fakeTransport)
+    .overrideProvider(AI_PROVIDER)
+    .useValue(testAi)
     .compile();
   const app = mod.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
   await configureApp(app, { rateLimit: false });

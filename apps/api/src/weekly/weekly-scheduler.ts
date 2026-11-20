@@ -4,31 +4,37 @@ import { ENV, type Env } from "../config/env";
 import { weeklyReminderText, weeklyResultText } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
+import { AiReviewService } from "./ai-reviews";
 
 const HOUR = 60 * 60 * 1000;
 
 /**
- * Haftalik test rejalashtiruvchisi: eslatmalar (BR-W07) va oynani yopish (BR-W03, W08).
+ * Haftalik test rejalashtiruvchisi: eslatmalar (BR-W07), oynani yopish (BR-W03, W08) va AI tekshiruvi navbati (T-033).
  * Har amal bazada "egallab olinadi" (updateMany shart bilan), shuning uchun ikki marta bajarilmaydi.
  */
 @Injectable()
 export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
   private readonly log = new Logger("Weekly");
   private timer?: NodeJS.Timeout;
+  private busy = false;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly access: AccessService,
     private readonly notify: NotifyService,
+    private readonly reviews: AiReviewService,
     @Inject(ENV) private readonly env: Env,
   ) {}
 
   onModuleInit() {
     if (this.env.WEEKLY_TICK_SEC === 0) return;
+    // AI tekshiruvi daqiqadan uzoq cho'zilishi mumkin: oldingi tick tugamaguncha yangisi boshlanmaydi
     this.timer = setInterval(() => {
-      this.tick(new Date()).catch((e: unknown) =>
-        this.log.warn(`tick: ${e instanceof Error ? e.name : "xato"}`),
-      );
+      if (this.busy) return;
+      this.busy = true;
+      this.tick(new Date())
+        .catch((e: unknown) => this.log.warn(`tick: ${e instanceof Error ? e.name : "xato"}`))
+        .finally(() => (this.busy = false));
     }, this.env.WEEKLY_TICK_SEC * 1000);
   }
 
@@ -39,6 +45,7 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
   async tick(now: Date) {
     await this.remind(now);
     await this.close(now);
+    await this.reviews.process(now);
   }
 
   /** 24 va 3 soat qolganda topshirmagan, to'liq kirishli o'quvchilarga */

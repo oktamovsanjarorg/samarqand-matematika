@@ -37,3 +37,7 @@ export const solutionVerdict = z.object({
   studentFeedback: z.string(),
 });
 export type SolutionVerdict = z.infer<typeof solutionVerdict>;
+
+/** Ustoz navbatida birinchi turadi: AI aniq shubha desa yoki kamida ikki belgi bo'lsa (BR-W05) */
+export const isSuspected = (v: SolutionVerdict) =>
+  v.verdict === "SUSPECTED_COPY" || v.copySignals.length >= 2;

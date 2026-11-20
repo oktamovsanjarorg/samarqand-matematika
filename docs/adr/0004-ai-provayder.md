@@ -22,4 +22,6 @@ Haftalik testda o'quvchi har savolga daftardagi yechim rasmini yuklaydi (BR-W04)
 
 - Gemini yoki GPT qo'shish — yangi `AiProvider` sinfi va `AI_PROVIDER` qiymati; qolgan kod o'zgarmaydi.
 - To'plam bo'lmaguncha production'da `AI_PROVIDER=off`: haftalik test va ustoz navbati AI'siz ishlaydi.
-- Xarajat: bitta savol — bitta so'rov (1–3 rasm). Kunlik limit va navbat T-033 da.
+- Xarajat: bitta savol — bitta so'rov (1–3 rasm). Kunlik chegara `AI_DAILY_LIMIT` (standart 300).
+- **Navbat (T-033)**: BullMQ o'rniga bazadagi `AiReview` jadvali va haftalik rejalashtiruvchi (har daqiqada 5 tadan). Har yozuv `updateMany` sharti bilan egallab olinadi, 3 martagacha qayta urinadi, 10 daqiqa osilib qolgan `RUNNING` qayta olinadi. Hozirgi hajmda Redis navbati kerak emas; hajm oshsa BullMQ'ga o'tish faqat shu xizmatni almashtiradi.
+- **Shubha** (`suspected`): AI `SUSPECTED_COPY` desa yoki kamida ikki belgi topsa. O'quvchiga hech qayerda qaytmaydi (BR-W05), ustoz navbatida birinchi turadi (T-034). Serverdagi qo'shimcha signallar: bir savolga aynan bir xil noto'g'ri javob bergan o'quvchilar, mavzu testlari <50% bo'lib haftalikda ≥90%.
