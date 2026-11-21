@@ -53,10 +53,11 @@ export interface AdminParentLink {
   rejectReason: string | null;
 }
 
-/** Ota-onaning farzandi (faqat tasdiqlangan ulanish) */
+/** Ota-onaning farzandi: tasdiqlangan yoki ustoz tasdig'ini kutayotgan ulanish (T-070) */
 export interface ChildView {
   studentId: string;
   name: string;
+  status: "APPROVED" | "PENDING";
 }
 
 /** Ota-ona kabineti: farzandning yopilgan haftalik natijasi (T-069) */
@@ -67,10 +68,21 @@ export interface ChildWeeklyRow {
   total: number;
   submitted: boolean;
   score: number;
+  /** Shu test reytingidagi o'rin (T-070); topshirmagan bo'lsa null */
+  place: number | null;
+  participants: number;
 }
 
 /** Ota-ona kabineti: faqat faktlar, AI shubhasisiz (BR-PA01) */
 export interface ChildSummary {
+  /** To'liq kirish qadamlari (BR-A04) va faol obuna tugash sanasi (T-070) */
+  access: {
+    full: boolean;
+    accepted: boolean;
+    parentApproved: boolean;
+    paid: boolean;
+    paidUntil: string | null;
+  };
   tests: number;
   averagePercent: number | null;
   recent: AttemptSummary[];

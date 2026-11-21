@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import type { ChildSummary } from "@samarqand/shared";
+import { rankRows, type ChildSummary } from "@samarqand/shared";
+import { isFullAccess } from "../access/access-rules";
+import { AccessService } from "../access/access.service";
 import { StudentInsightsService } from "../insights/student-insights.service";
 import { MyOfflineService } from "../offline/my-offline.service";
 import { PrismaService } from "../prisma/prisma.service";
@@ -15,6 +17,7 @@ import { scoreOf } from "../weekly/weekly-views";
 export class ChildSummaryService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly accessFacts: AccessService,
     private readonly stats: StatsService,
     private readonly school: MySchoolService,
     private readonly offline: MyOfflineService,
@@ -28,7 +31,8 @@ export class ChildSummaryService {
     });
     if (!link) throw new NotFoundException("Farzand topilmadi");
     const { userId, user } = link.student;
-    const [stats, school, offline, recs, weekly] = await Promise.all([
+    const [access, stats, school, offline, recs, weekly] = await Promise.all([
+      this.access(userId, now),
       this.stats.my(userId),
       this.school.get(userId),
       this.offline.list(userId),
@@ -36,6 +40,7 @@ export class ChildSummaryService {
       this.weekly(userId, user.createdAt, now),
     ]);
     return {
+      access,
       tests: stats.tests,
       averagePercent: stats.averagePercent,
       recent: stats.recent,
@@ -44,6 +49,25 @@ export class ChildSummaryService {
       weekly,
       offline,
       weak: recs.items.map((w) => ({ topicTitle: w.topicTitle, percent: w.percent, total: w.total })),
+    };
+  }
+
+  /** BR-A04 qadamlari va faol obuna tugash sanasi (ketma-ket obunalarda eng kechi) */
+  private async access(userId: string, now: Date): Promise<ChildSummary["access"]> {
+    const [f, sub] = await Promise.all([
+      this.accessFacts.facts(userId),
+      this.prisma.subscription.findFirst({
+        where: { userId, endsAt: { gt: now } },
+        orderBy: { endsAt: "desc" },
+        select: { endsAt: true },
+      }),
+    ]);
+    return {
+      full: isFullAccess(f),
+      accepted: f.accepted,
+      parentApproved: f.approvedParents > 0,
+      paid: f.paid,
+      paidUntil: sub?.endsAt.toISOString() ?? null,
     };
   }
 
@@ -58,18 +82,23 @@ export class ChildSummaryService {
         title: true,
         closesAt: true,
         _count: { select: { questions: true } },
-        attempts: { where: { userId }, select: { score: true, submittedAt: true, correct: true } },
+        attempts: { select: { userId: true, score: true, submittedAt: true, correct: true } },
       },
     });
     return tests.map((t) => {
-      const a = t.attempts[0];
+      // Reyting (BR-W10) bilan bir xil: hamma urinishlar, ball bo'yicha; tenglarda o'rin bir xil
+      const ranked = rankRows(t.attempts.map((a) => ({ name: a.userId, score: scoreOf(a) })));
+      const a = t.attempts.find((x) => x.userId === userId);
+      const submitted = !!a?.submittedAt;
       return {
         id: t.id,
         title: t.title,
         closesAt: t.closesAt.toISOString(),
         total: t._count.questions,
-        submitted: !!a?.submittedAt,
+        submitted,
         score: a ? scoreOf(a) : 0,
+        place: submitted ? (ranked.find((r) => r.name === userId)?.place ?? null) : null,
+        participants: ranked.length,
       };
     });
   }

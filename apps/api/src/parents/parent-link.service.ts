@@ -127,20 +127,22 @@ export class ParentLinkService {
     return flags;
   }
 
-  /** Ota-onaning tasdiqlangan farzandlari */
+  /** Ota-onaning farzandlari: tasdiqlangan va kutilayotgan (rad etilgan ko'rsatilmaydi) */
   async children(parentId: string): Promise<ChildView[]> {
     const links = await this.prisma.parentLink.findMany({
-      where: { parentId, status: "APPROVED" },
+      where: { parentId, status: { in: ["APPROVED", "PENDING"] } },
       orderBy: { createdAt: "asc" },
       select: {
+        status: true,
         student: {
           select: { id: true, fullName: true, user: { select: { firstName: true, lastName: true } } },
         },
       },
     });
-    return links.map(({ student }) => ({
+    return links.map(({ student, status }) => ({
       studentId: student.id,
       name: nameOf(student.user, student.fullName),
+      status: status === "APPROVED" ? "APPROVED" : "PENDING",
     }));
   }
 }

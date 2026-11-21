@@ -126,7 +126,9 @@ describe("Ustoz navbati", () => {
     expect(ok.json()).toMatchObject({ status: "APPROVED", studentName: "Dilnoza Karimova" });
     expect((await post(`/admin/parent-links/${row.id}/approve`, teacher)).statusCode).toBe(409);
     const children = (await get("/me/children", await parentHeaders(p))).json();
-    expect(children).toEqual([{ studentId: expect.any(String), name: "Dilnoza Karimova" }]);
+    expect(children).toEqual([
+      { studentId: expect.any(String), name: "Dilnoza Karimova", status: "APPROVED" },
+    ]);
   });
 
   it("rad etish sabab bilan; keyin qayta ulanish rejected_before", async () => {

@@ -102,9 +102,10 @@
 
 ## 6-bosqich: sayqal va o'quv oqimi
 
-| ID    | Vazifa                                                                                                     | Holat |
-| ----- | ---------------------------------------------------------------------------------------------------------- | ----- |
-| T-066 | Dars sahifasi oxiri: mavzu testi tugmasi (savollar soni bilan), oldingi va keyingi dars                    | ✅    |
-| T-067 | Darslar ro'yxati: mavzu bo'yicha eng yaxshi natija va mavzu testi tugmasi                                  | ✅    |
-| T-068 | Admin o'quvchi kartasi: natijalar, davomat, ota-ona, e'tibor sabablari va kuchsiz mavzular bitta sahifada  | ✅    |
-| T-069 | Ota-ona kabineti: Asosiy sahifada tasdiqlangan farzandlar, davomat, natijalar va takrorlash kerak mavzular | ✅    |
+| ID    | Vazifa                                                                                                          | Holat |
+| ----- | --------------------------------------------------------------------------------------------------------------- | ----- |
+| T-066 | Dars sahifasi oxiri: mavzu testi tugmasi (savollar soni bilan), oldingi va keyingi dars                         | ✅    |
+| T-067 | Darslar ro'yxati: mavzu bo'yicha eng yaxshi natija va mavzu testi tugmasi                                       | ✅    |
+| T-068 | Admin o'quvchi kartasi: natijalar, davomat, ota-ona, e'tibor sabablari va kuchsiz mavzular bitta sahifada       | ✅    |
+| T-069 | Ota-ona kabineti: Asosiy sahifada tasdiqlangan farzandlar, davomat, natijalar va takrorlash kerak mavzular      | ✅    |
+| T-070 | Ota-ona kabineti: kutilayotgan ulanish, kirish holati va obuna muddati, haftalikda o'rin, Darslar tabi yashirin | ✅    |
