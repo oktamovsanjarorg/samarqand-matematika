@@ -7,15 +7,15 @@ import {
   type WeeklyQuestionRow,
 } from "@samarqand/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Copy } from "lucide-react";
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { MockResults } from "../components/mock/MockResults";
 import { SectionPickers } from "../components/mock/SectionPickers";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
 import { WindowFields } from "../components/weekly/WindowFields";
 import { api } from "../lib/api";
-import { fromLocalInput, toLocalInput } from "../lib/weekly";
+import { fromLocalInput, nextTitle, shiftedWindow, toLocalInput } from "../lib/weekly";
 
 const field = "min-h-11 w-full rounded-xl border border-hint/25 bg-section px-3 text-sm";
 
@@ -46,6 +46,19 @@ function draftOf(m?: AdminMockDetail): Draft {
     opens: iso(w.opensAt),
     closes: iso(w.closesAt),
     sections: [],
+    isPublished: false,
+  };
+}
+
+/** Nusxa (T-098): o'sha shablon va savollar, keyingi oyna, raqami oshgan nom; nashr qilinmagan holda */
+function copyOf(m: AdminMockDetail): Draft {
+  const w = shiftedWindow(m.opensAt, m.closesAt, new Date());
+  return {
+    title: nextTitle(m.title),
+    templateId: m.templateId ?? "",
+    opens: toLocalInput(w.opensAt),
+    closes: toLocalInput(w.closesAt),
+    sections: m.sections,
     isPublished: false,
   };
 }
@@ -103,11 +116,12 @@ function TemplateSelect({ value, onPick }: { value: string; onPick: (t: ExamTemp
   );
 }
 
-function Form({ initial }: { initial?: AdminMockDetail }) {
-  const [d, setD] = useState<Draft>(() => draftOf(initial));
+/** copy: mavjud mockdan yangi mock (shablonni qayta tanlash mumkin) */
+function Form({ initial, copy = false }: { initial?: AdminMockDetail; copy?: boolean }) {
+  const [d, setD] = useState<Draft>(() => (initial && copy ? copyOf(initial) : draftOf(initial)));
   const [template, setTemplate] = useState<ExamTemplateInput | undefined>(initial?.template);
   const set = (patch: Partial<Draft>) => setD((prev) => ({ ...prev, ...patch }));
-  const save = useSave(initial?.id);
+  const save = useSave(copy ? undefined : initial?.id);
   const ready = !!template && template.sections.every((s, i) => d.sections[i]?.length === s.count);
   return (
     <div className="space-y-4">
@@ -118,7 +132,7 @@ function Form({ initial }: { initial?: AdminMockDetail }) {
         aria-label="Nomi"
         className={field}
       />
-      {initial ? (
+      {initial && !copy ? (
         <p className="text-sm text-hint">Shablon: {initial.templateName} (nusxasi mockda saqlangan)</p>
       ) : (
         <TemplateSelect
@@ -159,8 +173,46 @@ function Form({ initial }: { initial?: AdminMockDetail }) {
   );
 }
 
+function Header({ routeId }: { routeId?: string }) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <h1 className="text-xl font-extrabold">{routeId ? "Mock" : "Yangi mock"}</h1>
+      {routeId && (
+        <Link
+          to={`/mocks/new?from=${routeId}`}
+          className="tap flex min-h-11 items-center gap-2 rounded-xl border border-hint/25 bg-section px-4 text-sm font-semibold"
+        >
+          <Copy size={16} /> Nusxa olish
+        </Link>
+      )}
+    </div>
+  );
+}
+
+/** Mavjud mock: tahrirlash va natijalar; yoki undan nusxa (T-098) */
+function Loaded({ m, copy }: { m: AdminMockDetail; copy: boolean }) {
+  if (copy)
+    return (
+      <>
+        <p className="text-sm text-hint" data-testid="copy-hint">
+          «{m.title}» nusxasi: shablon va savollar koʻchirildi, oyna keyingi haftaga surildi. Tekshirib
+          saqlang.
+        </p>
+        <Form key={`copy-${m.id}`} initial={m} copy />
+      </>
+    );
+  return (
+    <>
+      <Form key={m.id} initial={m} />
+      {m.status !== "UPCOMING" && <MockResults id={m.id} title={m.title} />}
+    </>
+  );
+}
+
 export function MockEditPage() {
-  const { id } = useParams();
+  const { id: routeId } = useParams();
+  const from = useSearchParams()[0].get("from") ?? undefined;
+  const id = routeId ?? from;
   const m = useQuery({
     queryKey: ["mocks", id],
     queryFn: () => api.get<AdminMockDetail>(`/admin/mocks/${id}`),
@@ -171,12 +223,11 @@ export function MockEditPage() {
       <Link to="/mocks" className="flex w-fit items-center gap-1 text-sm font-semibold text-link">
         <ArrowLeft size={16} /> Mocklar
       </Link>
-      <h1 className="text-xl font-extrabold">{id ? "Mock" : "Yangi mock"}</h1>
+      <Header routeId={routeId} />
       {id && m.isPending && <SkeletonList rows={3} />}
       {m.isError && <ErrorState message={m.error.message} onRetry={() => m.refetch()} />}
       {!id && <Form />}
-      {m.data && <Form initial={m.data} />}
-      {m.data && m.data.status !== "UPCOMING" && <MockResults id={m.data.id} title={m.data.title} />}
+      {m.data && <Loaded m={m.data} copy={!routeId} />}
     </div>
   );
 }

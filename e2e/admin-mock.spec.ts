@@ -70,3 +70,27 @@ test("T-053b, T-076: ustoz mock natijalarini bo'limlar bo'yicha ko'radi", async 
   expect(csv.text).toContain(";Natija Mockchi;");
   await page.screenshot({ path: "e2e/.results/admin-mock-results.png", fullPage: true });
 });
+
+test("T-098: ustoz mockdan nusxa oladi: shablon va savollar ko'chadi, nomni yangisini yozadi", async ({
+  page,
+  request,
+}) => {
+  const m = await seedMock(request);
+  await loginAdmin(page, request, `mocks/${m.id}`);
+  await page.getByRole("link", { name: "Nusxa olish" }).click();
+  await expect(page).toHaveURL(new RegExp(`/mocks/new\\?from=${m.id}$`));
+  await expect(page.getByTestId("copy-hint")).toBeVisible();
+  // Nom raqam bilan boshlanmasa bo'sh qoladi (T-089 dagi kabi): ustoz yangisini yozadi
+  await expect(page.getByLabel("Nomi")).toHaveValue("");
+  const title = `${E2E_PREFIX}Nusxa mock ${m.stamp}`;
+  await page.getByLabel("Nomi").fill(title);
+  await expect(page.getByLabel("Shablon")).toHaveValue(m.body.templateId);
+  const sections = page.getByTestId("mock-section");
+  await expect(sections.nth(0)).toContainText("1/1");
+  await expect(sections.nth(1)).toContainText("1/1");
+  await expect(page.getByRole("checkbox", { name: /Nashr qilingan/ })).not.toBeChecked();
+  await expect(page.getByRole("button", { name: "Saqlash" })).toBeEnabled({ timeout: 2000 });
+  await page.screenshot({ path: "e2e/.results/admin-mock-copy.png", fullPage: true });
+  await page.getByRole("button", { name: "Saqlash" }).click();
+  await expect(page.getByTestId("mock").filter({ hasText: title })).toContainText("2 ta savol");
+});

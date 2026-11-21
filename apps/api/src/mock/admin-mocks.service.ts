@@ -94,7 +94,8 @@ export class AdminMocksService {
   async create(actorId: string, input: MockTestInput) {
     const row = await this.prisma.examTemplate.findFirst({ where: { id: input.templateId, isActive: true } });
     const template = row && toTemplate(row);
-    if (!template) throw new BadRequestException("Shablon topilmadi");
+    if (!template)
+      throw new BadRequestException("Shablon topilmadi yoki faol emas: boshqa shablonni tanlang");
     const { id: _id, isActive: _a, ...snapshot } = template;
     await this.mustFit(snapshot, input.sections);
     const t = await this.prisma.mockTest.create({
