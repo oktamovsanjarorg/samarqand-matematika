@@ -5,15 +5,15 @@ import {
   type WeeklyQuestionRow,
 } from "@samarqand/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Copy } from "lucide-react";
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
 import { QuestionPicker } from "../components/weekly/QuestionPicker";
 import { WindowFields } from "../components/weekly/WindowFields";
 import { Standings } from "../components/weekly/Standings";
 import { api } from "../lib/api";
-import { fromLocalInput, toLocalInput } from "../lib/weekly";
+import { fromLocalInput, nextTitle, shiftedWindow, toLocalInput } from "../lib/weekly";
 
 const field = "min-h-11 w-full rounded-xl border border-hint/25 bg-section px-3 text-sm";
 
@@ -44,6 +44,18 @@ function draftOf(t?: AdminWeeklyDetail): Draft {
   };
 }
 
+/** Nusxa (T-089): o'sha savollar, keyingi oyna, raqami oshgan nom; nashr qilinmagan holda */
+function copyOf(t: AdminWeeklyDetail): Draft {
+  const w = shiftedWindow(t.opensAt, t.closesAt, new Date());
+  return {
+    title: nextTitle(t.title),
+    opens: toLocalInput(w.opensAt),
+    closes: toLocalInput(w.closesAt),
+    questions: t.questions,
+    isPublished: false,
+  };
+}
+
 function useSave(id: string | undefined) {
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -67,8 +79,8 @@ function useSave(id: string | undefined) {
   });
 }
 
-function Form({ initial, id }: { initial?: AdminWeeklyDetail; id?: string }) {
-  const [d, setD] = useState<Draft>(() => draftOf(initial));
+function Form({ initial, id }: { initial: Draft; id?: string }) {
+  const [d, setD] = useState<Draft>(initial);
   const set = (patch: Partial<Draft>) => setD((prev) => ({ ...prev, ...patch }));
   const save = useSave(id);
   return (
@@ -113,8 +125,45 @@ function Form({ initial, id }: { initial?: AdminWeeklyDetail; id?: string }) {
   );
 }
 
+function Header({ routeId }: { routeId?: string }) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <h1 className="text-xl font-extrabold">{routeId ? "Haftalik test" : "Yangi haftalik test"}</h1>
+      {routeId && (
+        <Link
+          to={`/weekly/new?from=${routeId}`}
+          className="tap flex min-h-11 items-center gap-2 rounded-xl border border-hint/25 bg-section px-4 text-sm font-semibold"
+        >
+          <Copy size={16} /> Nusxa olish
+        </Link>
+      )}
+    </div>
+  );
+}
+
+/** Mavjud test: tahrirlash va natijalar; yoki undan nusxa (T-089) */
+function Loaded({ t, copy }: { t: AdminWeeklyDetail; copy: boolean }) {
+  if (copy)
+    return (
+      <>
+        <p className="text-sm text-hint" data-testid="copy-hint">
+          «{t.title}» nusxasi: savollar koʻchirildi, oyna keyingi haftaga surildi. Tekshirib saqlang.
+        </p>
+        <Form key={`copy-${t.id}`} initial={copyOf(t)} />
+      </>
+    );
+  return (
+    <>
+      <Form key={t.id} initial={draftOf(t)} id={t.id} />
+      {t.status !== "UPCOMING" && <Standings id={t.id} total={t.questionCount} title={t.title} />}
+    </>
+  );
+}
+
 export function WeeklyEditPage() {
-  const { id } = useParams();
+  const { id: routeId } = useParams();
+  const from = useSearchParams()[0].get("from") ?? undefined;
+  const id = routeId ?? from;
   const t = useQuery({
     queryKey: ["weekly", id],
     queryFn: () => api.get<AdminWeeklyDetail>(`/admin/weekly/${id}`),
@@ -125,14 +174,11 @@ export function WeeklyEditPage() {
       <Link to="/weekly" className="flex w-fit items-center gap-1 text-sm font-semibold text-link">
         <ArrowLeft size={16} /> Haftalik testlar
       </Link>
-      <h1 className="text-xl font-extrabold">{id ? "Haftalik test" : "Yangi haftalik test"}</h1>
+      <Header routeId={routeId} />
       {id && t.isPending && <SkeletonList rows={3} />}
       {t.isError && <ErrorState message={t.error.message} onRetry={() => t.refetch()} />}
-      {!id && <Form />}
-      {t.data && <Form initial={t.data} id={t.data.id} />}
-      {t.data && t.data.status !== "UPCOMING" && (
-        <Standings id={t.data.id} total={t.data.questionCount} title={t.data.title} />
-      )}
+      {!id && <Form initial={draftOf()} />}
+      {t.data && <Loaded t={t.data} copy={!routeId} />}
     </div>
   );
 }
