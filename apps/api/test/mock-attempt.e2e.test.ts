@@ -158,9 +158,19 @@ describe("Mock urinishi (T-051b)", () => {
     ).toBe(200);
   });
 
-  it("T-053: oyna yopilganda vaqti o'tgan urinish topshiriladi, ball qo'yiladi va o'quvchiga xabar boradi", async () => {
+  it("T-053, T-082: oyna yopilganda vaqti o'tgan urinish topshiriladi, ball qo'yiladi, o'quvchi va ota-onaga xabar boradi", async () => {
     const m = await mock();
     const s = await f.student();
+    // T-082: tasdiqlangan ota-ona
+    const parent = await f.student(false);
+    await f.prisma.user.update({ where: { id: parent.id }, data: { role: "PARENT" } });
+    const child = await f.prisma.studentProfile.findUniqueOrThrow({
+      where: { userId: s.id },
+      select: { id: true },
+    });
+    await f.prisma.parentLink.create({
+      data: { parentId: parent.id, studentId: child.id, status: "APPROVED", phone: "998900000000" },
+    });
     const a = (await begin(s.headers, m.id)).json() as MockOpen;
     await f.call("PUT", `/mock-attempts/${a.id}/answers/${m.numeric}`, s.headers, {
       response: { value: "0.75" },
@@ -179,6 +189,9 @@ describe("Mock urinishi (T-051b)", () => {
     expect(r).toMatchObject({ scaled: 50, grade: "C", approx: true });
     const sent = f.messagesTo(s.telegramId).filter((t) => t.includes("Sinov mock"));
     expect(sent).toEqual([expect.stringContaining("<b>50/75</b>, daraja <b>C</b>")]);
+    expect(f.messagesTo(parent.telegramId).filter((t) => t.includes("Sinov mock"))).toEqual([
+      expect.stringMatching(/mock <b>Sinov mock.*<b>50\/75<\/b>, daraja <b>C<\/b> \(taxminiy\)/),
+    ]);
   });
 
   it("T-053b: ustoz natijalarni ko'radi: ball bo'yicha, bo'limlar, usul; o'quvchiga 403", async () => {

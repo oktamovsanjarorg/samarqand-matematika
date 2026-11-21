@@ -2,7 +2,8 @@ import { Inject, Injectable, Logger, type OnModuleDestroy, type OnModuleInit } f
 import { gradeOf } from "@samarqand/shared";
 import { ENV, type Env } from "../config/env";
 import { AccessService } from "../access/access.service";
-import { mockOpenText, mockResultText } from "../notify/messages";
+import { PERSON_SELECT, personName } from "../common/person";
+import { mockOpenText, mockParentReport, mockResultText } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { snapshotOf } from "./admin-mocks.service";
@@ -114,6 +115,35 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
           a.userId,
           mockResultText(m.title, { scaled, scaleMax: t.scaleMax, grade: gradeOf(scaled, t.grades) }),
         );
+      }),
+    );
+    const results = new Map(
+      m.attempts.map((a) => {
+        const scaled = s.scaled.get(a.id) ?? 0;
+        const r = {
+          scaled,
+          scaleMax: t.scaleMax,
+          grade: gradeOf(scaled, t.grades),
+          approx: s.raschN === null,
+        };
+        return [a.userId, r] as const;
+      }),
+    );
+    await this.reportParents(m.title, results);
+  }
+
+  /** Tasdiqlangan ota-onalarga farzandining natijasi (T-082) */
+  private async reportParents(title: string, results: Map<string, Parameters<typeof mockParentReport>[2]>) {
+    const links = await this.prisma.parentLink.findMany({
+      where: { status: "APPROVED", student: { userId: { in: [...results.keys()] } } },
+      select: { parentId: true, student: { select: { userId: true, user: { select: PERSON_SELECT } } } },
+    });
+    await Promise.all(
+      links.map((l) => {
+        const r = results.get(l.student.userId);
+        return r
+          ? this.notify.toUser(l.parentId, mockParentReport(personName(l.student.user), title, r))
+          : null;
       }),
     );
   }
