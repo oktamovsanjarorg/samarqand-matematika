@@ -1,9 +1,10 @@
 import type { ChildSummary, ChildView } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarCheck, ClipboardList, Target, Users } from "lucide-react";
+import { CalendarCheck, CheckCircle2, ClipboardList, Clock, Lock, Target, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { api } from "../../lib/api";
 import { formatDay } from "../../lib/me";
+import { formatStamp } from "../../lib/time";
 import { EmptyState } from "../states";
 
 function Block({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
@@ -73,6 +74,46 @@ function Results({ s }: { s: ChildSummary }) {
   );
 }
 
+/** BR-A04: to'liq kirish holati va obuna muddati; yetishmayotgan qadam aniq yoziladi */
+function Access({ a }: { a: ChildSummary["access"] }) {
+  const missing = [
+    !a.accepted && "ustoz qabul qilmagan",
+    !a.parentApproved && "ota-ona tasdiqlanmagan",
+    !a.paid && "obuna toʻlanmagan",
+  ].filter(Boolean);
+  if (a.full)
+    return (
+      <p className="flex items-center gap-2 text-sm" data-testid="child-access">
+        <CheckCircle2 size={16} className="shrink-0 text-success" />
+        {a.paidUntil ? `Obuna faol: ${formatStamp(a.paidUntil).split(",")[0]} gacha` : "Barcha darslar ochiq"}
+      </p>
+    );
+  return (
+    <div className="space-y-1" data-testid="child-access">
+      <p className="flex items-center gap-2 text-sm">
+        <Lock size={16} className="shrink-0 text-danger" /> Pullik darslar yopiq: {missing.join(", ")}
+      </p>
+      {!a.paid && (
+        <p className="pl-6 text-xs text-hint">
+          Obunani farzandingiz ilovada “Profil → Obuna va toʻlovlar” boʻlimidan chek yuborib faollashtiradi
+        </p>
+      )}
+    </div>
+  );
+}
+
+function PendingCard({ c }: { c: ChildView }) {
+  return (
+    <section className="card space-y-1" data-testid="child-pending">
+      <h2 className="text-lg font-extrabold">{c.name}</h2>
+      <p className="flex items-center gap-2 text-sm text-hint">
+        <Clock size={16} className="shrink-0" /> Ulanish soʻrovi ustoz tasdigʻini kutmoqda. Tasdiqlangach
+        natijalar shu yerda chiqadi.
+      </p>
+    </section>
+  );
+}
+
 function ChildCard({ c }: { c: ChildView }) {
   const q = useQuery({
     queryKey: ["child", c.studentId],
@@ -85,6 +126,7 @@ function ChildCard({ c }: { c: ChildView }) {
       {q.isError && <p className="text-sm text-danger">{q.error.message}</p>}
       {q.data && (
         <>
+          <Access a={q.data.access} />
           <Attendance s={q.data} />
           <Results s={q.data} />
           {q.data.weak.length > 0 && (
@@ -115,9 +157,13 @@ export function ParentHome() {
     );
   return (
     <div className="space-y-4">
-      {children.data.map((c) => (
-        <ChildCard key={c.studentId} c={c} />
-      ))}
+      {children.data.map((c) =>
+        c.status === "APPROVED" ? (
+          <ChildCard key={c.studentId} c={c} />
+        ) : (
+          <PendingCard key={c.studentId} c={c} />
+        ),
+      )}
     </div>
   );
 }

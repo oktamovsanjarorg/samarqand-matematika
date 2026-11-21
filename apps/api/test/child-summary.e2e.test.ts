@@ -33,8 +33,12 @@ describe("ota-ona kabineti (T-069, BR-PA01)", () => {
       data: { createdAt: new Date(Date.now() - 24 * 3600_000) },
     });
     const p = await parentOf(child, "APPROVED");
-    await f.prisma.weeklyAttempt.create({
-      data: { weeklyTestId: closed, userId: child.id, submittedAt: new Date(), correct: 1 },
+    const rival = await f.student();
+    await f.prisma.weeklyAttempt.createMany({
+      data: [
+        { weeklyTestId: closed, userId: child.id, submittedAt: new Date(), correct: 1 },
+        { weeklyTestId: closed, userId: rival.id, submittedAt: new Date(), correct: 2 },
+      ],
     });
     await f.prisma.weeklyTest.update({
       where: { id: closed },
@@ -46,13 +50,29 @@ describe("ota-ona kabineti (T-069, BR-PA01)", () => {
     const ids = s.weekly.map((w) => w.id);
     expect(ids).toContain(closed);
     expect(ids).not.toContain(open);
-    expect(s.weekly.find((w) => w.id === closed)).toMatchObject({ submitted: true, score: 1, total: 2 });
+    expect(s.weekly.find((w) => w.id === closed)).toMatchObject({
+      submitted: true,
+      score: 1,
+      total: 2,
+      place: 2,
+      participants: 2,
+    });
+    // Fixture o'quvchisi FREE rejimda: obunasiz ham to'liq kirish
+    expect(s.access).toEqual({
+      full: true,
+      accepted: false,
+      parentApproved: true,
+      paid: false,
+      paidUntil: null,
+    });
     expect(JSON.stringify(s)).not.toMatch(/suspic|signal|aiVerdict/i);
   });
 
-  it("tasdiqlanmagan yoki boshqa farzand 404; o'quvchiga 403", async () => {
+  it("tasdiqlanmagan yoki boshqa farzand 404; o'quvchiga 403; ro'yxatda kutilayotgan holat bilan", async () => {
     const child = await f.student();
     const pending = await parentOf(child, "PENDING");
+    const list = (await f.call("GET", "/me/children", pending.headers)).json();
+    expect(list).toEqual([{ studentId: pending.studentId, name: expect.any(String), status: "PENDING" }]);
     expect((await f.call("GET", `/me/children/${pending.studentId}`, pending.headers)).statusCode).toBe(404);
     const other = await parentOf(await f.student(), "APPROVED");
     expect((await f.call("GET", `/me/children/${pending.studentId}`, other.headers)).statusCode).toBe(404);
