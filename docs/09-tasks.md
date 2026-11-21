@@ -102,13 +102,14 @@
 
 ## 6-bosqich: sayqal va o'quv oqimi
 
-| ID    | Vazifa                                                                                                                                                      | Holat |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| T-066 | Dars sahifasi oxiri: mavzu testi tugmasi (savollar soni bilan), oldingi va keyingi dars                                                                     | ✅    |
-| T-067 | Darslar ro'yxati: mavzu bo'yicha eng yaxshi natija va mavzu testi tugmasi                                                                                   | ✅    |
-| T-068 | Admin o'quvchi kartasi: natijalar, davomat, ota-ona, e'tibor sabablari va kuchsiz mavzular bitta sahifada                                                   | ✅    |
-| T-069 | Ota-ona kabineti: Asosiy sahifada tasdiqlangan farzandlar, davomat, natijalar va takrorlash kerak mavzular                                                  | ✅    |
-| T-070 | Ota-ona kabineti: kutilayotgan ulanish, kirish holati va obuna muddati, haftalikda o'rin, Darslar tabi yashirin                                             | ✅    |
-| T-071 | Tungi rejim va kontrast: WCAG AA (axe) brauzer testi, brend fon va brend matn alohida token, Telegram ranglari kontrast bo'yicha tekshiriladi, zoom yoqildi | ✅    |
-| T-072 | Kontrast tekshiruvi kengaytirildi: Mini App'ning barcha o'quvchi va ota-ona ekranlari (ikkala rejim), admin bo'limlari                                      | ✅    |
-| T-073 | Ota-ona Profili: farzandlar holati, botdan keladigan xabarlar, yana farzand ulash yo'li                                                                     | ✅    |
+| ID    | Vazifa                                                                                                                                                                      | Holat |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| T-066 | Dars sahifasi oxiri: mavzu testi tugmasi (savollar soni bilan), oldingi va keyingi dars                                                                                     | ✅    |
+| T-067 | Darslar ro'yxati: mavzu bo'yicha eng yaxshi natija va mavzu testi tugmasi                                                                                                   | ✅    |
+| T-068 | Admin o'quvchi kartasi: natijalar, davomat, ota-ona, e'tibor sabablari va kuchsiz mavzular bitta sahifada                                                                   | ✅    |
+| T-069 | Ota-ona kabineti: Asosiy sahifada tasdiqlangan farzandlar, davomat, natijalar va takrorlash kerak mavzular                                                                  | ✅    |
+| T-070 | Ota-ona kabineti: kutilayotgan ulanish, kirish holati va obuna muddati, haftalikda o'rin, Darslar tabi yashirin                                                             | ✅    |
+| T-071 | Tungi rejim va kontrast: WCAG AA (axe) brauzer testi, brend fon va brend matn alohida token, Telegram ranglari kontrast bo'yicha tekshiriladi, zoom yoqildi                 | ✅    |
+| T-072 | Kontrast tekshiruvi kengaytirildi: Mini App'ning barcha o'quvchi va ota-ona ekranlari (ikkala rejim), admin bo'limlari                                                      | ✅    |
+| T-073 | Ota-ona Profili: farzandlar holati, botdan keladigan xabarlar, yana farzand ulash yo'li                                                                                     | ✅    |
+| T-074 | Ifoda javobini avtomatik tekshirish: o'z parserimiz (LaTeX, Unicode, yashirin ko'paytirish), tasodifiy nuqtalarda tenglik, "Ustoz tekshiradi" belgisi, admin'da jonli holat | ✅    |

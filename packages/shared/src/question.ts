@@ -41,7 +41,11 @@ const numeric = z.object({
 const expression = z.object({
   ...common,
   type: z.literal("EXPRESSION"),
-  answer: z.object({ value: z.string().trim().min(1, "Javob kerak").max(500) }),
+  // manual: shakl muhim bo'lsa (masalan ko'paytuvchilarga ajratish) ekvivalentlik tekshirilmaydi, ustoz baholaydi (BR-Q03)
+  answer: z.object({
+    value: z.string().trim().min(1, "Javob kerak").max(500),
+    manual: z.boolean().optional(),
+  }),
 });
 const matching = z.object({
   ...common,

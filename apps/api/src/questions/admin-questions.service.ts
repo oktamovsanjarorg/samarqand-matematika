@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { parseNumber } from "@samarqand/math";
+import { parseExpression, parseNumber } from "@samarqand/math";
 import {
   ERROR_CODES,
   type AdminQuestionDetail,
@@ -20,8 +20,12 @@ const ROW = {
   isPublished: true,
 } as const;
 
-/** Son javobi va chegarasi o'qiladigan bo'lishi shart: aks holda hech kim to'g'ri javob bera olmaydi */
+/** Son javobi, chegarasi va ifoda (T-074) o'qiladigan bo'lishi shart: aks holda hech kim to'g'ri javob bera olmaydi */
 function assertCheckable(q: QuestionInput) {
+  if (q.type === "EXPRESSION" && !q.answer.manual && !parseExpression(q.answer.value))
+    throw new BadRequestException(
+      "answer.value: ifoda sifatida oʻqilmadi. Shakl muhim boʻlsa «Ustoz tekshiradi» ni belgilang",
+    );
   if (q.type !== "NUMERIC") return;
   if (!parseNumber(q.answer.value)) throw new BadRequestException("answer.value: son sifatida oʻqilmadi");
   if (q.answer.tolerance !== undefined && !parseNumber(q.answer.tolerance))

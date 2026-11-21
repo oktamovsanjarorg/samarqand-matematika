@@ -100,6 +100,16 @@ describe("Savollar banki: CRUD", () => {
     expect((await call("POST", "/admin/topics/yoq/questions", teacher, single)).statusCode).toBe(404);
   });
 
+  it("T-074: o'qilmaydigan ifoda 400, «ustoz tekshiradi» belgilansa saqlanadi", async () => {
+    const t = await newTopic();
+    const expr = { type: "EXPRESSION", text: "?", answer: { value: "x = \\int y" } };
+    const bad = await create(t.id, expr);
+    expect(bad.statusCode).toBe(400);
+    expect(bad.json().message).toContain("ifoda");
+    expect((await create(t.id, { ...expr, answer: { ...expr.answer, manual: true } })).statusCode).toBe(201);
+    expect((await create(t.id, { ...expr, answer: { value: "\\frac{x}{2}+1" } })).statusCode).toBe(201);
+  });
+
   it("BR-C03: savoli bor mavzuni o'chirib bo'lmaydi (409)", async () => {
     const t = await newTopic();
     await create(t.id);

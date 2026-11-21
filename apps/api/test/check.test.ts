@@ -57,10 +57,18 @@ describe("checkAnswer", () => {
     expect(checkAnswer(match, { pairs: { a: "c", b: "a", c: "b" } })).toBe("WRONG");
   });
 
-  it("EXPRESSION va WRITTEN ustozga qoladi (MANUAL)", () => {
-    expect(checkAnswer({ type: "EXPRESSION", text: "?", answer: { value: "x^2" } }, { value: "x^2" })).toBe(
-      "MANUAL",
-    );
+  it("T-074, BR-Q03: EXPRESSION ekvivalentlik bo'yicha, o'qilmasa yoki qo'lda belgilansa ustozga", () => {
+    const q = { type: "EXPRESSION" as const, text: "?", answer: { value: "x^2-1" } };
+    expect(checkAnswer(q, { value: "(x-1)(x+1)" })).toBe("CORRECT");
+    expect(checkAnswer(q, { value: "x^2+1" })).toBe("WRONG");
+    expect(checkAnswer(q, { value: "x^2 = 1" })).toBe("MANUAL");
+    expect(checkAnswer(q, { nope: 1 })).toBe("WRONG");
+    expect(
+      checkAnswer({ ...q, answer: { value: "(x-1)(x+1)", manual: true } }, { value: "(x-1)(x+1)" }),
+    ).toBe("MANUAL");
+  });
+
+  it("WRITTEN ustozga qoladi (MANUAL)", () => {
     expect(checkAnswer({ type: "WRITTEN", text: "?" }, { text: "..." })).toBe("MANUAL");
   });
 });

@@ -34,11 +34,11 @@
 
 ## Savollar (Q)
 
-| ID     | Qoida                                                                                                                                                               | Holat |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| BR-Q01 | To'g'ri javob va namunaviy yechim alohida ustunda saqlanadi. O'quvchi ko'rinishi uchun bu ustunlar bazadan o'qilmaydi, audit jurnaliga ham yozilmaydi               | ✅    |
-| BR-Q02 | Ko'p tanlovli savol faqat tanlangan to'plam aynan to'g'ri to'plamga teng bo'lsa to'g'ri. Qisman ball yo'q                                                           | ⚠️    |
-| BR-Q03 | Avtomatik tekshiruv: SINGLE, MULTIPLE, NUMERIC (BR-M04), MATCHING (BR-M03). EXPRESSION hozircha ustozga tushadi (ifoda ekvivalentligi T-022b), WRITTEN doim ustozga | ✅    |
+| ID     | Qoida                                                                                                                                                                                                            | Holat |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| BR-Q01 | To'g'ri javob va namunaviy yechim alohida ustunda saqlanadi. O'quvchi ko'rinishi uchun bu ustunlar bazadan o'qilmaydi, audit jurnaliga ham yozilmaydi                                                            | ✅    |
+| BR-Q02 | Ko'p tanlovli savol faqat tanlangan to'plam aynan to'g'ri to'plamga teng bo'lsa to'g'ri. Qisman ball yo'q                                                                                                        | ⚠️    |
+| BR-Q03 | Avtomatik tekshiruv: SINGLE, MULTIPLE, NUMERIC (BR-M04), MATCHING (BR-M03). EXPRESSION ekvivalentlik bo'yicha (T-074, ADR-0003): o'qilmasa yoki ustoz "Ustoz tekshiradi" belgilasa ustozga. WRITTEN doim ustozga | ✅    |
 
 ## Mavzu testi (P)
 
@@ -94,7 +94,7 @@
 | BR-M04 | Son javobi ekvivalentlik bo'yicha tekshiriladi: `3/4`, `0.75` va `0,75` teng hisoblanadi                                                                                                                                            | ✅                                    |
 | BR-M05 | Mock yopilganda shkala balli: topshirganlar 30 dan kam bo'lsa taxminiy (xom ball / eng yuqori xom ball × shkala, natijada "taxminiy"), 30 va undan ko'p bo'lsa Rasch (savol qiyinligi bilan og'irlangan mutlaq ball, ADR-0005)      | ✅ standart                           |
 | BR-M06 | Mock: muddat server bo'yicha (shablon vaqti, oyna yopilishidan oshmaydi). Vaqt tugasa saqlangan javoblar bilan avtomatik topshiriladi. Mock yechilayotganda AI yordamchi butunlay o'chiq. Natija va to'g'ri javoblar oyna yopilgach | ✅                                    |
-| BR-M07 | Mockda avtomatik tekshirilmaydigan savollar (ifoda, yozma) hozircha 0 ball: shablonga ochiq javob uchun son turini qo'ying. Ifoda tekshiruvi T-022b dan keyin                                                                       | ⚠️                                    |
+| BR-M07 | Mockda ifoda savoli avtomatik tekshiriladi (T-074). Avtomatik tekshirilmaydigan javob (yozma, o'qilmagan yoki "Ustoz tekshiradi" belgili ifoda) hozircha 0 ball: shablonga ochiq javob uchun son yoki ifoda turini qo'ying          | ✅                                    |
 
 ## Offline guruh va davomat (G)
 
