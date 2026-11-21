@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from "@nestjs/common";
-import { questionInput } from "@samarqand/shared";
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from "@nestjs/common";
+import { questionInput, questionSearch } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { AdminQuestionsService } from "./admin-questions.service";
@@ -18,6 +18,11 @@ export class AdminQuestionsController {
   @Post("topics/:id/questions")
   create(@CurrentUser() u: JwtUser, @Param("id") topicId: string, @Body() body: unknown) {
     return this.questions.create(u.sub, topicId, parseBody(questionInput, body));
+  }
+
+  @Get("questions")
+  search(@Query() query: unknown) {
+    return this.questions.search(parseBody(questionSearch, query).q);
   }
 
   @Get("questions/:id")

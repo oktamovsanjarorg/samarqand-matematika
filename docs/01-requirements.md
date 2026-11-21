@@ -20,7 +20,7 @@
 | FR-C01 | Kurs → mavzu → dars: yaratish, tartiblash, nashr, o'chirish; konspekt Markdown va LaTeX bilan, jonli ko'rinish     | BR-C01..C04    | T-021        | ✅    |
 | FR-C02 | Bepul va pullik dars; pullik dars to'liq kirish bilan ochiladi                                                     | BR-C02, BR-A04 | T-021        | ✅    |
 | FR-C07 | Yangi dars haqida o'quvchilarga bot xabari (ustoz tugmasi bilan)                                                   | BR-C05         | T-091        | ✅    |
-| FR-C03 | Savollar banki: 6 tur, namunaviy yechim, qiyinlik, ko'nikma teglari                                                | BR-Q01..Q03    | T-022        | ✅    |
+| FR-C03 | Savollar banki: 6 tur, namunaviy yechim, qiyinlik, ko'nikma teglari; matn va teg bo'yicha qidiruv                  | BR-Q01..Q03    | T-022, T-096 | ✅    |
 | FR-C04 | Javobni avtomatik tekshirish: son (kasr, vergul), ifoda (ekvivalentlik), moslashtirish; qolganini ustoz tekshiradi | BR-M04, BR-Q03 | T-014, T-074 | ✅    |
 | FR-C05 | Word yoki Excel'dan savol import                                                                                   |                | T-026        | ⬜    |
 | FR-C06 | Darsda himoyalangan video (HLS, belgi)                                                                             |                |              | ⬜    |
