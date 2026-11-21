@@ -2,6 +2,7 @@ import rateLimit from "@fastify/rate-limit";
 import type { NestFastifyApplication } from "@nestjs/platform-fastify";
 import { MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "@samarqand/shared";
 import type { FastifyRequest } from "fastify";
+import { PrismaConflictFilter } from "./common/prisma-conflict.filter";
 
 /** main.ts va testlar uchun umumiy sozlash */
 export async function configureApp(
@@ -9,6 +10,7 @@ export async function configureApp(
   opts: { rateLimit: false } | { authPerMinute: number; perMinute: number },
 ) {
   app.setGlobalPrefix("api");
+  app.useGlobalFilters(new PrismaConflictFilter(app.getHttpAdapter()));
   // Chek rasmi tanasi xom bayt bo'lib keladi (multipart'siz): turi baytlardan ham tekshiriladi
   app
     .getHttpAdapter()

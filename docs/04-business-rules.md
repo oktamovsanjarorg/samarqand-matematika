@@ -44,13 +44,13 @@
 
 ## Mavzu testi (P)
 
-| ID     | Qoida                                                                                                                                                | Holat |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| BR-P01 | Mavzu testi mashq: vaqt limiti yo'q, topshirgandan keyin qayta ishlash mumkin. Ochiq urinish bo'lsa, yangisi o'rniga o'sha davom etadi               | ⚠️    |
-| BR-P02 | Testga boshlanganda nashr qilingan savollar muzlatiladi. Keyin qo'shilgan savol shu urinishga kirmaydi                                               | ✅    |
-| BR-P03 | Topshirilguncha to'g'ri javob va yechim yuborilmaydi (BR-Q01). Topshirgandan keyin har savol bo'yicha to'g'ri javob va namunaviy yechim ko'rsatiladi | ✅    |
-| BR-P04 | Mavzu testi to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED`                                                                            | ⚠️    |
-| BR-P05 | O'quvchi faqat o'z urinishini ko'radi; boshqaniki 404. Urinishda ishlatilgan savol o'chirilmaydi (409), nashrdan olinadi                             | ✅    |
+| ID     | Qoida                                                                                                                                                      | Holat |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| BR-P01 | Mavzu testi mashq: vaqt limiti yo'q, topshirgandan keyin qayta ishlash mumkin. Ochiq urinish bo'lsa, yangisi o'rniga o'sha davom etadi                     | ⚠️    |
+| BR-P02 | Testga boshlanganda nashr qilingan savollar muzlatiladi. Keyin qo'shilgan savol shu urinishga kirmaydi                                                     | ✅    |
+| BR-P03 | Topshirilguncha to'g'ri javob va yechim yuborilmaydi (BR-Q01). Topshirgandan keyin har savol bo'yicha to'g'ri javob va namunaviy yechim ko'rsatiladi       | ✅    |
+| BR-P04 | Mavzu testi to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED`                                                                                  | ⚠️    |
+| BR-P05 | O'quvchi faqat o'z urinishini ko'radi; boshqaniki 404. Urinishda yoki haftalik/mock testda ishlatilgan savol o'chirilmaydi (409), nashrdan olinadi (T-095) | ✅    |
 
 ## To'lov va obuna (B)
 
