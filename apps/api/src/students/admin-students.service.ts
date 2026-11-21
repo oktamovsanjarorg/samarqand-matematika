@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import type { Prisma } from "@samarqand/db";
 import type { AdminStudentPatch, AdminStudentRow } from "@samarqand/shared";
+import { AccessService } from "../access/access.service";
 import { AuditService } from "../audit/audit.service";
+import { acceptedText, accessModeText } from "../notify/messages";
+import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 
 const SELECT = {
@@ -38,6 +41,8 @@ export class AdminStudentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly access: AccessService,
+    private readonly notify: NotifyService,
   ) {}
 
   /** filter "new": ustoz hali qabul qilmaganlar. q: ism, username yoki telefon bo'yicha qidiruv */
@@ -79,11 +84,13 @@ export class AdminStudentsService {
       create: { userId: id, acceptedAt: now, acceptedById: actorId },
     });
     await this.audit.log({ actorId, action: "student.accept", entity: "User", entityId: id });
+    await this.notify.toUser(id, acceptedText(await this.access.facts(id)));
     return this.get(id);
   }
 
   async update(actorId: string, id: string, patch: AdminStudentPatch): Promise<AdminStudentRow> {
     await this.mustStudent(id);
+    const before = (await this.access.facts(id)).mode;
     await this.prisma.studentProfile.upsert({
       where: { userId: id },
       update: patch,
@@ -97,6 +104,9 @@ export class AdminStudentsService {
       entityId: id,
       data: { fields: Object.keys(patch), ...(patch.accessMode ? { accessMode: patch.accessMode } : {}) },
     });
+    const text =
+      patch.accessMode && patch.accessMode !== before ? accessModeText[patch.accessMode] : undefined;
+    if (text) await this.notify.toUser(id, text);
     return this.get(id);
   }
 
