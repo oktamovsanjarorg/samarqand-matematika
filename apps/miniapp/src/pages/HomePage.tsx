@@ -2,6 +2,7 @@ import type { MyStats } from "@samarqand/shared";
 import { Bot, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AccessCard } from "../components/home/AccessCard";
+import { Hero } from "../components/home/Hero";
 import { Recommendations } from "../components/home/Recommendations";
 import { RecentResults } from "../components/home/RecentResults";
 import { MockRow } from "../components/mock/MockRow";
@@ -106,17 +107,12 @@ export function HomePage() {
   const user = useAuth((s) => s.user);
   const profile = useProfile();
   const stats = useStats();
+  const weekly = useWeeklyList();
   const name = profile.data?.fullName?.split(" ")[0] ?? user?.firstName;
 
   return (
     <div className="space-y-4">
-      <div className="card flex items-center gap-3">
-        <img src="/logo.jpg" alt="" className="h-12 w-12 rounded-xl" />
-        <div>
-          <p className="text-sm text-hint">Assalomu alaykum</p>
-          <h1 className="text-lg font-extrabold text-brand">{name}</h1>
-        </div>
-      </div>
+      <Hero name={name} stats={stats.data} weekly={weekly.data} />
       {profile.data && <AccessCard access={profile.data.access} />}
       <WeeklyBlock />
       <MockBlock />
