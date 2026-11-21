@@ -27,18 +27,18 @@
 
 ## Testlar (FR-T)
 
-| ID     | Talab                                                                                                              | BR               | T            | Holat |
-| ------ | ------------------------------------------------------------------------------------------------------------------ | ---------------- | ------------ | ----- |
-| FR-T01 | Mavzu testi: mashq, qayta ishlash, topshirgach to'g'ri javob va yechim                                             | BR-P01..P05      | T-023        | ✅    |
-| FR-T02 | Haftalik test: 1 haftalik oyna, bitta urinish, har savolga yechim rasmi, topshirmaganga 0                          | BR-W01..W04, W09 | T-030, T-031 | ✅    |
-| FR-T03 | Haftalik test ochilganda xabar, yopilishiga 24 va 3 soat qolganda eslatma                                          | BR-W07           | T-030, T-080 | ✅    |
-| FR-T04 | AI yechimni tekshiradi (hukm, qadamlar, ko'chirish signallari); shubha faqat ustozga                               | BR-W05, W06      | T-032, T-033 | ✅    |
-| FR-T05 | Ustoz navbati: shubhali va qo'lda tekshiriladigan javoblar birinchi, ball va izoh; yopilganda ustozga hisobot      | BR-W05, W06      | T-034, T-084 | ✅    |
-| FR-T06 | Reyting: test bo'yicha va umumiy; natija oyna yopilgandan keyin                                                    | BR-W08, W10      | T-035        | ✅    |
-| FR-T07 | Mock (Milliy sertifikat): shablon, bo'limlar, server vaqti, avtomatik topshirish, Rasch yoki taxminiy ball, daraja | BR-M01..M07      | T-050..T-053 | ✅    |
-| FR-T08 | Offline test natijalarini CSV'dan import qilish va o'quvchiga moslash                                              | BR-G04           | T-056        | ✅    |
-| FR-T09 | Natijalarni Excel'ga (CSV) yuklab olish: haftalik, mock, o'quvchilar ro'yxati                                      |                  | T-076, T-078 | ✅    |
-| FR-T10 | "Xatolarim": oxirgi javobi xato savollar to'g'ri javob va yechim bilan; Asosiy'da turtki                           |                  | T-079, T-083 | ✅    |
+| ID     | Talab                                                                                                                   | BR               | T                   | Holat |
+| ------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------- | ------------------- | ----- |
+| FR-T01 | Mavzu testi: mashq, qayta ishlash, topshirgach to'g'ri javob va yechim                                                  | BR-P01..P05      | T-023               | ✅    |
+| FR-T02 | Haftalik test: 1 haftalik oyna, bitta urinish, har savolga yechim rasmi, topshirmaganga 0                               | BR-W01..W04, W09 | T-030, T-031        | ✅    |
+| FR-T03 | Haftalik test ochilganda xabar, yopilishiga 24 va 3 soat qolganda eslatma                                               | BR-W07           | T-030, T-080        | ✅    |
+| FR-T04 | AI yechimni tekshiradi (hukm, qadamlar, ko'chirish signallari); shubha faqat ustozga                                    | BR-W05, W06      | T-032, T-033        | ✅    |
+| FR-T05 | Ustoz navbati: shubhali va qo'lda tekshiriladigan javoblar birinchi, ball va izoh; yopilganda ustozga hisobot           | BR-W05, W06      | T-034, T-084        | ✅    |
+| FR-T06 | Reyting: test bo'yicha va umumiy; natija oyna yopilgandan keyin                                                         | BR-W08, W10      | T-035               | ✅    |
+| FR-T07 | Mock (Milliy sertifikat): shablon, bo'limlar, server vaqti, avtomatik topshirish, Rasch yoki taxminiy ball, daraja      | BR-M01..M07      | T-050..T-053        | ✅    |
+| FR-T08 | Offline test natijalarini CSV'dan import qilish va o'quvchiga moslash                                                   | BR-G04           | T-056               | ✅    |
+| FR-T09 | Natijalarni Excel'ga (CSV) yuklab olish: haftalik, mock, o'quvchilar ro'yxati                                           |                  | T-076, T-078        | ✅    |
+| FR-T10 | "Xatolarim": oxirgi javobi xato savollar to'g'ri javob va yechim bilan; Asosiy'da turtki; faqat xatolarni qayta ishlash |                  | T-079, T-083, T-104 | ✅    |
 
 ## AI yordamchi (FR-Y)
 

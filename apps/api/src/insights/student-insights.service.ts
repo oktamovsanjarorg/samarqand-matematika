@@ -36,7 +36,7 @@ export class StudentInsightsService {
     const since = new Date(now.getTime() - INSIGHT_DAYS * 24 * 3600_000);
     const [topic, weekly, mock] = await Promise.all([
       this.prisma.topicAnswer.findMany({
-        where: { result: CHECKED, attempt: { userId, submittedAt: { gte: since } } },
+        where: { result: CHECKED, attempt: { userId, submittedAt: { gte: since }, mistakesOnly: false } },
         select: { result: true, question: Q },
       }),
       this.prisma.weeklyAnswer.findMany({

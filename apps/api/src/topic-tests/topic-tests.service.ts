@@ -17,6 +17,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { checkAnswer } from "../questions/check";
 import { toDetail } from "../questions/codec";
 import { ATTEMPT_INCLUDE, openView, resultView, type AttemptRow } from "./attempt-views";
+import { MistakesService } from "./mistakes.service";
 
 const published = { isPublished: true } as const;
 const asJson = (v: unknown) => v as object;
@@ -27,10 +28,11 @@ export class TopicTestsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly access: AccessService,
+    private readonly mistakes: MistakesService,
   ) {}
 
   /** Ochiq urinish bo'lsa davom ettiradi, bo'lmasa yangisini boshlaydi */
-  async start(userId: string, role: RoleName, topicId: string): Promise<AttemptView> {
+  async start(userId: string, role: RoleName, topicId: string, mistakes = false): Promise<AttemptView> {
     const topic = await this.prisma.topic.findFirst({
       where: { id: topicId, course: published },
       select: { questions: { where: published, orderBy: { order: "asc" }, select: { id: true } } },
@@ -40,20 +42,30 @@ export class TopicTestsService {
       throw new ForbiddenException({ code: ERROR_CODES.LOCKED, message: "Mavzu testi obuna bilan ochiladi" });
 
     const open = await this.prisma.topicAttempt.findFirst({
-      where: { userId, topicId, submittedAt: null },
+      where: { userId, topicId, submittedAt: null, mistakesOnly: mistakes },
       orderBy: { startedAt: "desc" },
       include: ATTEMPT_INCLUDE,
     });
     if (open) return openView(open as AttemptRow);
+    const all = topic.questions.map((q) => q.id);
+    const ids = mistakes ? await this.wrongIn(userId, all) : all;
+    if (ids.length === 0) throw new NotFoundException("Bu mavzuda xato qilingan savol yoʻq");
     const created = await this.prisma.topicAttempt.create({
       data: {
         userId,
         topicId,
-        answers: { create: topic.questions.map((q, order) => ({ questionId: q.id, order })) },
+        mistakesOnly: mistakes,
+        answers: { create: ids.map((questionId, order) => ({ questionId, order })) },
       },
       include: ATTEMPT_INCLUDE,
     });
     return openView(created as AttemptRow);
+  }
+
+  /** Mavzu savollaridan oxirgi javobi xato bo'lganlari, mavzudagi tartibda (Xatolarim bilan bir xil qoida) */
+  private async wrongIn(userId: string, inTopic: string[]): Promise<string[]> {
+    const wrong = new Set((await this.mistakes.list(userId)).map((m) => m.item.question.id));
+    return inTopic.filter((id) => wrong.has(id));
   }
 
   async get(userId: string, id: string): Promise<AttemptView | AttemptResult> {

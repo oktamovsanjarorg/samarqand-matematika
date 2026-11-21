@@ -17,13 +17,15 @@ import { useAuth } from "../store/auth";
 function ContinueCard({ open }: { open: NonNullable<MyStats["open"]> }) {
   return (
     <Link
-      to={`/topics/${open.topicId}/test`}
+      to={`/topics/${open.topicId}/test${open.mistakes ? "?mistakes=1" : ""}`}
       className="tap card flex items-center gap-3 border-2 border-brand/30"
       data-testid="continue"
     >
       <PlayCircle size={28} className="shrink-0 text-brand" />
       <div className="min-w-0 flex-1">
-        <p className="font-bold">Testni davom ettiring</p>
+        <p className="font-bold">
+          {open.mistakes ? "Xatolar ustida ishlashni davom ettiring" : "Testni davom ettiring"}
+        </p>
         <p className="truncate text-sm text-hint">
           {open.topicTitle} · {open.answered}/{open.total} javob
         </p>

@@ -142,3 +142,4 @@
 | T-101 | Admin'da CSV fayl tanlash o'zbekcha tugma bilan (brauzerning inglizcha "Choose File" o'rniga), offline va savol importida                                                   | ✅    |
 | T-102 | Tekshirish navbatida savol bo'yicha filtr: bitta savolni hamma o'quvchida ketma-ket baholash                                                                                | ✅    |
 | T-103 | Mavzudagi barcha qoralama savollarni bitta tugma bilan nashr qilish (importdan keyin)                                                                                       | ✅    |
+| T-104 | Xatolarimdan faqat xato qilingan savollar bilan qayta ishlash; bu urinishlar o'rtacha foiz, tavsiya va e'tibor signallariga kirmaydi                                        | ✅    |

@@ -14,8 +14,13 @@ export interface AttemptView {
   topicId: string;
   topicTitle: string;
   startedAt: string;
+  /** Faqat xato qilingan savollar bilan qayta ishlash (T-104) */
+  mistakesOnly: boolean;
   questions: { question: QuestionView; response: unknown }[];
 }
+
+/** Mavzu testini boshlash: mistakes bo'lsa faqat xato qilingan savollar (T-104) */
+export const topicAttemptStart = z.object({ mistakes: z.boolean().optional() });
 
 /** Topshirilgandan keyingi natija: endi to'g'ri javob va namunaviy yechim ko'rsatiladi */
 export interface AttemptResult {

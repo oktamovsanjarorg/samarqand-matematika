@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Put } from "@nestjs/common";
-import { saveAnswerBody } from "@samarqand/shared";
+import { saveAnswerBody, topicAttemptStart } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { MistakesService } from "./mistakes.service";
@@ -29,8 +29,9 @@ export class TopicTestsController {
   }
 
   @Post("topics/:id/attempts")
-  start(@CurrentUser() u: JwtUser, @Param("id") topicId: string) {
-    return this.tests.start(u.sub, u.role, topicId);
+  start(@CurrentUser() u: JwtUser, @Param("id") topicId: string, @Body() body: unknown) {
+    const { mistakes } = parseBody(topicAttemptStart, body ?? {});
+    return this.tests.start(u.sub, u.role, topicId, mistakes ?? false);
   }
 
   @Get("attempts/:id")

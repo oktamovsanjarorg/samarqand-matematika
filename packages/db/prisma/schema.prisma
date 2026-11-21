@@ -211,8 +211,10 @@ model TopicAttempt {
   startedAt   DateTime      @default(now()) @db.Timestamptz
   submittedAt DateTime?     @db.Timestamptz
   /// Avtomatik tekshirilgan to'g'ri javoblar soni (MANUAL hisobga kirmaydi)
-  correct     Int?
-  answers     TopicAnswer[]
+  correct      Int?
+  /// Faqat xato qilingan savollar bilan qayta ishlash (T-104): statistika va tavsiyalarga kirmaydi
+  mistakesOnly Boolean       @default(false)
+  answers      TopicAnswer[]
 
   @@index([userId, topicId, submittedAt])
 }
