@@ -9,11 +9,14 @@ const PAGES = [
   "parents",
   "payments",
   "weekly",
+  "weekly/new",
   "mocks",
+  "mocks/new",
   "groups",
   "offline",
   "tutor",
   "settings",
+  "audit",
 ];
 
 test("T-072: admin bo'limlari WCAG AA", async ({ page, request }) => {
@@ -23,7 +26,10 @@ test("T-072: admin bo'limlari WCAG AA", async ({ page, request }) => {
   for (const path of PAGES) {
     await page.goto(`http://127.0.0.1:5191/admin/${path}`);
     await page.waitForLoadState("networkidle");
-    await page.screenshot({ path: `e2e/.results/a11y-admin-${path || "home"}.png`, fullPage: true });
+    await page.screenshot({
+      path: `e2e/.results/a11y-admin-${path.replace("/", "-") || "home"}.png`,
+      fullPage: true,
+    });
     found.push(...(await violations(page, `/${path}`)));
   }
   expect(found).toEqual([]);
