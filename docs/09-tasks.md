@@ -166,4 +166,5 @@
 | T-125 | WCAG tekshiruvi: tasdiqlangan farzand kartasi va ota-onaning farzand uchun toʻlov sahifasi (tarif va karta bilan), ikkala rejimda                                           | ✅    |
 | T-126 | Ota-ona tasdiqlanganda xabarda kabinet imkoniyatlari (obunani oʻzi toʻlashi ham) va "Kabinetni ochish" tugmasi                                                              | ✅    |
 | T-127 | Obunasi 7 kun ichida tugaydigan (uzaytirilmagan, AUTO) oʻquvchilar: roʻyxatda "Tugayotgan" filtri, bosh sahifada eslatma                                                    | ✅    |
+| T-128 | Chek kartasida "Tasdiqlansa obuna X gacha": tasdiqlashdagi hisob bilan bir xil (BR-B03)                                                                                     | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                         | ✅    |

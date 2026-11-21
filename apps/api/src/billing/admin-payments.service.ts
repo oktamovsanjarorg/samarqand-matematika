@@ -31,6 +31,7 @@ const SELECT = {
   },
   submittedBy: { select: { firstName: true, lastName: true } },
   receiptHash: true,
+  plan: { select: { name: true, durationDays: true } },
 } satisfies Prisma.PaymentSelect;
 type Row = Prisma.PaymentGetPayload<{ select: typeof SELECT }>;
 
@@ -55,6 +56,11 @@ function toAdmin(p: Row, duplicateOf: AdminPayment["duplicateOf"] = null): Admin
       phone: u.phone,
     },
     activeUntil: end && end > new Date() ? end.toISOString() : null,
+    // T-128: tasdiqlashdagi bilan bir xil hisob (BR-B03)
+    extendsTo:
+      p.status === "PENDING"
+        ? nextPeriod(new Date(), end ?? null, p.plan.durationDays).endsAt.toISOString()
+        : null,
     submittedBy: p.submittedBy
       ? [p.submittedBy.firstName, p.submittedBy.lastName].filter(Boolean).join(" ")
       : null,
