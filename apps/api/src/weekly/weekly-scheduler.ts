@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
 import { AccessService } from "../access/access.service";
 import { ENV, type Env } from "../config/env";
-import { weeklyOpenText, weeklyReminderText, weeklyResultText } from "../notify/messages";
+import { weeklyOpenText, weeklyReminderText, weeklyResultText, weeklyStaffSummary } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { AiReviewService } from "./ai-reviews";
@@ -128,6 +128,24 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
         ),
       );
       await this.parents.send({ id: t.id, title: t.title, total: t._count.questions });
+      await this.staffSummary(t.id, t.title);
     }
+  }
+
+  /** Ustozga qisqa hisobot va tekshirish navbatiga tugma (T-084) */
+  private async staffSummary(id: string, title: string) {
+    const done = { attempt: { weeklyTestId: id, submittedAt: { not: null } }, reviewedAt: null };
+    const [submitted, eligible, toReview, suspected] = await Promise.all([
+      this.prisma.weeklyAttempt.count({ where: { weeklyTestId: id, submittedAt: { not: null } } }),
+      this.access.fullAccessStudentIds().then((ids) => ids.length),
+      this.prisma.weeklyAnswer.count({
+        where: { ...done, OR: [{ result: "MANUAL" }, { aiReview: { suspected: true } }] },
+      }),
+      this.prisma.weeklyAnswer.count({ where: { ...done, aiReview: { suspected: true } } }),
+    ]);
+    await this.notify.toStaff(
+      weeklyStaffSummary(title, { submitted, eligible: Math.max(eligible, submitted), toReview, suspected }),
+      this.notify.adminButton("Tekshirish navbati", `weekly/${id}/review`),
+    );
   }
 }

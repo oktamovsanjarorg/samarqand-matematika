@@ -55,4 +55,31 @@ describe("test ochilganda xabar (T-080)", () => {
     const got = f.messagesTo(s.telegramId).filter((x) => x.includes(title));
     expect(got).toEqual([expect.stringContaining("Mock imtihon ochildi")]);
   });
+
+  it("T-084: haftalik yopilganda ustozga hisobot: topshirganlar, kutilayotgan va shubhali javoblar", async () => {
+    const [q1, q2] = await f.questions();
+    const id = await f.weekly([q1 ?? "", q2 ?? ""]);
+    const title = `Hisobot ${Date.now()}`;
+    await f.prisma.weeklyTest.update({ where: { id }, data: { title } });
+    const s = await f.student();
+    const a = await f.prisma.weeklyAttempt.create({
+      data: { weeklyTestId: id, userId: s.id, submittedAt: new Date(), correct: 0 },
+    });
+    await f.prisma.weeklyAnswer.createMany({
+      data: [
+        { attemptId: a.id, questionId: q1 ?? "", order: 0, result: "MANUAL" },
+        { attemptId: a.id, questionId: q2 ?? "", order: 1, result: "CORRECT" },
+      ],
+    });
+    await f.prisma.aiReview.create({
+      data: { attemptId: a.id, questionId: q2 ?? "", status: "DONE", suspected: true },
+    });
+    await f.tick(new Date(Date.now() + 49 * HOUR));
+    const report = f.messagesTo(f.teacherTg).find((m) => m.includes(title));
+    expect(report).toContain("yopildi");
+    expect(report).toMatch(/Topshirdi: <b>1<\/b> \/ \d+/);
+    expect(report).toContain("Ustoz qarorini kutmoqda: <b>2</b> ta javob (shubhali: 1)");
+    // BR-W05: o'quvchiga shubha haqida hech narsa bormaydi
+    for (const m of f.messagesTo(s.telegramId)) expect(m).not.toMatch(/shubha/i);
+  });
 });
