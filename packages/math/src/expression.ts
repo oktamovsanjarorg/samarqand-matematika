@@ -8,7 +8,15 @@ import { normalizeExpression } from "./expression-text";
  */
 
 type Fn = (env: Record<string, number>) => number;
-type Token = { t: "num"; v: number } | { t: "var" | "fn" | "op"; v: string };
+/** s: ko'rsatish uchun asl yozuv (0.5, \\pi) */
+type Token = { t: "num"; v: number; s: string } | { t: "var" | "fn" | "op"; v: string };
+/** Tugun: qiymat funksiyasi va LaTeX ko'rinishi; inner: qavs ichidagisi (kasr va darajada qavssiz yoziladi) */
+interface N {
+  f: Fn;
+  tex: string;
+  inner?: string;
+}
+const bare = (n: N) => n.inner ?? n.tex;
 
 const FUNCS: Record<string, (x: number) => number> = {
   sqrt: Math.sqrt,
@@ -22,6 +30,7 @@ const FUNCS: Record<string, (x: number) => number> = {
   exp: Math.exp,
 };
 const CONSTS: Record<string, number> = { pi: Math.PI, e: Math.E };
+const TEX_CONST: Record<string, string> = { pi: "\\pi" };
 const WORDS = [...Object.keys(FUNCS), ...Object.keys(CONSTS)].sort((a, b) => b.length - a.length);
 const MAX_LENGTH = 200;
 
@@ -30,10 +39,14 @@ function next(s: string, i: number): { tok: Token | null; len: number } | null {
   const ch = s[i] ?? "";
   if (/\s/.test(ch)) return { tok: null, len: 1 };
   const num = /^(\d+\.?\d*|\.\d+)/.exec(s.slice(i));
-  if (num) return { tok: { t: "num", v: Number(num[1]) }, len: num[0].length };
+  if (num) return { tok: { t: "num", v: Number(num[1]), s: num[0] }, len: num[0].length };
   if ("+-*/^()".includes(ch)) return { tok: { t: "op", v: ch }, len: 1 };
   const w = WORDS.find((x) => s.startsWith(x, i));
-  if (w) return { tok: w in FUNCS ? { t: "fn", v: w } : { t: "num", v: CONSTS[w] ?? NaN }, len: w.length };
+  if (w)
+    return {
+      tok: w in FUNCS ? { t: "fn", v: w } : { t: "num", v: CONSTS[w] ?? NaN, s: TEX_CONST[w] ?? w },
+      len: w.length,
+    };
   return /[a-z]/i.test(ch) ? { tok: { t: "var", v: ch.toLowerCase() }, len: 1 } : null;
 }
 
@@ -59,80 +72,94 @@ class Parser {
   private peek = () => this.toks[this.i];
   private isOp = (v: string) => this.peek()?.t === "op" && this.peek()?.v === v;
 
-  parse(): Fn | null {
-    const f = this.expr();
-    return this.i === this.toks.length ? f : null;
+  parse(): N | null {
+    const n = this.expr();
+    return this.i === this.toks.length ? n : null;
   }
 
-  private expr(): Fn {
-    let f = this.term();
+  private take = () => this.toks[this.i++]?.v;
+
+  private expr(): N {
+    let n = this.term();
     while (this.isOp("+") || this.isOp("-")) {
-      const minus = this.toks[this.i++]?.v === "-";
-      const [a, b] = [f, this.term()];
-      f = minus ? (e) => a(e) - b(e) : (e) => a(e) + b(e);
+      const op = this.take();
+      const [a, b] = [n.f, this.term()];
+      n = { f: op === "-" ? (e) => a(e) - b.f(e) : (e) => a(e) + b.f(e), tex: `${n.tex} ${op} ${b.tex}` };
     }
-    return f;
+    return n;
   }
 
-  private term(): Fn {
-    let f = this.unary();
+  private term(): N {
+    let n = this.unary();
     for (;;) {
-      const op =
-        this.isOp("*") || this.isOp("/") ? this.toks[this.i++]?.v : STARTS_OPERAND(this.peek()) ? "*" : null;
-      if (!op) return f;
-      const [a, b] = [f, this.unary()];
-      f = op === "/" ? (e) => a(e) / b(e) : (e) => a(e) * b(e);
+      const op = this.isOp("*") || this.isOp("/") ? this.take() : STARTS_OPERAND(this.peek()) ? "" : null;
+      if (op === null) return n;
+      const [a, b] = [n, this.unary()];
+      if (op === "/") n = { f: (e) => a.f(e) / b.f(e), tex: `\\frac{${bare(a)}}{${bare(b)}}` };
+      else {
+        const dot = op === "*" || /^[\d.]/.test(b.tex);
+        n = { f: (e) => a.f(e) * b.f(e), tex: `${a.tex}${dot ? " \\cdot " : " "}${b.tex}` };
+      }
     }
   }
 
-  private unary(): Fn {
+  private unary(): N {
     if (this.isOp("-") || this.isOp("+")) {
-      const minus = this.toks[this.i++]?.v === "-";
+      const minus = this.take() === "-";
       const a = this.unary();
-      return minus ? (e) => -a(e) : a;
+      return minus ? { f: (e) => -a.f(e), tex: `-${a.tex}` } : a;
     }
     return this.power();
   }
 
-  private power(): Fn {
+  private power(): N {
     const base = this.primary();
     if (!this.isOp("^")) return base;
     this.i++;
     const exp = this.unary();
-    return (e) => Math.pow(base(e), exp(e));
+    return { f: (e) => Math.pow(base.f(e), exp.f(e)), tex: `{${base.tex}}^{${bare(exp)}}` };
   }
 
-  private primary(): Fn {
+  private primary(): N {
     const t = this.toks[this.i++];
-    if (t?.t === "num") return () => t.v;
+    if (t?.t === "num") return { f: () => t.v, tex: t.s };
     if (t?.t === "var") return this.variable(t.v);
-    if (t?.t === "fn") return this.call(FUNCS[t.v] ?? Math.abs);
+    if (t?.t === "fn") return this.call(t.v);
     if (t?.t === "op" && t.v === "(") return this.group();
     throw new Error("kutilmagan belgi");
   }
 
   /** Funksiya argumenti qavsda yoki qavssiz (sin x, sqrt2) */
-  private call(fn: (x: number) => number): Fn {
+  private call(name: string): N {
+    const fn = FUNCS[name] ?? Math.abs;
     const arg = this.isOp("(") ? this.primary() : this.power();
-    return (e) => fn(arg(e));
+    const tex =
+      name === "sqrt"
+        ? `\\sqrt{${bare(arg)}}`
+        : name === "abs"
+          ? `\\left|${bare(arg)}\\right|`
+          : `\\${name} ${arg.tex}`;
+    return { f: (e) => fn(arg.f(e)), tex };
   }
 
-  private group(): Fn {
+  private group(): N {
     const inner = this.expr();
     if (!this.isOp(")")) throw new Error("qavs yopilmagan");
     this.i++;
-    return inner;
+    return { f: inner.f, tex: `\\left(${inner.tex}\\right)`, inner: inner.tex };
   }
 
-  private variable(name: string): Fn {
+  private variable(name: string): N {
     this.vars.add(name);
-    return (e) => e[name] ?? NaN;
+    return { f: (e) => e[name] ?? NaN, tex: name };
   }
 }
 
 export interface ParsedExpression {
   fn: Fn;
   vars: Set<string>;
+  /** Ko'rsatish uchun LaTeX (T-077) */
+  tex: string;
 }
 
 /** Ifodani o'qiydi; tushunilmasa null */
@@ -142,8 +169,8 @@ export function parseExpression(input: string): ParsedExpression | null {
   if (!toks?.length) return null;
   try {
     const p = new Parser(toks);
-    const fn = p.parse();
-    return fn ? { fn, vars: p.vars } : null;
+    const n = p.parse();
+    return n ? { fn: n.f, vars: p.vars, tex: n.tex } : null;
   } catch {
     return null;
   }
