@@ -23,6 +23,12 @@ export class NotifyService {
     return { text, url: `${this.env.ADMIN_URL.replace(/\/$/, "")}/${path.replace(/^\//, "")}` };
   }
 
+  /** Mini App sahifasini Telegram ichida ochadigan tugma (T-093). MINIAPP_URL bo'lmasa tugma yo'q */
+  appButton(text: string, path: string): LinkButton | undefined {
+    const base = this.env.MINIAPP_URL?.replace(/\/$/, "");
+    return base ? { text, url: `${base}/${path.replace(/^\//, "")}`, webApp: true } : undefined;
+  }
+
   /** Barcha faol ustoz va yordamchilarga */
   async toStaff(html: string, button?: LinkButton): Promise<void> {
     const staff = await this.prisma.user.findMany({

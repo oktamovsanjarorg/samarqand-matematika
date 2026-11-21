@@ -54,6 +54,7 @@ export class ParentReportService {
         return this.notify.toUser(
           l.parentId,
           weeklyParentReport(personName(l.student.user), test.title, result),
+          this.notify.appButton("Batafsil", ""),
         );
       }),
     );

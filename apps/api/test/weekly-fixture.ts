@@ -80,6 +80,8 @@ export async function weeklyFixture() {
 
   const tick = (now = new Date()) => app.get(WeeklyScheduler).tick(now);
   const messagesTo = (tg: bigint) => sentMessages.filter((m) => m.chatId === tg).map((m) => m.html);
+  /** Xabar tugmalari (T-093) */
+  const buttonsTo = (tg: bigint) => sentMessages.filter((m) => m.chatId === tg).map((m) => m.button);
 
   const cleanup = async () => {
     const users = await prisma.user.findMany({ where: { telegramId: { in: tgIds } }, select: { id: true } });
@@ -115,6 +117,7 @@ export async function weeklyFixture() {
     student,
     tick,
     messagesTo,
+    buttonsTo,
     cleanup,
   };
 }

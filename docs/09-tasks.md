@@ -131,3 +131,4 @@
 | T-090 | Obuna tugashi eslatmasi: 3 kun qolganda o'quvchi va ota-onaga, tugaganda o'quvchiga (BR-B06)                                                                                | ✅    |
 | T-091 | Yangi dars haqida o'quvchilarga xabar: dars sahifasidagi tugma, bir marta, kirish bo'yicha qabul qiluvchilar (BR-C05)                                                       | ✅    |
 | T-092 | `NOTIFY_TRANSPORT=off`: brauzer testlarida bot xabarlari Telegram'ga chiqmaydi (tasodifiy test ID'lari haqiqiy foydalanuvchiga to'g'ri kelmasin)                            | ✅    |
+| T-093 | O'quvchi va ota-ona xabarlarida Mini App'ni kerakli sahifada ochadigan tugma (`web_app`): test, natija, dars, obuna, chek                                                   | ✅    |

@@ -21,6 +21,22 @@ describe("botApiTransport", () => {
     });
   });
 
+  it("T-093: webApp tugmasi Mini App'ni Telegram ichida ochadi (web_app)", async () => {
+    let body: Record<string, unknown> | undefined;
+    const fetchFn = (async (_: string, init: RequestInit) => {
+      body = JSON.parse(String(init.body));
+      return new Response("{}");
+    }) as unknown as typeof fetch;
+    await botApiTransport("1:T", fetchFn).send(1n, "x", {
+      text: "Ochish",
+      url: "https://app/weekly",
+      webApp: true,
+    });
+    expect(body?.reply_markup).toEqual({
+      inline_keyboard: [[{ text: "Ochish", web_app: { url: "https://app/weekly" } }]],
+    });
+  });
+
   it("xato yoki tarmoq uzilishida false qaytaradi, xato tashlamaydi", async () => {
     const bad = (async () => new Response("", { status: 500 })) as unknown as typeof fetch;
     expect(await botApiTransport("1:T", bad).send(1n, "x")).toBe(false);

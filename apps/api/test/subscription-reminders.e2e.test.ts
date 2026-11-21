@@ -52,6 +52,7 @@ describe("Obuna tugashi eslatmasi (T-090)", () => {
     await tick();
     await tick();
     expect(f.messagesTo(s.telegramId)).toEqual([expect.stringContaining("da tugaydi")]);
+    expect(f.buttonsTo(s.telegramId)[0]).toMatchObject({ url: "https://miniapp.test/billing", webApp: true });
     expect(f.messagesTo(p.telegramId)).toEqual([expect.stringContaining("<b>Obuna Egasi</b>ning obunasi")]);
 
     await tick(new Date(now.getTime() + 2 * DAY + 60_000));
