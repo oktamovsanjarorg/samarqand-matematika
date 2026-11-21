@@ -136,7 +136,10 @@ async function checkStats(page: Page, courseTitle: string) {
   await page.screenshot({ path: "e2e/.results/miniapp-lessons-progress.png" });
 }
 
-test("BR-A04: to'liq kirishsiz o'quvchiga mavzu testi yopiq", async ({ page, request }) => {
+test("BR-A04, T-088: to'liq kirishsiz o'quvchiga mavzu testi yopiq, qolgan qadamlar ko'rinadi", async ({
+  page,
+  request,
+}) => {
   const { title } = await seedTopic(request);
   const s = await createStudent(request, { fullName: "Yopiq Oquvchi", phone: "998901112204" });
   await openAsTelegram(page, { id: s.tg, first_name: "Oquvchi" }, "/lessons");
@@ -146,4 +149,10 @@ test("BR-A04: to'liq kirishsiz o'quvchiga mavzu testi yopiq", async ({ page, req
     .getByRole("link", { name: /Mavzu testi/ })
     .click();
   await expect(page.getByText("Mavzu testi obuna bilan ochiladi")).toBeVisible();
+  // T-088: aynan qaysi qadam qolgani va to'lovga yo'l
+  const steps = page.getByTestId("access");
+  await expect(steps.getByText("Ustoz qabul qildi")).toBeVisible();
+  await expect(steps.getByLabel("Kutilmoqda")).toHaveCount(3);
+  await expect(steps.getByRole("link", { name: "Obunani toʻlash" })).toBeVisible();
+  await page.screenshot({ path: "e2e/.results/miniapp-locked.png", fullPage: true });
 });
