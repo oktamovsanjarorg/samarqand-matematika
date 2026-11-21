@@ -5,7 +5,7 @@ import { E2E_PREFIX, openAsTelegram } from "./telegram";
 
 const day = (ago: number) => new Date(new Date(Date.now() - ago * 24 * 3600_000).toISOString().slice(0, 10));
 
-test("T-069, T-070, BR-PA01: ota-ona Asosiy sahifada farzandining davomati va natijalarini ko'radi", async ({
+test("T-069, T-070, T-073, BR-PA01: ota-ona Asosiy sahifada farzandining davomati va natijalarini ko'radi", async ({
   page,
   request,
 }) => {
@@ -58,4 +58,14 @@ test("T-069, T-070, BR-PA01: ota-ona Asosiy sahifada farzandining davomati va na
   // O'quvchiga mo'ljallangan bloklar ota-onaga chiqmaydi
   await expect(page.getByTestId("access")).toHaveCount(0);
   await page.screenshot({ path: "e2e/.results/miniapp-parent.png", fullPage: true });
+
+  // T-073: Profil: farzandlar holati, bot xabarlari, yana farzand ulash yo'li
+  await page.getByRole("link", { name: "Profil" }).click();
+  const kids = page.getByTestId("parent-child");
+  await expect(kids.filter({ hasText: "Farzand Sinov" })).toContainText("Tasdiqlangan");
+  await expect(kids.filter({ hasText: "Kichik Farzand" })).toContainText("Kutilmoqda");
+  await expect(page.getByTestId("parent-notices")).toContainText("darsga kelmasa yoki kechiksa");
+  await expect(page.getByTestId("parent-add")).toContainText("/ota");
+  await expect(page.getByTestId("tiles")).toHaveCount(0);
+  await page.screenshot({ path: "e2e/.results/miniapp-parent-profile.png", fullPage: true });
 });

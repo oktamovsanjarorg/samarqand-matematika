@@ -4,6 +4,7 @@ import { CalendarCheck, CheckCircle2, ClipboardList, Clock, Lock, Target, Users 
 import type { ReactNode } from "react";
 import { api } from "../../lib/api";
 import { formatDay } from "../../lib/me";
+import { useChildren } from "../../lib/parent";
 import { formatStamp } from "../../lib/time";
 import { EmptyState } from "../states";
 
@@ -146,7 +147,7 @@ function ChildCard({ c }: { c: ChildView }) {
 
 /** Ota-ona kabineti (T-069): tasdiqlangan farzandlar va ularning faktli holati */
 export function ParentHome() {
-  const children = useQuery({ queryKey: ["children"], queryFn: () => api<ChildView[]>("/me/children") });
+  const children = useChildren();
   if (children.isPending) return <div className="skeleton h-40" aria-busy="true" />;
   if (!children.data?.length)
     return (
