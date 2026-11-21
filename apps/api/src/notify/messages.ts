@@ -43,6 +43,43 @@ export const paymentApprovedText = (until: string) =>
 export const paymentRejectedText = (reason: string) =>
   `Toʻlov cheki qabul qilinmadi.\nSabab: ${esc(reason)}\n\nIlovada qayta yuborishingiz mumkin.`;
 
+const UZ_MONTHS = [
+  "yanvar",
+  "fevral",
+  "mart",
+  "aprel",
+  "may",
+  "iyun",
+  "iyul",
+  "avgust",
+  "sentabr",
+  "oktabr",
+  "noyabr",
+  "dekabr",
+];
+const PARTS = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Tashkent",
+  day: "numeric",
+  month: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
+/** Toshkent vaqti bilan: "30-noyabr, 23:59" */
+export function uzDateTime(d: Date): string {
+  const p = Object.fromEntries(PARTS.formatToParts(d).map((x) => [x.type, x.value]));
+  return `${p.day}-${UZ_MONTHS[Number(p.month) - 1] ?? ""}, ${p.hour}:${p.minute}`;
+}
+
+/** O'quvchiga: haftalik test ochildi (T-080) */
+export const weeklyOpenText = (title: string, closesAt: Date) =>
+  `📝 Yangi haftalik test: <b>${esc(title)}</b>.\n<b>${uzDateTime(closesAt)}</b> gacha ishlang va har savolga yechim rasmini yuklang.`;
+
+/** O'quvchiga: mock ochildi (T-080) */
+export const mockOpenText = (title: string, closesAt: Date) =>
+  `🎓 Mock imtihon ochildi: <b>${esc(title)}</b>.\n<b>${uzDateTime(closesAt)}</b> gacha bir marta topshirasiz. Vaqt boshlagan paytingizdan hisoblanadi.`;
+
 /** O'quvchiga: haftalik test yopilishiga oz qoldi (BR-W07) */
 export const weeklyReminderText = (title: string, hours: number) =>
   `⏰ Haftalik test <b>${esc(title)}</b> yopilishiga ${hours} soat qoldi.\nTopshirilmagan test 0 ball boʻladi.`;
