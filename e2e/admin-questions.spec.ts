@@ -115,7 +115,7 @@ test("T-097: kontent sahifasida savolni qidirib tahrirga o'tish", async ({ page,
   await expect(page.getByLabel("Savol matni")).toHaveValue(new RegExp(`^${word}`));
 });
 
-test("T-100, BR-Q04: Excel (CSV) dan savollar import: namuna, xatolar qator bilan, qoralama sifatida qo'shish", async ({
+test("T-100, T-103, BR-Q04: Excel (CSV) dan savollar import: namuna, xatolar qator bilan, qoralama sifatida qo'shish", async ({
   page,
   request,
 }) => {
@@ -154,4 +154,8 @@ test("T-100, BR-Q04: Excel (CSV) dan savollar import: namuna, xatolar qator bila
   await expect(rows).toHaveCount(2);
   await expect(rows.nth(0)).toContainText("Qoralama");
   await expect(rows.nth(1)).toContainText("Son javob");
+  // T-103: qoralamalarni bitta tugma bilan nashr qilish
+  await page.getByRole("button", { name: "2 ta qoralamani nashr qilish" }).click();
+  await expect(page.getByText("Qoralama", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /qoralamani nashr qilish/ })).toBeHidden();
 });

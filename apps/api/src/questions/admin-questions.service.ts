@@ -78,6 +78,24 @@ export class AdminQuestionsService {
     }));
   }
 
+  /** Mavzudagi barcha qoralamalarni nashr qilish (T-103): import qilingan savollar uchun */
+  async publishAll(actorId: string, topicId: string): Promise<{ published: number }> {
+    await this.mustTopic(topicId);
+    const { count } = await this.prisma.question.updateMany({
+      where: { topicId, isPublished: false },
+      data: { isPublished: true },
+    });
+    if (count)
+      await this.audit.log({
+        actorId,
+        action: "question.publish_all",
+        entity: "Topic",
+        entityId: topicId,
+        data: { count },
+      });
+    return { published: count };
+  }
+
   async get(id: string): Promise<AdminQuestionDetail> {
     const row = await this.prisma.question.findUnique({ where: { id } });
     if (!row) throw new NotFoundException("Savol topilmadi");
