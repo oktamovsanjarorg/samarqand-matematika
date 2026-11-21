@@ -4,6 +4,7 @@ import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { AdminCoursesService } from "./admin-courses.service";
 import { AdminLessonsService } from "./admin-lessons.service";
+import { LessonAnnounceService } from "./lesson-announce.service";
 import { ReorderService } from "./reorder.service";
 
 /** Kontent boshqaruvi: ustoz va yordamchi (docs/02-roles-permissions.md) */
@@ -14,6 +15,7 @@ export class AdminContentController {
     private readonly courses: AdminCoursesService,
     private readonly lessons: AdminLessonsService,
     private readonly order: ReorderService,
+    private readonly announce: LessonAnnounceService,
   ) {}
 
   @Get("courses")
@@ -66,6 +68,13 @@ export class AdminContentController {
   @Patch("lessons/:id")
   updateLesson(@CurrentUser() u: JwtUser, @Param("id") id: string, @Body() body: unknown) {
     return this.lessons.update(u.sub, id, parseBody(lessonInput.partial(), body));
+  }
+
+  /** Yangi dars haqida o'quvchilarga xabar (T-091) */
+  @Post("lessons/:id/announce")
+  @HttpCode(200)
+  announceLesson(@CurrentUser() u: JwtUser, @Param("id") id: string) {
+    return this.announce.announce(u.sub, id);
   }
 
   @Delete("lessons/:id")

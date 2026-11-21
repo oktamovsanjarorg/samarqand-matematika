@@ -2,7 +2,10 @@ import { expect, test } from "@playwright/test";
 import { adminNav, loginAdmin } from "./api";
 import { E2E_PREFIX } from "./telegram";
 
-test("BR-C01..C03: kurs, mavzu va dars yaratish, formula ko'rinishi, nashr", async ({ page, request }) => {
+test("BR-C01..C03, T-091: kurs, mavzu va dars yaratish, formula ko'rinishi, nashr, xabar", async ({
+  page,
+  request,
+}) => {
   const course = `${E2E_PREFIX}Algebra ${Date.now()}`;
   await loginAdmin(page, request, "content");
 
@@ -46,4 +49,15 @@ test("BR-C01..C03: kurs, mavzu va dars yaratish, formula ko'rinishi, nashr", asy
     page.getByTestId("course").filter({ hasText: course }).getByText("Nashr qilingan"),
   ).toBeVisible();
   await page.screenshot({ path: "e2e/.results/admin-content.png", fullPage: true });
+
+  // T-091: kurs nashr qilingach yangi dars haqida bir marta xabar
+  await page.getByTestId("course").filter({ hasText: course }).getByTestId("lesson-row").click();
+  const box = page.getByTestId("announce");
+  await box.getByRole("button", { name: "Xabar yuborish" }).click();
+  await box.getByRole("button", { name: "Yuborilsinmi?" }).click();
+  await expect(box).toContainText("Botda xabar yuborilgan");
+  await expect(box).toContainText(/\d+ ta oʻquvchiga/);
+  await expect(box.getByRole("button")).toHaveCount(0);
+  await box.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "e2e/.results/admin-lesson-announce.png" });
 });

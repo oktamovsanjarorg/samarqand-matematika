@@ -26,12 +26,13 @@
 
 ## Kontent (C)
 
-| ID     | Qoida                                                                                                                                                                                                      | Holat |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| BR-C01 | O'quvchi faqat nashr qilingan kurs va darslarni ko'radi. Nashr qilinmagan darsni to'g'ridan-to'g'ri havola bilan ham ochib bo'lmaydi (404). Darsi ham, nashr qilingan savoli ham yo'q mavzu ko'rsatilmaydi | ✅    |
-| BR-C02 | Bepul dars (`isFree`) hammaga ochiq. Pullik dars faqat to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED` qaytadi va matn yuborilmaydi. Ustoz va yordamchida doim bor                           | ✅    |
-| BR-C03 | Ichida mavzu bor kursni yoki ichida dars bor mavzuni o'chirib bo'lmaydi (409 `NOT_EMPTY`)                                                                                                                  | ✅    |
-| BR-C04 | Kontentni ustoz ham, yordamchi ham boshqaradi. Har o'zgarish auditga yoziladi, dars matni esa auditga yozilmaydi (faqat o'zgargan maydon nomlari)                                                          | ✅    |
+| ID     | Qoida                                                                                                                                                                                                                                                 | Holat |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| BR-C01 | O'quvchi faqat nashr qilingan kurs va darslarni ko'radi. Nashr qilinmagan darsni to'g'ridan-to'g'ri havola bilan ham ochib bo'lmaydi (404). Darsi ham, nashr qilingan savoli ham yo'q mavzu ko'rsatilmaydi                                            | ✅    |
+| BR-C02 | Bepul dars (`isFree`) hammaga ochiq. Pullik dars faqat to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED` qaytadi va matn yuborilmaydi. Ustoz va yordamchida doim bor                                                                      | ✅    |
+| BR-C03 | Ichida mavzu bor kursni yoki ichida dars bor mavzuni o'chirib bo'lmaydi (409 `NOT_EMPTY`)                                                                                                                                                             | ✅    |
+| BR-C04 | Kontentni ustoz ham, yordamchi ham boshqaradi. Har o'zgarish auditga yoziladi, dars matni esa auditga yozilmaydi (faqat o'zgargan maydon nomlari)                                                                                                     | ✅    |
+| BR-C05 | Yangi dars haqida xabarni ustoz yoki yordamchi tugma bilan yuboradi (avtomatik emas), dars va kurs nashr qilingan bo'lishi kerak, har darsga bir marta. Pullik dars to'liq kirishli o'quvchilarga, bepul dars yopilmagan barcha o'quvchilarga (T-091) | ✅    |
 
 ## Savollar (Q)
 

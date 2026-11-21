@@ -176,3 +176,7 @@ export const subscriptionEndingText = (endsAt: Date) =>
 export const subscriptionEndingParentText = (child: string, endsAt: Date) =>
   `⏳ <b>${esc(child)}</b>ning obunasi <b>${uzDateTime(endsAt)}</b> da tugaydi. Uzaytirilmasa pullik darslar va testlar yopiladi.`;
 export const subscriptionEndedText = `🔒 Obunangiz tugadi: pullik darslar va testlar yopildi.\n${RENEW}`;
+
+/** O'quvchilarga: yangi dars (T-091, ustoz tugmasi bilan) */
+export const lessonNewText = (l: { title: string; course: string; topic: string; isFree: boolean }) =>
+  `📚 Yangi dars: <b>${esc(l.title)}</b>\n${esc(l.course)} · ${esc(l.topic)}${l.isFree ? "\nBepul: hamma uchun ochiq." : ""}\nIlovada: Darslar boʻlimi.`;

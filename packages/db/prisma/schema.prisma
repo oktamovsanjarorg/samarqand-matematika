@@ -114,20 +114,22 @@ model Topic {
 }
 
 model Lesson {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   topicId     String
-  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  topic       Topic     @relation(fields: [topicId], references: [id], onDelete: Restrict)
   title       String
   /// Konspekt: Markdown va LaTeX ($...$, $$...$$)
-  body        String   @default("")
+  body        String    @default("")
   /// Video havola (keyinroq himoyalangan HLS bilan almashtiriladi)
   videoUrl    String?
-  order       Int      @default(0)
+  order       Int       @default(0)
   /// Bepul dars: obunasiz ham ochiq (sinov uchun)
-  isFree      Boolean  @default(false)
-  isPublished Boolean  @default(false)
-  createdAt   DateTime @default(now()) @db.Timestamptz
-  updatedAt   DateTime @updatedAt @db.Timestamptz
+  isFree      Boolean   @default(false)
+  isPublished Boolean   @default(false)
+  /// O'quvchilarga "yangi dars" xabari yuborilgan vaqt (T-091, ustoz tugmasi bilan, bir marta)
+  announcedAt DateTime? @db.Timestamptz
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz
 
   @@index([topicId, order])
 }
