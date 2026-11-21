@@ -167,3 +167,12 @@ export const staffAddedText =
   "👋 Ustoz sizni yordamchi qilib tayinladi.\nAdmin panelga kirish uchun botga /admin yuboring.";
 export const staffRemovedText =
   "Yordamchilik huquqingiz olib tashlandi. Ilovadan oʻquvchi sifatida foydalanishingiz mumkin.";
+
+const RENEW = "Uzaytirish: ilovada Profil → Obuna va toʻlovlar.";
+
+/** Obuna tugashiga oz qoldi (T-090): o'quvchiga va ota-onaga */
+export const subscriptionEndingText = (endsAt: Date) =>
+  `⏳ Obunangiz <b>${uzDateTime(endsAt)}</b> da tugaydi. Darslar va testlar yopilmasligi uchun uni uzaytiring.\n${RENEW}`;
+export const subscriptionEndingParentText = (child: string, endsAt: Date) =>
+  `⏳ <b>${esc(child)}</b>ning obunasi <b>${uzDateTime(endsAt)}</b> da tugaydi. Uzaytirilmasa pullik darslar va testlar yopiladi.`;
+export const subscriptionEndedText = `🔒 Obunangiz tugadi: pullik darslar va testlar yopildi.\n${RENEW}`;

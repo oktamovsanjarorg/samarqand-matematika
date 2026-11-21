@@ -128,3 +128,4 @@
 | T-087 | Ustoz va yordamchi sinovi reyting, natijalar, ota-ona hisoboti va Rasch kalibrovkasiga kirmaydi (BR-W10, BR-M05)                                                            | ✅    |
 | T-088 | Yopiq dars yoki testda o'quvchiga qolgan qadamlar (qabul, ota-ona, to'lov) va "Obunani toʻlash" tugmasi                                                                     | ✅    |
 | T-089 | Haftalik testdan nusxa olish: savollar ko'chadi, oyna keyingi haftaga suriladi, nomdagi raqam oshadi, nashrsiz saqlanadi                                                    | ✅    |
+| T-090 | Obuna tugashi eslatmasi: 3 kun qolganda o'quvchi va ota-onaga, tugaganda o'quvchiga (BR-B06)                                                                                | ✅    |

@@ -23,6 +23,7 @@ const NOTICES = [
   "Farzandingiz darsga kelmasa yoki kechiksa",
   "Haftalik test yopilganda: ball va oʻrin",
   "Mock imtihon yopilganda: ball va daraja",
+  "Obuna tugashiga 3 kun qolganda",
   "Ulanish soʻrovi tasdiqlanganda yoki rad etilganda",
 ];
 
