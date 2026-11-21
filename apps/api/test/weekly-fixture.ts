@@ -105,6 +105,7 @@ export async function weeklyFixture() {
     prisma,
     app,
     teacher,
+    teacherTg: t.telegramId,
     HOUR,
     call,
     at,
