@@ -105,5 +105,5 @@
 | ID    | Vazifa                                                                                                    | Holat |
 | ----- | --------------------------------------------------------------------------------------------------------- | ----- |
 | T-066 | Dars sahifasi oxiri: mavzu testi tugmasi (savollar soni bilan), oldingi va keyingi dars                   | ✅    |
-| T-067 | Darslar ro'yxati: mavzu bo'yicha eng yaxshi natija va mavzu testi tugmasi                                 | ⬜    |
+| T-067 | Darslar ro'yxati: mavzu bo'yicha eng yaxshi natija va mavzu testi tugmasi                                 | ✅    |
 | T-068 | Admin o'quvchi kartasi: natijalar, davomat, ota-ona, e'tibor sabablari va kuchsiz mavzular bitta sahifada | ⬜    |

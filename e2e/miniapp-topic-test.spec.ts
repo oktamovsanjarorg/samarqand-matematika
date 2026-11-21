@@ -100,11 +100,11 @@ test("BR-Q01, BR-Q03, BR-P03: o'quvchi mavzu testini yechadi va natijani ko'radi
   await items.nth(0).getByText("Yechim").click();
   await expect(items.nth(0).getByText(/Umumiy maxraj/)).toBeVisible();
   await page.screenshot({ path: "e2e/.results/miniapp-test-result.png", fullPage: true });
-  await checkStats(page);
+  await checkStats(page, title);
 });
 
 /** T-024: natija Asosiy va Profil ekranlarida ko'rinadi */
-async function checkStats(page: Page) {
+async function checkStats(page: Page, courseTitle: string) {
   const nav = page.getByRole("navigation").last();
   await nav.getByRole("link", { name: "Asosiy" }).click();
   await expect(page.getByTestId("recent")).toContainText("Kasrlar");
@@ -118,6 +118,13 @@ async function checkStats(page: Page) {
   await expect(page.getByTestId("tiles")).toContainText("67%");
   await expect(page.getByTestId("topics")).toContainText("Kasrlar");
   await page.screenshot({ path: "e2e/.results/miniapp-profile.png" });
+  // T-067: Darslar ro'yxatida mavzuning eng yaxshi natijasi
+  await nav.getByRole("link", { name: "Darslar" }).click();
+  const topic = page.getByTestId("course").filter({ hasText: courseTitle }).getByTestId("topic");
+  await expect(topic.getByTestId("best")).toHaveText("67%");
+  await expect(topic).toContainText("1 marta ishlangan");
+  await topic.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "e2e/.results/miniapp-lessons-progress.png" });
 }
 
 test("BR-A04: to'liq kirishsiz o'quvchiga mavzu testi yopiq", async ({ page, request }) => {
