@@ -1,34 +1,41 @@
-import type { Response01 } from "@samarqand/math";
-import { MILLIY_PRESET } from "@samarqand/shared";
+import { RASCH_MIN_SAMPLE } from "@samarqand/math";
 import { describe, expect, it } from "vitest";
-import { scoreMock } from "../src/mock/mock-scoring";
+import { scoreMock, type ScoredAttempt } from "../src/mock/mock-scoring";
 
-const row = (k: number, n = 10): Response01[] => Array.from({ length: n }, (_, j) => (j < k ? 1 : 0));
+const template = {
+  name: "Sinov",
+  durationMin: 60,
+  scaleMax: 75,
+  sections: [{ title: "Yopiq", types: ["SINGLE" as const], count: 4, points: 1 }],
+  grades: [],
+};
 
-describe("mock shkala balli (T-053)", () => {
-  it("BR-M05: topshirgan 30 dan kam bo'lsa taxminiy: xom ball ulushi × shkala", () => {
-    const s = scoreMock(MILLIY_PRESET, [{ id: "a", raw: 50.25, row: row(5) }]);
-    expect(s).toMatchObject({ raschN: null, b: null });
-    expect(s.scaled.get("a")).toBe(37.5);
+/** i-o'quvchi birinchi (i mod 5) savolni to'g'ri yechgan: qiyinliklar har xil chiqadi */
+const attempt = (i: number, staff = false): ScoredAttempt => {
+  const row = [0, 1, 2, 3].map((q) => (q < i % 5 ? 1 : 0) as 0 | 1);
+  return { id: `${staff ? "x" : "s"}${i}`, raw: row.reduce<number>((a, b) => a + b, 0), row, staff };
+};
+
+describe("Mock shkala balli va xodim sinovi (T-087)", () => {
+  it("BR-M05: xodim urinishi namuna soniga kirmaydi, lekin ball oladi", () => {
+    const students = Array.from({ length: RASCH_MIN_SAMPLE - 1 }, (_, i) => attempt(i));
+    const staff = Array.from({ length: 5 }, (_, i) => attempt(i + 100, true));
+    const s = scoreMock(template, [...students, ...staff]);
+    expect(s.raschN).toBeNull();
+    expect(s.scaled.size).toBe(students.length + staff.length);
   });
 
-  it("BR-M05: 30 va undan ko'p bo'lsa Rasch: qiyin savolni yechgan yuqori, ko'p yechgan yuqori", () => {
-    // Savollar qiyinligi bo'yicha: j-savolni k > j yechganlar yechadi (Guttman shkalasi + shovqin)
-    const attempts = Array.from({ length: 40 }, (_, n) => {
-      const k = n % 11;
-      const r = row(k);
-      if (n % 7 === 0 && k > 0 && k < 10) [r[k - 1], r[k]] = [0, 1];
-      return { id: `p${n}`, raw: k, row: r };
-    });
-    attempts.push({ id: "hard", raw: 2, row: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1] });
-    attempts.push({ id: "easy", raw: 2, row: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0] });
-    const s = scoreMock(MILLIY_PRESET, attempts);
-    expect(s.raschN).toBe(42);
-    expect(s.b?.[9]).toBeGreaterThan(s.b?.[0] ?? 0);
-    expect(s.scaled.get("hard")).toBeGreaterThan(s.scaled.get("easy") ?? 0);
-    expect(s.scaled.get("p10")).toBeGreaterThan(s.scaled.get("p5") ?? 0);
-    const all = [...s.scaled.values()];
-    expect(Math.min(...all)).toBeGreaterThanOrEqual(0);
-    expect(Math.max(...all)).toBeLessThanOrEqual(75);
+  it("BR-M05: Rasch faqat o'quvchilar bo'yicha kalibrlanadi; xodim ham shu shkalada baholanadi", () => {
+    const students = Array.from({ length: RASCH_MIN_SAMPLE + 5 }, (_, i) => attempt(i));
+    const alone = scoreMock(template, students);
+    const withStaff = scoreMock(template, [
+      ...students,
+      attempt(4, true),
+      attempt(4, true),
+      attempt(0, true),
+    ]);
+    expect(withStaff.raschN).toBe(students.length);
+    expect(withStaff.b).toEqual(alone.b);
+    expect(withStaff.scaled.get("x4")).toBe(alone.scaled.get("s4"));
   });
 });

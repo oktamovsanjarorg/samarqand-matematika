@@ -6,6 +6,7 @@ import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { personName, PERSON_SELECT } from "../common/person";
 import { scoreOf } from "./weekly-views";
+import { RANKED } from "../common/ranked";
 
 /**
  * Ota-onaga hisobot (T-035b): oyna yopilganda tasdiqlangan ota-onalarga ball va o'rin.
@@ -21,7 +22,7 @@ export class ParentReportService {
 
   async send(test: { id: string; title: string; total: number }) {
     const attempts = await this.prisma.weeklyAttempt.findMany({
-      where: { weeklyTestId: test.id },
+      where: { weeklyTestId: test.id, ...RANKED },
       select: {
         userId: true,
         score: true,

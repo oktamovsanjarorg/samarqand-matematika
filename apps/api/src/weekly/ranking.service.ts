@@ -3,6 +3,7 @@ import { RANKING_TOP, rankRows, shortName, type Ranking } from "@samarqand/share
 import { PrismaService } from "../prisma/prisma.service";
 import { personName, PERSON_SELECT } from "../common/person";
 import { scoreOf } from "./weekly-views";
+import { RANKED } from "../common/ranked";
 
 type Row = { userId: string; name: string; score: number };
 
@@ -35,7 +36,7 @@ export class RankingService {
     if (!t) throw new NotFoundException("Test topilmadi");
     if (now < t.closesAt) throw new ForbiddenException("Reyting test yopilgach ochiladi");
     const attempts = await this.prisma.weeklyAttempt.findMany({
-      where: { weeklyTestId: testId },
+      where: { weeklyTestId: testId, ...RANKED },
       select: {
         userId: true,
         score: true,
@@ -51,7 +52,7 @@ export class RankingService {
   /** Umumiy: barcha yopilgan haftalik testlar ballari yig'indisi */
   async overall(userId: string, now: Date): Promise<Ranking> {
     const attempts = await this.prisma.weeklyAttempt.findMany({
-      where: { weeklyTest: { isPublished: true, closesAt: { lte: now } } },
+      where: { weeklyTest: { isPublished: true, closesAt: { lte: now } }, ...RANKED },
       select: {
         userId: true,
         score: true,

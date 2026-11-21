@@ -7,10 +7,25 @@ import { mockOpenText, mockParentReport, mockResultText } from "../notify/messag
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { snapshotOf } from "./admin-mocks.service";
-import { scoreMock } from "./mock-scoring";
+import { scoreMock, type ScoredAttempt } from "./mock-scoring";
 import { MocksService } from "./mocks.service";
 
 /** Mock yopilishi (T-053): vaqti o'tganlar topshiriladi, shkala balli qo'yiladi, o'quvchiga natija xabari */
+/** Urinish → Rasch qatori (savollar tartibida, to'g'ri = 1); xodim sinovi belgilanadi (T-087) */
+function toScored(
+  a: {
+    id: string;
+    raw: number | null;
+    user: { role: string };
+    answers: { questionId: string; result: string | null }[];
+  },
+  ids: string[],
+): ScoredAttempt {
+  const correct = new Set(a.answers.filter((x) => x.result === "CORRECT").map((x) => x.questionId));
+  const row = ids.map((q) => (correct.has(q) ? 1 : 0) as 0 | 1);
+  return { id: a.id, raw: a.raw ?? 0, row, staff: a.user.role !== "STUDENT" };
+}
+
 @Injectable()
 export class MockScheduler implements OnModuleInit, OnModuleDestroy {
   private readonly log = new Logger("Mock");
@@ -84,6 +99,7 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
             id: true,
             userId: true,
             raw: true,
+            user: { select: { role: true } },
             answers: { select: { questionId: true, result: true } },
           },
         },
@@ -91,11 +107,10 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
     });
     const t = snapshotOf(m.template);
     const ids = m.questions.map((q) => q.questionId);
-    const attempts = m.attempts.map((a) => {
-      const correct = new Set(a.answers.filter((x) => x.result === "CORRECT").map((x) => x.questionId));
-      return { id: a.id, raw: a.raw ?? 0, row: ids.map((q) => (correct.has(q) ? 1 : 0) as 0 | 1) };
-    });
-    const s = scoreMock(t, attempts);
+    const s = scoreMock(
+      t,
+      m.attempts.map((a) => toScored(a, ids)),
+    );
     await this.prisma.$transaction([
       this.prisma.mockTest.update({ where: { id }, data: { raschN: s.raschN } }),
       ...[...s.scaled].map(([attemptId, scaled]) =>
@@ -108,15 +123,6 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
         }),
       ),
     ]);
-    await Promise.all(
-      m.attempts.map((a) => {
-        const scaled = s.scaled.get(a.id) ?? 0;
-        return this.notify.toUser(
-          a.userId,
-          mockResultText(m.title, { scaled, scaleMax: t.scaleMax, grade: gradeOf(scaled, t.grades) }),
-        );
-      }),
-    );
     const results = new Map(
       m.attempts.map((a) => {
         const scaled = s.scaled.get(a.id) ?? 0;
@@ -128,6 +134,9 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
         };
         return [a.userId, r] as const;
       }),
+    );
+    await Promise.all(
+      [...results].map(([userId, r]) => this.notify.toUser(userId, mockResultText(m.title, r))),
     );
     await this.reportParents(m.title, results);
   }

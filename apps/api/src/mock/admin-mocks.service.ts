@@ -12,6 +12,7 @@ import {
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { toTemplate } from "./exam-templates.service";
+import { RANKED } from "../common/ranked";
 
 const ROW_SELECT = {
   id: true,
@@ -20,7 +21,7 @@ const ROW_SELECT = {
   closesAt: true,
   isPublished: true,
   template: true,
-  _count: { select: { questions: true, attempts: { where: { submittedAt: { not: null } } } } },
+  _count: { select: { questions: true, attempts: { where: { submittedAt: { not: null }, ...RANKED } } } },
 } as const;
 type Row = Prisma.MockTestGetPayload<{ select: typeof ROW_SELECT }>;
 
