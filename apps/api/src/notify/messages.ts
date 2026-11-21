@@ -161,3 +161,9 @@ export const accessModeText: Partial<Record<StudentAccess, string>> = {
   FREE: "🔓 Ustoz sizga barcha darslar va testlarni ochib berdi.",
   CLOSED: "🔒 Darslar va testlarga kirishingiz yopildi. Savolingiz boʻlsa, ustozga murojaat qiling.",
 };
+
+/** Yordamchi tayinlandi yoki olib tashlandi (T-086) */
+export const staffAddedText =
+  "👋 Ustoz sizni yordamchi qilib tayinladi.\nAdmin panelga kirish uchun botga /admin yuboring.";
+export const staffRemovedText =
+  "Yordamchilik huquqingiz olib tashlandi. Ilovadan oʻquvchi sifatida foydalanishingiz mumkin.";

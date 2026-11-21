@@ -43,6 +43,8 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "group.add": "Guruhga oʻquvchi qoʻshdi",
   "group.remove": "Guruhdan oʻquvchi chiqardi",
   "student.accept": "Oʻquvchini qabul qildi",
+  "staff.add": "Yordamchi tayinladi",
+  "staff.remove": "Yordamchini olib tashladi",
   "student.update": "Oʻquvchi kirishini oʻzgartirdi",
   "parent.approve": "Ota-onani tasdiqladi",
   "parent.reject": "Ota-onani rad etdi",
