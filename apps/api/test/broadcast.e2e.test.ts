@@ -1,4 +1,4 @@
-import type { BroadcastResult } from "@samarqand/shared";
+import type { BroadcastLogRow, BroadcastResult } from "@samarqand/shared";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { weeklyFixture } from "./weekly-fixture";
 
@@ -66,6 +66,23 @@ describe("ustozdan eʼlon (T-116)", () => {
       where: { action: "broadcast.send", entityId: groupId },
     });
     expect(log.data).toMatchObject({ audience: "all", recipients: 3, sent: 3, text: body.text });
+  });
+
+  it("T-117: tarixda oxirgi eʼlon birinchi, guruh nomi bilan; faqat ustozga", async () => {
+    const list = await f.call("GET", "/admin/broadcast", f.teacher);
+    expect(list.statusCode).toBe(200);
+    const [last] = list.json() as BroadcastLogRow[];
+    expect(last).toMatchObject({
+      audience: "all",
+      groupName: "Eʼlon guruhi",
+      recipients: 3,
+      sent: 3,
+      text: "Ertaga dars <b>yoʻq</b>",
+    });
+    const helper = await f.student(false);
+    await f.prisma.user.update({ where: { id: helper.id }, data: { role: "ASSISTANT" } });
+    expect((await f.call("GET", "/admin/broadcast", helper.headers)).statusCode).toBe(403);
+    expect((await f.call("GET", "/admin/broadcast", {})).statusCode).toBe(401);
   });
 
   it("bo'sh matn 400, yo'q guruh 404, yordamchi va o'quvchiga 403, tokensiz 401", async () => {
