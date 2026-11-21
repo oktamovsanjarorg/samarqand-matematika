@@ -1,3 +1,4 @@
+import { downloadText } from "./download";
 import { expect, test, type APIRequestContext } from "@playwright/test";
 import { adminHeaders, apiPost, createStudent, grantFree, loginAdmin } from "./api";
 import { E2E_PREFIX } from "./telegram";
@@ -32,7 +33,7 @@ async function seed(request: APIRequestContext) {
   return { admin, course };
 }
 
-test("BR-W01, BR-W09: ustoz haftalik test tuzadi, natijalarni ko'radi, boshlangan test savoli o'zgarmaydi", async ({
+test("BR-W01, BR-W09, T-076: ustoz haftalik test tuzadi, natijalarni ko'radi, boshlangan test savoli o'zgarmaydi", async ({
   page,
   request,
 }) => {
@@ -81,6 +82,14 @@ test("BR-W01, BR-W09: ustoz haftalik test tuzadi, natijalarni ko'radi, boshlanga
   await page.getByTestId("weekly").filter({ hasText: title }).click();
   await expect(page.getByTestId("standings")).toContainText("Haftalik Yechuvchi");
   await expect(page.getByTestId("standings")).toContainText("1/2");
+  // T-076: natijalar Excel'ga (CSV)
+  const csv = await downloadText(
+    page,
+    page.getByTestId("standings").getByRole("button", { name: "Excel'ga yuklab olish" }),
+  );
+  expect(csv.name).toBe(`${title}.csv`);
+  expect(csv.text).toContain("#;Oʻquvchi;Topshirgan;Toʻgʻri javob;Ball;Savollar");
+  expect(csv.text).toMatch(/1;Haftalik Yechuvchi;\d{4}-\d{2}-\d{2} \d{2}:\d{2};\d+;1;2/);
   await page.getByRole("button", { name: "2-savolni olib tashlash" }).click();
   await page.getByRole("button", { name: "Saqlash" }).click();
   await expect(page.getByRole("alert")).toHaveText("Test boshlangan: savollarni oʻzgartirib boʻlmaydi");

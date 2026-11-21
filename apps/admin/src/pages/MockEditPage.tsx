@@ -176,7 +176,7 @@ export function MockEditPage() {
       {m.isError && <ErrorState message={m.error.message} onRetry={() => m.refetch()} />}
       {!id && <Form />}
       {m.data && <Form initial={m.data} />}
-      {m.data && m.data.status !== "UPCOMING" && <MockResults id={m.data.id} />}
+      {m.data && m.data.status !== "UPCOMING" && <MockResults id={m.data.id} title={m.data.title} />}
     </div>
   );
 }

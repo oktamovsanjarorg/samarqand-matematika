@@ -2,18 +2,33 @@ import type { WeeklyStanding } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
+import { csvTime, downloadCsv } from "../../lib/download";
 import { formatDate } from "../../lib/labels";
+import { ExportButton } from "../ExportButton";
 
 /** Natijalar: ustoz oyna ochiq paytda ham ko'radi (o'quvchi faqat yopilgach) */
-export function Standings({ id, total }: { id: string; total: number }) {
+export function Standings({ id, total, title }: { id: string; total: number; title: string }) {
   const rows = useQuery({
     queryKey: ["standings", id],
     queryFn: () => api.get<WeeklyStanding[]>(`/admin/weekly/${id}/standings`),
   });
+  const exportCsv = () =>
+    downloadCsv(title, [
+      ["#", "Oʻquvchi", "Topshirgan", "Toʻgʻri javob", "Ball", "Savollar"],
+      ...(rows.data ?? []).map((r, i) => [
+        i + 1,
+        r.name,
+        csvTime(r.submittedAt) ?? "topshirmagan",
+        r.correct,
+        r.score,
+        total,
+      ]),
+    ]);
   return (
     <section className="card space-y-2" data-testid="standings">
       <div className="flex items-center justify-between">
-        <h2 className="font-bold">Natijalar</h2>
+        <h2 className="min-w-0 flex-1 font-bold">Natijalar</h2>
+        {!!rows.data?.length && <ExportButton onClick={exportCsv} />}
         <Link to={`/weekly/${id}/review`} className="text-sm font-semibold text-link">
           Tekshirish navbati
         </Link>
