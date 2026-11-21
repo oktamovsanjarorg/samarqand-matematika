@@ -85,6 +85,15 @@ describe("ustozdan eʼlon (T-116)", () => {
     expect((await f.call("GET", "/admin/broadcast", {})).statusCode).toBe(401);
   });
 
+  it("T-130: appButton bo'lsa xabar ostida Mini App tugmasi, bo'lmasa tugmasiz", async () => {
+    const s = await member();
+    const body = { text: "Yangi test ochildi", audience: "students", groupId, dryRun: false };
+    await send({ ...body, appButton: true });
+    expect(f.buttonsTo(s.telegramId).at(-1)).toMatchObject({ text: "📐 Ilovani ochish", webApp: true });
+    await send(body);
+    expect(f.buttonsTo(s.telegramId).at(-1)).toBeUndefined();
+  });
+
   it("bo'sh matn 400, yo'q guruh 404, yordamchi va o'quvchiga 403, tokensiz 401", async () => {
     const ok = { text: "Salom", audience: "students", groupId: null, dryRun: true };
     expect((await send({ ...ok, text: "  " })).statusCode).toBe(400);

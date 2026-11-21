@@ -168,4 +168,5 @@
 | T-127 | Obunasi 7 kun ichida tugaydigan (uzaytirilmagan, AUTO) oʻquvchilar: roʻyxatda "Tugayotgan" filtri, bosh sahifada eslatma                                                    | ✅    |
 | T-128 | Chek kartasida "Tasdiqlansa obuna X gacha": tasdiqlashdagi hisob bilan bir xil (BR-B03)                                                                                     | ✅    |
 | T-129 | Botga oddiy matn yozilsa javob: bot xabarni oʻqimaydi, savol AI yordamchiga; ilovani ochish tugmasi (faqat shaxsiy chatda)                                                  | ✅    |
+| T-130 | Eʼlon ostida ixtiyoriy "Ilovani ochish" tugmasi (standart yoqilgan)                                                                                                         | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                         | ✅    |

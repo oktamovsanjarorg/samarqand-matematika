@@ -41,7 +41,8 @@ export class BroadcastService {
     if (input.dryRun) return { recipients: ids.length, sent: 0 };
 
     const text = `📢 <b>Ustozdan eʼlon</b>\n\n${esc(input.text)}`;
-    const results = await Promise.all(ids.map((id) => this.notify.toUser(id, text)));
+    const button = input.appButton ? this.notify.appButton("📐 Ilovani ochish", "") : undefined;
+    const results = await Promise.all(ids.map((id) => this.notify.toUser(id, text, button)));
     const sent = results.filter(Boolean).length;
     await this.audit.log({
       actorId,
