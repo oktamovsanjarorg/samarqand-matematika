@@ -3,6 +3,7 @@ import { Bot, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AccessCard } from "../components/home/AccessCard";
 import { Hero } from "../components/home/Hero";
+import { MistakesCard } from "../components/home/MistakesCard";
 import { ParentHome } from "../components/parent/ParentHome";
 import { Recommendations } from "../components/home/Recommendations";
 import { RecentResults } from "../components/home/RecentResults";
@@ -119,6 +120,7 @@ function StudentHome() {
       <MockBlock />
       {stats.fetchStatus === "fetching" && !stats.data && <div className="skeleton h-24" aria-busy="true" />}
       {stats.data && <StatsBlock stats={stats.data} />}
+      <MistakesCard />
       <Recommendations />
       {user?.role === "STUDENT" && <TutorCard />}
     </div>

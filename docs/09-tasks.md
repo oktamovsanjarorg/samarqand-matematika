@@ -121,3 +121,4 @@
 | T-080 | Haftalik test va mock ochilganda o'quvchilarga bot xabari (bir marta, eski testlar uchun yuborilmaydi)                                                                      | ✅    |
 | T-081 | O'quvchiga bot xabari: ustoz qabul qilganda (to'liq kirish uchun qolgan qadamlar bilan) va kirish rejimi FREE yoki CLOSED bo'lganda                                         | ✅    |
 | T-082 | Mock yopilganda tasdiqlangan ota-onaga farzandining natijasi (ball, daraja, taxminiy belgisi)                                                                               | ✅    |
+| T-083 | Asosiy sahifada xatolar bo'lsa "Xatolar ustida ishlang" kartasi (savol va mavzu soni)                                                                                       | ✅    |
