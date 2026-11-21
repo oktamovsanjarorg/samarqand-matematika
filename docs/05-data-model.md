@@ -9,7 +9,7 @@
 User (role: STUDENT | PARENT | ASSISTANT | TEACHER, telegramId, phone, isBlocked, lastSeenAt)
  ├─ StudentProfile (fullName, accessMode AUTO|FREE|CLOSED, acceptedAt, parentCode, groupId)
  │    └─ ParentLink (parentId → User, status PENDING|APPROVED|REJECTED, phone, flags, rejectReason)
- ├─ Subscription (endsAt)      ← Payment (status, amountUzs, receiptPath) ← Plan
+ ├─ Subscription (endsAt, reminderStage) ← Payment (status, amountUzs, receiptPath) ← Plan
  ├─ LoginToken (admin havolasi, 5 daqiqa, bir martalik)
  └─ AuditLog (actorId, action, entity, entityId, data)
 AppSetting (kalit → JSON): karta, sozlamalar

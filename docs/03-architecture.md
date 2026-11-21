@@ -58,10 +58,11 @@ Chegaralar (ESLint): UI va bot `@samarqand/db` ni import qilmaydi; paketlar ilov
 
 Redis va BullMQ hozircha ishlatilmaydi (Redis konteyneri compose'da kelajak uchun turibdi). Fon ishlari API ichidagi rejalashtiruvchilarda:
 
-| Rejalashtiruvchi  | Har (`WEEKLY_TICK_SEC`, 60 s) | Nima qiladi                                                                                              |
-| ----------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `WeeklyScheduler` | daqiqada                      | ochilganda e'lon, 24 va 3 soatlik eslatma, yopish (0 ball, natija, ota-ona, ustozga hisobot), AI navbati |
-| `MockScheduler`   | daqiqada                      | ochilganda e'lon, yopish (vaqti o'tgan urinishlarni topshirish, Rasch yoki taxminiy ball, xabarlar)      |
+| Rejalashtiruvchi        | Har (`WEEKLY_TICK_SEC`, 60 s) | Nima qiladi                                                                                              |
+| ----------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `WeeklyScheduler`       | daqiqada                      | ochilganda e'lon, 24 va 3 soatlik eslatma, yopish (0 ball, natija, ota-ona, ustozga hisobot), AI navbati |
+| `MockScheduler`         | daqiqada                      | ochilganda e'lon, yopish (vaqti o'tgan urinishlarni topshirish, Rasch yoki taxminiy ball, xabarlar)      |
+| `SubscriptionReminders` | daqiqada                      | obuna tugashiga 3 kun qolganda va tugaganda eslatma (BR-B06)                                             |
 
 Har ish bazada `updateMany ... where: { closedAt: null }` kabi shart bilan "egallanadi", shuning uchun ikki nusxa ishlasa ham xabar ikki marta ketmaydi. AI navbati (`AiReview`) yozuvlarni partiyalab oladi, 3 martagacha qayta uradi, 10 daqiqa osilib qolganini qaytadan oladi.
 
