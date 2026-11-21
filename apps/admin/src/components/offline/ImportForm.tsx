@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import { tashkentToday, useGroups } from "../../lib/groups";
 import { Badge, Button } from "../ui";
+import { CsvPicker } from "../CsvPicker";
 import { ScoresTable } from "./ScoresTable";
 
 const field = "min-h-11 w-full rounded-xl border border-hint/25 bg-section px-3 text-sm";
@@ -92,8 +93,8 @@ export function ImportForm() {
       navigate(`/offline/${t.id}`);
     },
   });
-  const onFile = async (file?: File) => {
-    setCsv(file ? await file.text() : "");
+  const onText = (text: string) => {
+    setCsv(text);
     preview.reset();
   };
   const ok = preview.data && !preview.data.errors.length && preview.data.rows.length > 0;
@@ -105,13 +106,7 @@ export function ImportForm() {
         qolgan ustunlar boʻlimlar.
       </p>
       <HeadFields v={head} set={setHead} />
-      <input
-        type="file"
-        accept=".csv,.txt,text/csv"
-        aria-label="CSV fayl"
-        onChange={(e) => void onFile(e.target.files?.[0])}
-        className="text-sm"
-      />
+      <CsvPicker onText={onText} />
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => preview.mutate()} busy={preview.isPending} disabled={!csv}>
           Tekshirish
