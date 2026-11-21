@@ -43,6 +43,8 @@ test("T-063, BR-R02: bosh sahifada e'tibor kerak o'quvchi sababi bilan", async (
   await expect(page).toHaveURL(/\/students\/[a-z0-9]+$/);
   await expect(page.getByTestId("card-status")).toContainText("9 kundan beri ilovaga kirmagan");
   await expect(page.getByTestId("card-status")).toContainText("Toʻliq kirish yopiq");
+  // T-094: obuna holati
+  await expect(page.getByTestId("card-status")).toContainText("Obuna toʻlanmagan");
   await expect(page.getByTestId("card-school")).toContainText("Guruhsiz");
   await expect(page.getByTestId("card-study")).toContainText("0 ta test");
   await page.screenshot({ path: "e2e/.results/admin-student-card.png", fullPage: true });

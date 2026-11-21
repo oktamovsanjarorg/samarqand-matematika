@@ -5,6 +5,7 @@ import { AccessService } from "../access/access.service";
 import { AttentionService } from "../insights/attention.service";
 import { StudentInsightsService } from "../insights/student-insights.service";
 import { MyOfflineService } from "../offline/my-offline.service";
+import { PrismaService } from "../prisma/prisma.service";
 import { StatsService } from "../topic-tests/stats.service";
 import { AdminStudentsService } from "./admin-students.service";
 import { MySchoolService } from "./my-school.service";
@@ -20,17 +21,28 @@ export class StudentCardService {
     private readonly stats: StatsService,
     private readonly school: MySchoolService,
     private readonly offline: MyOfflineService,
+    private readonly prisma: PrismaService,
   ) {}
+
+  /** Eng oxirgi faol obuna tugashi: uzaytirilgan bo'lsa oxirgisi (BR-B03) */
+  private async paidUntil(userId: string): Promise<string | null> {
+    const r = await this.prisma.subscription.aggregate({
+      where: { userId, endsAt: { gt: new Date() } },
+      _max: { endsAt: true },
+    });
+    return r._max.endsAt?.toISOString() ?? null;
+  }
 
   async get(id: string): Promise<AdminStudentCard> {
     const student = await this.students.get(id);
-    const [facts, reasons, recs, stats, school, offline] = await Promise.all([
+    const [facts, reasons, recs, stats, school, offline, paidUntil] = await Promise.all([
       this.access.facts(id),
       this.attention.forStudent(id),
       this.insights.recommendations(id),
       this.stats.my(id),
       this.school.get(id),
       this.offline.list(id),
+      this.paidUntil(id),
     ]);
     return {
       student,
@@ -41,6 +53,7 @@ export class StudentCardService {
         paid: facts.paid,
         mode: facts.mode,
       },
+      paidUntil,
       reasons,
       weak: recs.items,
       stats,
