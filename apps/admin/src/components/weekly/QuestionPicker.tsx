@@ -4,8 +4,9 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import { api } from "../../lib/api";
 import { useTree } from "../../lib/content";
-import { TYPE_LABELS } from "../../lib/questions";
+import { TYPE_LABELS, manualBadge } from "../../lib/questions";
 import { MathText } from "../MathText";
+import { Badge } from "../ui";
 
 const field = "min-h-11 w-full rounded-xl border border-hint/25 bg-section px-3 text-sm";
 
@@ -38,7 +39,10 @@ function TopicQuestions(p: {
               onChange={() => p.onAdd({ id: q.id, type: q.type, text: q.text, topicTitle: p.topicTitle })}
               className="mt-1 h-5 w-5 shrink-0"
             />
-            <MathText text={q.text} className="line-clamp-2 flex-1 text-sm" />
+            <div className="min-w-0 flex-1 space-y-1">
+              <MathText text={q.text} className="line-clamp-2 text-sm" />
+              {manualBadge(q) && <Badge tone="accent">Ustoz tekshiradi</Badge>}
+            </div>
           </label>
         </li>
       ))}

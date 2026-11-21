@@ -7,7 +7,7 @@ import { RowActions } from "../components/RowActions";
 import { Badge, EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
 import { moved, reorder, useTree } from "../lib/content";
-import { DIFFICULTY_LABELS, TYPE_LABELS } from "../lib/questions";
+import { DIFFICULTY_LABELS, TYPE_LABELS, manualBadge } from "../lib/questions";
 
 function useQuestions(topicId: string) {
   const qc = useQueryClient();
@@ -37,6 +37,7 @@ function QuestionRow(p: {
         <div className="flex flex-wrap gap-1">
           <Badge tone="brand">{TYPE_LABELS[q.type]}</Badge>
           <Badge>{DIFFICULTY_LABELS[q.difficulty]}</Badge>
+          {manualBadge(q) && <Badge tone="accent">Ustoz tekshiradi</Badge>}
           {!q.isPublished && <Badge>Qoralama</Badge>}
         </div>
         <MathText text={q.text} className="line-clamp-3 text-sm" />

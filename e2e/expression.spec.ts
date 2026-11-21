@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { adminHeaders, apiPost, createStudent, grantFree, loginAdmin } from "./api";
 import { E2E_PREFIX, openAsTelegram } from "./telegram";
 
-test("T-074, T-077, BR-Q03: ustoz ifoda savolini qo'shadi, o'quvchining teng ifodasi to'g'ri hisoblanadi", async ({
+test("T-074, T-077, T-085, BR-Q03: ustoz ifoda savolini qo'shadi, o'quvchining teng ifodasi to'g'ri hisoblanadi", async ({
   page,
   request,
 }) => {
@@ -27,6 +27,16 @@ test("T-074, T-077, BR-Q03: ustoz ifoda savolini qo'shadi, o'quvchining teng ifo
   await page.screenshot({ path: "e2e/.results/admin-question-expression.png", fullPage: true });
   await page.getByRole("button", { name: "Saqlash" }).click();
   await expect(page.getByTestId("question")).toHaveCount(1);
+  await expect(page.getByTestId("question").getByText("Ustoz tekshiradi")).toHaveCount(0);
+  // T-085: qo'lda tekshiriladigan ifoda ro'yxatda belgi bilan
+  await apiPost(request, `/admin/topics/${topic.id}/questions`, admin, {
+    type: "EXPRESSION",
+    text: "Tengsizlikni yeching: $x^2 < 4$",
+    answer: { value: "-2 < x < 2", manual: true },
+  });
+  await page.reload();
+  await expect(page.getByTestId("question").getByText("Ustoz tekshiradi")).toHaveCount(1);
+  await page.screenshot({ path: "e2e/.results/admin-questions-manual.png", fullPage: true });
 
   const s = await createStudent(request, { fullName: "Ifoda Yozuvchi", phone: "998901112321" });
   await grantFree(request, admin, "Ifoda Yozuvchi");

@@ -120,6 +120,8 @@ export interface AdminQuestionRow {
   skills: string[];
   order: number;
   isPublished: boolean;
+  /** Javobni ustoz tekshiradi: yozma yechim yoki "Ustoz tekshiradi" belgili ifoda (T-085) */
+  manual: boolean;
 }
 
 export type AdminQuestionDetail = QuestionInput & { id: string; topicId: string; order: number };

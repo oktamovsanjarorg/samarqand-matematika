@@ -33,7 +33,7 @@ export function Badge({
   tone = "hint",
   children,
 }: {
-  tone?: "hint" | "brand" | "danger" | "success";
+  tone?: "hint" | "brand" | "danger" | "success" | "accent";
   children: ReactNode;
 }) {
   const tones = {
@@ -41,6 +41,7 @@ export function Badge({
     brand: "bg-brand/10 text-brand",
     danger: "bg-danger/10 text-danger",
     success: "bg-success/10 text-success",
+    accent: "bg-accent/10 text-accent",
   };
   return <span className={`rounded-lg px-2 py-0.5 text-xs font-semibold ${tones[tone]}`}>{children}</span>;
 }
