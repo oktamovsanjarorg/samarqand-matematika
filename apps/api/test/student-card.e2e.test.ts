@@ -41,6 +41,27 @@ describe("admin o'quvchi kartasi (T-068)", () => {
     expect(card.stats).toMatchObject({ tests: 0, averagePercent: null });
     expect(card.weak).toEqual([]);
     expect(card.offline).toEqual([]);
+    expect(card.paidUntil).toBeNull();
+  });
+
+  it("T-094: faol obuna qachongacha: uzaytirilgan bo'lsa eng oxirgisi, tugagani hisobga olinmaydi", async () => {
+    const s = await f.student(false);
+    const plan = await f.prisma.plan.create({
+      data: { name: `Karta ${Date.now()}`, priceUzs: 1, durationDays: 30 },
+    });
+    const day = 86_400_000;
+    const at = (d: number) => new Date(Date.now() + d * day);
+    await f.prisma.subscription.createMany({
+      data: [
+        { userId: s.id, planId: plan.id, startsAt: at(-40), endsAt: at(-10) },
+        { userId: s.id, planId: plan.id, startsAt: at(-10), endsAt: at(20) },
+        { userId: s.id, planId: plan.id, startsAt: at(20), endsAt: at(50) },
+      ],
+    });
+    const card = (await f.call("GET", `/admin/students/${s.id}`, f.teacher)).json() as AdminStudentCard;
+    expect(new Date(card.paidUntil ?? 0).getTime()).toBeCloseTo(at(50).getTime(), -4);
+    await f.prisma.subscription.deleteMany({ where: { userId: s.id } });
+    await f.prisma.plan.delete({ where: { id: plan.id } });
   });
 
   it("o'quvchi bo'lmagan id 404; o'quvchiga 403", async () => {

@@ -54,6 +54,8 @@ export const ABSENT_MIN = 2;
 export interface AdminStudentCard {
   student: AdminStudentRow;
   access: MyProfile["access"];
+  /** Faol obuna qachongacha (T-094); faol obuna yo'q bo'lsa null */
+  paidUntil: string | null;
   reasons: AttentionReason[];
   weak: TopicRecommendation[];
   stats: MyStats;

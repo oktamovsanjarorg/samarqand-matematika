@@ -132,3 +132,4 @@
 | T-091 | Yangi dars haqida o'quvchilarga xabar: dars sahifasidagi tugma, bir marta, kirish bo'yicha qabul qiluvchilar (BR-C05)                                                       | ✅    |
 | T-092 | `NOTIFY_TRANSPORT=off`: brauzer testlarida bot xabarlari Telegram'ga chiqmaydi (tasodifiy test ID'lari haqiqiy foydalanuvchiga to'g'ri kelmasin)                            | ✅    |
 | T-093 | O'quvchi va ota-ona xabarlarida Mini App'ni kerakli sahifada ochadigan tugma (`web_app`): test, natija, dars, obuna, chek                                                   | ✅    |
+| T-094 | Admin o'quvchi kartasida faol obuna qachongacha ekani (uzaytirilganda eng oxirgisi)                                                                                         | ✅    |
