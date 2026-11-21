@@ -1,7 +1,8 @@
 import { Inject, Injectable, Logger, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
 import { gradeOf } from "@samarqand/shared";
 import { ENV, type Env } from "../config/env";
-import { mockResultText } from "../notify/messages";
+import { AccessService } from "../access/access.service";
+import { mockOpenText, mockResultText } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { snapshotOf } from "./admin-mocks.service";
@@ -18,20 +19,39 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
     private readonly prisma: PrismaService,
     private readonly mocks: MocksService,
     private readonly notify: NotifyService,
+    private readonly access: AccessService,
     @Inject(ENV) private readonly env: Env,
   ) {}
 
   onModuleInit() {
     if (this.env.WEEKLY_TICK_SEC === 0) return;
     this.timer = setInterval(() => {
-      this.close(new Date()).catch((e: unknown) =>
-        this.log.warn(`close: ${e instanceof Error ? e.name : "xato"}`),
-      );
+      const now = new Date();
+      this.announce(now)
+        .then(() => this.close(now))
+        .catch((e: unknown) => this.log.warn(`tick: ${e instanceof Error ? e.name : "xato"}`));
     }, this.env.WEEKLY_TICK_SEC * 1000);
   }
 
   onModuleDestroy() {
     clearInterval(this.timer);
+  }
+
+  /** Mock ochildi: to'liq kirishli o'quvchilarga bir marta xabar (T-080) */
+  async announce(now: Date) {
+    const due = await this.prisma.mockTest.findMany({
+      where: { isPublished: true, announcedAt: null, opensAt: { lte: now }, closesAt: { gt: now } },
+      select: { id: true, title: true, closesAt: true },
+    });
+    for (const t of due) {
+      const claimed = await this.prisma.mockTest.updateMany({
+        where: { id: t.id, announcedAt: null },
+        data: { announcedAt: now },
+      });
+      if (!claimed.count) continue;
+      const to = await this.access.fullAccessStudentIds();
+      await Promise.all(to.map((id) => this.notify.toUser(id, mockOpenText(t.title, t.closesAt))));
+    }
   }
 
   async close(now: Date) {

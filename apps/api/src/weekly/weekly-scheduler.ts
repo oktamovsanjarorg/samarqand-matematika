@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
 import { AccessService } from "../access/access.service";
 import { ENV, type Env } from "../config/env";
-import { weeklyReminderText, weeklyResultText } from "../notify/messages";
+import { weeklyOpenText, weeklyReminderText, weeklyResultText } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { AiReviewService } from "./ai-reviews";
@@ -45,9 +45,27 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
   }
 
   async tick(now: Date) {
+    await this.announce(now);
     await this.remind(now);
     await this.close(now);
     await this.reviews.process(now);
+  }
+
+  /** Oyna ochildi: to'liq kirishli o'quvchilarga bir marta xabar (T-080) */
+  async announce(now: Date) {
+    const due = await this.prisma.weeklyTest.findMany({
+      where: { isPublished: true, announcedAt: null, opensAt: { lte: now }, closesAt: { gt: now } },
+      select: { id: true, title: true, closesAt: true },
+    });
+    for (const t of due) {
+      const claimed = await this.prisma.weeklyTest.updateMany({
+        where: { id: t.id, announcedAt: null },
+        data: { announcedAt: now },
+      });
+      if (!claimed.count) continue;
+      const to = await this.access.fullAccessStudentIds();
+      await Promise.all(to.map((id) => this.notify.toUser(id, weeklyOpenText(t.title, t.closesAt))));
+    }
   }
 
   /** 24 va 3 soat qolganda topshirmagan, to'liq kirishli o'quvchilarga */

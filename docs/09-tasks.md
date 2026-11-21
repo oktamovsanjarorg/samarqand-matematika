@@ -118,3 +118,4 @@
 | T-077 | Mini App: ifoda javobi yozilayotganda formula ko'rinishi (KaTeX), tushunilmasa darhol ogohlantirish                                                                         | ✅    |
 | T-078 | O'quvchilar ro'yxatini Excel'ga yuklab olish (filtr va qidiruv bo'yicha, telefon matn ko'rinishida)                                                                         | ✅    |
 | T-079 | Xatolarim: mavzu testida oxirgi marta xato ishlangan savollar to'g'ri javob va yechim bilan, mavzu bo'yicha, qayta ishlash havolasi                                         | ✅    |
+| T-080 | Haftalik test va mock ochilganda o'quvchilarga bot xabari (bir marta, eski testlar uchun yuborilmaydi)                                                                      | ✅    |
