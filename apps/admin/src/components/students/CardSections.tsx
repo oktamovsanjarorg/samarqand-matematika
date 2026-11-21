@@ -15,6 +15,11 @@ function Section({ title, children, testId }: { title: string; children: ReactNo
 
 const pct = (correct: number, of: number) => (of ? Math.round((correct / of) * 100) : 0);
 
+const MODE_NOTE = {
+  FREE: "Ustoz bepul ochgan: quyidagi qadamlar kirishga taʼsir qilmaydi",
+  CLOSED: "Ustoz yopib qoʻygan: qadamlar bajarilsa ham kirish yopiq",
+} as const;
+
 /** Kirish qadamlari (BR-A04) va e'tibor sabablari (BR-R02) */
 export function StatusSection({ c }: { c: AdminStudentCard }) {
   const steps = [
@@ -28,6 +33,8 @@ export function StatusSection({ c }: { c: AdminStudentCard }) {
   return (
     <Section title="Holat" testId="card-status">
       <p className="text-sm font-semibold">{c.access.full ? "Toʻliq kirish ochiq" : "Toʻliq kirish yopiq"}</p>
+      {/* T-113: qo'lda rejimda qadamlar kirishni hal qilmaydi (BR-A04) */}
+      {c.access.mode !== "AUTO" && <p className="text-xs text-hint">{MODE_NOTE[c.access.mode]}</p>}
       <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
         {steps.map((s) => (
           <li key={s.label} className="flex items-center gap-1">
