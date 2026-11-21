@@ -1,6 +1,15 @@
 import type { ChildSummary, ChildView } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarCheck, CheckCircle2, ClipboardList, Clock, Lock, Target, Users } from "lucide-react";
+import {
+  CalendarCheck,
+  CheckCircle2,
+  ClipboardList,
+  Clock,
+  GraduationCap,
+  Lock,
+  Target,
+  Users,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { api } from "../../lib/api";
 import { formatDay } from "../../lib/me";
@@ -53,6 +62,17 @@ function Results({ s }: { s: ChildSummary }) {
             <span className="font-bold tabular-nums">
               {w.submitted ? `${w.score}/${w.total}` : "Topshirmagan"}
             </span>
+          </li>
+        ))}
+        {s.mocks.map((m) => (
+          <li key={m.id} className="flex items-center gap-2 py-1.5" data-testid="child-mock">
+            <GraduationCap size={14} className="shrink-0 text-hint" />
+            <span className="min-w-0 flex-1 truncate">{m.title}</span>
+            <span className="font-bold tabular-nums">
+              {m.scaled}/{m.scaleMax}
+              {m.grade ? ` · ${m.grade}` : ""}
+            </span>
+            {m.approx && <span className="text-xs text-hint">taxminiy</span>}
           </li>
         ))}
         {s.recent.map((a) => (

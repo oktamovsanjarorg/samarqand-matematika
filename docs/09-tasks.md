@@ -152,3 +152,4 @@
 | T-111 | O'quvchi kartasida yopilgan haftalik testlar (ball, o'rin, topshirmagani) va oxirgi cheklar (holat, rad sababi); haftalik tarix ota-ona xulosasi bilan umumiy funksiyada    | ✅    |
 | T-112 | O'quvchi kartasida oynasi yopilgan mock'lar: shkala balli, daraja, Rasch bo'lmasa "taxminiy" (BR-M05)                                                                       | ✅    |
 | T-113 | O'quvchi kartasida bepul yoki yopiq rejimda kirish qadamlari hal qilmasligi tushuntiriladi (BR-A04)                                                                         | ✅    |
+| T-114 | Ota-ona kabinetida farzandning oynasi yopilgan mock natijalari (ball, daraja, "taxminiy"); hisob o'quvchi kartasi bilan umumiy                                              | ✅    |

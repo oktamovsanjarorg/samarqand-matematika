@@ -51,12 +51,12 @@
 
 ## Guruhlar, davomat, ota-ona (FR-G)
 
-| ID     | Talab                                                                                      | BR          | T            | Holat |
-| ------ | ------------------------------------------------------------------------------------------ | ----------- | ------------ | ----- |
-| FR-G01 | Offline guruhlar va a'zolar                                                                | BR-G01      | T-054        | ✅    |
-| FR-G02 | Davomat; kelmagan yoki kechikkanda ota-onaga xabar, tuzatish xabari; oylik jadval va Excel | BR-G02, G03 | T-055, T-108 | ✅    |
-| FR-G03 | Ota-ona kabineti: farzandlar, davomat, natijalar, takrorlash kerak mavzular                | BR-PA01     | T-069, T-073 | ✅    |
-| FR-G04 | Ota-onaga hisobot: haftalik va mock natijasi                                               |             | T-035, T-082 | ✅    |
+| ID     | Talab                                                                                                        | BR          | T                   | Holat |
+| ------ | ------------------------------------------------------------------------------------------------------------ | ----------- | ------------------- | ----- |
+| FR-G01 | Offline guruhlar va a'zolar                                                                                  | BR-G01      | T-054               | ✅    |
+| FR-G02 | Davomat; kelmagan yoki kechikkanda ota-onaga xabar, tuzatish xabari; oylik jadval va Excel                   | BR-G02, G03 | T-055, T-108        | ✅    |
+| FR-G03 | Ota-ona kabineti: farzandlar, davomat, natijalar (mavzu, haftalik, mock, offline), takrorlash kerak mavzular | BR-PA01     | T-069, T-073, T-114 | ✅    |
+| FR-G04 | Ota-onaga hisobot: haftalik va mock natijasi                                                                 |             | T-035, T-082        | ✅    |
 
 ## To'lov (FR-B)
 
