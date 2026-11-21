@@ -64,6 +64,37 @@ describe("admin o'quvchi kartasi (T-068)", () => {
     await f.prisma.plan.delete({ where: { id: plan.id } });
   });
 
+  it("T-111: kartada yopilgan haftalik (o'rni bilan) va oxirgi cheklar", async () => {
+    const s = await f.student();
+    const id = await f.weekly(await f.questions());
+    await f.prisma.weeklyAttempt.create({
+      data: { weeklyTestId: id, userId: s.id, submittedAt: new Date(), correct: 1 },
+    });
+    await f.prisma.weeklyTest.update({
+      where: { id },
+      data: { opensAt: new Date(Date.now() - 3600_000), closesAt: new Date() },
+    });
+    const plan = await f.prisma.plan.create({
+      data: { name: `Tarix ${Date.now()}`, priceUzs: 1000, durationDays: 30 },
+    });
+    await f.prisma.payment.create({
+      data: { userId: s.id, planId: plan.id, amountUzs: 1000, status: "REJECTED", reviewNote: "Summa kam" },
+    });
+
+    const card = (await f.call("GET", `/admin/students/${s.id}`, f.teacher)).json() as AdminStudentCard;
+    expect(card.weekly[0]).toMatchObject({ id, submitted: true, place: 1, total: 2 });
+    expect(card.payments).toEqual([
+      expect.objectContaining({
+        planName: plan.name,
+        amountUzs: 1000,
+        status: "REJECTED",
+        reviewNote: "Summa kam",
+      }),
+    ]);
+    await f.prisma.payment.deleteMany({ where: { userId: s.id } });
+    await f.prisma.plan.delete({ where: { id: plan.id } });
+  });
+
   it("o'quvchi bo'lmagan id 404; o'quvchiga 403", async () => {
     const teacher = await f.prisma.user.findFirstOrThrow({
       where: { role: "TEACHER" },

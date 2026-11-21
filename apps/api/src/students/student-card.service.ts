@@ -2,11 +2,13 @@ import { Injectable } from "@nestjs/common";
 import type { AdminStudentCard } from "@samarqand/shared";
 import { isFullAccess } from "../access/access-rules";
 import { AccessService } from "../access/access.service";
+import { MY_PAYMENT_SELECT, toMyPayment } from "../billing/payments.service";
 import { AttentionService } from "../insights/attention.service";
 import { StudentInsightsService } from "../insights/student-insights.service";
 import { MyOfflineService } from "../offline/my-offline.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { StatsService } from "../topic-tests/stats.service";
+import { weeklyHistory } from "../weekly/weekly-history";
 import { AdminStudentsService } from "./admin-students.service";
 import { MySchoolService } from "./my-school.service";
 
@@ -35,7 +37,8 @@ export class StudentCardService {
 
   async get(id: string): Promise<AdminStudentCard> {
     const student = await this.students.get(id);
-    const [facts, reasons, recs, stats, school, offline, paidUntil] = await Promise.all([
+    const now = new Date();
+    const [facts, reasons, recs, stats, school, offline, paidUntil, weekly, payments] = await Promise.all([
       this.access.facts(id),
       this.attention.forStudent(id),
       this.insights.recommendations(id),
@@ -43,6 +46,13 @@ export class StudentCardService {
       this.school.get(id),
       this.offline.list(id),
       this.paidUntil(id),
+      weeklyHistory(this.prisma, id, new Date(student.createdAt), { now, take: 8 }),
+      this.prisma.payment.findMany({
+        where: { userId: id },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        select: MY_PAYMENT_SELECT,
+      }),
     ]);
     return {
       student,
@@ -59,6 +69,8 @@ export class StudentCardService {
       stats,
       school,
       offline,
+      weekly,
+      payments: payments.map(toMyPayment),
     };
   }
 }
