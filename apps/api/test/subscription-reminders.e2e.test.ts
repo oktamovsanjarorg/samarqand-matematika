@@ -54,6 +54,16 @@ describe("Obuna tugashi eslatmasi (T-090)", () => {
     expect(f.messagesTo(s.telegramId)).toEqual([expect.stringContaining("da tugaydi")]);
     expect(f.buttonsTo(s.telegramId)[0]).toMatchObject({ url: "https://miniapp.test/billing", webApp: true });
     expect(f.messagesTo(p.telegramId)).toEqual([expect.stringContaining("<b>Obuna Egasi</b>ning obunasi")]);
+    // T-122: ota-onaga farzandning to'lov sahifasiga tugma
+    const { id: studentId } = await f.prisma.studentProfile.findUniqueOrThrow({
+      where: { userId: s.id },
+      select: { id: true },
+    });
+    expect(f.buttonsTo(p.telegramId)[0]).toMatchObject({
+      text: "Obunani toʻlash",
+      url: `https://miniapp.test/children/${studentId}/billing`,
+      webApp: true,
+    });
 
     await tick(new Date(now.getTime() + 2 * DAY + 60_000));
     await tick(new Date(now.getTime() + 2 * DAY + 120_000));

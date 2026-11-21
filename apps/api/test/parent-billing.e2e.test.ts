@@ -84,6 +84,8 @@ describe("ota-ona farzandi uchun toʻlaydi (T-120, BR-B07)", () => {
     });
     expect(reject.statusCode).toBe(200);
     expect(f.messagesTo(parent.telegramId).at(-1)).toContain("Sabab: Summa kam");
+    // T-122: tugma farzandning to'lov sahifasiga
+    expect(f.buttonsTo(parent.telegramId).at(-1)?.url).toContain(`/children/${base.split("/")[3]}/billing`);
 
     const again = (await upload(parent.headers, base)).json() as MyPayment;
     expect((await f.call("DELETE", `${base}/payments/${again.id}`, parent.headers)).statusCode).toBe(204);

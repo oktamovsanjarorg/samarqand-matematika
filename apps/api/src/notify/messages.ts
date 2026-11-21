@@ -190,7 +190,7 @@ const RENEW = "Uzaytirish: ilovada Profil → Obuna va toʻlovlar.";
 export const subscriptionEndingText = (endsAt: Date) =>
   `⏳ Obunangiz <b>${uzDateTime(endsAt)}</b> da tugaydi. Darslar va testlar yopilmasligi uchun uni uzaytiring.\n${RENEW}`;
 export const subscriptionEndingParentText = (child: string, endsAt: Date) =>
-  `⏳ <b>${esc(child)}</b>ning obunasi <b>${uzDateTime(endsAt)}</b> da tugaydi. Uzaytirilmasa pullik darslar va testlar yopiladi.`;
+  `⏳ <b>${esc(child)}</b>ning obunasi <b>${uzDateTime(endsAt)}</b> da tugaydi. Uzaytirilmasa pullik darslar va testlar yopiladi.\nChekni kabinetdan oʻzingiz ham yuborishingiz mumkin.`;
 export const subscriptionEndedText = `🔒 Obunangiz tugadi: pullik darslar va testlar yopildi.\n${RENEW}`;
 
 /** O'quvchilarga: yangi dars (T-091, ustoz tugmasi bilan) */
