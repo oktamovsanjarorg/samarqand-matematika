@@ -102,3 +102,23 @@ describe("ota-ona farzandi uchun toʻlaydi (T-120, BR-B07)", () => {
     expect((await f.call("GET", other.base, {})).statusCode).toBe(401);
   });
 });
+
+describe("chek takrorlanishi (T-124)", () => {
+  it("aynan shu rasm avval yuborilgan bo'lsa ustozga birinchisi ko'rsatiladi", async () => {
+    const img = Buffer.concat([PNG, Buffer.from(String(Date.now()))]);
+    const send = (h: Record<string, string>) =>
+      f.app.inject({
+        method: "POST",
+        url: `/api/billing/payments?planId=${planId}`,
+        headers: { ...h, "content-type": "image/png" },
+        payload: img,
+      });
+    const [a, b] = [await f.student(), await f.student()];
+    await f.prisma.user.update({ where: { id: a.id }, data: { firstName: "Birinchi", lastName: null } });
+    expect((await send(a.headers)).statusCode).toBe(201);
+    expect((await send(b.headers)).statusCode).toBe(201);
+    const list = (await f.call("GET", "/admin/payments?status=PENDING", f.teacher)).json() as AdminPayment[];
+    expect(list.find((p) => p.student.id === a.id)?.duplicateOf).toBeNull();
+    expect(list.find((p) => p.student.id === b.id)?.duplicateOf?.student).toBe("Birinchi");
+  });
+});
