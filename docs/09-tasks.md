@@ -111,3 +111,4 @@
 | T-070 | Ota-ona kabineti: kutilayotgan ulanish, kirish holati va obuna muddati, haftalikda o'rin, Darslar tabi yashirin                                             | ✅    |
 | T-071 | Tungi rejim va kontrast: WCAG AA (axe) brauzer testi, brend fon va brend matn alohida token, Telegram ranglari kontrast bo'yicha tekshiriladi, zoom yoqildi | ✅    |
 | T-072 | Kontrast tekshiruvi kengaytirildi: Mini App'ning barcha o'quvchi va ota-ona ekranlari (ikkala rejim), admin bo'limlari                                      | ✅    |
+| T-073 | Ota-ona Profili: farzandlar holati, botdan keladigan xabarlar, yana farzand ulash yo'li                                                                     | ✅    |

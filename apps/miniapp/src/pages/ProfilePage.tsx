@@ -1,5 +1,6 @@
 import { ROLE_LABELS, type MyStats } from "@samarqand/shared";
 import { Link } from "react-router-dom";
+import { ParentProfile } from "../components/parent/ParentProfile";
 import { HistoryLinks } from "../components/profile/HistoryLinks";
 import { SchoolCard } from "../components/profile/SchoolCard";
 import { useProfile, useSchool, useStats } from "../lib/me";
@@ -74,6 +75,7 @@ export function ProfilePage() {
       )}
       {stats && stats.topics.length > 0 && <Topics topics={stats.topics} />}
       {user.role === "STUDENT" && <HistoryLinks />}
+      {user.role === "PARENT" && <ParentProfile />}
     </div>
   );
 }
