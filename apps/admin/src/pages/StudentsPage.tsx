@@ -2,11 +2,27 @@ import type { AdminStudentRow } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useDeferredValue, useState } from "react";
+import { ExportButton } from "../components/ExportButton";
 import { StudentCard } from "../components/students/StudentCard";
 import { EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
+import { exportStudents } from "../lib/students-export";
 
 type Filter = "new" | "all";
+
+function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="flex min-h-11 flex-1 items-center gap-2 rounded-xl border border-hint/25 bg-section px-3">
+      <Search size={16} className="text-hint" />
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Ism, username yoki telefon"
+        className="w-full bg-transparent text-sm outline-none"
+      />
+    </label>
+  );
+}
 
 export function StudentsPage() {
   const [filter, setFilter] = useState<Filter>("new");
@@ -36,15 +52,10 @@ export function StudentsPage() {
           ))}
         </div>
       </PageTitle>
-      <label className="flex min-h-11 items-center gap-2 rounded-xl border border-hint/25 bg-section px-3">
-        <Search size={16} className="text-hint" />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Ism, username yoki telefon"
-          className="w-full bg-transparent text-sm outline-none"
-        />
-      </label>
+      <div className="flex items-center gap-2">
+        <SearchBox value={q} onChange={setQ} />
+        {!!list.data?.length && <ExportButton onClick={() => exportStudents(list.data, filter === "all")} />}
+      </div>
       {list.isPending && <SkeletonList />}
       {list.isError && <ErrorState message={list.error.message} onRetry={() => list.refetch()} />}
       {list.data?.length === 0 && (
