@@ -1,6 +1,6 @@
-import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
-import { adminHeaders, apiPost, createStudent, grantFree } from "./api";
+import { expect, test, type APIRequestContext } from "@playwright/test";
+import { adminHeaders, apiPost, createStudent, grantFree, requestParentLink } from "./api";
+import { shotName, violations } from "./axe";
 import { E2E_PREFIX, openAsTelegram } from "./telegram";
 
 /** Kurs, mavzu, bepul dars va bitta savol: ekranlar bo'sh bo'lmasin */
@@ -25,34 +25,44 @@ async function seed(request: APIRequestContext) {
     answer: { value: "-2" },
     isPublished: true,
   });
-  return { admin, lessonId: lesson.id };
-}
-
-/** WCAG 2 A/AA qoidabuzarliklari: qisqa ko'rinishda (qaysi qoida, qaysi element) */
-async function violations(page: Page) {
-  const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
-  return r.violations.flatMap((v) =>
-    v.nodes.map((n) => `${v.id}: ${n.target.join(" ")} ${n.failureSummary?.split("\n")[1] ?? ""}`),
-  );
+  return { admin, lessonId: lesson.id, topicId: topic.id };
 }
 
 for (const theme of ["light", "dark"] as const)
-  test(`T-071: o'quvchi ekranlari WCAG AA (${theme === "dark" ? "tungi" : "kunduzgi"} rejim)`, async ({
+  test(`T-071: o'quvchi va ota-ona ekranlari WCAG AA (${theme === "dark" ? "tungi" : "kunduzgi"} rejim)`, async ({
     page,
     request,
   }) => {
-    const { admin, lessonId } = await seed(request);
-    const s = await createStudent(request, { fullName: "Kontrast Tekshiruvchi", phone: "998901112311" });
+    test.setTimeout(180_000);
+    const { admin, lessonId, topicId } = await seed(request);
+    const phone = `99890${String(Date.now()).slice(-7)}`;
+    const s = await createStudent(request, { fullName: "Kontrast Tekshiruvchi", phone });
     await grantFree(request, admin, "Kontrast Tekshiruvchi");
+    const paths = [
+      "/",
+      "/lessons",
+      `/lessons/${lessonId}`,
+      `/topics/${topicId}/test`,
+      "/weekly",
+      "/mocks",
+      "/tutor",
+    ];
     const found: string[] = [];
-    for (const path of ["/", "/lessons", `/lessons/${lessonId}`, "/profile"]) {
+    for (const path of [...paths, "/billing", "/profile"]) {
       await openAsTelegram(page, { id: s.tg, first_name: "Kontrast" }, path, theme);
       await page.waitForLoadState("networkidle");
+      await page.screenshot({ path: `e2e/.results/a11y-${theme}-${shotName(path)}.png`, fullPage: true });
+      found.push(...(await violations(page, path)));
+    }
+    const parent = await requestParentLink(request, s.tg, phone);
+    for (const path of ["/", "/profile"]) {
+      await openAsTelegram(page, parent, path, theme);
+      await page.waitForLoadState("networkidle");
       await page.screenshot({
-        path: `e2e/.results/a11y-${theme}${path === "/" ? "-home" : path.replace(/\//g, "-")}.png`,
+        path: `e2e/.results/a11y-${theme}-parent-${shotName(path)}.png`,
         fullPage: true,
       });
-      found.push(...(await violations(page)).map((v) => `${path} ${v}`));
+      found.push(...(await violations(page, `ota-ona ${path}`)));
     }
     expect(found).toEqual([]);
   });
