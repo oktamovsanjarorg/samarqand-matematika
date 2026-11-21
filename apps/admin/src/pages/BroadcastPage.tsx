@@ -1,6 +1,7 @@
 import {
   BROADCAST_AUDIENCE_LABELS,
   BROADCAST_AUDIENCES,
+  UNLINKED_REMINDER_TEXT,
   type BroadcastAudience,
   type BroadcastResult,
 } from "@samarqand/shared";
@@ -110,11 +111,23 @@ function useSend(text: string, target: Target & { appButton: boolean }, onDone: 
 }
 
 /** Ustozdan eʼlon (T-116): qabul qilingan o'quvchilar va tasdiqlangan ota-onalarga bot xabari */
-export function BroadcastPage() {
-  const [text, setText] = useState("");
-  // T-119: guruh sahifasidan kelinsa shu guruh tanlangan bo'ladi
+/**
+ * Boshlang'ich holat manzildan. T-119: guruh sahifasidan kelinsa shu guruh tanlangan.
+ * T-137: bosh sahifadan ?audience=unlinked bilan kelinsa tayyor eslatma matni qo'yiladi
+ */
+function useInitial(): { text: string; target: Target } {
   const [params] = useSearchParams();
-  const [target, setTarget] = useState<Target>({ audience: "all", groupId: params.get("group") ?? "" });
+  const unlinked = params.get("audience") === "unlinked";
+  return {
+    text: unlinked ? UNLINKED_REMINDER_TEXT : "",
+    target: { audience: unlinked ? "unlinked" : "all", groupId: params.get("group") ?? "" },
+  };
+}
+
+export function BroadcastPage() {
+  const initial = useInitial();
+  const [text, setText] = useState(initial.text);
+  const [target, setTarget] = useState<Target>(initial.target);
   const count = useRecipients(target);
   const n = count.data?.recipients ?? 0;
   const [appButton, setAppButton] = useState(true);

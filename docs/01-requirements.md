@@ -51,13 +51,13 @@
 
 ## Guruhlar, davomat, ota-ona (FR-G)
 
-| ID     | Talab                                                                                                                               | BR          | T                   | Holat |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------- | ----- |
-| FR-G01 | Offline guruhlar va a'zolar                                                                                                         | BR-G01      | T-054               | ✅    |
-| FR-G02 | Davomat; kelmagan yoki kechikkanda ota-onaga xabar, tuzatish xabari; oylik jadval va Excel                                          | BR-G02, G03 | T-055, T-108        | ✅    |
-| FR-G03 | Ota-ona kabineti: farzandlar, davomat, natijalar (mavzu, haftalik, mock, offline), takrorlash kerak mavzular                        | BR-PA01     | T-069, T-073, T-114 | ✅    |
-| FR-G04 | Ota-onaga hisobot: haftalik va mock natijasi                                                                                        |             | T-035, T-082        | ✅    |
-| FR-G05 | Ustozdan eʼlon: qabul qilingan o'quvchilar va tasdiqlangan ota-onalarga (guruh bo'yicha), oldindan soni bilan; yuborilganlar tarixi |             | T-116, T-117        | ✅    |
+| ID     | Talab                                                                                                                                                                          | BR          | T                   | Holat |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- | ------------------- | ----- |
+| FR-G01 | Offline guruhlar va a'zolar                                                                                                                                                    | BR-G01      | T-054               | ✅    |
+| FR-G02 | Davomat; kelmagan yoki kechikkanda ota-onaga xabar, tuzatish xabari; oylik jadval va Excel                                                                                     | BR-G02, G03 | T-055, T-108        | ✅    |
+| FR-G03 | Ota-ona kabineti: farzandlar, davomat, natijalar (mavzu, haftalik, mock, offline), takrorlash kerak mavzular                                                                   | BR-PA01     | T-069, T-073, T-114 | ✅    |
+| FR-G04 | Ota-onaga hisobot: haftalik va mock natijasi                                                                                                                                   |             | T-035, T-082        | ✅    |
+| FR-G05 | Ustozdan eʼlon: qabul qilingan o'quvchilar va tasdiqlangan ota-onalarga (guruh bo'yicha), oldindan soni bilan; yuborilganlar tarixi; ota-onasi ulanmaganlarga eslatma (BR-A04) |             | T-116, T-117, T-137 | ✅    |
 
 ## To'lov (FR-B)
 

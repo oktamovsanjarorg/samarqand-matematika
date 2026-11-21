@@ -94,6 +94,37 @@ describe("ustozdan eʼlon (T-116)", () => {
     expect(f.buttonsTo(s.telegramId).at(-1)).toBeUndefined();
   });
 
+  it("T-137: unlinked faqat tasdiqlangan ota-onasi yo'q o'quvchilarga, ota-onalarga emas", async () => {
+    const g = (await f.prisma.group.create({ data: { name: "Ulanmagan guruhi" } })).id;
+    const inGroup = async () => {
+      const s = await f.student();
+      await f.prisma.studentProfile.update({
+        where: { userId: s.id },
+        data: { groupId: g, acceptedAt: new Date() },
+      });
+      return s;
+    };
+    try {
+      const [linked, pendingOnly, alone] = [await inGroup(), await inGroup(), await inGroup()];
+      const pa = await parentOf(linked, "APPROVED");
+      await parentOf(pendingOnly, "PENDING");
+      const res = await send({
+        text: "Ota-onangizni ulang",
+        audience: "unlinked",
+        groupId: g,
+        dryRun: false,
+      });
+      expect(res.json()).toEqual({ recipients: 2, sent: 2 });
+      expect(f.messagesTo(pendingOnly.telegramId)).toHaveLength(1);
+      expect(f.messagesTo(alone.telegramId)).toHaveLength(1);
+      for (const u of [linked, pa]) expect(f.messagesTo(u.telegramId)).toEqual([]);
+    } finally {
+      await f.prisma.auditLog.deleteMany({ where: { action: "broadcast.send", entityId: g } });
+      await f.prisma.studentProfile.updateMany({ where: { groupId: g }, data: { groupId: null } });
+      await f.prisma.group.delete({ where: { id: g } });
+    }
+  });
+
   it("bo'sh matn 400, yo'q guruh 404, yordamchi va o'quvchiga 403, tokensiz 401", async () => {
     const ok = { text: "Salom", audience: "students", groupId: null, dryRun: true };
     expect((await send({ ...ok, text: "  " })).statusCode).toBe(400);

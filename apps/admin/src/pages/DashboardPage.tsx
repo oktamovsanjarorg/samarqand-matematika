@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { AttentionList } from "../components/dashboard/AttentionList";
 import { ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { useDashboard } from "../lib/dashboard";
+import { loadSession } from "../lib/session";
 
 interface Todo {
   to: string;
@@ -90,17 +91,23 @@ function TodoCard({ t }: { t: Todo }) {
   );
 }
 
-function Stat({ value, label }: { value: string | number; label: string }) {
+function Stat(p: { value: string | number; label: string; link?: { to: string; text: string } }) {
   return (
     <div className="card">
-      <p className="text-2xl font-extrabold tabular-nums text-brand">{value}</p>
-      <p className="text-sm text-hint">{label}</p>
+      <p className="text-2xl font-extrabold tabular-nums text-brand">{p.value}</p>
+      <p className="text-sm text-hint">{p.label}</p>
+      {p.link && (
+        <Link to={p.link.to} className="mt-1 inline-block text-sm font-semibold text-link">
+          {p.link.text}
+        </Link>
+      )}
     </div>
   );
 }
 
 /** Muvaffaqiyat o'lchovlari (T-105): haftalik testda qatnashish va ota-onalar ulanganligi */
 function Metrics({ s }: { s: AdminDashboard["stats"] }) {
+  const teacher = loadSession()?.user.role === "TEACHER";
   return (
     <>
       {s.lastWeekly ? (
@@ -111,7 +118,16 @@ function Metrics({ s }: { s: AdminDashboard["stats"] }) {
       ) : (
         <Stat value="–" label="Yopilgan haftalik test hali yoʻq" />
       )}
-      <Stat value={`${s.parentsLinked}/${s.students}`} label="Ota-onasi ulangan oʻquvchilar" />
+      <Stat
+        value={`${s.parentsLinked}/${s.students}`}
+        label="Ota-onasi ulangan oʻquvchilar"
+        // T-137: eslatma e'loni faqat ustozga (yordamchida e'lon sahifasi yo'q)
+        link={
+          teacher && s.parentsLinked < s.students
+            ? { to: "/broadcast?audience=unlinked", text: "Ulanmaganlarga eslatma" }
+            : undefined
+        }
+      />
       {/* T-133: kuchsiz mavzuni qayta ishlaganda o'sish (00-vision) */}
       <Stat
         value={s.retries.count ? `${Math.round((s.retries.improved / s.retries.count) * 100)}%` : "–"}
