@@ -21,10 +21,14 @@ test("T-116: ustoz guruhga eʼlon yozadi, kimga borishini koʻradi va tasdiqlab 
   await apiPost(request, `/admin/groups/${g.id}/students`, admin, { userIds: [s?.id] });
 
   await loginAdmin(page, request);
-  await adminNav(page, "Eʼlon yuborish");
+  // T-119: guruh sahifasidan "Guruhga eʼlon": guruh oldindan tanlangan
+  await adminNav(page, "Guruhlar");
+  await page.getByRole("link", { name: `${E2E_PREFIX}Eʼlon ${stamp}` }).click();
+  await page.screenshot({ path: "e2e/.results/admin-group-broadcast-link.png" });
+  await page.getByRole("link", { name: "Guruhga eʼlon" }).click();
+  await expect(page.getByLabel("Guruh", { exact: true })).toHaveValue(g.id);
   await page.getByLabel("Eʼlon matni").fill("Ertaga dars soat 15:00 da");
   await page.getByLabel("Kimga").selectOption("students");
-  await page.getByLabel("Guruh").selectOption(g.id);
   await expect(page.getByTestId("broadcast-count")).toContainText("1 kishiga boradi");
   await page.getByRole("button", { name: "Yuborish" }).click();
   await expect(page.getByText("1 kishiga yuboriladi. Qaytarib boʻlmaydi.")).toBeVisible();
