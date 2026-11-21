@@ -150,3 +150,4 @@
 | T-109 | To'lovlar sahifasida oylik tushum (faqat ustozga): tasdiqlangan cheklar soni va summasi, tariflar bo'yicha, Excel'ga yuklab olish                                           | ✅    |
 | T-110 | O'quvchilar ro'yxatida "To'lamagan" filtri (qabul qilingan, AUTO, faol obunasiz), qatorda va Excel'da obuna muddati                                                         | ✅    |
 | T-111 | O'quvchi kartasida yopilgan haftalik testlar (ball, o'rin, topshirmagani) va oxirgi cheklar (holat, rad sababi); haftalik tarix ota-ona xulosasi bilan umumiy funksiyada    | ✅    |
+| T-112 | O'quvchi kartasida oynasi yopilgan mock'lar: shkala balli, daraja, Rasch bo'lmasa "taxminiy" (BR-M05)                                                                       | ✅    |

@@ -65,3 +65,27 @@ export function PaymentsSection({ c }: { c: AdminStudentCard }) {
     </section>
   );
 }
+
+/** Yopilgan mock'lar: shkala balli va daraja; kam qatnashchida "taxminiy" (T-112, BR-M05) */
+export function MocksSection({ c }: { c: AdminStudentCard }) {
+  if (!c.mocks.length) return null;
+  return (
+    <section className="card space-y-2" data-testid="card-mocks">
+      <h2 className="font-bold">Mock imtihonlar</h2>
+      <ul className="divide-y divide-hint/10 text-sm">
+        {c.mocks.map((m) => (
+          <li key={m.id} className="flex items-center gap-2 py-1.5">
+            <Link to={`/mocks/${m.id}`} className="min-w-0 flex-1 truncate font-semibold text-link">
+              {m.title}
+            </Link>
+            <span className="font-bold tabular-nums">
+              {m.scaled}/{m.scaleMax}
+            </span>
+            {m.grade && <Badge tone="brand">{m.grade}</Badge>}
+            {m.approx && <span className="text-xs text-hint">taxminiy</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}

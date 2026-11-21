@@ -5,6 +5,7 @@ import { AccessService } from "../access/access.service";
 import { MY_PAYMENT_SELECT, toMyPayment } from "../billing/payments.service";
 import { AttentionService } from "../insights/attention.service";
 import { StudentInsightsService } from "../insights/student-insights.service";
+import { mockHistory } from "../mock/mock-history";
 import { MyOfflineService } from "../offline/my-offline.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { StatsService } from "../topic-tests/stats.service";
@@ -38,22 +39,24 @@ export class StudentCardService {
   async get(id: string): Promise<AdminStudentCard> {
     const student = await this.students.get(id);
     const now = new Date();
-    const [facts, reasons, recs, stats, school, offline, paidUntil, weekly, payments] = await Promise.all([
-      this.access.facts(id),
-      this.attention.forStudent(id),
-      this.insights.recommendations(id),
-      this.stats.my(id),
-      this.school.get(id),
-      this.offline.list(id),
-      this.paidUntil(id),
-      weeklyHistory(this.prisma, id, new Date(student.createdAt), { now, take: 8 }),
-      this.prisma.payment.findMany({
-        where: { userId: id },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-        select: MY_PAYMENT_SELECT,
-      }),
-    ]);
+    const [facts, reasons, recs, stats, school, offline, paidUntil, weekly, payments, mocks] =
+      await Promise.all([
+        this.access.facts(id),
+        this.attention.forStudent(id),
+        this.insights.recommendations(id),
+        this.stats.my(id),
+        this.school.get(id),
+        this.offline.list(id),
+        this.paidUntil(id),
+        weeklyHistory(this.prisma, id, new Date(student.createdAt), { now, take: 8 }),
+        this.prisma.payment.findMany({
+          where: { userId: id },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+          select: MY_PAYMENT_SELECT,
+        }),
+        mockHistory(this.prisma, id, { now, take: 6 }),
+      ]);
     return {
       student,
       access: {
@@ -71,6 +74,7 @@ export class StudentCardService {
       offline,
       weekly,
       payments: payments.map(toMyPayment),
+      mocks,
     };
   }
 }

@@ -1,4 +1,10 @@
-import type { AdminMockResults, MockOpen, MockResult, StudentMockRow } from "@samarqand/shared";
+import type {
+  AdminMockResults,
+  AdminStudentCard,
+  MockOpen,
+  MockResult,
+  StudentMockRow,
+} from "@samarqand/shared";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { MockScheduler } from "../src/mock/mock-scheduler";
 import { testAi } from "./helpers";
@@ -225,5 +231,32 @@ describe("Mock urinishi (T-051b)", () => {
     await f.app.get(MockScheduler).close(new Date());
     const closed = (await f.call("GET", url, f.teacher)).json() as AdminMockResults;
     expect(closed).toMatchObject({ method: "APPROX", submitted: 2 });
+  });
+});
+
+describe("O'quvchi kartasida mock (T-112)", () => {
+  it("faqat oynasi yopilgan mock: shkala balli (Rasch bo'lmasa taxminiy), daraja; ochig'i ko'rinmaydi", async () => {
+    const s = await f.student();
+    const closed = await mock();
+    const open = await mock();
+    await f.prisma.mockAttempt.createMany({
+      data: [closed.id, open.id].map((mockTestId) => ({
+        mockTestId,
+        userId: s.id,
+        deadline: new Date(),
+        submittedAt: new Date(),
+        raw: 1.5,
+      })),
+    });
+    await f.prisma.mockTest.update({
+      where: { id: closed.id },
+      data: { opensAt: new Date(Date.now() - 2 * f.HOUR), closesAt: new Date(Date.now() - 1000) },
+    });
+
+    const card = (await f.call("GET", `/admin/students/${s.id}`, f.teacher)).json() as AdminStudentCard;
+    // 1.5 / 4.5 xom ball → 75 lik shkalada 25, daraja C (≥ 20)
+    expect(card.mocks).toEqual([
+      expect.objectContaining({ id: closed.id, scaled: 25, scaleMax: 75, grade: "C", approx: true }),
+    ]);
   });
 });
