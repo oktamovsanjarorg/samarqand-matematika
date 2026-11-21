@@ -100,7 +100,8 @@ export class AdminStudentsService {
     return this.get(id);
   }
 
-  private async get(id: string): Promise<AdminStudentRow> {
+  async get(id: string): Promise<AdminStudentRow> {
+    await this.mustStudent(id);
     return toRow(await this.prisma.user.findUniqueOrThrow({ where: { id }, select: SELECT }));
   }
 

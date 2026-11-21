@@ -2,6 +2,7 @@ import type { AttentionCode, AttentionRow } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarX, Moon, Phone, TrendingDown, FileWarning, type LucideIcon } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 
 const ICON: Record<AttentionCode, LucideIcon> = {
@@ -16,7 +17,9 @@ function Row({ r }: { r: AttentionRow }) {
   return (
     <li className="space-y-1 py-3" data-testid="attention-row">
       <div className="flex flex-wrap items-baseline gap-x-2">
-        <p className="font-bold">{r.name}</p>
+        <Link to={`/students/${r.userId}`} className="font-bold text-link hover:underline">
+          {r.name}
+        </Link>
         {r.groupName && <span className="text-xs text-hint">{r.groupName}</span>}
         {r.phone && (
           <a

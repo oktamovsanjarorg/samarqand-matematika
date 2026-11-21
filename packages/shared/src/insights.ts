@@ -1,3 +1,6 @@
+import type { StudentOfflineResult } from "./offline";
+import type { AdminStudentRow, MyProfile, MySchool } from "./profile";
+import type { MyStats } from "./stats";
 /** Tavsiyalar (5-bosqich): faqat faktlardan, AI'siz (BR-R01) */
 export type InsightSource = "topic" | "weekly" | "mock";
 
@@ -46,3 +49,14 @@ export const INACTIVE_DAYS = 7;
 export const DROP_POINTS = 20;
 export const ABSENT_WINDOW_DAYS = 14;
 export const ABSENT_MIN = 2;
+
+/** Admin: bitta o'quvchining to'liq kartasi (T-068) */
+export interface AdminStudentCard {
+  student: AdminStudentRow;
+  access: MyProfile["access"];
+  reasons: AttentionReason[];
+  weak: TopicRecommendation[];
+  stats: MyStats;
+  school: MySchool;
+  offline: StudentOfflineResult[];
+}
