@@ -17,6 +17,7 @@ const PAGES = [
   "tutor",
   "settings",
   "audit",
+  "trash",
 ];
 
 test("T-072: admin bo'limlari WCAG AA", async ({ page, request }) => {

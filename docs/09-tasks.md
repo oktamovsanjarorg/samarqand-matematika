@@ -137,3 +137,4 @@
 | T-096 | Savollar bankida qidiruv: matn yoki teg bo'yicha, barcha kurslarda; haftalik va mock savol tanlagichida                                                                     | ✅    |
 | T-097 | Kontent sahifasida savolni qidirib tahrirga o'tish (matn yoki teg, nashrda emas belgisi)                                                                                    | ✅    |
 | T-098 | Mockdan nusxa olish: shablon va savollar ko'chadi, oyna keyingi haftaga suriladi, shablonni qayta tanlash mumkin                                                            | ✅    |
+| T-099 | Axlat qutisi (FR-U05, BR-C06): o'chirilgan kurs, mavzu, dars va savol 30 kun tiklanadi                                                                                      | ✅    |

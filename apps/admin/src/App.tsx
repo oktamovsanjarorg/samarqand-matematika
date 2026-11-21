@@ -5,6 +5,7 @@ import { AdminLayout } from "./components/AdminLayout";
 import { setUnauthorizedHandler } from "./lib/api";
 import { clearSession, loadSession } from "./lib/session";
 import { AuditPage } from "./pages/AuditPage";
+import { TrashPage } from "./pages/TrashPage";
 import { ContentPage } from "./pages/ContentPage";
 import { LessonEditorPage } from "./pages/LessonEditorPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -62,6 +63,7 @@ export function App() {
               <Route path="payments" element={<PaymentsPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="audit" element={<AuditPage />} />
+              <Route path="trash" element={<TrashPage />} />
               <Route path="weekly" element={<WeeklyListPage />} />
               <Route path="weekly/new" element={<WeeklyEditPage />} />
               <Route path="weekly/:id" element={<WeeklyEditPage />} />

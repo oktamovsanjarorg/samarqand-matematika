@@ -2,6 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from "@nestjs/common
 import { ERROR_CODES, type AdminCourseTree, type CourseInput, type TopicInput } from "@samarqand/shared";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
+import { TrashService } from "../trash/trash.service";
 
 const notEmpty = (what: string) =>
   new ConflictException({
@@ -15,6 +16,7 @@ export class AdminCoursesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly trash: TrashService,
   ) {}
 
   /** Butun daraxt: kurslar → mavzular → darslar (matnsiz) */
@@ -63,9 +65,14 @@ export class AdminCoursesService {
   }
 
   async deleteCourse(actorId: string, id: string) {
-    await this.mustCourse(id);
+    const row = await this.prisma.course.findUnique({ where: { id } });
+    if (!row) throw new NotFoundException("Kurs topilmadi");
     if (await this.prisma.topic.count({ where: { courseId: id } })) throw notEmpty("Kurs");
-    await this.prisma.course.delete({ where: { id } });
+    // T-099: nusxa axlat qutisiga, o'chirish bilan bitta tranzaksiyada
+    await this.prisma.$transaction([
+      this.trash.record(actorId, "Course", row),
+      this.prisma.course.delete({ where: { id } }),
+    ]);
     await this.audit.log({ actorId, action: "course.delete", entity: "Course", entityId: id });
   }
 
@@ -85,13 +92,17 @@ export class AdminCoursesService {
   }
 
   async deleteTopic(actorId: string, id: string) {
-    await this.mustTopic(id);
+    const row = await this.prisma.topic.findUnique({ where: { id } });
+    if (!row) throw new NotFoundException("Mavzu topilmadi");
     const [lessons, questions] = await Promise.all([
       this.prisma.lesson.count({ where: { topicId: id } }),
       this.prisma.question.count({ where: { topicId: id } }),
     ]);
     if (lessons + questions) throw notEmpty("Mavzu");
-    await this.prisma.topic.delete({ where: { id } });
+    await this.prisma.$transaction([
+      this.trash.record(actorId, "Topic", row),
+      this.prisma.topic.delete({ where: { id } }),
+    ]);
     await this.audit.log({ actorId, action: "topic.delete", entity: "Topic", entityId: id });
   }
 

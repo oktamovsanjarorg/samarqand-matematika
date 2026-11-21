@@ -21,6 +21,7 @@ import { NotifyModule } from "./notify/notify.module";
 import { HealthController } from "./health/health.controller";
 import { PrismaModule } from "./prisma/prisma.module";
 import { StaffModule } from "./staff/staff.module";
+import { TrashModule } from "./trash/trash.module";
 import { UsersModule } from "./users/users.module";
 
 @Global()
@@ -40,6 +41,7 @@ export class AppModule {
         EnvModule.forRoot(env),
         PrismaModule,
         AuditModule,
+        TrashModule,
         AccessModule,
         UsersModule,
         AuthModule,

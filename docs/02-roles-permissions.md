@@ -22,6 +22,7 @@ O'quvchining pullik kontentga kirishi rol bilan emas, BR-A04 shartlari bilan bel
 | ---------------------------------------------------------------------------------------------- | :-----: | :-------: | :-----: | :----: |
 | `admin/courses`, `topics`, `lessons`, `reorder` (kontent)                                      |   ✅    |    ✅     |    —    |   —    |
 | `admin/topics/:id/questions`, `admin/questions` (savollar)                                     |   ✅    |    ✅     |    —    |   —    |
+| `admin/trash` (axlat qutisi, tiklash)                                                          |   ✅    |    ✅     |    —    |   —    |
 | `admin/students` (ro'yxat, karta, qabul, kirish rejimi)                                        |   ✅    |    ✅     |    —    |   —    |
 | `admin/parent-links` (ota-ona so'rovlari)                                                      |   ✅    |    ✅     |    —    |   —    |
 | `admin/payments` (cheklar, tasdiq, rad)                                                        |   ✅    |    ✅     |    —    |   —    |

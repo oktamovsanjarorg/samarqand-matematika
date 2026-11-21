@@ -9,6 +9,7 @@ import {
   FileSpreadsheet,
   History,
   Settings,
+  Trash2,
   UserRound,
   Users,
   UsersRound,
@@ -37,6 +38,8 @@ export function navGroups(role: RoleName): NavGroup[] {
         { to: "/weekly", label: "Haftalik", Icon: CalendarCheck },
         { to: "/mocks", label: "Mock", Icon: ClipboardList },
         { to: "/offline", label: "Offline", Icon: FileSpreadsheet },
+        // T-099: o'chirilgan kontentni tiklash
+        { to: "/trash", label: "Axlat qutisi", Icon: Trash2 },
       ],
     },
     {

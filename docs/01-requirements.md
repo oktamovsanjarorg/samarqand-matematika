@@ -74,7 +74,7 @@
 | FR-U02 | "E'tibor kerak" o'quvchilar faktli sabab bilan; o'quvchi kartasi                | BR-R02 | T-063, T-068 | ✅    |
 | FR-U03 | O'quvchiga faktli tavsiya: kuchsiz mavzular, dars va testga havola              | BR-R01 | T-062        | ✅    |
 | FR-U04 | Audit jurnali: kim, qachon, nimani o'zgartirdi (bo'lim va xodim bo'yicha filtr) | BR-C04 | T-075        | ✅    |
-| FR-U05 | Axlat qutisi: o'chirilganni qaytarish                                           |        |              | ⬜    |
+| FR-U05 | Axlat qutisi: o'chirilgan kurs, mavzu, dars va savolni 30 kun ichida qaytarish  | BR-C06 | T-099        | ✅    |
 
 ## Nofunksional (NFR)
 
