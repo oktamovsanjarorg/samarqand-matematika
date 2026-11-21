@@ -3,3 +3,4 @@ export * from "./numeric";
 export * from "./segments";
 export * from "./render";
 export * from "./rasch";
+export * from "./expression";

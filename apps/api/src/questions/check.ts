@@ -1,4 +1,4 @@
-import { numbersEqual } from "@samarqand/math";
+import { expressionsEqual, numbersEqual } from "@samarqand/math";
 import { responseSchemas, type CheckResult, type QuestionInput } from "@samarqand/shared";
 
 type Of<T extends QuestionInput["type"]> = Extract<QuestionInput, { type: T }>;
@@ -24,6 +24,15 @@ function numeric(q: Of<"NUMERIC">, raw: unknown) {
   return verdict(r.success && numbersEqual(r.data.value, q.answer.value, q.answer.tolerance));
 }
 
+/** Ifoda: tasodifiy nuqtalarda ekvivalentlik (T-074). O'qilmasa yoki ustoz "qo'lda" desa MANUAL (BR-Q03) */
+function expression(q: Of<"EXPRESSION">, raw: unknown): CheckResult {
+  const r = responseSchemas.EXPRESSION.safeParse(raw);
+  if (!r.success) return "WRONG";
+  if (q.answer.manual) return "MANUAL";
+  const eq = expressionsEqual(r.data.value, q.answer.value);
+  return eq === null ? "MANUAL" : verdict(eq);
+}
+
 /** Moslashtirish: barcha juftlar to'g'ri bo'lsagina to'g'ri (BR-M03) */
 function matching(q: Of<"MATCHING">, raw: unknown) {
   const r = responseSchemas.MATCHING.safeParse(raw);
@@ -35,7 +44,7 @@ function matching(q: Of<"MATCHING">, raw: unknown) {
 
 /**
  * O'quvchi javobini avtomatik tekshiradi. Noto'g'ri shakldagi javob WRONG.
- * EXPRESSION hozircha MANUAL: ifoda ekvivalentligi alohida vazifada (T-022b, ADR-0003). WRITTEN doim MANUAL.
+ * EXPRESSION ekvivalentlik bo'yicha (T-074, ADR-0003), o'qilmasa MANUAL. WRITTEN doim MANUAL.
  */
 export function checkAnswer(q: QuestionInput, raw: unknown): CheckResult {
   switch (q.type) {
@@ -47,6 +56,8 @@ export function checkAnswer(q: QuestionInput, raw: unknown): CheckResult {
       return numeric(q, raw);
     case "MATCHING":
       return matching(q, raw);
+    case "EXPRESSION":
+      return expression(q, raw);
     default:
       return "MANUAL";
   }

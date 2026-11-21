@@ -1,3 +1,4 @@
+import { parseExpression } from "@samarqand/math";
 import type { QuestionInput } from "@samarqand/shared";
 import { MatchingEditor } from "./MatchingEditor";
 import { OptionsEditor } from "./OptionsEditor";
@@ -5,6 +6,48 @@ import { OptionsEditor } from "./OptionsEditor";
 const field = "min-h-11 w-full rounded-xl border border-hint/25 bg-section px-3 text-sm";
 
 type Numeric = Extract<QuestionInput, { type: "NUMERIC" }>;
+type Expression = Extract<QuestionInput, { type: "EXPRESSION" }>;
+
+/** Ifoda: brauzerda o'qilishi darhol ko'rinadi; shakl muhim bo'lsa ustoz o'zi tekshiradi (T-074) */
+function ExpressionFields({ q, onChange }: { q: Expression; onChange: (q: QuestionInput) => void }) {
+  const manual = q.answer.manual === true;
+  const ok = !q.answer.value.trim() || parseExpression(q.answer.value) !== null;
+  return (
+    <div className="space-y-2">
+      <label className="block space-y-1">
+        <span className="text-xs font-semibold text-hint">
+          {"Toʻgʻri ifoda (2(x+1), x^2-1, \\frac{x}{2})"}
+        </span>
+        <input
+          value={q.answer.value}
+          onChange={(e) => onChange({ ...q, answer: { ...q.answer, value: e.target.value } })}
+          aria-label="Toʻgʻri ifoda"
+          className={field}
+        />
+      </label>
+      {!manual && (
+        <p className={`text-xs ${ok ? "text-hint" : "text-danger"}`} data-testid="expression-status">
+          {ok
+            ? "Teng ifodalar toʻgʻri hisoblanadi: 2(x+1) va 2x+2 bir xil"
+            : "Ifoda oʻqilmadi: tekshirib boʻlmaydi"}
+        </p>
+      )}
+      <label className="flex min-h-11 items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          checked={manual}
+          onChange={(e) =>
+            onChange({
+              ...q,
+              answer: { value: q.answer.value, ...(e.target.checked ? { manual: true } : {}) },
+            })
+          }
+        />
+        Ustoz tekshiradi (shakl muhim: masalan koʻpaytuvchilarga ajratish)
+      </label>
+    </div>
+  );
+}
 
 function NumericFields({ q, onChange }: { q: Numeric; onChange: (q: QuestionInput) => void }) {
   return (
@@ -61,17 +104,7 @@ export function AnswerEditor({ q, onChange }: { q: QuestionInput; onChange: (q: 
     case "NUMERIC":
       return <NumericFields q={q} onChange={onChange} />;
     case "EXPRESSION":
-      return (
-        <label className="block space-y-1">
-          <span className="text-xs font-semibold text-hint">Toʻgʻri ifoda (hozircha ustoz tekshiradi)</span>
-          <input
-            value={q.answer.value}
-            onChange={(e) => onChange({ ...q, answer: { value: e.target.value } })}
-            aria-label="Toʻgʻri ifoda"
-            className={field}
-          />
-        </label>
-      );
+      return <ExpressionFields q={q} onChange={onChange} />;
     case "MATCHING":
       return (
         <MatchingEditor

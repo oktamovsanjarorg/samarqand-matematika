@@ -1,0 +1,44 @@
+import { expect, test } from "@playwright/test";
+import { adminHeaders, apiPost, createStudent, grantFree, loginAdmin } from "./api";
+import { E2E_PREFIX, openAsTelegram } from "./telegram";
+
+test("T-074, BR-Q03: ustoz ifoda savolini qo'shadi, o'quvchining teng ifodasi to'g'ri hisoblanadi", async ({
+  page,
+  request,
+}) => {
+  const admin = await adminHeaders(request);
+  const title = `${E2E_PREFIX}Ifoda ${Date.now()}`;
+  const course = await apiPost<{ id: string }>(request, "/admin/courses", admin, {
+    title,
+    isPublished: true,
+  });
+  const topic = await apiPost<{ id: string }>(request, `/admin/courses/${course.id}/topics`, admin, {
+    title: "Qisqa koʻpaytirish",
+  });
+
+  await loginAdmin(page, request, `content/topics/${topic.id}/questions/new`);
+  await page.getByLabel("Savol turi").selectOption("EXPRESSION");
+  await page.getByLabel("Savol matni").fill("Qavslarni oching: $(x-1)(x+1)$");
+  await page.getByLabel("Toʻgʻri ifoda").fill("x^2 = 1");
+  await expect(page.getByTestId("expression-status")).toHaveText("Ifoda oʻqilmadi: tekshirib boʻlmaydi");
+  await page.getByLabel("Toʻgʻri ifoda").fill("x^2-1");
+  await expect(page.getByTestId("expression-status")).toContainText("2(x+1) va 2x+2 bir xil");
+  await page.getByText("Nashr qilingan (testga tushadi)").click();
+  await page.screenshot({ path: "e2e/.results/admin-question-expression.png", fullPage: true });
+  await page.getByRole("button", { name: "Saqlash" }).click();
+  await expect(page.getByTestId("question")).toHaveCount(1);
+
+  const s = await createStudent(request, { fullName: "Ifoda Yozuvchi", phone: "998901112321" });
+  await grantFree(request, admin, "Ifoda Yozuvchi");
+  await openAsTelegram(page, { id: s.tg, first_name: "Ifoda" }, `/topics/${topic.id}/test`);
+  await expect(page.getByLabel("Javob", { exact: true })).toHaveAttribute(
+    "placeholder",
+    "Masalan: 2(x+1) yoki x^2-1",
+  );
+  await page.getByLabel("Javob", { exact: true }).fill("x² − 1");
+  await page.getByRole("button", { name: "Yakunlash" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Topshirish" }).click();
+  await expect(page.getByTestId("score")).toContainText("1/1");
+  await expect(page.getByTestId("score")).not.toContainText("Ustoz tekshiradi");
+  await page.screenshot({ path: "e2e/.results/miniapp-expression-result.png", fullPage: true });
+});

@@ -127,7 +127,7 @@ export function AnswerInput(props: Props) {
           value={get<string>(value, "value") ?? ""}
           onChange={(e) => onChange({ value: e.target.value }, false)}
           aria-label="Javob"
-          placeholder={q.type === "NUMERIC" ? "Masalan: 3/4 yoki 0,75" : "Ifodani yozing"}
+          placeholder={q.type === "NUMERIC" ? "Masalan: 3/4 yoki 0,75" : "Masalan: 2(x+1) yoki x^2-1"}
           autoComplete="off"
           className={`${field} h-12`}
         />
