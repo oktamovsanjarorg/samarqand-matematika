@@ -1,4 +1,4 @@
-import type { MyProfile, MySchool, MyStats } from "@samarqand/shared";
+import type { Mistake, MyProfile, MySchool, MyStats } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../store/auth";
 import { api } from "./api";
@@ -18,6 +18,17 @@ export function useStats() {
 }
 
 /** Guruh, ota-ona holati, davomat: faqat o'quvchida (T-065) */
+/** Xatolarim (T-079): test topshirilgach yangilanadi */
+export function useMistakes() {
+  const isStudent = useAuth((s) => s.user?.role === "STUDENT");
+  return useQuery({
+    queryKey: ["mistakes"],
+    queryFn: () => api<Mistake[]>("/me/mistakes"),
+    enabled: isStudent,
+    staleTime: 0,
+  });
+}
+
 export function useSchool() {
   const isStudent = useAuth((s) => s.user?.role === "STUDENT");
   return useQuery({ queryKey: ["school"], queryFn: () => api<MySchool>("/me/school"), enabled: isStudent });
