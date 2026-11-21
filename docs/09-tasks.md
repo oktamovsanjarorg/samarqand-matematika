@@ -130,3 +130,4 @@
 | T-089 | Haftalik testdan nusxa olish: savollar ko'chadi, oyna keyingi haftaga suriladi, nomdagi raqam oshadi, nashrsiz saqlanadi                                                    | ✅    |
 | T-090 | Obuna tugashi eslatmasi: 3 kun qolganda o'quvchi va ota-onaga, tugaganda o'quvchiga (BR-B06)                                                                                | ✅    |
 | T-091 | Yangi dars haqida o'quvchilarga xabar: dars sahifasidagi tugma, bir marta, kirish bo'yicha qabul qiluvchilar (BR-C05)                                                       | ✅    |
+| T-092 | `NOTIFY_TRANSPORT=off`: brauzer testlarida bot xabarlari Telegram'ga chiqmaydi (tasodifiy test ID'lari haqiqiy foydalanuvchiga to'g'ri kelmasin)                            | ✅    |

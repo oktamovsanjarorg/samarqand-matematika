@@ -11,6 +11,9 @@ export interface TelegramTransport {
 }
 export const TELEGRAM_TRANSPORT = Symbol("TELEGRAM_TRANSPORT");
 
+/** Hech narsa yubormaydi (NOTIFY_TRANSPORT=off, T-092). Xabar mazmuni logga yozilmaydi */
+export const silentTransport: TelegramTransport = { send: () => Promise.resolve(false) };
+
 /** Bot API orqali yuboradi. Token URL ichida: xato logiga URL yozilmaydi, faqat holat kodi */
 export function botApiTransport(botToken: string, fetchFn: typeof fetch = fetch): TelegramTransport {
   const log = new Logger("Telegram");

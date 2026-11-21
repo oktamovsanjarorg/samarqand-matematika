@@ -31,6 +31,9 @@ const base = z.object({
   MEDIA_DIR: z.string().min(1).default("./media"),
   // Haftalik test rejalashtiruvchisi (eslatma va yopish) necha soniyada bir ishlaydi; 0 — o'chiq (testlarda)
   WEEKLY_TICK_SEC: z.coerce.number().int().min(0).default(60),
+  // Bot xabarlari (T-092): off — Telegram'ga hech narsa yuborilmaydi (brauzer testlari: ularning
+  // tasodifiy Telegram ID'lari haqiqiy foydalanuvchiga to'g'ri kelib qolmasin)
+  NOTIFY_TRANSPORT: z.enum(["telegram", "off"]).default("telegram"),
   // Yechim tekshiruvi (ADR-0004): off — AI'siz, hamma savol ustoz navbatiga
   AI_PROVIDER: z.enum(["off", "claude"]).default("off"),
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
