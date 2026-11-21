@@ -81,6 +81,10 @@ export const weeklyOpenText = (title: string, closesAt: Date) =>
 export const mockOpenText = (title: string, closesAt: Date) =>
   `🎓 Mock imtihon ochildi: <b>${esc(title)}</b>.\n<b>${uzDateTime(closesAt)}</b> gacha bir marta topshirasiz. Vaqt boshlagan paytingizdan hisoblanadi.`;
 
+/** O'quvchiga: mock yopilishiga 1 kun qoldi, hali topshirmagan (T-118) */
+export const mockReminderText = (title: string, closesAt: Date) =>
+  `⏰ Mock imtihon <b>${esc(title)}</b> <b>${uzDateTime(closesAt)}</b> da yopiladi.\nHali topshirmadingiz: vaqtingizni oldindan rejalang.`;
+
 /** Ustoz va yordamchilarga: haftalik test yopildi (T-084). Shubha soni faqat xodimga (BR-W05) */
 export const weeklyStaffSummary = (
   title: string,

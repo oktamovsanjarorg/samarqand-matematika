@@ -156,3 +156,4 @@
 | T-115 | Bot xabarlari sekundiga 25 tadan (navbat bilan), 429 da `retry_after` kutib qayta yuborish: ommaviy xabarlar 30+ o'quvchida yo'qolmasin                                     | ✅    |
 | T-116 | Ustozdan eʼlon: matn, kimga (o'quvchi, ota-ona, hammasi) va guruh; yuborishdan oldin soni va tasdiqlash; faqat ustoz; jurnalga matni bilan                                  | ✅    |
 | T-117 | Eʼlon sahifasida yuborilgan eʼlonlar tarixi (oxirgi 20 ta): vaqt, kimga, guruh, nechtasiga yetdi, matn; jurnaldan                                                           | ✅    |
+| T-118 | Mock yopilishiga 24 soat qolganda topshirmagan to'liq kirishli o'quvchilarga bir marta eslatma (`MockTest.remindedAt`); qisqa oynada (12 soatdan kam ochiq) yo'q            | ✅    |

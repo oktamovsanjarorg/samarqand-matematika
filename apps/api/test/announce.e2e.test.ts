@@ -56,6 +56,38 @@ describe("test ochilganda xabar (T-080)", () => {
     expect(got).toEqual([expect.stringContaining("Mock imtihon ochildi")]);
   });
 
+  it("T-118: mock yopilishiga 1 kun qolganda topshirmaganga bir marta eslatma; qisqa oynada yo'q", async () => {
+    const now = Date.now();
+    const mock = async (title: string, openedAgo: number) => {
+      const m = await f.prisma.mockTest.create({
+        data: {
+          title,
+          template: {},
+          opensAt: new Date(now - openedAgo),
+          closesAt: new Date(now + 20 * HOUR),
+          isPublished: true,
+        },
+      });
+      mockIds.push(m.id);
+      return m.id;
+    };
+    const [long, short] = [`Uzun ${now}`, `Qisqa ${now}`];
+    const id = await mock(long, 13 * HOUR);
+    await mock(short, 2 * HOUR);
+    const [waiting, done, closed] = [await f.student(), await f.student(), await f.student(false)];
+    await f.prisma.mockAttempt.create({
+      data: { mockTestId: id, userId: done.id, deadline: new Date(now), submittedAt: new Date(now) },
+    });
+    const scheduler = f.app.get(MockScheduler);
+    await scheduler.remind(new Date(now));
+    await scheduler.remind(new Date(now));
+    const about = (tg: bigint, title: string) => f.messagesTo(tg).filter((m) => m.includes(title));
+    expect(about(waiting.telegramId, long)).toEqual([expect.stringContaining("Hali topshirmadingiz")]);
+    expect(about(waiting.telegramId, short)).toEqual([]);
+    expect(about(done.telegramId, long)).toEqual([]);
+    expect(about(closed.telegramId, long)).toEqual([]);
+  });
+
   it("T-084: haftalik yopilganda ustozga hisobot: topshirganlar, kutilayotgan va shubhali javoblar", async () => {
     const [q1, q2] = await f.questions();
     const id = await f.weekly([q1 ?? "", q2 ?? ""]);
