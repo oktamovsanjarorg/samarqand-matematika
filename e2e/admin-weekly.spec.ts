@@ -18,19 +18,19 @@ async function seed(request: APIRequestContext) {
     { id: "a", text: "1" },
     { id: "b", text: "2" },
   ];
-  await apiPost(request, `/admin/topics/${t.id}/questions`, admin, {
+  const q1 = await apiPost<{ id: string }>(request, `/admin/topics/${t.id}/questions`, admin, {
     type: "SINGLE",
     text: "1+1 = ?",
     options: opts,
     answer: { optionId: "b" },
   });
-  await apiPost(request, `/admin/topics/${t.id}/questions`, admin, {
+  const q2 = await apiPost<{ id: string }>(request, `/admin/topics/${t.id}/questions`, admin, {
     type: "NUMERIC",
     text: "$\\frac{1}{2}+\\frac{1}{4}$",
     answer: { value: "3/4" },
   });
 
-  return { admin, course };
+  return { admin, course, questionIds: [q1.id, q2.id] };
 }
 
 test("BR-W01, BR-W09, T-076: ustoz haftalik test tuzadi, natijalarni ko'radi, boshlangan test savoli o'zgarmaydi", async ({
@@ -94,4 +94,30 @@ test("BR-W01, BR-W09, T-076: ustoz haftalik test tuzadi, natijalarni ko'radi, bo
   await page.getByRole("button", { name: "Saqlash" }).click();
   await expect(page.getByRole("alert")).toHaveText("Test boshlangan: savollarni oʻzgartirib boʻlmaydi");
   await page.screenshot({ path: "e2e/.results/admin-weekly.png", fullPage: true });
+});
+
+test("T-089: ustoz haftalik testdan nusxa oladi: savollar ko'chadi, oyna keyingi haftaga, raqam oshadi", async ({
+  page,
+  request,
+}) => {
+  const { admin, questionIds } = await seed(request);
+  const n = Date.now() % 100_000;
+  const src = await apiPost<{ id: string }>(request, "/admin/weekly", admin, {
+    title: `${n}-hafta ${E2E_PREFIX}nusxa`,
+    opensAt: new Date(Date.now() - 3_600_000).toISOString(),
+    closesAt: new Date(Date.now() + 6 * 86_400_000).toISOString(),
+    questionIds,
+    isPublished: true,
+  });
+  await loginAdmin(page, request, `weekly/${src.id}`);
+  await page.getByRole("link", { name: "Nusxa olish" }).click();
+  await expect(page.getByTestId("copy-hint")).toBeVisible();
+  await expect(page.getByLabel("Nomi")).toHaveValue(`${n + 1}-hafta ${E2E_PREFIX}nusxa`);
+  await expect(page.getByTestId("selected").getByRole("listitem")).toHaveCount(2);
+  await expect(page.getByText("Nashr qilingan (oʻquvchilar koʻradi)")).not.toBeChecked();
+  await page.screenshot({ path: "e2e/.results/admin-weekly-copy.png", fullPage: true });
+  await page.getByRole("button", { name: "Saqlash" }).click();
+  const row = page.getByTestId("weekly").filter({ hasText: `${n + 1}-hafta ${E2E_PREFIX}nusxa` });
+  await expect(row).toContainText("Ochilmagan");
+  await expect(row).toContainText("2 ta savol");
 });

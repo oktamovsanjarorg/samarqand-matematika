@@ -127,3 +127,4 @@
 | T-086 | Yordamchilar: ustoz Sozlamalarda o'quvchini qidirib yordamchi qiladi va qaytarib oladi (`admin/staff`, BR-A05)                                                              | ✅    |
 | T-087 | Ustoz va yordamchi sinovi reyting, natijalar, ota-ona hisoboti va Rasch kalibrovkasiga kirmaydi (BR-W10, BR-M05)                                                            | ✅    |
 | T-088 | Yopiq dars yoki testda o'quvchiga qolgan qadamlar (qabul, ota-ona, to'lov) va "Obunani toʻlash" tugmasi                                                                     | ✅    |
+| T-089 | Haftalik testdan nusxa olish: savollar ko'chadi, oyna keyingi haftaga suriladi, nomdagi raqam oshadi, nashrsiz saqlanadi                                                    | ✅    |

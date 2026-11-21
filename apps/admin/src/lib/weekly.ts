@@ -14,3 +14,21 @@ export const toLocalInput = (iso: string) =>
 
 /** datetime-local (Toshkent) → ISO */
 export const fromLocalInput = (v: string) => new Date(`${v}:00+05:00`).toISOString();
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** Nusxa oynasi (T-089): manba oynasi 7 kunlab suriladi, ochilishi hozirdan keyin bo'lguncha */
+export function shiftedWindow(opensAt: string, closesAt: string, now: Date) {
+  const [o, c] = [Date.parse(opensAt), Date.parse(closesAt)];
+  const weeks = Math.max(1, Math.floor((now.getTime() - o) / WEEK_MS) + 1);
+  return {
+    opensAt: new Date(o + weeks * WEEK_MS).toISOString(),
+    closesAt: new Date(c + weeks * WEEK_MS).toISOString(),
+  };
+}
+
+/** "48-hafta" → "49-hafta". Raqam bilan boshlanmasa bo'sh: ustoz o'zi yozadi */
+export function nextTitle(title: string): string {
+  const m = /^(\d+)(.*)$/.exec(title.trim());
+  return m ? `${Number(m[1]) + 1}${m[2] ?? ""}` : "";
+}
