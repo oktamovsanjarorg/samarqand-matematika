@@ -77,6 +77,11 @@ export function StudentCard({ s, link = false }: { s: AdminStudentRow; link?: bo
         ) : (
           <span className="text-hint">Telefon yoʻq</span>
         )}
+        {s.parentPhones.map((p) => (
+          <a key={p} href={`tel:${p}`} className="flex items-center gap-1 font-semibold text-link">
+            <Phone size={14} /> {p} <span className="font-normal text-hint">ota-ona</span>
+          </a>
+        ))}
         {s.groupName && <Badge>{s.groupName}</Badge>}
         {/* T-110: pullik rejimdagi qabul qilingan o'quvchining obunasi */}
         {s.acceptedAt && s.accessMode === "AUTO" && (

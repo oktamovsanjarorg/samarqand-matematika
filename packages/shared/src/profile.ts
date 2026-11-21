@@ -63,6 +63,8 @@ export interface AdminStudentRow {
   groupName: string | null;
   /** Faol obuna tugash vaqti; obuna yo'q yoki tugagan bo'lsa null (T-110) */
   paidUntil: string | null;
+  /** Tasdiqlangan ota-onalar telefoni (T-123): ustoz qo'ng'iroq qilishi uchun */
+  parentPhones: string[];
   createdAt: string;
   lastSeenAt: string | null;
 }
