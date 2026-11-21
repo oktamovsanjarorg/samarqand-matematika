@@ -82,6 +82,9 @@
 		root * /srv/admin
 		@assets path /assets/*
 		header @assets Cache-Control "public, max-age=31536000, immutable"
+		# index.html keshlanmaydi: deploydan keyin eski chunk nomlari so'ralmasin (T-132)
+		@html path / /index.html
+		header @html Cache-Control "no-cache"
 		try_files {path} /index.html
 		file_server
 	}

@@ -1,10 +1,11 @@
 import { ROLE_LABELS } from "@samarqand/shared";
 import { LogOut, Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import type { Session } from "../lib/session";
 import { navGroups, type NavGroup } from "./layout/nav";
 import { SideNav } from "./layout/SideNav";
+import { SkeletonList } from "./ui";
 
 function Brand({ session }: { session: Session }) {
   return (
@@ -95,7 +96,10 @@ export function AdminLayout({ session, onLogout }: { session: Session; onLogout:
         <MobileMenu session={session} groups={groups} onLogout={onLogout} onClose={() => setOpen(false)} />
       )}
       <main className="mx-auto w-full max-w-5xl min-w-0 flex-1 p-4 lg:p-8">
-        <Outlet />
+        {/* T-132: lazy sahifa yuklanguncha menyu joyida qoladi */}
+        <Suspense fallback={<SkeletonList rows={3} />}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   );

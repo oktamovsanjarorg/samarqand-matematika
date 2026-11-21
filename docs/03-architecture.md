@@ -14,7 +14,7 @@ Admin panel (React) ──HTTPS /api──────────┘     │ re
                                           └──► MEDIA_DIR (yechim rasmlari, cheklar)
 ```
 
-Production'da hammasi bitta serverda Docker Compose bilan ishlaydi (`06-infrastructure.md`). Caddy (`web` konteyneri) Mini App'ni `/`, admin panelni `/admin/` da beradi va `/api` ni API'ga uzatadi. Mini App sahifalari alohida chunk'larda yuklanadi (T-131): birinchi ochilishda faqat Asosiy (~112 KB gzip), KaTeX matematik matnli sahifa ochilganda. Deploydan keyin eski sahifa yo'q chunk'ni so'rasa (`vite:preloadError`), sahifa bir marta qayta yuklanadi.
+Production'da hammasi bitta serverda Docker Compose bilan ishlaydi (`06-infrastructure.md`). Caddy (`web` konteyneri) Mini App'ni `/`, admin panelni `/admin/` da beradi va `/api` ni API'ga uzatadi. Mini App sahifalari alohida chunk'larda yuklanadi (T-131): birinchi ochilishda faqat Asosiy (~112 KB gzip), KaTeX matematik matnli sahifa ochilganda. Deploydan keyin eski sahifa yo'q chunk'ni so'rasa (`vite:preloadError`), sahifa bir marta qayta yuklanadi. Admin panelda ham shunday (T-132): kirish va bosh sahifa darhol, qolgani kerak bo'lganda (~110 KB gzip).
 
 ## Monorepo
 

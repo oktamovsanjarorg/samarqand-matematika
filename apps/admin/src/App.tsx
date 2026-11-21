@@ -1,35 +1,53 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { lazy, useCallback, useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminLayout } from "./components/AdminLayout";
 import { setUnauthorizedHandler } from "./lib/api";
 import { clearSession, loadSession } from "./lib/session";
-import { AuditPage } from "./pages/AuditPage";
-import { TrashPage } from "./pages/TrashPage";
-import { ContentPage } from "./pages/ContentPage";
-import { LessonEditorPage } from "./pages/LessonEditorPage";
 import { LoginPage } from "./pages/LoginPage";
-import { ParentsPage } from "./pages/ParentsPage";
-import { PaymentsPage } from "./pages/PaymentsPage";
-import { SettingsPage } from "./pages/SettingsPage";
-import { BroadcastPage } from "./pages/BroadcastPage";
 import { DashboardPage } from "./pages/DashboardPage";
-import { GroupPage } from "./pages/GroupPage";
-import { GroupsPage } from "./pages/GroupsPage";
-import { MockEditPage } from "./pages/MockEditPage";
-import { OfflineListPage } from "./pages/OfflineListPage";
-import { OfflineTestPage } from "./pages/OfflineTestPage";
-import { MockListPage } from "./pages/MockListPage";
-import { WeeklyEditPage } from "./pages/WeeklyEditPage";
-import { WeeklyListPage } from "./pages/WeeklyListPage";
-import { WeeklyReviewPage } from "./pages/WeeklyReviewPage";
-import { TutorChatPage } from "./pages/TutorChatPage";
-import { TutorChatsPage } from "./pages/TutorChatsPage";
-import { QuestionEditPage } from "./pages/QuestionEditPage";
-import { QuestionsPage } from "./pages/QuestionsPage";
 import { SignInHint } from "./pages/SignInHint";
-import { StudentPage } from "./pages/StudentPage";
-import { StudentsPage } from "./pages/StudentsPage";
+
+/** T-132: kirish va bosh sahifadan boshqa sahifalar alohida chunk'larda yuklanadi */
+const AuditPage = lazy(() => import("./pages/AuditPage").then((m) => ({ default: m.AuditPage })));
+const TrashPage = lazy(() => import("./pages/TrashPage").then((m) => ({ default: m.TrashPage })));
+const ContentPage = lazy(() => import("./pages/ContentPage").then((m) => ({ default: m.ContentPage })));
+const LessonEditorPage = lazy(() =>
+  import("./pages/LessonEditorPage").then((m) => ({ default: m.LessonEditorPage })),
+);
+const ParentsPage = lazy(() => import("./pages/ParentsPage").then((m) => ({ default: m.ParentsPage })));
+const PaymentsPage = lazy(() => import("./pages/PaymentsPage").then((m) => ({ default: m.PaymentsPage })));
+const SettingsPage = lazy(() => import("./pages/SettingsPage").then((m) => ({ default: m.SettingsPage })));
+const BroadcastPage = lazy(() => import("./pages/BroadcastPage").then((m) => ({ default: m.BroadcastPage })));
+const GroupPage = lazy(() => import("./pages/GroupPage").then((m) => ({ default: m.GroupPage })));
+const GroupsPage = lazy(() => import("./pages/GroupsPage").then((m) => ({ default: m.GroupsPage })));
+const MockEditPage = lazy(() => import("./pages/MockEditPage").then((m) => ({ default: m.MockEditPage })));
+const OfflineListPage = lazy(() =>
+  import("./pages/OfflineListPage").then((m) => ({ default: m.OfflineListPage })),
+);
+const OfflineTestPage = lazy(() =>
+  import("./pages/OfflineTestPage").then((m) => ({ default: m.OfflineTestPage })),
+);
+const MockListPage = lazy(() => import("./pages/MockListPage").then((m) => ({ default: m.MockListPage })));
+const WeeklyEditPage = lazy(() =>
+  import("./pages/WeeklyEditPage").then((m) => ({ default: m.WeeklyEditPage })),
+);
+const WeeklyListPage = lazy(() =>
+  import("./pages/WeeklyListPage").then((m) => ({ default: m.WeeklyListPage })),
+);
+const WeeklyReviewPage = lazy(() =>
+  import("./pages/WeeklyReviewPage").then((m) => ({ default: m.WeeklyReviewPage })),
+);
+const TutorChatPage = lazy(() => import("./pages/TutorChatPage").then((m) => ({ default: m.TutorChatPage })));
+const TutorChatsPage = lazy(() =>
+  import("./pages/TutorChatsPage").then((m) => ({ default: m.TutorChatsPage })),
+);
+const QuestionEditPage = lazy(() =>
+  import("./pages/QuestionEditPage").then((m) => ({ default: m.QuestionEditPage })),
+);
+const QuestionsPage = lazy(() => import("./pages/QuestionsPage").then((m) => ({ default: m.QuestionsPage })));
+const StudentPage = lazy(() => import("./pages/StudentPage").then((m) => ({ default: m.StudentPage })));
+const StudentsPage = lazy(() => import("./pages/StudentsPage").then((m) => ({ default: m.StudentsPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
