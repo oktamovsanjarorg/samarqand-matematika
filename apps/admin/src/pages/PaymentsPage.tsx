@@ -2,11 +2,13 @@ import { formatSum, type AdminPayment } from "@samarqand/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Phone } from "lucide-react";
 import { useState } from "react";
+import { IncomeCard } from "../components/billing/IncomeCard";
 import { ReceiptImage } from "../components/ReceiptImage";
 import { RejectForm, StatusTabs, type Status } from "../components/ReviewParts";
 import { Button, EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
 import { formatDate } from "../lib/labels";
+import { loadSession } from "../lib/session";
 
 function Actions({ p, onDone }: { p: AdminPayment; onDone: () => void }) {
   const [rejecting, setRejecting] = useState(false);
@@ -79,11 +81,16 @@ export function PaymentsPage() {
     queryKey: ["payments", status],
     queryFn: () => api.get<AdminPayment[]>(`/admin/payments?status=${status}`),
   });
-  const done = () => qc.invalidateQueries({ queryKey: ["payments"] });
+  const done = () => {
+    void qc.invalidateQueries({ queryKey: ["payments"] });
+    void qc.invalidateQueries({ queryKey: ["income"] });
+  };
 
   return (
     <div className="space-y-4">
       <PageTitle title="Toʻlovlar" />
+      {/* BR-B05: tushum faqat ustozga (server ham tekshiradi) */}
+      {loadSession()?.user.role === "TEACHER" && <IncomeCard />}
       <StatusTabs value={status} onChange={setStatus} />
       {list.isPending && <SkeletonList />}
       {list.isError && <ErrorState message={list.error.message} onRetry={() => list.refetch()} />}

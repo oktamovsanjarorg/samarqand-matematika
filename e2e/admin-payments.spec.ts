@@ -27,7 +27,7 @@ async function sendReceipt(request: APIRequestContext, browser: Browser, planId:
   expect(res.status()).toBe(201);
 }
 
-test("BR-B01, BR-B03..B05: ustoz tarif va kartani sozlaydi, chekni tasdiqlaydi va rad etadi", async ({
+test("BR-B01, BR-B03..B05, T-109: ustoz tarif va kartani sozlaydi, chekni tasdiqlaydi va rad etadi", async ({
   page,
   request,
   browser,
@@ -60,6 +60,14 @@ test("BR-B01, BR-B03..B05: ustoz tarif va kartani sozlaydi, chekni tasdiqlaydi v
   await page.screenshot({ path: "e2e/.results/admin-payments.png", fullPage: true });
   await first.getByRole("button", { name: "Tasdiqlash" }).click();
   await expect(first).toHaveCount(0);
+  // T-109: tasdiqlangan to'lov oylik tushumda tarif bo'yicha ko'rinadi, Excel'ga yuklanadi
+  const income = page.getByLabel("Oylik tushum");
+  await expect(income.getByRole("listitem").filter({ hasText: plan })).toContainText("1 ta · 150 000 soʻm");
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: "e2e/.results/admin-income.png" });
+  const download = page.waitForEvent("download");
+  await income.getByRole("button", { name: "Excel'ga yuklab olish" }).click();
+  expect((await download).suggestedFilename()).toMatch(/^Tushum \d{4}-\d{2}\.csv$/);
 
   const second = page.getByTestId("payment").filter({ hasText: "Tolov Ikkinchi" });
   await second.getByRole("button", { name: "Rad etish" }).click();
