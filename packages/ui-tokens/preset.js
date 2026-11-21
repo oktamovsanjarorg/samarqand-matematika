@@ -20,6 +20,9 @@ export default {
         brand: { DEFAULT: c("brand"), soft: "rgb(var(--c-brand) / var(--brand-soft-alpha))" },
         accent: c("accent"),
       },
+      // Matn rangi alohida: tungi rejimda brend fon (oq matn ostida) to'q, brend matn (to'q fonda) och bo'lishi kerak.
+      // Bitta rang ikkalasida 4.5:1 bera olmaydi (T-071)
+      textColor: { brand: c("brand-text") },
       borderRadius: { card: "16px" },
       spacing: {
         "safe-top": "calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px))",
