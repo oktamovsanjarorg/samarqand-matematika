@@ -3,7 +3,7 @@ import { createStudent, grantFree, loginAdmin } from "./api";
 import { openAsTelegram } from "./telegram";
 import { notebookPng, seedWeekly, solveWeekly } from "./weekly-seed";
 
-test("BR-W05, BR-W06: ustoz navbatda bir xil xatoni ko'radi, ball qo'yadi, o'quvchi izohni oladi", async ({
+test("BR-W05, BR-W06, T-102: ustoz navbatda bir xil xatoni ko'radi, ball qo'yadi, o'quvchi izohni oladi", async ({
   page,
   request,
   browser,
@@ -32,6 +32,15 @@ test("BR-W05, BR-W06: ustoz navbatda bir xil xatoni ko'radi, ball qo'yadi, o'quv
   await page.screenshot({ path: "e2e/.results/admin-review.png", fullPage: true });
   await page.getByRole("tab", { name: "Hammasi (4)" }).click();
   await expect(page.getByText("Ustoz: 0 ball")).toBeVisible();
+  // T-102: bitta savolni hamma o'quvchida ketma-ket tekshirish
+  await page.getByLabel("Savol").selectOption({ label: "1-savol (1 ta tekshirilmagan)" });
+  await expect(page.getByRole("tab", { name: "Hammasi (2)" })).toBeVisible();
+  await expect(page.getByTestId("review-item")).toHaveCount(2);
+  for (const card of await page.getByTestId("review-item").all()) await expect(card).toContainText("1-savol");
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: "e2e/.results/admin-review-by-question.png", fullPage: true });
+  await page.getByLabel("Savol").selectOption({ label: "Hamma savollar" });
+  await expect(page.getByTestId("review-item")).toHaveCount(4);
 
   expect((await close()).ok()).toBe(true);
   await openAsTelegram(page, { id: a.tg, first_name: "Oquvchi" }, `/weekly/${id}`);

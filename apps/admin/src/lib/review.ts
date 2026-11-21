@@ -31,6 +31,16 @@ export function filterItems(items: ReviewItem[], f: ReviewFilter): ReviewItem[] 
   return items;
 }
 
+/** Savol bo'yicha tanlov (T-102): testdagi tartib raqami bilan, har savol bir marta */
+export function questionChoices(items: ReviewItem[]): { id: string; n: number }[] {
+  const seen = new Map(items.map((i) => [i.questionId, i.order + 1]));
+  return [...seen].map(([id, n]) => ({ id, n })).sort((a, b) => a.n - b.n);
+}
+
+/** Bitta savolning javoblari; qid bo'sh bo'lsa hammasi */
+export const ofQuestion = (items: ReviewItem[], qid: string) =>
+  qid ? items.filter((i) => i.questionId === qid) : items;
+
 export const useReview = (id: string) =>
   useQuery({ queryKey: ["review", id], queryFn: () => api.get<ReviewQueue>(`/admin/weekly/${id}/review`) });
 
