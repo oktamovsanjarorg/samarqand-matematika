@@ -15,7 +15,7 @@ test.describe("Admin panel", () => {
     const url = await adminLink(request);
     await page.goto(url);
     await expect(page).toHaveURL(/\/admin\/content$/);
-    await expect(page.getByText("Ustoz").first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Menyu", exact: true })).toBeVisible();
     await page.screenshot({ path: "e2e/.results/admin-home.png" });
 
     const other = await browser.newPage();
@@ -26,8 +26,8 @@ test.describe("Admin panel", () => {
 
   test("sahifani yangilaganda sessiya saqlanadi", async ({ page, request }) => {
     await page.goto(await adminLink(request));
-    await expect(page.getByText("Ustoz").first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Menyu", exact: true })).toBeVisible();
     await page.reload();
-    await expect(page.getByText("Ustoz").first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Menyu", exact: true })).toBeVisible();
   });
 });

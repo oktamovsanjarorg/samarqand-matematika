@@ -1,5 +1,5 @@
 import { expect, test, type APIRequestContext, type Browser } from "@playwright/test";
-import { adminHeaders, createStudent, loginAdmin } from "./api";
+import { adminHeaders, adminNav, createStudent, loginAdmin } from "./api";
 import { E2E_PREFIX } from "./telegram";
 
 const API = "http://127.0.0.1:4300/api";
@@ -51,7 +51,7 @@ test("BR-B01, BR-B03..B05: ustoz tarif va kartani sozlaydi, chekni tasdiqlaydi v
   await sendReceipt(request, browser, planId, "Tolov Birinchi");
   await sendReceipt(request, browser, planId, "Tolov Ikkinchi");
 
-  await page.getByRole("navigation", { name: "Boʻlimlar" }).getByRole("link", { name: "Toʻlovlar" }).click();
+  await adminNav(page, "Toʻlovlar");
   const first = page.getByTestId("payment").filter({ hasText: "Tolov Birinchi" });
   await expect(first).toContainText("Izoh: Otamning kartasidan");
   const img = first.getByRole("img", { name: "Toʻlov cheki" });

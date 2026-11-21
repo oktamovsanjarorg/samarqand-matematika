@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { adminHeaders, apiPost, loginAdmin } from "./api";
+import { adminHeaders, adminNav, apiPost, loginAdmin } from "./api";
 import { E2E_PREFIX } from "./telegram";
 
 /** Moslashtirish: juft tanlanmasa xato, tanlansa saqlanadi */
@@ -84,6 +84,6 @@ test("BR-Q01..Q03: ustoz savol yaratadi, tahrirlaydi, tartiblaydi", async ({ pag
   await page.getByRole("button", { name: "Saqlash" }).click();
   await expect(page.getByTestId("question")).toHaveCount(3);
 
-  await page.getByRole("link", { name: "Kontent" }).first().click();
+  await adminNav(page, "Kontent");
   await expect(page.getByRole("link", { name: "Mavzu testi savollari (3)" })).toBeVisible();
 });

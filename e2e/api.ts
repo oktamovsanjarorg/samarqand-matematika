@@ -21,7 +21,11 @@ export async function adminLink(request: APIRequestContext) {
 
 export async function loginAdmin(page: Page, request: APIRequestContext, path = "") {
   await page.goto(await adminLink(request));
-  await expect(page.getByText("Ustoz").first()).toBeVisible();
+  // Kirgandan keyin admin karkasi: telefonda menyu tugmasi, kompyuterda yon panel
+  const shell = page
+    .getByRole("button", { name: "Menyu", exact: true })
+    .or(page.getByRole("navigation", { name: "Boʻlimlar" }));
+  await expect(shell.first()).toBeVisible();
   if (path) await page.goto(`http://127.0.0.1:5191/admin/${path}`);
 }
 
@@ -95,4 +99,14 @@ export async function grantFree(request: APIRequestContext, admin: Record<string
     data: { accessMode: "FREE" },
   });
   expect(patch.ok()).toBe(true);
+}
+
+/** Admin bo'limiga o'tish: telefonda avval menyu ochiladi */
+export async function adminNav(page: Page, label: string) {
+  const menu = page.getByRole("button", { name: "Menyu", exact: true });
+  if (await menu.isVisible()) await menu.click();
+  await page
+    .getByRole("navigation", { name: "Boʻlimlar" })
+    .getByRole("link", { name: label, exact: true })
+    .click();
 }
