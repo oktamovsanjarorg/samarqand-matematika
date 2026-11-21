@@ -19,6 +19,7 @@
 | ------ | ------------------------------------------------------------------------------------------------------------------ | -------------- | ------------ | ----- |
 | FR-C01 | Kurs → mavzu → dars: yaratish, tartiblash, nashr, o'chirish; konspekt Markdown va LaTeX bilan, jonli ko'rinish     | BR-C01..C04    | T-021        | ✅    |
 | FR-C02 | Bepul va pullik dars; pullik dars to'liq kirish bilan ochiladi                                                     | BR-C02, BR-A04 | T-021        | ✅    |
+| FR-C07 | Yangi dars haqida o'quvchilarga bot xabari (ustoz tugmasi bilan)                                                   | BR-C05         | T-091        | ✅    |
 | FR-C03 | Savollar banki: 6 tur, namunaviy yechim, qiyinlik, ko'nikma teglari                                                | BR-Q01..Q03    | T-022        | ✅    |
 | FR-C04 | Javobni avtomatik tekshirish: son (kasr, vergul), ifoda (ekvivalentlik), moslashtirish; qolganini ustoz tekshiradi | BR-M04, BR-Q03 | T-014, T-074 | ✅    |
 | FR-C05 | Word yoki Excel'dan savol import                                                                                   |                | T-026        | ⬜    |
@@ -62,6 +63,7 @@
 | ID     | Talab                                                           | BR          | T     | Holat |
 | ------ | --------------------------------------------------------------- | ----------- | ----- | ----- |
 | FR-B01 | Qo'lda to'lov: tarif, karta, chek rasmi, tasdiq yoki rad, obuna | BR-B01..B05 | T-025 | ✅    |
+| FR-B03 | Obuna tugashi haqida eslatma: o'quvchi va ota-onaga             | BR-B06      | T-090 | ✅    |
 | FR-B02 | Click va Payme orqali to'lov                                    |             |       | ⬜    |
 
 ## Ustoz uchun (FR-U)

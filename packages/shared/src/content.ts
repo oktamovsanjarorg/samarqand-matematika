@@ -61,6 +61,13 @@ export interface AdminLessonDetail extends AdminLessonRow {
   body: string;
   videoUrl: string | null;
   updatedAt: string;
+  /** O'quvchilarga xabar yuborilgan vaqt (T-091) */
+  announcedAt: string | null;
+}
+
+export interface LessonAnnounceResult {
+  sent: number;
+  announcedAt: string;
 }
 
 // ---------- O'quvchi ko'rinishi ----------

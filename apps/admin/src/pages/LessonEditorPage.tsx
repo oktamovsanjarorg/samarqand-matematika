@@ -7,6 +7,7 @@ import { MathText } from "../components/MathText";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
 import { TREE_KEY } from "../lib/content";
+import { LessonAnnounce } from "../components/LessonAnnounce";
 
 type Draft = Pick<AdminLessonDetail, "title" | "body" | "videoUrl" | "isFree" | "isPublished">;
 const pick = (l: AdminLessonDetail): Draft => ({
@@ -135,6 +136,7 @@ function Editor({ lesson }: { lesson: AdminLessonDetail }) {
         </Button>
       </div>
       {error && <p className="text-sm text-danger">{error.message}</p>}
+      <LessonAnnounce lesson={lesson} />
     </div>
   );
 }

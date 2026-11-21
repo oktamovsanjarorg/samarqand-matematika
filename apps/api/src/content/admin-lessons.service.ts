@@ -13,10 +13,18 @@ const DETAIL = {
   isFree: true,
   isPublished: true,
   updatedAt: true,
+  announcedAt: true,
 } as const;
 
-type Row = Omit<AdminLessonDetail, "updatedAt"> & { updatedAt: Date };
-const toDetail = (l: Row): AdminLessonDetail => ({ ...l, updatedAt: l.updatedAt.toISOString() });
+type Row = Omit<AdminLessonDetail, "updatedAt" | "announcedAt"> & {
+  updatedAt: Date;
+  announcedAt: Date | null;
+};
+const toDetail = (l: Row): AdminLessonDetail => ({
+  ...l,
+  updatedAt: l.updatedAt.toISOString(),
+  announcedAt: l.announcedAt?.toISOString() ?? null,
+});
 
 /** Admin: darslar */
 @Injectable()
