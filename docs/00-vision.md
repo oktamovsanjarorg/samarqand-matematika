@@ -39,5 +39,5 @@ Platforma uchta muammoni hal qiladi:
 - Og'zaki himoya (yozma variant rad etilgan, PLAN §6).
 - Click va Payme (qo'lda chek bilan boshlangan, `PaymentProvider` keyin).
 - Himoyalangan HLS video (darsda oddiy havola).
-- Word/Excel import (T-026, pandoc kerak).
+- Word'dan import (T-026, pandoc kerak). Excel (CSV) importi bor (T-100).
 - Gamification.

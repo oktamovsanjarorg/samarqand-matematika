@@ -38,6 +38,7 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "question.create": "Savol qoʻshdi",
   "question.update": "Savolni tahrirladi",
   "question.delete": "Savolni oʻchirdi",
+  "question.import": "Excel'dan savollar import qildi",
   "trash.restore": "Axlat qutisidan tikladi",
   "group.create": "Guruh yaratdi",
   "group.update": "Guruhni tahrirladi",

@@ -22,7 +22,7 @@
 | FR-C07 | Yangi dars haqida o'quvchilarga bot xabari (ustoz tugmasi bilan)                                                   | BR-C05         | T-091        | ✅    |
 | FR-C03 | Savollar banki: 6 tur, namunaviy yechim, qiyinlik, ko'nikma teglari; matn va teg bo'yicha qidiruv                  | BR-Q01..Q03    | T-022, T-096 | ✅    |
 | FR-C04 | Javobni avtomatik tekshirish: son (kasr, vergul), ifoda (ekvivalentlik), moslashtirish; qolganini ustoz tekshiradi | BR-M04, BR-Q03 | T-014, T-074 | ✅    |
-| FR-C05 | Word yoki Excel'dan savol import                                                                                   |                | T-026        | ⬜    |
+| FR-C05 | Excel (CSV) dan savol import (T-100); Word'dan import (T-026, pandoc kerak)                                        | BR-Q04         | T-100, T-026 | 🟨    |
 | FR-C06 | Darsda himoyalangan video (HLS, belgi)                                                                             |                |              | ⬜    |
 
 ## Testlar (FR-T)

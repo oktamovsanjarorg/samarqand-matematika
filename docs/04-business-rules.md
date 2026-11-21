@@ -37,11 +37,12 @@
 
 ## Savollar (Q)
 
-| ID     | Qoida                                                                                                                                                                                                            | Holat |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| BR-Q01 | To'g'ri javob va namunaviy yechim alohida ustunda saqlanadi. O'quvchi ko'rinishi uchun bu ustunlar bazadan o'qilmaydi, audit jurnaliga ham yozilmaydi                                                            | ✅    |
-| BR-Q02 | Ko'p tanlovli savol faqat tanlangan to'plam aynan to'g'ri to'plamga teng bo'lsa to'g'ri. Qisman ball yo'q                                                                                                        | ⚠️    |
-| BR-Q03 | Avtomatik tekshiruv: SINGLE, MULTIPLE, NUMERIC (BR-M04), MATCHING (BR-M03). EXPRESSION ekvivalentlik bo'yicha (T-074, ADR-0003): o'qilmasa yoki ustoz "Ustoz tekshiradi" belgilasa ustozga. WRITTEN doim ustozga | ✅    |
+| ID     | Qoida                                                                                                                                                                                                                                                     | Holat |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| BR-Q01 | To'g'ri javob va namunaviy yechim alohida ustunda saqlanadi. O'quvchi ko'rinishi uchun bu ustunlar bazadan o'qilmaydi, audit jurnaliga ham yozilmaydi                                                                                                     | ✅    |
+| BR-Q02 | Ko'p tanlovli savol faqat tanlangan to'plam aynan to'g'ri to'plamga teng bo'lsa to'g'ri. Qisman ball yo'q                                                                                                                                                 | ⚠️    |
+| BR-Q03 | Avtomatik tekshiruv: SINGLE, MULTIPLE, NUMERIC (BR-M04), MATCHING (BR-M03). EXPRESSION ekvivalentlik bo'yicha (T-074, ADR-0003): o'qilmasa yoki ustoz "Ustoz tekshiradi" belgilasa ustozga. WRITTEN doim ustozga                                          | ✅    |
+| BR-Q04 | Excel (CSV) importi avval tekshiriladi; bitta qator xato bo'lsa hech narsa saqlanmaydi va xato qator raqami bilan ko'rsatiladi. Import qilingan savol qoralama bo'ladi (nashr qilinmagan), mavzu oxiriga qo'shiladi. Bir faylda 300 tagacha savol (T-100) | ✅    |
 
 ## Mavzu testi (P)
 

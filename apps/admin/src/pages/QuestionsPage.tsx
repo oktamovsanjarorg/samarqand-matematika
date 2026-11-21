@@ -4,6 +4,7 @@ import { ArrowLeft, Plus } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { MathText } from "../components/MathText";
 import { RowActions } from "../components/RowActions";
+import { QuestionImport } from "../components/QuestionImport";
 import { Badge, EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
 import { moved, reorder, useTree } from "../lib/content";
@@ -74,6 +75,7 @@ export function QuestionsPage() {
           <Plus size={16} /> Yangi savol
         </Link>
       </PageTitle>
+      <QuestionImport topicId={topicId} />
       {error && (
         <p className="text-sm text-danger" role="alert">
           {error.message}
