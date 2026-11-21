@@ -1,6 +1,6 @@
 # Samarqand matematika: Telegram Mini App (reja, qoralama)
 
-> Holat: **qoralama, tasdiqlanmagan**. Sana: 2026-11-19. Ochiq savollar oxirgi bo'limda.
+> Holat: **dastlabki reja (2026-11-19), tarix uchun saqlanadi.** Amaldagi holat: `00-vision`, `01-requirements`, `02-roles-permissions`, `03-architecture`, `05-data-model`, `11-ux` (T-015). Ziddiyat bo'lsa, o'sha hujjatlar ustun.
 > `skdmath` faqat papka nomi. Loyiha nomi **Samarqand matematika**.
 
 ## 1. Kontekst
