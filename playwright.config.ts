@@ -13,6 +13,8 @@ const apiEnv = {
   OWNER_USERNAMES: E2E_OWNER,
   ADMIN_URL: "http://127.0.0.1:5191/admin",
   RATE_LIMIT_AUTH_PER_MIN: "10000",
+  // Hamma testlar bitta IP'dan: 600/daq chegarasi CI'da tez yugurishda 429 berardi
+  RATE_LIMIT_PER_MIN: "10000",
 };
 
 export default defineConfig({
