@@ -24,3 +24,25 @@ export interface MyRecommendations {
 export const INSIGHT_DAYS = 90;
 export const WEAK_MIN_ANSWERS = 3;
 export const WEAK_PERCENT = 60;
+
+/** Ustozga: e'tibor kerak o'quvchi va sabablari (T-063, BR-R02) */
+export type AttentionCode = "INACTIVE" | "DROP" | "ABSENT" | "MISSED_WEEKLY";
+
+export interface AttentionReason {
+  code: AttentionCode;
+  /** Faktli izoh: "12 kundan beri kirmagan" */
+  text: string;
+}
+
+export interface AttentionRow {
+  userId: string;
+  name: string;
+  phone: string | null;
+  groupName: string | null;
+  reasons: AttentionReason[];
+}
+
+export const INACTIVE_DAYS = 7;
+export const DROP_POINTS = 20;
+export const ABSENT_WINDOW_DAYS = 14;
+export const ABSENT_MIN = 2;
