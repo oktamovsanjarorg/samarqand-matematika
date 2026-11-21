@@ -8,6 +8,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { MySchoolService } from "../students/my-school.service";
 import { StatsService } from "../topic-tests/stats.service";
 import { scoreOf } from "../weekly/weekly-views";
+import { RANKED } from "../common/ranked";
 
 /**
  * Ota-ona kabineti (T-069, BR-PA01): faqat tasdiqlangan farzand, faqat faktlar.
@@ -82,11 +83,11 @@ export class ChildSummaryService {
         title: true,
         closesAt: true,
         _count: { select: { questions: true } },
-        attempts: { select: { userId: true, score: true, submittedAt: true, correct: true } },
+        attempts: { where: RANKED, select: { userId: true, score: true, submittedAt: true, correct: true } },
       },
     });
     return tests.map((t) => {
-      // Reyting (BR-W10) bilan bir xil: hamma urinishlar, ball bo'yicha; tenglarda o'rin bir xil
+      // Reyting (BR-W10) bilan bir xil: o'quvchilar urinishlari (T-087), ball bo'yicha; tenglarda o'rin bir xil
       const ranked = rankRows(t.attempts.map((a) => ({ name: a.userId, score: scoreOf(a) })));
       const a = t.attempts.find((x) => x.userId === userId);
       const submitted = !!a?.submittedAt;

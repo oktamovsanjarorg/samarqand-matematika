@@ -6,6 +6,7 @@ import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { AiReviewService } from "./ai-reviews";
 import { ParentReportService } from "./parent-report";
+import { RANKED } from "../common/ranked";
 
 const HOUR = 60 * 60 * 1000;
 
@@ -136,7 +137,7 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
   private async staffSummary(id: string, title: string) {
     const done = { attempt: { weeklyTestId: id, submittedAt: { not: null } }, reviewedAt: null };
     const [submitted, eligible, toReview, suspected] = await Promise.all([
-      this.prisma.weeklyAttempt.count({ where: { weeklyTestId: id, submittedAt: { not: null } } }),
+      this.prisma.weeklyAttempt.count({ where: { weeklyTestId: id, submittedAt: { not: null }, ...RANKED } }),
       this.access.fullAccessStudentIds().then((ids) => ids.length),
       this.prisma.weeklyAnswer.count({
         where: { ...done, OR: [{ result: "MANUAL" }, { aiReview: { suspected: true } }] },

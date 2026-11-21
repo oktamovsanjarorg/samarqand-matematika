@@ -10,6 +10,7 @@ import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { personName, PERSON_SELECT } from "../common/person";
 import { scoreOf } from "./weekly-views";
+import { RANKED } from "../common/ranked";
 
 const ROW_SELECT = {
   id: true,
@@ -17,7 +18,7 @@ const ROW_SELECT = {
   opensAt: true,
   closesAt: true,
   isPublished: true,
-  _count: { select: { questions: true, attempts: { where: { submittedAt: { not: null } } } } },
+  _count: { select: { questions: true, attempts: { where: { submittedAt: { not: null }, ...RANKED } } } },
 } as const;
 type Row = {
   id: string;
@@ -135,7 +136,7 @@ export class AdminWeeklyService {
   /** Natijalar: ball kamayishi bo'yicha, teng bo'lsa erta topshirgan yuqorida. Ustoz oyna ochiq paytda ham ko'radi */
   async standings(id: string): Promise<WeeklyStanding[]> {
     const rows = await this.prisma.weeklyAttempt.findMany({
-      where: { weeklyTestId: id },
+      where: { weeklyTestId: id, ...RANKED },
       select: {
         userId: true,
         submittedAt: true,

@@ -125,3 +125,4 @@
 | T-084 | Haftalik test yopilganda ustozga hisobot: topshirganlar, ustoz qarorini kutayotgan va shubhali javoblar soni, navbatga tugma                                                | ✅    |
 | T-085 | Savollar ro'yxati va test tuzish oynasida qo'lda tekshiriladigan ifoda savoliga "Ustoz tekshiradi" belgisi; accent rangi AA ga moslandi                                     | ✅    |
 | T-086 | Yordamchilar: ustoz Sozlamalarda o'quvchini qidirib yordamchi qiladi va qaytarib oladi (`admin/staff`, BR-A05)                                                              | ✅    |
+| T-087 | Ustoz va yordamchi sinovi reyting, natijalar, ota-ona hisoboti va Rasch kalibrovkasiga kirmaydi (BR-W10, BR-M05)                                                            | ✅    |

@@ -12,6 +12,8 @@ export interface ScoredAttempt {
   raw: number;
   /** Savollar tartibida: to'g'ri = 1 */
   row: Response01[];
+  /** Ustoz yoki yordamchi sinovi: ball oladi, lekin kalibrovka va namuna soniga kirmaydi (T-087) */
+  staff?: boolean;
 }
 
 export interface MockScores {
@@ -27,7 +29,8 @@ export interface MockScores {
  * mutlaq ball), aks holda xom ball ulushi × shkala
  */
 export function scoreMock(t: ExamTemplateInput, attempts: ScoredAttempt[]): MockScores {
-  if (attempts.length < RASCH_MIN_SAMPLE) {
+  const sample = attempts.filter((a) => !a.staff);
+  if (sample.length < RASCH_MIN_SAMPLE) {
     const max = examMaxRaw(t.sections);
     return {
       raschN: null,
@@ -35,10 +38,10 @@ export function scoreMock(t: ExamTemplateInput, attempts: ScoredAttempt[]): Mock
       scaled: new Map(attempts.map((a) => [a.id, approxScaled(a.raw, max, t.scaleMax)])),
     };
   }
-  const b = calibrate(attempts.map((a) => a.row));
+  const b = calibrate(sample.map((a) => a.row));
   const w = difficultyWeights(b);
   return {
-    raschN: attempts.length,
+    raschN: sample.length,
     b,
     scaled: new Map(attempts.map((a) => [a.id, abilityScore(a.row, w, t.scaleMax)])),
   };

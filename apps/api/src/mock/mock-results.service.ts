@@ -5,6 +5,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { snapshotOf } from "./admin-mocks.service";
 import { sectionResults } from "./mock-views";
 import { MocksService } from "./mocks.service";
+import { RANKED } from "../common/ranked";
 
 /** Ustoz: mock natijalari. Yopilgach saqlangan shkala balli, ochiq paytda taxminiy */
 @Injectable()
@@ -23,6 +24,7 @@ export class MockResultsService {
         closedAt: true,
         raschN: true,
         attempts: {
+          where: RANKED,
           select: {
             userId: true,
             submittedAt: true,
