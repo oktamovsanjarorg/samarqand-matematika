@@ -123,3 +123,4 @@
 | T-082 | Mock yopilganda tasdiqlangan ota-onaga farzandining natijasi (ball, daraja, taxminiy belgisi)                                                                               | ✅    |
 | T-083 | Asosiy sahifada xatolar bo'lsa "Xatolar ustida ishlang" kartasi (savol va mavzu soni)                                                                                       | ✅    |
 | T-084 | Haftalik test yopilganda ustozga hisobot: topshirganlar, ustoz qarorini kutayotgan va shubhali javoblar soni, navbatga tugma                                                | ✅    |
+| T-085 | Savollar ro'yxati va test tuzish oynasida qo'lda tekshiriladigan ifoda savoliga "Ustoz tekshiradi" belgisi; accent rangi AA ga moslandi                                     | ✅    |

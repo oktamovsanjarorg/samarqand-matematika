@@ -100,7 +100,7 @@ describe("Savollar banki: CRUD", () => {
     expect((await call("POST", "/admin/topics/yoq/questions", teacher, single)).statusCode).toBe(404);
   });
 
-  it("T-074: o'qilmaydigan ifoda 400, «ustoz tekshiradi» belgilansa saqlanadi", async () => {
+  it("T-074, T-085: o'qilmaydigan ifoda 400, «ustoz tekshiradi» belgilansa saqlanadi va ro'yxatda belgilanadi", async () => {
     const t = await newTopic();
     const expr = { type: "EXPRESSION", text: "?", answer: { value: "x = \\int y" } };
     const bad = await create(t.id, expr);
@@ -108,6 +108,10 @@ describe("Savollar banki: CRUD", () => {
     expect(bad.json().message).toContain("ifoda");
     expect((await create(t.id, { ...expr, answer: { ...expr.answer, manual: true } })).statusCode).toBe(201);
     expect((await create(t.id, { ...expr, answer: { value: "\\frac{x}{2}+1" } })).statusCode).toBe(201);
+    // T-085: ro'yxatda faqat belgi, javobning o'zi emas
+    const list = (await call("GET", `/admin/topics/${t.id}/questions`, teacher)).json();
+    expect(list.map((q: { manual: boolean }) => q.manual)).toEqual([true, false]);
+    expect(list[0]).not.toHaveProperty("answer");
   });
 
   it("BR-C03: savoli bor mavzuni o'chirib bo'lmaydi (409)", async () => {

@@ -1,5 +1,8 @@
 import { questionInput, type Choice, type QuestionInput, type QuestionType } from "@samarqand/shared";
 
+/** Turi nomida aytilmagan "ustoz tekshiradi" belgisi: yozma savol nomida bor (T-085) */
+export const manualBadge = (q: { type: string; manual: boolean }) => q.manual && q.type !== "WRITTEN";
+
 export const TYPE_LABELS: Record<QuestionType, string> = {
   SINGLE: "Bitta javob",
   MULTIPLE: "Bir nechta javob",

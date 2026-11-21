@@ -1,3 +1,4 @@
+import type { Prisma } from "@samarqand/db";
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { parseExpression, parseNumber } from "@samarqand/math";
 import {
@@ -18,7 +19,20 @@ const ROW = {
   skills: true,
   order: true,
   isPublished: true,
+  answer: true,
 } as const;
+
+/** Ro'yxat qatori: javobning o'zi kliyentga yuborilmaydi, faqat "qo'lda tekshiriladi" belgisi (T-085) */
+function toRow({ answer, ...q }: Prisma.QuestionGetPayload<{ select: typeof ROW }>): AdminQuestionRow {
+  const manual =
+    q.type === "WRITTEN" ||
+    (q.type === "EXPRESSION" &&
+      typeof answer === "object" &&
+      answer !== null &&
+      "manual" in answer &&
+      answer.manual === true);
+  return { ...q, manual };
+}
 
 /** Son javobi, chegarasi va ifoda (T-074) o'qiladigan bo'lishi shart: aks holda hech kim to'g'ri javob bera olmaydi */
 function assertCheckable(q: QuestionInput) {
@@ -42,7 +56,12 @@ export class AdminQuestionsService {
 
   async list(topicId: string): Promise<AdminQuestionRow[]> {
     await this.mustTopic(topicId);
-    return this.prisma.question.findMany({ where: { topicId }, orderBy: { order: "asc" }, select: ROW });
+    const rows = await this.prisma.question.findMany({
+      where: { topicId },
+      orderBy: { order: "asc" },
+      select: ROW,
+    });
+    return rows.map(toRow);
   }
 
   async get(id: string): Promise<AdminQuestionDetail> {
