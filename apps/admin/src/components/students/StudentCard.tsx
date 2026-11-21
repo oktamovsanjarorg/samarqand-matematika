@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
-import { ACCESS_HINTS, ACCESS_LABELS, formatDate } from "../../lib/labels";
+import { ACCESS_HINTS, ACCESS_LABELS, formatDate, paidLabel } from "../../lib/labels";
 import { Badge, Button } from "../ui";
 
 function AccessSelect(p: { value: StudentAccess; busy: boolean; onChange: (m: StudentAccess) => void }) {
@@ -78,6 +78,10 @@ export function StudentCard({ s, link = false }: { s: AdminStudentRow; link?: bo
           <span className="text-hint">Telefon yoʻq</span>
         )}
         {s.groupName && <Badge>{s.groupName}</Badge>}
+        {/* T-110: pullik rejimdagi qabul qilingan o'quvchining obunasi */}
+        {s.acceptedAt && s.accessMode === "AUTO" && (
+          <Badge tone={s.paidUntil ? "success" : "danger"}>{paidLabel(s.paidUntil)}</Badge>
+        )}
         <span className="text-xs text-hint">Roʻyxatdan: {formatDate(s.createdAt)}</span>
       </div>
       <div className="flex flex-wrap items-center gap-2">

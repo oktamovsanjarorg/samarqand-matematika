@@ -27,3 +27,7 @@ export function formatDate(iso: string): string {
   const p = Object.fromEntries(fmt.formatToParts(new Date(iso)).map((x) => [x.type, x.value]));
   return `${p.day}.${p.month}.${p.year}, ${p.hour}:${p.minute}`;
 }
+
+/** Obuna holati (T-094, T-110): "Obuna 21.12.2026 gacha" yoki "Obuna toʻlanmagan" */
+export const paidLabel = (paidUntil: string | null) =>
+  paidUntil ? `Obuna ${formatDate(paidUntil).slice(0, 10)} gacha` : "Obuna toʻlanmagan";

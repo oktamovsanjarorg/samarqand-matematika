@@ -5,7 +5,10 @@ import { createStudent, loginAdmin, requestParentLink } from "./api";
 const unique = () => Math.random().toString(36).slice(2, 7).replace(/\d/g, "x");
 
 test.describe("Admin: o'quvchilar", () => {
-  test("BR-S03, T-078: yangi o'quvchini qabul qiladi va kirishni ochadi", async ({ page, request }) => {
+  test("BR-S03, T-078, T-110: yangi o'quvchini qabul qiladi va kirishni ochadi", async ({
+    page,
+    request,
+  }) => {
     const name = `Sardor ${unique()}ov`;
     await createStudent(request, { fullName: name, phone: "998901234567" });
     await loginAdmin(page, request, "students");
@@ -15,6 +18,13 @@ test.describe("Admin: o'quvchilar", () => {
     await expect(card.getByText("+998901234567")).toBeVisible();
     await card.getByRole("button", { name: "Qabul qilish" }).click();
     await expect(card).toHaveCount(0);
+
+    // T-110: qabul qilingan, lekin to'lamagan o'quvchi "To'lamagan" ro'yxatida, belgi bilan
+    await page.getByRole("tab", { name: "Toʻlamagan" }).click();
+    await page.getByPlaceholder("Ism, username yoki telefon").fill(name);
+    const unpaid = page.getByTestId("student").filter({ hasText: name });
+    await expect(unpaid.getByText("Obuna toʻlanmagan")).toBeVisible();
+    await page.screenshot({ path: "e2e/.results/admin-students-unpaid.png" });
 
     await page.getByRole("tab", { name: "Hammasi" }).click();
     await page.getByPlaceholder("Ism, username yoki telefon").fill(name);
@@ -34,7 +44,7 @@ test.describe("Admin: o'quvchilar", () => {
     await expect(page.getByTestId("student")).toHaveCount(1);
     const csv = await downloadText(page, page.getByRole("button", { name: "Excel'ga yuklab olish" }));
     expect(csv.name).toBe("Oʻquvchilar.csv");
-    expect(csv.text).toContain("Ism;Telegram;Telefon;Guruh;Kirish");
+    expect(csv.text).toContain("Ism;Telegram;Telefon;Guruh;Kirish;Obuna tugashi");
     expect(csv.text).toContain(`${name};`);
     expect(csv.text).toContain(";998 90 123 45 67;");
   });

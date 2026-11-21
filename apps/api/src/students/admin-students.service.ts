@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import type { Prisma } from "@samarqand/db";
-import type { AdminStudentPatch, AdminStudentRow } from "@samarqand/shared";
+import type { AdminStudentPatch, AdminStudentRow, StudentFilter } from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
 import { AuditService } from "../audit/audit.service";
 import { acceptedText, accessModeText } from "../notify/messages";
@@ -18,10 +18,28 @@ const SELECT = {
   student: {
     select: { fullName: true, accessMode: true, acceptedAt: true, group: { select: { name: true } } },
   },
+  // Eng oxirgi tugaydigan obuna: hozirdan keyin bo'lsa faol (T-110)
+  subscriptions: { orderBy: { endsAt: "desc" }, take: 1, select: { endsAt: true } },
 } as const;
 type Row = Prisma.UserGetPayload<{ select: typeof SELECT }>;
 
 const iso = (d: Date | null | undefined) => (d ? d.toISOString() : null);
+const activeUntil = (u: Row) => {
+  const end = u.subscriptions[0]?.endsAt;
+  return end && end > new Date() ? end.toISOString() : null;
+};
+
+/** Filtr sharti: "unpaid" — pullik rejimda qabul qilingan, lekin hozir faol obunasi yo'q */
+function filterWhere(filter: StudentFilter): Prisma.UserWhereInput {
+  if (filter === "new") return { OR: [{ student: null }, { student: { acceptedAt: null } }] };
+  if (filter === "unpaid")
+    return {
+      student: { acceptedAt: { not: null }, accessMode: "AUTO" },
+      subscriptions: { none: { endsAt: { gt: new Date() } } },
+    };
+  return {};
+}
+
 const toRow = (u: Row): AdminStudentRow => ({
   id: u.id,
   telegramName: [u.firstName, u.lastName].filter(Boolean).join(" "),
@@ -31,6 +49,7 @@ const toRow = (u: Row): AdminStudentRow => ({
   accessMode: u.student?.accessMode ?? "AUTO",
   acceptedAt: iso(u.student?.acceptedAt),
   groupName: u.student?.group?.name ?? null,
+  paidUntil: activeUntil(u),
   createdAt: u.createdAt.toISOString(),
   lastSeenAt: iso(u.lastSeenAt),
 });
@@ -45,12 +64,12 @@ export class AdminStudentsService {
     private readonly notify: NotifyService,
   ) {}
 
-  /** filter "new": ustoz hali qabul qilmaganlar. q: ism, username yoki telefon bo'yicha qidiruv */
-  async list(filter: "new" | "all", q?: string): Promise<AdminStudentRow[]> {
+  /** filter "new": ustoz hali qabul qilmaganlar, "unpaid": to'lamaganlar. q: ism, username yoki telefon */
+  async list(filter: StudentFilter, q?: string): Promise<AdminStudentRow[]> {
     const text = q?.trim();
     const where: Prisma.UserWhereInput = {
       role: "STUDENT",
-      ...(filter === "new" ? { OR: [{ student: null }, { student: { acceptedAt: null } }] } : {}),
+      ...filterWhere(filter),
       ...(text
         ? {
             AND: [

@@ -1,5 +1,6 @@
 import type { NestFastifyApplication } from "@nestjs/platform-fastify";
 import { PrismaClient } from "@samarqand/db";
+import type { AdminStudentRow } from "@samarqand/shared";
 import { internalKey } from "@samarqand/shared/server";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { BOT_TOKEN, createApp, loginAs } from "./helpers";
@@ -9,6 +10,7 @@ let app: NestFastifyApplication;
 let teacher: Record<string, string>;
 const tgIds: bigint[] = [];
 const courseIds: string[] = [];
+const planIds: string[] = [];
 
 type Method = "GET" | "POST" | "PATCH";
 const call = (method: Method, url: string, headers: Record<string, string>, payload?: object) =>
@@ -42,6 +44,7 @@ afterAll(async () => {
   await prisma.course.deleteMany({ where: { id: { in: courseIds } } });
   await prisma.auditLog.deleteMany({ where: { actorId: { in: ids } } });
   await prisma.user.deleteMany({ where: { telegramId: { in: tgIds } } });
+  await prisma.plan.deleteMany({ where: { id: { in: planIds } } });
   await prisma.$disconnect();
   await app.close();
 });
@@ -109,6 +112,41 @@ describe("Admin: o'quvchilar", () => {
     expect(renamed.json().fullName).toBe("Bahrom Qodiriy");
     const logs = await prisma.auditLog.findMany({ where: { entityId: s.id } });
     expect(JSON.stringify(logs)).not.toContain("Qodiriy");
+  });
+
+  it("T-110: to'lamaganlar filtri — qabul qilingan, AUTO, faol obunasiz; qatorda obuna muddati", async () => {
+    const [noSub, free, paid, expired, fresh] = [
+      await newStudent(),
+      await newStudent(),
+      await newStudent(),
+      await newStudent(),
+      await newStudent(),
+    ];
+    for (const s of [noSub, free, paid, expired])
+      await call("POST", `/admin/students/${s.id}/accept`, teacher);
+    await call("PATCH", `/admin/students/${free.id}`, teacher, { accessMode: "FREE" });
+    const plan = await prisma.plan.create({
+      data: { name: `T110 ${Date.now()}`, priceUzs: 1, durationDays: 30 },
+    });
+    planIds.push(plan.id);
+    const at = (days: number) => new Date(Date.now() + days * 86_400_000);
+    await prisma.subscription.createMany({
+      data: [
+        { userId: paid.id, planId: plan.id, startsAt: at(-1), endsAt: at(29) },
+        { userId: expired.id, planId: plan.id, startsAt: at(-31), endsAt: at(-1) },
+      ],
+    });
+
+    const ids = async (filter: string) =>
+      ((await call("GET", `/admin/students?filter=${filter}`, teacher)).json() as AdminStudentRow[]).filter(
+        (r) => [noSub, free, paid, expired, fresh].some((s) => s.id === r.id),
+      );
+    expect((await ids("unpaid")).map((r) => r.id).sort()).toEqual([noSub.id, expired.id].sort());
+    const all = await ids("all");
+    expect(all.find((r) => r.id === paid.id)?.paidUntil).not.toBeNull();
+    expect(all.find((r) => r.id === expired.id)?.paidUntil).toBeNull();
+    // Noma'lum filtr "hammasi" deb olinadi
+    expect((await ids("nimadir")).length).toBe(5);
   });
 
   it("mavjud boʻlmagan oʻquvchi 404", async () => {

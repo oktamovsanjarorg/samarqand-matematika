@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Param, Patch, Post, Query } from "@nestjs/common";
-import { adminStudentPatch } from "@samarqand/shared";
+import { adminStudentPatch, STUDENT_FILTERS, type StudentFilter } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { AdminStudentsService } from "./admin-students.service";
@@ -15,7 +15,8 @@ export class AdminStudentsController {
 
   @Get()
   list(@Query("filter") filter?: string, @Query("q") q?: string) {
-    return this.students.list(filter === "new" ? "new" : "all", q?.slice(0, 100));
+    const f = STUDENT_FILTERS.includes(filter as StudentFilter) ? (filter as StudentFilter) : "all";
+    return this.students.list(f, q?.slice(0, 100));
   }
 
   /** O'quvchi kartasi (T-068) */
