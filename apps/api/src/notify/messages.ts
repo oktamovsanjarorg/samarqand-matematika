@@ -35,8 +35,20 @@ export const newStudentText = (name: string, phone: string) =>
   `🆕 Yangi oʻquvchi: <b>${esc(name)}</b>\nTelefon: ${esc(phone)}\n\nQabul qilish yoki kirish rejimini belgilash uchun panelni oching.`;
 
 /** Ustozga: yangi to'lov cheki */
-export const paymentSubmittedText = (p: { student: string; plan: string; amount: string }) =>
-  `💳 Yangi toʻlov cheki: <b>${esc(p.student)}</b>\n${esc(p.plan)} · ${p.amount} soʻm`;
+export const paymentSubmittedText = (p: {
+  student: string;
+  plan: string;
+  amount: string;
+  byParent: boolean;
+}) =>
+  `💳 Yangi toʻlov cheki: <b>${esc(p.student)}</b>${p.byParent ? " (ota-onasi yubordi)" : ""}\n${esc(p.plan)} · ${p.amount} soʻm`;
+
+/** Chekni yuborgan ota-onaga (T-120) */
+export const paymentApprovedParentText = (child: string, until: string) =>
+  `✅ <b>${esc(child)}</b> uchun toʻlov tasdiqlandi. Barcha darslar <b>${until}</b> gacha ochiq.`;
+
+export const paymentRejectedParentText = (child: string, reason: string) =>
+  `<b>${esc(child)}</b> uchun toʻlov cheki qabul qilinmadi.\nSabab: ${esc(reason)}\n\nKabinetda qayta yuborishingiz mumkin.`;
 
 export const paymentApprovedText = (until: string) =>
   `✅ Toʻlovingiz tasdiqlandi. Barcha darslar <b>${until}</b> gacha ochiq.`;

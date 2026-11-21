@@ -22,7 +22,7 @@ export class BillingController {
     @Query("note") note: string | undefined,
     @Body() body: unknown,
   ) {
-    return this.payments.submit(u.sub, planId ?? "", parseBody(payerNote, note), body);
+    return this.payments.submit(u.sub, { planId: planId ?? "", note: parseBody(payerNote, note), body });
   }
 
   @Delete("payments/:id")

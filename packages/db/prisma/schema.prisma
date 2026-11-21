@@ -17,37 +17,38 @@ enum Role {
 }
 
 model User {
-  id               String           @id @default(cuid())
-  telegramId       BigInt           @unique
-  firstName        String
-  lastName         String?
-  username         String?
-  phone            String?
-  role             Role             @default(STUDENT)
-  isBlocked        Boolean          @default(false)
-  blockedReason    String?
-  lastSeenAt       DateTime?        @db.Timestamptz
-  loginTokens      LoginToken[]
-  auditLogs        AuditLog[]
-  createdAt        DateTime         @default(now()) @db.Timestamptz
-  updatedAt        DateTime         @updatedAt @db.Timestamptz
-  topicAttempts    TopicAttempt[]
-  payments         Payment[]
-  reviewedPayments Payment[]        @relation("PaymentReviewer")
-  subscriptions    Subscription[]
-  weeklyAttempts   WeeklyAttempt[]
-  weeklyReviews    WeeklyAnswer[]   @relation("WeeklyReviewer")
-  student          StudentProfile?  @relation("Student")
-  acceptedStudents StudentProfile[] @relation("AcceptedBy")
-  children         ParentLink[]     @relation("ParentOf")
-  reviewedLinks    ParentLink[]     @relation("LinkReviewer")
-  TutorChat        TutorChat[]
-  mockAttempts     MockAttempt[]
-  attendance       Attendance[]     @relation("Attendance")
-  attendanceMarked Attendance[]     @relation("AttendanceMarker")
-  offlineTests     OfflineTest[]    @relation("OfflineTestCreator")
-  offlineResults   OfflineResult[]  @relation("OfflineResults")
-  trashItems       TrashItem[]      @relation("TrashDeleter")
+  id                String           @id @default(cuid())
+  telegramId        BigInt           @unique
+  firstName         String
+  lastName          String?
+  username          String?
+  phone             String?
+  role              Role             @default(STUDENT)
+  isBlocked         Boolean          @default(false)
+  blockedReason     String?
+  lastSeenAt        DateTime?        @db.Timestamptz
+  loginTokens       LoginToken[]
+  auditLogs         AuditLog[]
+  createdAt         DateTime         @default(now()) @db.Timestamptz
+  updatedAt         DateTime         @updatedAt @db.Timestamptz
+  topicAttempts     TopicAttempt[]
+  payments          Payment[]
+  reviewedPayments  Payment[]        @relation("PaymentReviewer")
+  subscriptions     Subscription[]
+  weeklyAttempts    WeeklyAttempt[]
+  weeklyReviews     WeeklyAnswer[]   @relation("WeeklyReviewer")
+  student           StudentProfile?  @relation("Student")
+  acceptedStudents  StudentProfile[] @relation("AcceptedBy")
+  children          ParentLink[]     @relation("ParentOf")
+  reviewedLinks     ParentLink[]     @relation("LinkReviewer")
+  submittedPayments Payment[]        @relation("PaymentSubmitter")
+  TutorChat         TutorChat[]
+  mockAttempts      MockAttempt[]
+  attendance        Attendance[]     @relation("Attendance")
+  attendanceMarked  Attendance[]     @relation("AttendanceMarker")
+  offlineTests      OfflineTest[]    @relation("OfflineTestCreator")
+  offlineResults    OfflineResult[]  @relation("OfflineResults")
+  trashItems        TrashItem[]      @relation("TrashDeleter")
 
   @@index([role])
 }
@@ -203,13 +204,13 @@ enum CheckResult {
 
 /// Mavzu testi urinishi (T-023). Mashq: qayta ishlash mumkin, vaqt server bo'yicha yoziladi
 model TopicAttempt {
-  id          String        @id @default(cuid())
-  userId      String
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  topicId     String
-  topic       Topic         @relation(fields: [topicId], references: [id], onDelete: Restrict)
-  startedAt   DateTime      @default(now()) @db.Timestamptz
-  submittedAt DateTime?     @db.Timestamptz
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topicId      String
+  topic        Topic         @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  startedAt    DateTime      @default(now()) @db.Timestamptz
+  submittedAt  DateTime?     @db.Timestamptz
   /// Avtomatik tekshirilgan to'g'ri javoblar soni (MANUAL hisobga kirmaydi)
   correct      Int?
   /// Faqat xato qilingan savollar bilan qayta ishlash (T-104): statistika va tavsiyalarga kirmaydi
@@ -317,24 +318,27 @@ enum PaymentStatus {
 
 /// Qo'lda to'lov: o'quvchi kartaga o'tkazib chek rasmini yuboradi, ustoz tasdiqlaydi (BR-B01)
 model Payment {
-  id           String        @id @default(cuid())
-  userId       String
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  planId       String
-  plan         Plan          @relation(fields: [planId], references: [id], onDelete: Restrict)
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId        String
+  plan          Plan          @relation(fields: [planId], references: [id], onDelete: Restrict)
   /// To'lov paytidagi narx (tarif narxi keyin o'zgarishi mumkin)
-  amountUzs    Int
-  status       PaymentStatus @default(PENDING)
+  amountUzs     Int
+  status        PaymentStatus @default(PENDING)
   /// MEDIA_DIR ichidagi nisbiy yo'l: receipts/<id>.jpg
-  receiptPath  String?
-  payerNote    String?
-  reviewedById String?
-  reviewedBy   User?         @relation("PaymentReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
-  reviewNote   String?
-  reviewedAt   DateTime?     @db.Timestamptz
-  subscription Subscription?
-  createdAt    DateTime      @default(now()) @db.Timestamptz
-  updatedAt    DateTime      @updatedAt @db.Timestamptz
+  receiptPath   String?
+  payerNote     String?
+  reviewedById  String?
+  reviewedBy    User?         @relation("PaymentReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewNote    String?
+  reviewedAt    DateTime?     @db.Timestamptz
+  /// Chekni ota-ona yuborgan bo'lsa (T-120); null: o'quvchining o'zi
+  submittedById String?
+  submittedBy   User?         @relation("PaymentSubmitter", fields: [submittedById], references: [id], onDelete: SetNull)
+  subscription  Subscription?
+  createdAt     DateTime      @default(now()) @db.Timestamptz
+  updatedAt     DateTime      @updatedAt @db.Timestamptz
 
   @@index([status, createdAt])
   @@index([userId, createdAt])

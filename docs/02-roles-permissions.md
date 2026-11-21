@@ -46,6 +46,7 @@ O'quvchining pullik kontentga kirishi rol bilan emas, BR-A04 shartlari bilan bel
 | `mocks`, `mock-attempts/*`                                                                     |   ✅    |    ✅     |   ✅    |   —    |
 | `tutor/chats` (AI yordamchi)                                                                   |   ✅    |    ✅     |   ✅    |   —    |
 | `me/children`, `me/children/:id` (ota-ona kabineti)                                            |    —    |     —     |    —    |   ✅   |
+| `me/children/:id/billing` (farzand uchun toʻlov, T-120)                                        |    —    |     —     |    —    |   ✅   |
 | `me`, `me/school`, `courses`, `lessons/:id`                                                    |   ✅    |    ✅     |   ✅    |   ✅   |
 
 Ustoz va yordamchi o'quvchi oqimlarini (haftalik, mock, yordamchi) sinab ko'rish uchun ochishi mumkin.

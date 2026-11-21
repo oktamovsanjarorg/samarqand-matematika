@@ -2,7 +2,12 @@ import { ConflictException, Injectable, NotFoundException } from "@nestjs/common
 import type { Prisma } from "@samarqand/db";
 import type { AdminPayment, PaymentStatus } from "@samarqand/shared";
 import { AuditService } from "../audit/audit.service";
-import { paymentApprovedText, paymentRejectedText } from "../notify/messages";
+import {
+  paymentApprovedParentText,
+  paymentApprovedText,
+  paymentRejectedParentText,
+  paymentRejectedText,
+} from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { MY_PAYMENT_SELECT, toMyPayment } from "./payments.service";
@@ -23,6 +28,7 @@ const SELECT = {
       subscriptions: { orderBy: { endsAt: "desc" }, take: 1, select: { endsAt: true } },
     },
   },
+  submittedBy: { select: { firstName: true, lastName: true } },
 } satisfies Prisma.PaymentSelect;
 type Row = Prisma.PaymentGetPayload<{ select: typeof SELECT }>;
 
@@ -47,6 +53,9 @@ function toAdmin(p: Row): AdminPayment {
       phone: u.phone,
     },
     activeUntil: end && end > new Date() ? end.toISOString() : null,
+    submittedBy: p.submittedBy
+      ? [p.submittedBy.firstName, p.submittedBy.lastName].filter(Boolean).join(" ")
+      : null,
   };
 }
 
@@ -112,6 +121,7 @@ export class AdminPaymentsService {
       paymentApprovedText(day(endsAt)),
       this.notify.appButton("Ilovani ochish", ""),
     );
+    await this.toSubmitter(id, paymentApprovedParentText(view.student.name, day(endsAt)));
     return view;
   }
 
@@ -134,7 +144,15 @@ export class AdminPaymentsService {
       paymentRejectedText(reason),
       this.notify.appButton("Chekni qayta yuborish", "billing"),
     );
+    await this.toSubmitter(id, paymentRejectedParentText(view.student.name, reason));
     return view;
+  }
+
+  /** Chekni ota-ona yuborgan bo'lsa, natija unga ham boradi (T-120) */
+  private async toSubmitter(id: string, text: string): Promise<void> {
+    const p = await this.prisma.payment.findUnique({ where: { id }, select: { submittedById: true } });
+    if (p?.submittedById)
+      await this.notify.toUser(p.submittedById, text, this.notify.appButton("Kabinetni ochish", ""));
   }
 
   private async one(id: string): Promise<AdminPayment> {

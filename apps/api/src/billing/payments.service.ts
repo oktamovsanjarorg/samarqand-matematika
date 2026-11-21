@@ -12,6 +12,7 @@ export const MY_PAYMENT_SELECT = {
   status: true,
   reviewNote: true,
   createdAt: true,
+  submittedById: true,
   plan: { select: { name: true } },
 } as const;
 
@@ -21,6 +22,7 @@ type Row = {
   status: MyPayment["status"];
   reviewNote: string | null;
   createdAt: Date;
+  submittedById: string | null;
   plan: { name: string };
 };
 export const toMyPayment = (p: Row): MyPayment => ({
@@ -30,7 +32,16 @@ export const toMyPayment = (p: Row): MyPayment => ({
   status: p.status,
   reviewNote: p.reviewNote,
   createdAt: p.createdAt.toISOString(),
+  byParent: p.submittedById !== null,
 });
+
+/** Chek yuborish: rasm tanada; by: ota-ona yuborsa uning id'si (T-120) */
+export interface SubmitInput {
+  planId: string;
+  note: string | undefined;
+  body: unknown;
+  by?: string;
+}
 
 /** O'quvchi: tariflar, karta, obuna holati, chek yuborish (BR-B01, BR-B02) */
 @Injectable()
@@ -65,7 +76,7 @@ export class PaymentsService {
     };
   }
 
-  async submit(userId: string, planId: string, note: string | undefined, body: unknown): Promise<MyPayment> {
+  async submit(userId: string, { planId, note, body, by }: SubmitInput): Promise<MyPayment> {
     if (!Buffer.isBuffer(body) || body.length === 0) throw new BadRequestException("Chek rasmini yuboring");
     const image = sniffImage(body);
     if (!image) throw new BadRequestException("Faqat rasm (JPG, PNG, WEBP) qabul qilinadi");
@@ -78,7 +89,13 @@ export class PaymentsService {
       if (await tx.payment.count({ where: { userId, status: "PENDING" } }))
         throw new ConflictException("Avvalgi chekingiz hali tekshirilmoqda");
       return tx.payment.create({
-        data: { userId, planId, amountUzs: plan.priceUzs, payerNote: note || null },
+        data: {
+          userId,
+          planId,
+          amountUzs: plan.priceUzs,
+          payerNote: note || null,
+          submittedById: by ?? null,
+        },
         select: {
           ...MY_PAYMENT_SELECT,
           user: { select: { firstName: true, lastName: true, student: { select: { fullName: true } } } },
@@ -94,15 +111,28 @@ export class PaymentsService {
     }
     const student = p.user.student?.fullName ?? [p.user.firstName, p.user.lastName].filter(Boolean).join(" ");
     await this.notify.toStaff(
-      paymentSubmittedText({ student, plan: plan.name, amount: formatSum(plan.priceUzs) }),
+      paymentSubmittedText({ student, plan: plan.name, amount: formatSum(plan.priceUzs), byParent: !!by }),
       this.notify.adminButton("Cheklarni koʻrish", "payments"),
     );
     return toMyPayment(p);
   }
 
-  /** Noto'g'ri rasm yuborilgan bo'lsa, tekshirilguncha o'quvchi o'zi bekor qiladi */
-  async cancel(userId: string, id: string): Promise<void> {
-    const p = await this.prisma.payment.findFirst({ where: { id, userId }, select: { receiptPath: true } });
+  /** Ota-onaning tasdiqlangan farzandi: o'quvchi userId (T-120) */
+  async childUserId(parentId: string, studentId: string): Promise<string> {
+    const link = await this.prisma.parentLink.findFirst({
+      where: { parentId, studentId, status: "APPROVED" },
+      select: { student: { select: { userId: true } } },
+    });
+    if (!link) throw new NotFoundException("Farzand topilmadi");
+    return link.student.userId;
+  }
+
+  /** Noto'g'ri rasm yuborilgan bo'lsa, tekshirilguncha o'quvchi o'zi bekor qiladi; ota-ona faqat o'zinikini */
+  async cancel(userId: string, id: string, by?: string): Promise<void> {
+    const p = await this.prisma.payment.findFirst({
+      where: { id, userId, ...(by ? { submittedById: by } : {}) },
+      select: { receiptPath: true },
+    });
     if (!p) throw new NotFoundException("Toʻlov topilmadi");
     const { count } = await this.prisma.payment.deleteMany({ where: { id, status: "PENDING" } });
     if (!count) throw new ConflictException("Chek allaqachon tekshirilgan");

@@ -53,6 +53,8 @@ export interface MyPayment {
   status: PaymentStatus;
   reviewNote: string | null;
   createdAt: string;
+  /** Chekni ota-ona yuborgan (T-120) */
+  byParent: boolean;
 }
 
 /** O'quvchining "To'lov" sahifasi */
@@ -68,6 +70,8 @@ export interface AdminPayment extends MyPayment {
   payerNote: string | null;
   /** O'quvchining hozirgi obunasi tugash vaqti */
   activeUntil: string | null;
+  /** Chekni yuborgan ota-ona ismi (T-120); null: o'quvchining o'zi */
+  submittedBy: string | null;
 }
 
 /** Oylik tushum (T-109): "YYYY-MM", Toshkent vaqti bo'yicha tasdiqlangan to'lovlar */
