@@ -26,7 +26,7 @@
 - Bot menyusidagi Mini App manzili (`MINIAPP_URL`) bot ishga tushganda `setChatMenuButton` bilan yangilanadi.
 - Serverda: `~/samarqand` (git clone, read-only deploy key), sirlar `~/samarqand/.env` da (chmod 600, serverda yaratilgan).
 - Konteynerlar: `postgres`, `redis`, `api` (ishga tushishda `prisma migrate deploy`), `bot`, `web` (Caddy: Mini App `/`, admin `/admin/`, `/api` proxy).
-- **Avtomatik:** `main` ga push → CI yashil → `deploy` job SSH orqali `scripts/deploy.sh` ni chaqiradi. CI kaliti serverda faqat shu skriptni ishga tushira oladi (`authorized_keys` dagi `command=`).
+- **Avtomatik:** `main` ga push → CI yashil → `deploy` job SSH orqali `scripts/deploy.sh` ni chaqiradi. CI kaliti serverda faqat shu skriptni ishga tushira oladi (`authorized_keys` dagi `command=`). Skript eski image'larni o'chiradi va Docker build keshini 4 GB gacha qisqartiradi (aks holda disk to'ladi).
 - Qo'lda: `scripts/deploy-remote.sh` (noutbukdan).
 - Qoida: serverda kod qo'lda tahrirlanmaydi.
 

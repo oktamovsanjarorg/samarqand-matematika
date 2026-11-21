@@ -19,6 +19,10 @@ echo "== $(date -Is) deploy $before -> $after"
 docker compose build --pull
 docker compose up -d --remove-orphans
 docker image prune -f >/dev/null
+# Build keshi har deploy'da o'sadi (bir kunda 23 GB bo'lgan): 4 GB dan ortig'i tozalanadi.
+# Yangi buildx'da --reserved-space, eskisida --keep-storage
+docker builder prune -af --reserved-space 4gb >/dev/null 2>&1 \
+  || docker builder prune -af --keep-storage 4gb >/dev/null 2>&1 || true
 
 # API sog'lom bo'lguncha kutamiz (migratsiyalar shu yerda qo'llanadi)
 for _ in $(seq 1 40); do
