@@ -14,7 +14,8 @@ test.describe("Admin panel", () => {
   }) => {
     const url = await adminLink(request);
     await page.goto(url);
-    await expect(page).toHaveURL(/\/admin\/content$/);
+    await expect(page).toHaveURL(/\/admin\/?$/);
+    await expect(page.getByRole("heading", { name: "Bosh sahifa" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Menyu", exact: true })).toBeVisible();
     await page.screenshot({ path: "e2e/.results/admin-home.png" });
 

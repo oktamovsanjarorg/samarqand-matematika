@@ -4,6 +4,7 @@ import {
   BookOpen,
   CalendarCheck,
   ClipboardList,
+  LayoutDashboard,
   CreditCard,
   FileSpreadsheet,
   Settings,
@@ -27,6 +28,7 @@ export interface NavGroup {
 /** Admin bo'limlari guruhlab: o'quv jarayoni, odamlar, to'lov va AI */
 export function navGroups(role: RoleName): NavGroup[] {
   const groups: NavGroup[] = [
+    { title: "Asosiy", items: [{ to: "/", label: "Bosh sahifa", Icon: LayoutDashboard }] },
     {
       title: "Oʻquv jarayoni",
       items: [
@@ -57,7 +59,3 @@ export function navGroups(role: RoleName): NavGroup[] {
     groups.push({ title: "Sozlash", items: [{ to: "/settings", label: "Sozlamalar", Icon: Settings }] });
   return groups;
 }
-
-/** Joriy sahifa nomi (telefondagi tepa panel uchun) */
-export const currentLabel = (groups: NavGroup[], path: string) =>
-  groups.flatMap((g) => g.items).find((i) => path === i.to || path.startsWith(`${i.to}/`))?.label ?? "";

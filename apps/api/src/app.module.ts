@@ -12,6 +12,7 @@ import { TutorModule } from "./tutor/tutor.module";
 import { MockModule } from "./mock/mock.module";
 import { GroupsModule } from "./groups/groups.module";
 import { OfflineModule } from "./offline/offline.module";
+import { DashboardModule } from "./dashboard/dashboard.module";
 import { AiModule } from "./ai/ai.module";
 import { StudentsModule } from "./students/students.module";
 import { ParentsModule } from "./parents/parents.module";
@@ -51,6 +52,7 @@ export class AppModule {
         MockModule,
         GroupsModule,
         OfflineModule,
+        DashboardModule,
         AiModule,
         StudentsModule,
         ParentsModule,

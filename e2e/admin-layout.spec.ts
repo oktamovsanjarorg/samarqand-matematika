@@ -13,7 +13,7 @@ test("T-060: telefonda menyu ochiladi va bo'limga o'tadi, kompyuterda yon panel"
   await page.screenshot({ path: "e2e/.results/admin-menu-mobile.png" });
   await nav.getByRole("link", { name: "Guruhlar", exact: true }).click();
   await expect(nav).toBeHidden();
-  await expect(page.getByRole("banner")).toContainText("Guruhlar");
+  await expect(page.getByRole("heading", { name: "Guruhlar" })).toBeVisible();
 
   await page.setViewportSize({ width: 1366, height: 860 });
   await expect(nav.getByRole("link", { name: "Guruhlar", exact: true })).toHaveClass(/bg-brand/);
