@@ -1,3 +1,4 @@
+import { downloadText } from "./download";
 import { expect, test } from "@playwright/test";
 import { apiPost, createStudent, grantFree, loginAdmin } from "./api";
 import { seedMock, seedMockBase } from "./mock-seed";
@@ -45,7 +46,7 @@ test("BR-M01: ustoz shablondan mock tuzadi, har bo'limga faqat mos turdagi savol
   await expect(page.getByTestId("mock-section").nth(1).getByTestId("selected")).toContainText("1");
 });
 
-test("T-053b: ustoz mock natijalarini bo'limlar bo'yicha ko'radi", async ({ page, request }) => {
+test("T-053b, T-076: ustoz mock natijalarini bo'limlar bo'yicha ko'radi", async ({ page, request }) => {
   const m = await seedMock(request);
   const s = await createStudent(request, { fullName: "Natija Mockchi", phone: "998901112252" });
   await grantFree(request, m.admin, "Natija Mockchi");
@@ -63,5 +64,9 @@ test("T-053b: ustoz mock natijalarini bo'limlar bo'yicha ko'radi", async ({ page
   const row = results.getByTestId("mock-result-row").filter({ hasText: "Natija Mockchi" });
   await expect(row).toContainText("50/75");
   await expect(row).toContainText("C");
+  // T-076: natijalar Excel'ga (CSV), bo'limlar ustunlari bilan
+  const csv = await downloadText(page, results.getByRole("button", { name: "Excel'ga yuklab olish" }));
+  expect(csv.text).toContain("#;Oʻquvchi;Topshirgan;Ball;Daraja;Xom ball");
+  expect(csv.text).toContain(";Natija Mockchi;");
   await page.screenshot({ path: "e2e/.results/admin-mock-results.png", fullPage: true });
 });

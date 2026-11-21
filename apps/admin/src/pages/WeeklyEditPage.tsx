@@ -130,7 +130,9 @@ export function WeeklyEditPage() {
       {t.isError && <ErrorState message={t.error.message} onRetry={() => t.refetch()} />}
       {!id && <Form />}
       {t.data && <Form initial={t.data} id={t.data.id} />}
-      {t.data && t.data.status !== "UPCOMING" && <Standings id={t.data.id} total={t.data.questionCount} />}
+      {t.data && t.data.status !== "UPCOMING" && (
+        <Standings id={t.data.id} total={t.data.questionCount} title={t.data.title} />
+      )}
     </div>
   );
 }
