@@ -45,7 +45,7 @@ async function seedTopic(request: APIRequestContext) {
   return { admin, title };
 }
 
-test("BR-Q01, BR-Q03, BR-P03, T-079: o'quvchi mavzu testini yechadi va natijani ko'radi", async ({
+test("BR-Q01, BR-Q03, BR-P03, T-079, T-083: o'quvchi mavzu testini yechadi va natijani ko'radi", async ({
   page,
   request,
 }) => {
@@ -110,6 +110,8 @@ async function checkStats(page: Page, courseTitle: string) {
   await expect(page.getByTestId("recent")).toContainText("Kasrlar");
   await expect(page.getByTestId("recent")).toContainText("2/3");
   await expect(page.getByTestId("recent")).toContainText(/\d{2}\.\d{2}/);
+  // T-083: xato savol bo'lsa Asosiy'da turtki
+  await expect(page.getByTestId("mistakes-home")).toContainText("1 ta savol, 1 ta mavzu");
   await expect(page.getByTestId("continue")).toHaveCount(0);
   await expect(page.getByTestId("access")).toHaveCount(0);
   await page.screenshot({ path: "e2e/.results/miniapp-home.png" });
