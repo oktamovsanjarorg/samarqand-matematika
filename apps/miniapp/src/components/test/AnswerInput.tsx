@@ -1,3 +1,4 @@
+import { parseExpression } from "@samarqand/math";
 import type { Choice, QuestionView } from "@samarqand/shared";
 import { Check } from "lucide-react";
 import type { Response } from "../../lib/answers";
@@ -87,6 +88,39 @@ function MatchingInput({ question, value, onChange }: Props) {
   );
 }
 
+/** Ifoda: yozilgani formula ko'rinishida darhol chiqadi; tushunilmasa topshirishdan oldin aytiladi (T-077) */
+function ExpressionInput({ value, onChange }: Props) {
+  const text = get<string>(value, "value") ?? "";
+  const parsed = text.trim() ? parseExpression(text) : null;
+  return (
+    <div className="space-y-2">
+      <input
+        value={text}
+        onChange={(e) => onChange({ value: e.target.value }, false)}
+        aria-label="Javob"
+        placeholder="Masalan: 2(x+1) yoki x^2-1"
+        autoComplete="off"
+        autoCapitalize="off"
+        spellCheck={false}
+        className={`${field} h-12`}
+      />
+      {text.trim() && (
+        <div
+          className="rounded-xl bg-surface px-4 py-2 text-sm"
+          data-testid="expression-preview"
+          aria-live="polite"
+        >
+          {parsed ? (
+            <MathText text={"$" + parsed.tex + "$"} />
+          ) : (
+            <p className="text-danger">Ifoda tushunilmadi. Masalan: 2(x+1), x^2-1, sqrt(x)</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Savol turiga mos javob maydoni */
 export function AnswerInput(props: Props) {
   const { question: q, value, onChange } = props;
@@ -121,13 +155,15 @@ export function AnswerInput(props: Props) {
           className={`${field} py-3`}
         />
       );
+    case "EXPRESSION":
+      return <ExpressionInput {...props} />;
     default:
       return (
         <input
           value={get<string>(value, "value") ?? ""}
           onChange={(e) => onChange({ value: e.target.value }, false)}
           aria-label="Javob"
-          placeholder={q.type === "NUMERIC" ? "Masalan: 3/4 yoki 0,75" : "Masalan: 2(x+1) yoki x^2-1"}
+          placeholder="Masalan: 3/4 yoki 0,75"
           autoComplete="off"
           className={`${field} h-12`}
         />

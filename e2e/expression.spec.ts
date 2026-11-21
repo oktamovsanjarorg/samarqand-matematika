@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { adminHeaders, apiPost, createStudent, grantFree, loginAdmin } from "./api";
 import { E2E_PREFIX, openAsTelegram } from "./telegram";
 
-test("T-074, BR-Q03: ustoz ifoda savolini qo'shadi, o'quvchining teng ifodasi to'g'ri hisoblanadi", async ({
+test("T-074, T-077, BR-Q03: ustoz ifoda savolini qo'shadi, o'quvchining teng ifodasi to'g'ri hisoblanadi", async ({
   page,
   request,
 }) => {
@@ -35,7 +35,12 @@ test("T-074, BR-Q03: ustoz ifoda savolini qo'shadi, o'quvchining teng ifodasi to
     "placeholder",
     "Masalan: 2(x+1) yoki x^2-1",
   );
+  // T-077: tushunilmagan yozuv darhol aytiladi, to'g'risi formula bo'lib chiqadi
+  await page.getByLabel("Javob", { exact: true }).fill("x^2 = 1");
+  await expect(page.getByTestId("expression-preview")).toContainText("Ifoda tushunilmadi");
   await page.getByLabel("Javob", { exact: true }).fill("x² − 1");
+  await expect(page.getByTestId("expression-preview").locator(".katex")).toBeVisible();
+  await page.screenshot({ path: "e2e/.results/miniapp-expression-preview.png" });
   await page.getByRole("button", { name: "Yakunlash" }).click();
   await page.getByRole("dialog").getByRole("button", { name: "Topshirish" }).click();
   await expect(page.getByTestId("score")).toContainText("1/1");

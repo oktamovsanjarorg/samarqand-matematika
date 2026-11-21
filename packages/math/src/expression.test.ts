@@ -46,3 +46,20 @@ describe("T-074: ifoda ekvivalentligi", () => {
     expect(expressionsEqual("sqrt(-1-x^2)", "sqrt(-2-x^2)")).toBeNull();
   });
 });
+
+describe("T-077: ifodaning formula ko'rinishi", () => {
+  it.each([
+    ["x^2-1", "{x}^{2} - 1"],
+    ["2(x+1)", "2 \\left(x + 1\\right)"],
+    ["1/2x", "\\frac{1}{2} x"],
+    ["(a+b)/(c-d)", "\\frac{a + b}{c - d}"],
+    ["sqrt(x+1)", "\\sqrt{x + 1}"],
+    ["2*3", "2 \\cdot 3"],
+    ["πr²", "\\pi {r}^{2}"],
+    ["x^(n+1)", "{x}^{n + 1}"],
+    ["\\sin x", "\\sin x"],
+    ["2 3", "2 \\cdot 3"],
+  ])("%s → %s", (a, tex) => {
+    expect(parseExpression(a)?.tex).toBe(tex);
+  });
+});
