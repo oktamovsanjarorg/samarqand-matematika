@@ -104,3 +104,9 @@
 | BR-G02 | Davomat o'quvchi va kun bo'yicha bitta: keldi, kechikdi, kelmadi, sababli. Kelajak sanasiga qo'yilmaydi                                                                                                                                                                                                                   |
 | BR-G03 | Kelmadi yoki kechikdi belgilansa, faqat tasdiqlangan ota-onaga xabar boradi. Holat o'zgarmasa xabar takrorlanmaydi; yuborilgan xabardan keyin holat tuzatilsa, ota-onaga "Tuzatish" xabari boradi                                                                                                                         |
 | BR-G04 | Tashqi (offline) test natijasi CSV dan olinadi: sarlavhada ism ustuni, ixtiyoriy telefon, qolgan ustunlar bo'limlar. Qator o'quvchiga avval telefon, keyin aniq ism bo'yicha moslanadi (guruh a'zolari ustun). Noaniq bo'lsa moslanmaydi, ustoz qo'lda biriktiradi. Bitta o'quvchi bitta qatorda. Xatoli fayl saqlanmaydi |
+
+## Tavsiyalar (R)
+
+| ID     | Qoida                                                                                                                                                                                                                                                                                                         |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BR-R01 | O'quvchiga tavsiya faqat faktlardan (AI'siz): oxirgi 90 kundagi tekshirilgan javoblar (mavzu testi, yopilgan haftalik va yopilgan mock; haftalikda ustoz bahosi ustun). Mavzuda kamida 3 javob va to'g'ri ulush 60% dan past bo'lsa kuchsiz. Tavsiyada son, manba va ko'p xato qilingan ko'nikma ko'rsatiladi |

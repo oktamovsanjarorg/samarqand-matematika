@@ -2,6 +2,7 @@ import type { MyStats } from "@samarqand/shared";
 import { Bot, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AccessCard } from "../components/home/AccessCard";
+import { Recommendations } from "../components/home/Recommendations";
 import { RecentResults } from "../components/home/RecentResults";
 import { MockRow } from "../components/mock/MockRow";
 import { WeeklyRow } from "../components/weekly/WeeklyRow";
@@ -121,6 +122,7 @@ export function HomePage() {
       <MockBlock />
       {stats.fetchStatus === "fetching" && !stats.data && <div className="skeleton h-24" aria-busy="true" />}
       {stats.data && <StatsBlock stats={stats.data} />}
+      <Recommendations />
       {user?.role === "STUDENT" && <TutorCard />}
     </div>
   );
