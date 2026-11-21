@@ -106,6 +106,14 @@ export const mockResultText = (
 ) =>
   `📊 Mock <b>${esc(title)}</b> natijasi: <b>${r.scaled}/${r.scaleMax}</b>${r.grade ? `, daraja <b>${esc(r.grade)}</b>` : ""}.\nBoʻlimlar va toʻgʻri javoblar ilovada.`;
 
+/** Ota-onaga: farzandning mock natijasi (T-082). Kam qatnashchida "taxminiy" (BR-M05) */
+export const mockParentReport = (
+  child: string,
+  title: string,
+  r: { scaled: number; scaleMax: number; grade: string | null; approx: boolean },
+) =>
+  `🎓 <b>${esc(child)}</b>, mock <b>${esc(title)}</b>: <b>${r.scaled}/${r.scaleMax}</b>${r.grade ? `, daraja <b>${esc(r.grade)}</b>` : ""}${r.approx ? " (taxminiy)" : ""}.`;
+
 const ATTENDANCE_TEXT = {
   LATE: "darsga kechikdi",
   ABSENT: "darsga kelmadi",
