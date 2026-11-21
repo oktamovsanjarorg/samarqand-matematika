@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { clock, formatStamp, timeLeft } from "./time";
+import { clock, formatStamp, timeLeft, uzToday } from "./time";
 
 describe("haftalik test vaqti", () => {
   const now = new Date("2026-11-20T11:00:00Z");
@@ -21,5 +21,13 @@ describe("clock", () => {
     expect(clock(1_499_001)).toBe("25:00");
     expect(clock(7_000)).toBe("0:07");
     expect(clock(-5)).toBe("0:00");
+  });
+});
+
+describe("uzToday", () => {
+  it("Toshkent sanasi bo'yicha kun va oy nomi", () => {
+    expect(uzToday(new Date("2026-11-21T10:00:00Z"))).toBe("Shanba, 21-noyabr");
+    // UTC 20:00 — Toshkentda ertangi kun
+    expect(uzToday(new Date("2026-11-21T20:00:00Z"))).toBe("Yakshanba, 22-noyabr");
   });
 });

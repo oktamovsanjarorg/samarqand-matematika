@@ -35,3 +35,33 @@ export function clock(msLeft: number): string {
   const pad = (n: number) => String(n).padStart(2, "0");
   return h > 0 ? `${h}:${pad(m)}:${pad(s % 60)}` : `${m}:${pad(s % 60)}`;
 }
+
+const WEEKDAYS = ["yakshanba", "dushanba", "seshanba", "chorshanba", "payshanba", "juma", "shanba"];
+const MONTHS = [
+  "yanvar",
+  "fevral",
+  "mart",
+  "aprel",
+  "may",
+  "iyun",
+  "iyul",
+  "avgust",
+  "sentabr",
+  "oktabr",
+  "noyabr",
+  "dekabr",
+];
+const DAY_PARTS = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  timeZone: "Asia/Tashkent",
+});
+
+/** "Shanba, 21-noyabr" (Toshkent sanasi, o'zbekcha) */
+export function uzToday(now: Date): string {
+  const p = Object.fromEntries(DAY_PARTS.formatToParts(now).map((x) => [x.type, x.value]));
+  const d = new Date(Date.UTC(Number(p.year), Number(p.month) - 1, Number(p.day)));
+  const w = WEEKDAYS[d.getUTCDay()] ?? "";
+  return `${w.charAt(0).toUpperCase()}${w.slice(1)}, ${d.getUTCDate()}-${MONTHS[d.getUTCMonth()]}`;
+}
