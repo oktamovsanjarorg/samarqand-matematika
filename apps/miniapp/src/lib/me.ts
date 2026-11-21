@@ -1,4 +1,4 @@
-import type { MyProfile, MyStats } from "@samarqand/shared";
+import type { MyProfile, MySchool, MyStats } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../store/auth";
 import { api } from "./api";
@@ -15,6 +15,12 @@ export function useStats() {
     enabled: isStudent,
     staleTime: 0,
   });
+}
+
+/** Guruh, ota-ona holati, davomat: faqat o'quvchida (T-065) */
+export function useSchool() {
+  const isStudent = useAuth((s) => s.user?.role === "STUDENT");
+  return useQuery({ queryKey: ["school"], queryFn: () => api<MySchool>("/me/school"), enabled: isStudent });
 }
 
 const DAY = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", timeZone: "Asia/Tashkent" });
