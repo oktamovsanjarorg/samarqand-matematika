@@ -25,6 +25,7 @@ import { TutorChatsPage } from "./pages/TutorChatsPage";
 import { QuestionEditPage } from "./pages/QuestionEditPage";
 import { QuestionsPage } from "./pages/QuestionsPage";
 import { SignInHint } from "./pages/SignInHint";
+import { StudentPage } from "./pages/StudentPage";
 import { StudentsPage } from "./pages/StudentsPage";
 
 const queryClient = new QueryClient({
@@ -55,6 +56,7 @@ export function App() {
               <Route path="content/topics/:topicId/questions/new" element={<QuestionEditPage />} />
               <Route path="content/questions/:id" element={<QuestionEditPage />} />
               <Route path="students" element={<StudentsPage />} />
+              <Route path="students/:id" element={<StudentPage />} />
               <Route path="parents" element={<ParentsPage />} />
               <Route path="payments" element={<PaymentsPage />} />
               <Route path="settings" element={<SettingsPage />} />

@@ -15,9 +15,19 @@ export class AttentionService {
     private readonly access: AccessService,
   ) {}
 
-  async list(now = new Date()): Promise<AttentionRow[]> {
+  /** Bitta o'quvchining sabablari (T-068 kartasi uchun) */
+  async forStudent(userId: string, now = new Date()) {
+    return (await this.list(now, userId))[0]?.reasons ?? [];
+  }
+
+  async list(now = new Date(), onlyId?: string): Promise<AttentionRow[]> {
     const students = await this.prisma.user.findMany({
-      where: { role: "STUDENT", isBlocked: false, student: { acceptedAt: { not: null } } },
+      where: {
+        role: "STUDENT",
+        isBlocked: false,
+        student: { acceptedAt: { not: null } },
+        ...(onlyId ? { id: onlyId } : {}),
+      },
       select: {
         id: true,
         phone: true,

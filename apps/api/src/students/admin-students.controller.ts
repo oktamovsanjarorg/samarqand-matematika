@@ -3,15 +3,25 @@ import { adminStudentPatch } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { AdminStudentsService } from "./admin-students.service";
+import { StudentCardService } from "./student-card.service";
 
 @Roles("TEACHER", "ASSISTANT")
 @Controller("admin/students")
 export class AdminStudentsController {
-  constructor(private readonly students: AdminStudentsService) {}
+  constructor(
+    private readonly students: AdminStudentsService,
+    private readonly card: StudentCardService,
+  ) {}
 
   @Get()
   list(@Query("filter") filter?: string, @Query("q") q?: string) {
     return this.students.list(filter === "new" ? "new" : "all", q?.slice(0, 100));
+  }
+
+  /** O'quvchi kartasi (T-068) */
+  @Get(":id")
+  one(@Param("id") id: string) {
+    return this.card.get(id);
   }
 
   @Post(":id/accept")
