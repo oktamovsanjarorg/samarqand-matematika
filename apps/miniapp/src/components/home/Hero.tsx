@@ -12,7 +12,7 @@ function Tile({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 flex-1 rounded-xl bg-white/10 px-3 py-2">
       <p className="truncate text-lg font-extrabold tabular-nums">{value}</p>
-      <p className="truncate text-xs text-white/75">{label}</p>
+      <p className="truncate text-xs text-white">{label}</p>
     </div>
   );
 }
@@ -25,7 +25,7 @@ export function Hero(p: { name?: string; stats?: MyStats; weekly?: StudentWeekly
       <div className="flex items-center gap-3">
         <img src="/logo.jpg" alt="" className="h-12 w-12 rounded-xl bg-white p-0.5" />
         <div className="min-w-0">
-          <p className="text-sm text-white/75">{uzToday(new Date())}</p>
+          <p className="text-sm text-white/90">{uzToday(new Date())}</p>
           <h1 className="truncate text-xl font-extrabold">Assalomu alaykum{p.name ? `, ${p.name}` : ""}!</h1>
         </div>
       </div>

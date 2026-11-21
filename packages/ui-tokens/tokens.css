@@ -9,24 +9,28 @@
   --c-surface: 243 245 248;
   --c-section: 255 255 255;
   --c-text: 17 24 39;
-  --c-hint: 107 114 128;
+  --c-hint: 95 101 112; /* #5F6570: oq fonda 5.9, surface fonda 5.4 */
   --c-link: 20 63 99;
-  --c-danger: 220 38 38;
-  --c-success: 22 163 74;
+  --c-danger: 185 28 28; /* #B91C1C: danger/10 fonda ham 4.5+ */
+  --c-success: 19 115 51; /* #137333: success/10 fonda 5.2 */
   --c-brand: 20 63 99; /* #143F63 */
+  --c-brand-text: 20 63 99;
   --c-accent: 154 106 15; /* #9A6A0F, oq fonda 4.7:1 */
   --brand-soft-alpha: 0.08;
 }
 
-/* Tungi rejim: toʻq koʻk qora fonda koʻrinmaydi. #4282C2: oq matn bilan ham, #17212B fon bilan ham 4:1 */
+/* Tungi rejim (T-071, WCAG AA 4.5:1, axe bilan tekshiriladi): brend fon va brend matn alohida */
 [data-scheme="dark"] {
   --c-bg: 23 33 43;
   --c-surface: 14 22 33;
   --c-section: 23 33 43;
   --c-text: 245 245 245;
-  --c-hint: 140 150 160;
+  --c-hint: 147 163 180; /* #93A3B4: fon va surface'da 5.3+ */
   --c-link: 106 166 230;
-  --c-brand: 66 130 194; /* #4282C2 */
+  --c-danger: 248 113 113; /* #F87171: 5.9 */
+  --c-success: 34 197 94; /* #22C55E: 7.1 */
+  --c-brand: 47 102 153; /* #2F6699: fon sifatida, oq matn bilan 6.0 */
+  --c-brand-text: 106 166 230; /* #6AA6E6: to'q fonda matn sifatida 5.4+ */
   --c-accent: 232 184 92; /* #E8B85C */
   --brand-soft-alpha: 0.18;
 }
