@@ -1,13 +1,24 @@
 import { Body, Controller, Get, HttpCode, Post, UseGuards } from "@nestjs/common";
 import { fullNameBody, userPhoneBody } from "@samarqand/shared";
-import { CurrentUser, JwtUser, Public } from "../auth/decorators";
+import { CurrentUser, JwtUser, Public, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { InternalGuard } from "../staff/internal.guard";
+import { MySchoolService } from "./my-school.service";
 import { ProfileService } from "./profile.service";
 
 @Controller()
 export class ProfileController {
-  constructor(private readonly profile: ProfileService) {}
+  constructor(
+    private readonly profile: ProfileService,
+    private readonly school: MySchoolService,
+  ) {}
+
+  /** Guruh, ota-ona holati, davomat (T-065) */
+  @Get("me/school")
+  @Roles("STUDENT")
+  mySchool(@CurrentUser() u: JwtUser) {
+    return this.school.get(u.sub);
+  }
 
   @Get("me/profile")
   my(@CurrentUser() u: JwtUser) {

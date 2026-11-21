@@ -1,6 +1,8 @@
 import { ROLE_LABELS, type MyStats } from "@samarqand/shared";
 import { Link } from "react-router-dom";
-import { useProfile, useStats } from "../lib/me";
+import { HistoryLinks } from "../components/profile/HistoryLinks";
+import { SchoolCard } from "../components/profile/SchoolCard";
+import { useProfile, useSchool, useStats } from "../lib/me";
 import { useAuth } from "../store/auth";
 
 function Tile({ label, value }: { label: string; value: string }) {
@@ -45,15 +47,22 @@ export function ProfilePage() {
   const user = useAuth((s) => s.user);
   const profile = useProfile();
   const stats = useStats().data;
+  const school = useSchool().data;
   if (!user) return null;
   const name = profile.data?.fullName ?? [user.firstName, user.lastName].filter(Boolean).join(" ");
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-extrabold">Profil</h1>
-      <div className="card">
-        <p className="font-bold">{name}</p>
-        <p className="text-sm text-hint">{ROLE_LABELS[user.role]}</p>
+      <div className="card flex items-center gap-3">
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-brand text-lg font-extrabold text-white">
+          {name.charAt(0).toUpperCase()}
+        </span>
+        <div className="min-w-0">
+          <p className="truncate font-bold">{name}</p>
+          <p className="text-sm text-hint">{ROLE_LABELS[user.role]}</p>
+        </div>
       </div>
+      {school && <SchoolCard s={school} />}
       {stats && (
         <div className="flex gap-3" data-testid="tiles">
           <Tile label="Topshirilgan test" value={String(stats.tests)} />
@@ -64,11 +73,7 @@ export function ProfilePage() {
         </div>
       )}
       {stats && stats.topics.length > 0 && <Topics topics={stats.topics} />}
-      {user.role === "STUDENT" && (
-        <Link to="/billing" className="tap card flex items-center justify-between font-semibold">
-          Obuna va toʻlovlar <span className="text-hint">›</span>
-        </Link>
-      )}
+      {user.role === "STUDENT" && <HistoryLinks />}
     </div>
   );
 }

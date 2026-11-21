@@ -37,6 +37,13 @@ export interface AdminGroupDetail extends AdminGroupRow {
 export const ATTENDANCE_STATUSES = ["PRESENT", "LATE", "ABSENT", "EXCUSED"] as const;
 export type AttendanceStatus = (typeof ATTENDANCE_STATUSES)[number];
 
+export const ATTENDANCE_LABELS = {
+  PRESENT: "Keldi",
+  LATE: "Kechikdi",
+  ABSENT: "Kelmadi",
+  EXCUSED: "Sababli",
+} as const satisfies Record<AttendanceStatus, string>;
+
 /** Toshkent sanasi "YYYY-MM-DD" */
 export const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Sana YYYY-MM-DD koʻrinishida");
 

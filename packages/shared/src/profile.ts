@@ -1,3 +1,4 @@
+import type { AttendanceStatus } from "./groups";
 import { z } from "zod";
 import { telegramProfileSchema } from "./telegram-profile";
 
@@ -58,4 +59,13 @@ export interface AdminStudentRow {
   groupName: string | null;
   createdAt: string;
   lastSeenAt: string | null;
+}
+
+/** Profil: offline maktab ma'lumoti (T-065). Faqat o'quvchi o'zi ko'radi */
+export interface MySchool {
+  group: { name: string; schedule: string | null } | null;
+  /** Ota-ona ulanishlari: tasdiqlangan va ustoz ko'rib chiqishini kutayotgan */
+  parents: { approved: number; pending: number };
+  /** Oxirgi 30 kun davomati, yangisi birinchi */
+  attendance: { date: string; status: AttendanceStatus }[];
 }

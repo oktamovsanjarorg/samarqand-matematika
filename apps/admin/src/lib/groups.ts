@@ -1,3 +1,4 @@
+export { ATTENDANCE_LABELS } from "@samarqand/shared";
 import type { AdminGroupDetail, AdminGroupRow } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api";
@@ -11,10 +12,3 @@ export const useGroup = (id: string) =>
 /** Toshkent bo'yicha bugungi sana "YYYY-MM-DD" */
 export const tashkentToday = (now = new Date()) =>
   new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tashkent" }).format(now);
-
-export const ATTENDANCE_LABELS = {
-  PRESENT: "Keldi",
-  LATE: "Kechikdi",
-  ABSENT: "Kelmadi",
-  EXCUSED: "Sababli",
-} as const;
