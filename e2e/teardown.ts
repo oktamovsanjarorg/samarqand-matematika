@@ -16,6 +16,18 @@ export default async function teardown() {
     };
     await prisma.weeklyTest.deleteMany({ where: e2eTest });
     await prisma.mockTest.deleteMany({ where: e2eTest });
+    // T-099: E2E kontentidan o'chirilganlar axlat qutisida qolmasin
+    const e2eCourse = { course: { title: { startsWith: E2E_PREFIX } } };
+    const parents = [
+      ...(await prisma.course.findMany({
+        where: { title: { startsWith: E2E_PREFIX } },
+        select: { id: true },
+      })),
+      ...(await prisma.topic.findMany({ where: e2eCourse, select: { id: true } })),
+    ].map((r) => r.id);
+    await prisma.trashItem.deleteMany({
+      where: { OR: [{ title: { startsWith: E2E_PREFIX } }, { parentId: { in: parents } }] },
+    });
     await prisma.question.deleteMany({ where: inCourse });
     await prisma.lesson.deleteMany({ where: inCourse });
     await prisma.topic.deleteMany({ where: { course: { title: { startsWith: E2E_PREFIX } } } });

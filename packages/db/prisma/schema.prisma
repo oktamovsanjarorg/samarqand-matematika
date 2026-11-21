@@ -47,6 +47,7 @@ model User {
   attendanceMarked Attendance[]     @relation("AttendanceMarker")
   offlineTests     OfflineTest[]    @relation("OfflineTestCreator")
   offlineResults   OfflineResult[]  @relation("OfflineResults")
+  trashItems       TrashItem[]      @relation("TrashDeleter")
 
   @@index([role])
 }
@@ -82,6 +83,25 @@ model AuditLog {
 
   @@index([entity, entityId])
   @@index([createdAt])
+}
+
+/// Axlat qutisi (T-099, FR-U05): o'chirilgan kontent qatorining to'liq nusxasi. TRASH_DAYS kun saqlanadi, keyin o'chadi
+model TrashItem {
+  id          String   @id @default(cuid())
+  /// Course | Topic | Lesson | Question
+  entity      String
+  entityId    String
+  /// Ro'yxatda ko'rsatiladigan nom (savol uchun matn boshi)
+  title       String
+  /// Tiklash uchun kerak ota: mavzu uchun kurs, dars va savol uchun mavzu
+  parentId    String?
+  /// Qatorning o'zi (Prisma qatori JSON ko'rinishida)
+  data        Json
+  deletedById String?
+  deletedBy   User?    @relation("TrashDeleter", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedAt   DateTime @default(now()) @db.Timestamptz
+
+  @@index([deletedAt])
 }
 
 /// Kurs → Mavzu → Dars (docs/05-data-model.md). Tartib `order` bo'yicha, ota ichida 0 dan boshlab

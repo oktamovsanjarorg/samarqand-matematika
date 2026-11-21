@@ -97,6 +97,8 @@ export async function weeklyFixture() {
     await prisma.question.deleteMany({ where: { topic: { courseId: { in: courseIds } } } });
     await prisma.topic.deleteMany({ where: { courseId: { in: courseIds } } });
     await prisma.course.deleteMany({ where: { id: { in: courseIds } } });
+    // T-099: testda o'chirilgan kontent axlat qutisida qolmasin
+    await prisma.trashItem.deleteMany({ where: { deletedById: { in: userIds } } });
     await prisma.auditLog.deleteMany({ where: { actorId: { in: userIds } } });
     await prisma.user.deleteMany({ where: { telegramId: { in: tgIds } } });
     await prisma.$disconnect();

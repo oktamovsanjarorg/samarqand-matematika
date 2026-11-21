@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import type { AdminLessonDetail, LessonInput } from "@samarqand/shared";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
+import { TrashService } from "../trash/trash.service";
 
 const DETAIL = {
   id: true,
@@ -32,6 +33,7 @@ export class AdminLessonsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly trash: TrashService,
   ) {}
 
   async get(id: string): Promise<AdminLessonDetail> {
@@ -64,8 +66,13 @@ export class AdminLessonsService {
   }
 
   async remove(actorId: string, id: string): Promise<void> {
-    await this.get(id);
-    await this.prisma.lesson.delete({ where: { id } });
+    const row = await this.prisma.lesson.findUnique({ where: { id } });
+    if (!row) throw new NotFoundException("Dars topilmadi");
+    // T-099: konspekt yo'qolmasin: nusxa axlat qutisiga
+    await this.prisma.$transaction([
+      this.trash.record(actorId, "Lesson", row),
+      this.prisma.lesson.delete({ where: { id } }),
+    ]);
     await this.audit.log({ actorId, action: "lesson.delete", entity: "Lesson", entityId: id });
   }
 }

@@ -25,3 +25,4 @@ export * from "./audit";
 export * from "./csv";
 export * from "./mistakes";
 export * from "./staff";
+export * from "./trash";

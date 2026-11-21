@@ -11,6 +11,7 @@ import {
 } from "@samarqand/shared";
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
+import { TrashService } from "../trash/trash.service";
 import { toDetail, toStorage } from "./codec";
 
 const ROW = {
@@ -54,6 +55,7 @@ export class AdminQuestionsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly trash: TrashService,
   ) {}
 
   async list(topicId: string): Promise<AdminQuestionRow[]> {
@@ -113,7 +115,8 @@ export class AdminQuestionsService {
   }
 
   async remove(actorId: string, id: string): Promise<void> {
-    await this.get(id);
+    const row = await this.prisma.question.findUnique({ where: { id } });
+    if (!row) throw new NotFoundException("Savol topilmadi");
     // Testda ishlatilgan savol o'chirilmaydi: o'quvchilar natijasi buzilmasin (T-095: haftalik va mock ham)
     const [topic, weekly, mock] = await Promise.all([
       this.prisma.topicAnswer.count({ where: { questionId: id } }),
@@ -128,7 +131,10 @@ export class AdminQuestionsService {
             ? "Savol haftalik yoki mock testda bor: avval testdan olib tashlang"
             : "Savol testlarda ishlatilgan: oʻchirish oʻrniga nashrdan oling",
       });
-    await this.prisma.question.delete({ where: { id } });
+    await this.prisma.$transaction([
+      this.trash.record(actorId, "Question", row),
+      this.prisma.question.delete({ where: { id } }),
+    ]);
     await this.audit.log({ actorId, action: "question.delete", entity: "Question", entityId: id });
   }
 

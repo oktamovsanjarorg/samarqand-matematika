@@ -30,6 +30,7 @@ Course → Topic → Lesson (body: Markdown + LaTeX, videoUrl, isFree, isPublish
 - Ichi bo'sh bo'lmagan kurs yoki mavzu o'chmaydi (`onDelete: Restrict`, BR-C03).
 - **`Question.answer` va `solution` alohida ustunlar.** O'quvchiga savol ko'rinishi tuzilganda bu ustunlar `select` qilinmaydi (BR-Q01). `answer` formati turga qarab `packages/shared/src/question.ts` dagi Zod sxemasida (`codec.ts` saqlash va o'qishni bajaradi).
 - Testda ishlatilgan savol o'chirilmaydi (`Restrict`, BR-P05), nashrdan olinadi.
+- `TrashItem` (entity, entityId, title, parentId, data, deletedBy): o'chirilgan kurs, mavzu, dars yoki savolning to'liq nusxasi (BR-C06). O'chirish bilan bitta tranzaksiyada yoziladi, ro'yxat ochilganda 30 kundan eskisi o'chiriladi. Faqat bo'sh yoki ishlatilmagan qator o'chgani uchun bitta qatorni tiklash yetarli.
 
 ## Testlar
 

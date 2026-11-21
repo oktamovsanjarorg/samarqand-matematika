@@ -51,6 +51,8 @@ afterAll(async () => {
   await prisma.topic.deleteMany({ where: { courseId: { in: courseIds } } });
   await prisma.course.deleteMany({ where: { id: { in: courseIds } } });
   const users = await prisma.user.findMany({ where: { telegramId: { in: tgIds } }, select: { id: true } });
+  // T-099: testda o'chirilgan kontent axlat qutisida qolmasin
+  await prisma.trashItem.deleteMany({ where: { deletedById: { in: users.map((u) => u.id) } } });
   await prisma.auditLog.deleteMany({ where: { actorId: { in: users.map((u) => u.id) } } });
   await prisma.user.deleteMany({ where: { telegramId: { in: tgIds } } });
   await prisma.$disconnect();
