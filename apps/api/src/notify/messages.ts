@@ -23,7 +23,7 @@ export const parentRequestToStudent = (parent: string) =>
   `👨‍👩‍👦 <b>${esc(parent)}</b> sizning ota-onangiz sifatida ulanish soʻrovini yubordi. Ustoz tasdiqlagach, natijalaringiz haqida xabar oladi.`;
 
 export const parentApprovedToParent = (student: string) =>
-  `✅ Siz <b>${esc(student)}</b>ning ota-onasi sifatida tasdiqlandingiz. Natijalar haqida shu yerda xabar olasiz.`;
+  `✅ Siz <b>${esc(student)}</b>ning ota-onasi sifatida tasdiqlandingiz. Natijalar haqida shu yerda xabar olasiz.\nKabinetda davomat, natijalar va obunani koʻrasiz, kerak boʻlsa obunani oʻzingiz toʻlaysiz.`;
 
 export const parentApprovedToStudent = (parent: string) =>
   `✅ Ota-onangiz <b>${esc(parent)}</b> tasdiqlandi.`;
