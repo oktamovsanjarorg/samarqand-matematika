@@ -21,3 +21,4 @@ export * from "./answers";
 export * from "./review";
 export * from "./ranking";
 export * from "./tutor";
+export * from "./audit";

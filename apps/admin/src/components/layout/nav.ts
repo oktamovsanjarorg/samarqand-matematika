@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   CreditCard,
   FileSpreadsheet,
+  History,
   Settings,
   UserRound,
   Users,
@@ -56,6 +57,13 @@ export function navGroups(role: RoleName): NavGroup[] {
   ];
   // BR-B05: tarif va karta faqat ustozda
   if (role === "TEACHER")
-    groups.push({ title: "Sozlash", items: [{ to: "/settings", label: "Sozlamalar", Icon: Settings }] });
+    groups.push({
+      title: "Sozlash",
+      items: [
+        { to: "/settings", label: "Sozlamalar", Icon: Settings },
+        // T-075: yordamchilar amallarini ustoz ko'radi
+        { to: "/audit", label: "Jurnal", Icon: History },
+      ],
+    });
   return groups;
 }

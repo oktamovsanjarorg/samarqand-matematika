@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminLayout } from "./components/AdminLayout";
 import { setUnauthorizedHandler } from "./lib/api";
 import { clearSession, loadSession } from "./lib/session";
+import { AuditPage } from "./pages/AuditPage";
 import { ContentPage } from "./pages/ContentPage";
 import { LessonEditorPage } from "./pages/LessonEditorPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -60,6 +61,7 @@ export function App() {
               <Route path="parents" element={<ParentsPage />} />
               <Route path="payments" element={<PaymentsPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="audit" element={<AuditPage />} />
               <Route path="weekly" element={<WeeklyListPage />} />
               <Route path="weekly/new" element={<WeeklyEditPage />} />
               <Route path="weekly/:id" element={<WeeklyEditPage />} />

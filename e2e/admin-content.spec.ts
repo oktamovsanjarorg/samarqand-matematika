@@ -7,7 +7,7 @@ test("BR-C01..C03: kurs, mavzu va dars yaratish, formula ko'rinishi, nashr", asy
   await loginAdmin(page, request, "content");
 
   await page.getByPlaceholder("Yangi kurs nomi").fill(course);
-  await page.getByRole("button", { name: "Kurs" }).click();
+  await page.getByRole("button", { name: "Kurs", exact: true }).click();
   const card = page.getByTestId("course").filter({ hasText: course });
   await expect(card.getByText("Qoralama")).toBeVisible();
 

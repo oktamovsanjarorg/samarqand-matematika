@@ -113,3 +113,4 @@
 | T-072 | Kontrast tekshiruvi kengaytirildi: Mini App'ning barcha o'quvchi va ota-ona ekranlari (ikkala rejim), admin bo'limlari                                                      | ✅    |
 | T-073 | Ota-ona Profili: farzandlar holati, botdan keladigan xabarlar, yana farzand ulash yo'li                                                                                     | ✅    |
 | T-074 | Ifoda javobini avtomatik tekshirish: o'z parserimiz (LaTeX, Unicode, yashirin ko'paytirish), tasodifiy nuqtalarda tenglik, "Ustoz tekshiradi" belgisi, admin'da jonli holat | ✅    |
+| T-075 | Admin jurnali (faqat ustoz): xodimlar amallari kun bo'yicha, obyekt nomi va havolasi, bo'lim va xodim filtri, sahifalash                                                    | ✅    |
