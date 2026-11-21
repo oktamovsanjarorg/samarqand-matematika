@@ -124,3 +124,4 @@
 | T-083 | Asosiy sahifada xatolar bo'lsa "Xatolar ustida ishlang" kartasi (savol va mavzu soni)                                                                                       | ✅    |
 | T-084 | Haftalik test yopilganda ustozga hisobot: topshirganlar, ustoz qarorini kutayotgan va shubhali javoblar soni, navbatga tugma                                                | ✅    |
 | T-085 | Savollar ro'yxati va test tuzish oynasida qo'lda tekshiriladigan ifoda savoliga "Ustoz tekshiradi" belgisi; accent rangi AA ga moslandi                                     | ✅    |
+| T-086 | Yordamchilar: ustoz Sozlamalarda o'quvchini qidirib yordamchi qiladi va qaytarib oladi (`admin/staff`, BR-A05)                                                              | ✅    |
