@@ -90,6 +90,23 @@ function Stat({ value, label }: { value: string | number; label: string }) {
   );
 }
 
+/** Muvaffaqiyat o'lchovlari (T-105): haftalik testda qatnashish va ota-onalar ulanganligi */
+function Metrics({ s }: { s: AdminDashboard["stats"] }) {
+  return (
+    <>
+      {s.lastWeekly ? (
+        <Stat
+          value={`${s.lastWeekly.submitted}/${s.lastWeekly.eligible}`}
+          label={`«${s.lastWeekly.title}» ni topshirgan (toʻliq kirishlilardan)`}
+        />
+      ) : (
+        <Stat value="–" label="Yopilgan haftalik test hali yoʻq" />
+      )}
+      <Stat value={`${s.parentsLinked}/${s.students}`} label="Ota-onasi ulangan oʻquvchilar" />
+    </>
+  );
+}
+
 /** Ustozni kutayotgan ishlar va qisqa holat (T-061) */
 export function DashboardPage() {
   const d = useDashboard();
@@ -119,7 +136,7 @@ export function DashboardPage() {
           <AttentionList />
           <section className="space-y-2" aria-label="Holat">
             <h2 className="font-bold">Holat</h2>
-            <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
               <Stat value={d.data.stats.students} label="Oʻquvchilar" />
               <Stat value={d.data.stats.activeToday} label="Bugun kirgan" />
               <Stat value={d.data.stats.activeWeek} label="7 kunda faol" />
@@ -131,6 +148,7 @@ export function DashboardPage() {
               ) : (
                 <Stat value="–" label="Guruh hali yoʻq" />
               )}
+              <Metrics s={d.data.stats} />
             </div>
           </section>
         </>

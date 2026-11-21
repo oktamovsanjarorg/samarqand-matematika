@@ -29,10 +29,10 @@ Platforma uchta muammoni hal qiladi:
 
 ## Muvaffaqiyat o'lchovi
 
-- Haftalik testni oyna ichida topshirgan to'liq kirishli o'quvchilar ulushi.
+- Haftalik testni oyna ichida topshirgan to'liq kirishli o'quvchilar ulushi (admin bosh sahifasi, T-105).
 - Ustozning haftalik tekshiruvga sarflagan vaqti (navbatda qolgan javoblar soni, T-084 hisoboti).
 - Kuchsiz mavzu bo'yicha keyingi urinishda natija o'sishi (Xatolarim, tavsiyalar).
-- Ota-onalarning ulanganlik ulushi (BR-A04 sharti).
+- Ota-onalarning ulanganlik ulushi (BR-A04 sharti; admin bosh sahifasi, T-105).
 
 ## Hozircha qilinmaydi
 

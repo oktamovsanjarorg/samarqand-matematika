@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { PrismaClient } from "@samarqand/db";
 import { createStudent, loginAdmin } from "./api";
 
-test("T-061: bosh sahifada kutayotgan ishlar, bosilsa bo'limga o'tadi", async ({ page, request }) => {
+test("T-061, T-105: bosh sahifada kutayotgan ishlar, bosilsa bo'limga o'tadi", async ({ page, request }) => {
   // Yangi (qabul qilinmagan) o'quvchi: "Yangi o'quvchilar" kartasi chiqadi
   await createStudent(request, { fullName: "Yangi Kelgan" });
   await loginAdmin(page, request);
@@ -10,6 +10,11 @@ test("T-061: bosh sahifada kutayotgan ishlar, bosilsa bo'limga o'tadi", async ({
   const card = page.getByTestId("todo").filter({ hasText: "Yangi oʻquvchilar" });
   await expect(card).toBeVisible();
   await expect(page.getByLabel("Holat")).toContainText("Oʻquvchilar");
+  // T-105: muvaffaqiyat o'lchovlari
+  await expect(page.getByLabel("Holat")).toContainText("Ota-onasi ulangan oʻquvchilar");
+  await expect(page.getByLabel("Holat")).toContainText(
+    /topshirgan \(toʻliq kirishlilardan\)|Yopilgan haftalik test hali yoʻq/,
+  );
   await page.screenshot({ path: "e2e/.results/admin-dashboard.png", fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 860 });

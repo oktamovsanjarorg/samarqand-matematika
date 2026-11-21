@@ -15,6 +15,11 @@ export interface AdminDashboard {
     groups: number;
     /** Bugun davomat belgilangan guruhlar */
     groupsMarkedToday: number;
+    /** Muvaffaqiyat o'lchovlari (T-105, 00-vision) */
+    /** Oxirgi yopilgan haftalik test: topshirganlar va hozir to'liq kirishli o'quvchilar soni */
+    lastWeekly: { testId: string; title: string; submitted: number; eligible: number } | null;
+    /** Kamida bitta tasdiqlangan ota-onasi bor o'quvchilar */
+    parentsLinked: number;
   };
 }
 
