@@ -1,6 +1,7 @@
 import type { AdminCourseTree } from "@samarqand/shared";
 import { useState } from "react";
 import { InlineForm } from "../components/InlineForm";
+import { QuestionSearch } from "../components/QuestionSearch";
 import { RowActions } from "../components/RowActions";
 import { TopicBlock } from "../components/TopicBlock";
 import { Badge, Button, EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
@@ -95,6 +96,7 @@ export function ContentPage() {
       <p className="text-sm text-hint">
         Kurs → mavzu → dars. Oʻquvchi faqat nashr qilingan kurs va darslarni koʻradi.
       </p>
+      <QuestionSearch />
       <InlineForm
         label="Kurs"
         placeholder="Yangi kurs nomi"
