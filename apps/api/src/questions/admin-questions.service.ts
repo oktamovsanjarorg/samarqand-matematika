@@ -97,11 +97,19 @@ export class AdminQuestionsService {
 
   async remove(actorId: string, id: string): Promise<void> {
     await this.get(id);
-    // Urinishlarda ishlatilgan savol o'chirilmaydi: o'quvchilar natijasi buzilmasin. Nashrdan olish mumkin
-    if (await this.prisma.topicAnswer.count({ where: { questionId: id } }))
+    // Testda ishlatilgan savol o'chirilmaydi: o'quvchilar natijasi buzilmasin (T-095: haftalik va mock ham)
+    const [topic, weekly, mock] = await Promise.all([
+      this.prisma.topicAnswer.count({ where: { questionId: id } }),
+      this.prisma.weeklyQuestion.count({ where: { questionId: id } }),
+      this.prisma.mockQuestion.count({ where: { questionId: id } }),
+    ]);
+    if (topic + weekly + mock > 0)
       throw new ConflictException({
         code: ERROR_CODES.NOT_EMPTY,
-        message: "Savol testlarda ishlatilgan: oʻchirish oʻrniga nashrdan oling",
+        message:
+          weekly + mock > 0
+            ? "Savol haftalik yoki mock testda bor: avval testdan olib tashlang"
+            : "Savol testlarda ishlatilgan: oʻchirish oʻrniga nashrdan oling",
       });
     await this.prisma.question.delete({ where: { id } });
     await this.audit.log({ actorId, action: "question.delete", entity: "Question", entityId: id });
