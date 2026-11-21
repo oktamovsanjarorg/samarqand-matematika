@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { adminHeaders, apiPost, createStudent, loginAdmin } from "./api";
+import { adminHeaders, adminNav, apiPost, createStudent, loginAdmin } from "./api";
 import { E2E_PREFIX } from "./telegram";
 
 const API = "http://127.0.0.1:4300/api";
@@ -24,13 +24,13 @@ test("T-054: ustoz guruh tuzadi, o'quvchini qidirib qo'shadi va chiqaradi", asyn
   await expect(page.getByText("Topilganlar shu guruhda")).toBeVisible();
   await page.screenshot({ path: "e2e/.results/admin-group.png", fullPage: true });
 
-  await page.getByRole("link", { name: "Oʻquvchilar" }).click();
+  await adminNav(page, "Oʻquvchilar");
   await page.getByPlaceholder("Ism, username yoki telefon").fill("Guruhli");
   await expect(page.getByTestId("student").filter({ hasText: "Guruhli Oquvchi" }).first()).toContainText(
     name,
   );
 
-  await page.getByRole("link", { name: "Guruhlar" }).click();
+  await adminNav(page, "Guruhlar");
   await row.click();
   await page.getByLabel("Guruhli Oquvchini guruhdan chiqarish").click();
   await expect(members).toContainText("Oʻquvchilar (0)");

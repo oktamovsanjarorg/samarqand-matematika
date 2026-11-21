@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { loginAdmin } from "./api";
+import { adminNav, loginAdmin } from "./api";
 import { E2E_PREFIX } from "./telegram";
 
 test("BR-C01..C03: kurs, mavzu va dars yaratish, formula ko'rinishi, nashr", async ({ page, request }) => {
@@ -26,7 +26,7 @@ test("BR-C01..C03: kurs, mavzu va dars yaratish, formula ko'rinishi, nashr", asy
   await expect(page.getByText("Saqlandi")).toBeVisible();
   await page.screenshot({ path: "e2e/.results/admin-lesson-editor.png", fullPage: true });
 
-  await page.getByRole("link", { name: "Kontent" }).first().click();
+  await adminNav(page, "Kontent");
   const row = page.getByTestId("course").filter({ hasText: course }).getByTestId("lesson-row");
   await expect(row.getByText("Bepul")).toBeVisible();
   await expect(row.getByText("Qoralama")).toHaveCount(0);
