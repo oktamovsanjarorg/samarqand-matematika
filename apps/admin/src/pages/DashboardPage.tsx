@@ -112,6 +112,15 @@ function Metrics({ s }: { s: AdminDashboard["stats"] }) {
         <Stat value="–" label="Yopilgan haftalik test hali yoʻq" />
       )}
       <Stat value={`${s.parentsLinked}/${s.students}`} label="Ota-onasi ulangan oʻquvchilar" />
+      {/* T-133: kuchsiz mavzuni qayta ishlaganda o'sish (00-vision) */}
+      <Stat
+        value={s.retries.count ? `${Math.round((s.retries.improved / s.retries.count) * 100)}%` : "–"}
+        label={
+          s.retries.count
+            ? `Mavzu testini qayta ishlaganda natija oshgan (30 kun, ${s.retries.count} ta urinish)`
+            : "30 kunda mavzu testi qayta ishlanmagan"
+        }
+      />
     </>
   );
 }

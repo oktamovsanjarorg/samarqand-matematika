@@ -12,6 +12,10 @@ test("T-061, T-105: bosh sahifada kutayotgan ishlar, bosilsa bo'limga o'tadi", a
   await expect(page.getByLabel("Holat")).toContainText("Oʻquvchilar");
   // T-105: muvaffaqiyat o'lchovlari
   await expect(page.getByLabel("Holat")).toContainText("Ota-onasi ulangan oʻquvchilar");
+  // T-133: qayta ishlashda o'sish (bo'sh bazada "qayta ishlanmagan")
+  await expect(page.getByLabel("Holat")).toContainText(
+    /Mavzu testini qayta ishlaganda natija oshgan|qayta ishlanmagan/,
+  );
   await expect(page.getByLabel("Holat")).toContainText(
     /topshirgan \(toʻliq kirishlilardan\)|Yopilgan haftalik test hali yoʻq/,
   );
