@@ -1,4 +1,5 @@
-import { PARENT_FLAGS, type ParentFlag } from "@samarqand/shared";
+import { PARENT_FLAGS, type ParentFlag, type StudentAccess } from "@samarqand/shared";
+import { isFullAccess, type AccessFacts } from "../access/access-rules";
 import { esc } from "./notify.service";
 
 /** Ustozga: yangi ota-ona so'rovi */
@@ -121,3 +122,21 @@ export const attendanceParentText = (p: {
   correction: boolean;
 }) =>
   `${p.correction ? "✏️ Tuzatish: " : "📋 "}<b>${esc(p.child)}</b> ${p.date} kuni ${ATTENDANCE_TEXT[p.status]} (${esc(p.group)}).`;
+
+/** O'quvchiga: ustoz qabul qildi; to'liq kirish uchun nima qolgani aniq yoziladi (T-081) */
+export function acceptedText(f: AccessFacts): string {
+  if (isFullAccess(f)) return "✅ Ustoz sizni qabul qildi. Barcha darslar va testlar ochiq.";
+  const steps = [
+    ...(f.approvedParents > 0
+      ? []
+      : ["ota-onangizni ulang: botga /ota yuboring va havolani ularga joʻnating"]),
+    ...(f.paid ? [] : ["obunani toʻlang: ilovada Profil → Obuna va toʻlovlar"]),
+  ];
+  return `✅ Ustoz sizni qabul qildi.\nBarcha darslar ochilishi uchun:\n${steps.map((x) => `• ${x}`).join("\n")}`;
+}
+
+/** O'quvchiga: ustoz kirish rejimini qo'lda o'zgartirdi (T-081). AUTO ga qaytishda xabar yo'q */
+export const accessModeText: Partial<Record<StudentAccess, string>> = {
+  FREE: "🔓 Ustoz sizga barcha darslar va testlarni ochib berdi.",
+  CLOSED: "🔒 Darslar va testlarga kirishingiz yopildi. Savolingiz boʻlsa, ustozga murojaat qiling.",
+};
