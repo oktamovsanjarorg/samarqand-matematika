@@ -3,6 +3,7 @@ import { Bot, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AccessCard } from "../components/home/AccessCard";
 import { Hero } from "../components/home/Hero";
+import { ParentHome } from "../components/parent/ParentHome";
 import { Recommendations } from "../components/home/Recommendations";
 import { RecentResults } from "../components/home/RecentResults";
 import { MockRow } from "../components/mock/MockRow";
@@ -103,7 +104,7 @@ function TutorCard() {
   );
 }
 
-export function HomePage() {
+function StudentHome() {
   const user = useAuth((s) => s.user);
   const profile = useProfile();
   const stats = useStats();
@@ -120,6 +121,18 @@ export function HomePage() {
       {stats.data && <StatsBlock stats={stats.data} />}
       <Recommendations />
       {user?.role === "STUDENT" && <TutorCard />}
+    </div>
+  );
+}
+
+/** Ota-onaga o'z kabineti (T-069), qolganlarga o'quvchi Asosiy sahifasi */
+export function HomePage() {
+  const user = useAuth((s) => s.user);
+  if (user?.role !== "PARENT") return <StudentHome />;
+  return (
+    <div className="space-y-4">
+      <Hero name={user.firstName} />
+      <ParentHome />
     </div>
   );
 }
