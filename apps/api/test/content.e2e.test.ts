@@ -171,4 +171,17 @@ describe("O'quvchi ko'rinishi", () => {
     const draft = await lesson(t.id, { isPublished: false, isFree: true });
     expect((await call("GET", `/lessons/${draft.id}`, student)).statusCode).toBe(404);
   });
+
+  it("T-066: darsda qo'shni darslar (nashr qilinmagani tashlab o'tiladi, pullik yopiq) va mavzu testi soni", async () => {
+    const t = await topic((await course()).id);
+    const a = await lesson(t.id, { title: "Birinchi", isFree: true });
+    await lesson(t.id, { title: "Qoralama", isPublished: false, isFree: true });
+    const c = await lesson(t.id, { title: "Uchinchi" });
+    const view = (await call("GET", `/lessons/${a.id}`, student)).json();
+    expect(view).toMatchObject({ topicId: t.id, questionCount: 0, prev: null });
+    expect(view.next).toEqual({ id: c.id, title: "Uchinchi", locked: true });
+    const back = (await call("GET", `/lessons/${c.id}`, teacher)).json();
+    expect(back.prev).toEqual({ id: a.id, title: "Birinchi", locked: false });
+    expect(back.next).toBeNull();
+  });
 });

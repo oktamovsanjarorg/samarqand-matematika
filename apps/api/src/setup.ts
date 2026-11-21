@@ -6,7 +6,7 @@ import type { FastifyRequest } from "fastify";
 /** main.ts va testlar uchun umumiy sozlash */
 export async function configureApp(
   app: NestFastifyApplication,
-  opts: { rateLimit: false } | { authPerMinute: number },
+  opts: { rateLimit: false } | { authPerMinute: number; perMinute: number },
 ) {
   app.setGlobalPrefix("api");
   // Chek rasmi tanasi xom bayt bo'lib keladi (multipart'siz): turi baytlardan ham tekshiriladi
@@ -19,12 +19,12 @@ export async function configureApp(
       (_req, body, done) => done(null, body),
     );
   if ("rateLimit" in opts) return;
-  // Bitta IP'dan daqiqasiga 600 so'rov, kirish (auth) uchun RATE_LIMIT_AUTH_PER_MIN (maktab Wi-Fi'da butun sinf bitta IP'da).
+  // Bitta IP'dan daqiqasiga RATE_LIMIT_PER_MIN so'rov, kirish (auth) uchun RATE_LIMIT_AUTH_PER_MIN (maktab Wi-Fi'da butun sinf bitta IP'da).
   // Haqiqiy IP proxy'dan X-Real-IP orqali keladi.
-  const auth = opts.authPerMinute;
+  const { authPerMinute: auth, perMinute } = opts;
   await app.register(rateLimit as never, {
     timeWindow: "1 minute",
-    max: (req: FastifyRequest) => (req.url.startsWith("/api/auth/") ? auth : 600),
+    max: (req: FastifyRequest) => (req.url.startsWith("/api/auth/") ? auth : perMinute),
     keyGenerator: (req: FastifyRequest) => String(req.headers["x-real-ip"] ?? req.ip),
     allowList: (req: FastifyRequest) => req.url === "/api/health",
     errorResponseBuilder: () => ({

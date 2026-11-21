@@ -99,3 +99,11 @@
 | T-063 | Ustozga tavsiya: e'tibor kerak o'quvchilar (7+ kun faolsiz, natijasi tushgan, ketma-ket dars qoldirgan, haftalikni topshirmagan), sababi bilan                        | ✅    |
 | T-064 | Mini App Asosiy sahifa dizayni: salomlashuv va holat bloki, keyingi qadam                                                                                             | ✅    |
 | T-065 | Mini App Profil: guruh, ota-ona holati, natijalar tarixi (haftalik, mock, offline)                                                                                    | ✅    |
+
+## 6-bosqich: sayqal va o'quv oqimi
+
+| ID    | Vazifa                                                                                                    | Holat |
+| ----- | --------------------------------------------------------------------------------------------------------- | ----- |
+| T-066 | Dars sahifasi oxiri: mavzu testi tugmasi (savollar soni bilan), oldingi va keyingi dars                   | ✅    |
+| T-067 | Darslar ro'yxati: mavzu bo'yicha eng yaxshi natija va mavzu testi tugmasi                                 | ⬜    |
+| T-068 | Admin o'quvchi kartasi: natijalar, davomat, ota-ona, e'tibor sabablari va kuchsiz mavzular bitta sahifada | ⬜    |

@@ -2,6 +2,7 @@ import { ERROR_CODES, type LessonView } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { PlayCircle } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { LessonFooter } from "../components/lesson/LessonFooter";
 import { Locked } from "../components/Locked";
 import { MathText } from "../components/MathText";
 import { ErrorState } from "../components/states";
@@ -57,6 +58,7 @@ export function LessonPage() {
       <div className="card text-[15px] leading-relaxed">
         {l.body.trim() ? <MathText text={l.body} /> : <p className="text-hint">Konspekt hali yozilmagan.</p>}
       </div>
+      <LessonFooter l={l} />
     </article>
   );
 }

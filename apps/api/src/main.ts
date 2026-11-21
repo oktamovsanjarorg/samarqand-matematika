@@ -13,7 +13,7 @@ import { configureApp } from "./setup";
 async function bootstrap() {
   const env = loadEnv();
   const app = await NestFactory.create<NestFastifyApplication>(AppModule.forRoot(env), new FastifyAdapter());
-  await configureApp(app, { authPerMinute: env.RATE_LIMIT_AUTH_PER_MIN });
+  await configureApp(app, { authPerMinute: env.RATE_LIMIT_AUTH_PER_MIN, perMinute: env.RATE_LIMIT_PER_MIN });
   app.enableCors({ origin: env.CORS_ORIGINS.split(",").map((s) => s.trim()) });
   await app.listen(env.API_PORT, env.API_HOST);
   console.info(`API: http://${env.API_HOST}:${env.API_PORT}/api`);

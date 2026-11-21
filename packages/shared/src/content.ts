@@ -86,4 +86,16 @@ export interface LessonView {
   body: string;
   videoUrl: string | null;
   isFree: boolean;
+  topicId: string;
+  /** Mavzu testidagi nashr qilingan savollar: 0 bo'lsa "Mavzu testi" tugmasi chiqmaydi */
+  questionCount: number;
+  /** Shu mavzudagi qo'shni darslar (T-066) */
+  prev: LessonLink | null;
+  next: LessonLink | null;
+}
+
+export interface LessonLink {
+  id: string;
+  title: string;
+  locked: boolean;
 }
