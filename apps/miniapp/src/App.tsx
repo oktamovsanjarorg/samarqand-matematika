@@ -6,19 +6,27 @@ import { AppLayout } from "./components/AppLayout";
 import { ErrorState, Splash } from "./components/states";
 import { api, login } from "./lib/api";
 import { HomePage } from "./pages/HomePage";
-import { AttemptResultPage } from "./pages/AttemptResultPage";
-import { BillingPage } from "./pages/BillingPage";
-import { LessonPage } from "./pages/LessonPage";
-import { LessonsPage } from "./pages/LessonsPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
-import { TopicTestPage } from "./pages/TopicTestPage";
-import { MistakesPage } from "./pages/MistakesPage";
-import { ProfilePage } from "./pages/ProfilePage";
-import { TutorPage } from "./pages/TutorPage";
-import { MockListPage } from "./pages/MockListPage";
-import { MockTestPage } from "./pages/MockTestPage";
-import { WeeklyListPage } from "./pages/WeeklyListPage";
-import { WeeklyTestPage } from "./pages/WeeklyTestPage";
+
+/** T-131: sahifalar alohida chunk'larda: birinchi ochilishda faqat Asosiy yuklanadi, KaTeX esa kerak bo'lganda */
+const AttemptResultPage = lazy(() =>
+  import("./pages/AttemptResultPage").then((m) => ({ default: m.AttemptResultPage })),
+);
+const BillingPage = lazy(() => import("./pages/BillingPage").then((m) => ({ default: m.BillingPage })));
+const LessonPage = lazy(() => import("./pages/LessonPage").then((m) => ({ default: m.LessonPage })));
+const LessonsPage = lazy(() => import("./pages/LessonsPage").then((m) => ({ default: m.LessonsPage })));
+const TopicTestPage = lazy(() => import("./pages/TopicTestPage").then((m) => ({ default: m.TopicTestPage })));
+const MistakesPage = lazy(() => import("./pages/MistakesPage").then((m) => ({ default: m.MistakesPage })));
+const ProfilePage = lazy(() => import("./pages/ProfilePage").then((m) => ({ default: m.ProfilePage })));
+const TutorPage = lazy(() => import("./pages/TutorPage").then((m) => ({ default: m.TutorPage })));
+const MockListPage = lazy(() => import("./pages/MockListPage").then((m) => ({ default: m.MockListPage })));
+const MockTestPage = lazy(() => import("./pages/MockTestPage").then((m) => ({ default: m.MockTestPage })));
+const WeeklyListPage = lazy(() =>
+  import("./pages/WeeklyListPage").then((m) => ({ default: m.WeeklyListPage })),
+);
+const WeeklyTestPage = lazy(() =>
+  import("./pages/WeeklyTestPage").then((m) => ({ default: m.WeeklyTestPage })),
+);
 
 // Faqat dev: production bundle'ga tushmaydi
 const KitPage = lazy(() => import("./pages/KitPage").then((m) => ({ default: m.KitPage })));
