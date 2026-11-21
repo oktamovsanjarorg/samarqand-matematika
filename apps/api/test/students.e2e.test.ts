@@ -149,6 +149,39 @@ describe("Admin: o'quvchilar", () => {
     expect((await ids("nimadir")).length).toBe(5);
   });
 
+  it("T-127: tugayotganlar — 7 kun ichida tugaydi, uzaytirilmagan, AUTO; bosh sahifada soni", async () => {
+    const [soon, renewed, later, free] = [
+      await newStudent(),
+      await newStudent(),
+      await newStudent(),
+      await newStudent(),
+    ];
+    for (const s of [soon, renewed, later, free])
+      await call("POST", `/admin/students/${s.id}/accept`, teacher);
+    await call("PATCH", `/admin/students/${free.id}`, teacher, { accessMode: "FREE" });
+    const plan = await prisma.plan.create({
+      data: { name: `T127 ${Date.now()}`, priceUzs: 1, durationDays: 30 },
+    });
+    planIds.push(plan.id);
+    const at = (days: number) => new Date(Date.now() + days * 86_400_000);
+    await prisma.subscription.createMany({
+      data: [
+        { userId: soon.id, planId: plan.id, startsAt: at(-27), endsAt: at(3) },
+        { userId: renewed.id, planId: plan.id, startsAt: at(-27), endsAt: at(3) },
+        { userId: renewed.id, planId: plan.id, startsAt: at(3), endsAt: at(33) },
+        { userId: later.id, planId: plan.id, startsAt: at(-10), endsAt: at(20) },
+        { userId: free.id, planId: plan.id, startsAt: at(-27), endsAt: at(3) },
+      ],
+    });
+    const ids = (
+      (await call("GET", "/admin/students?filter=expiring", teacher)).json() as AdminStudentRow[]
+    ).map((r) => r.id);
+    expect(ids).toContain(soon.id);
+    for (const s of [renewed, later, free]) expect(ids).not.toContain(s.id);
+    const d = (await call("GET", "/admin/dashboard", teacher)).json() as { stats: { expiringSoon: number } };
+    expect(d.stats.expiringSoon).toBeGreaterThanOrEqual(1);
+  });
+
   it("T-123: qatorda faqat tasdiqlangan ota-onalar telefoni", async () => {
     const s = await newStudent();
     await call("POST", `/admin/students/${s.id}/accept`, teacher);

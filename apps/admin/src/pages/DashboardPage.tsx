@@ -1,7 +1,8 @@
-import type { AdminDashboard } from "@samarqand/shared";
+import { EXPIRING_DAYS, type AdminDashboard } from "@samarqand/shared";
 import {
   CheckCircle2,
   ChevronRight,
+  CalendarClock,
   CreditCard,
   FileSpreadsheet,
   Image,
@@ -52,6 +53,14 @@ const todos = (d: AdminDashboard): Todo[] =>
       hint: "Yozma yechim rasmlari bahoni kutyapti",
       Icon: Image,
     })),
+    {
+      // T-127: eslatish uchun: obunasi bir hafta ichida tugaydi va hali uzaytirilmagan
+      to: "/students?filter=expiring",
+      count: d.stats.expiringSoon,
+      title: "Obunasi tugayotganlar",
+      hint: `${EXPIRING_DAYS} kun ichida tugaydi: eslatib qoʻying`,
+      Icon: CalendarClock,
+    },
     {
       to: "/offline",
       count: d.todo.unmatchedOffline,

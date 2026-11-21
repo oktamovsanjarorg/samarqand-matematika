@@ -1,3 +1,4 @@
+import { filterWhere } from "../students/admin-students.service";
 import { Injectable } from "@nestjs/common";
 import type { AdminDashboard } from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
@@ -28,17 +29,19 @@ export class DashboardService {
       p.offlineResult.count({ where: { userId: null } }),
       this.review(now),
     ]);
-    const [students, activeToday, activeWeek, groups, marked, lastWeekly, parentsLinked] = await Promise.all([
-      p.user.count({ where: { role: "STUDENT" } }),
-      p.user.count({ where: { role: "STUDENT", lastSeenAt: { gte: dayStart } } }),
-      p.user.count({ where: { role: "STUDENT", lastSeenAt: { gte: new Date(now.getTime() - 7 * DAY) } } }),
-      p.group.count({ where: { isActive: true } }),
-      p.attendance.groupBy({ by: ["groupId"], where: { date: new Date(`${today}T00:00:00Z`) } }),
-      this.lastWeekly(now),
-      p.studentProfile.count({
-        where: { user: { role: "STUDENT" }, parents: { some: { status: "APPROVED" } } },
-      }),
-    ]);
+    const [students, activeToday, activeWeek, groups, marked, lastWeekly, parentsLinked, expiringSoon] =
+      await Promise.all([
+        p.user.count({ where: { role: "STUDENT" } }),
+        p.user.count({ where: { role: "STUDENT", lastSeenAt: { gte: dayStart } } }),
+        p.user.count({ where: { role: "STUDENT", lastSeenAt: { gte: new Date(now.getTime() - 7 * DAY) } } }),
+        p.group.count({ where: { isActive: true } }),
+        p.attendance.groupBy({ by: ["groupId"], where: { date: new Date(`${today}T00:00:00Z`) } }),
+        this.lastWeekly(now),
+        p.studentProfile.count({
+          where: { user: { role: "STUDENT" }, parents: { some: { status: "APPROVED" } } },
+        }),
+        p.user.count({ where: { role: "STUDENT", ...filterWhere("expiring", now) } }),
+      ]);
     return {
       todo: { newStudents, pendingParents, pendingPayments, unmatchedOffline, review },
       stats: {
@@ -49,6 +52,7 @@ export class DashboardService {
         groupsMarkedToday: marked.length,
         lastWeekly,
         parentsLinked,
+        expiringSoon,
       },
     };
   }

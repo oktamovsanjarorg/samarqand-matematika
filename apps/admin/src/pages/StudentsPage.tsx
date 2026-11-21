@@ -1,17 +1,24 @@
-import type { AdminStudentRow, StudentFilter } from "@samarqand/shared";
+import { STUDENT_FILTERS, type AdminStudentRow, type StudentFilter } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useDeferredValue, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ExportButton } from "../components/ExportButton";
 import { StudentCard } from "../components/students/StudentCard";
 import { EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
 import { exportStudents } from "../lib/students-export";
 
-const TABS: Record<StudentFilter, string> = { new: "Yangilar", unpaid: "Toʻlamagan", all: "Hammasi" };
+const TABS: Record<StudentFilter, string> = {
+  new: "Yangilar",
+  unpaid: "Toʻlamagan",
+  expiring: "Tugayotgan",
+  all: "Hammasi",
+};
 const EMPTY: Record<StudentFilter, string> = {
   new: "Yangi oʻquvchi yoʻq",
   unpaid: "Hamma toʻlagan",
+  expiring: "Yaqin kunlarda obunasi tugaydigan oʻquvchi yoʻq",
   all: "Oʻquvchi topilmadi",
 };
 
@@ -30,7 +37,10 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
 }
 
 export function StudentsPage() {
-  const [filter, setFilter] = useState<StudentFilter>("new");
+  // T-127: bosh sahifadan ?filter=expiring bilan kelinadi
+  const [params] = useSearchParams();
+  const initial = STUDENT_FILTERS.find((f) => f === params.get("filter")) ?? "new";
+  const [filter, setFilter] = useState<StudentFilter>(initial);
   const [q, setQ] = useState("");
   const query = useDeferredValue(q.trim());
   const list = useQuery({
@@ -42,8 +52,8 @@ export function StudentsPage() {
   return (
     <div className="space-y-4">
       <PageTitle title="Oʻquvchilar">
-        <div className="flex rounded-xl bg-section p-1" role="tablist">
-          {(["new", "unpaid", "all"] as const).map((f) => (
+        <div className="flex max-w-full overflow-x-auto rounded-xl bg-section p-1" role="tablist">
+          {(["new", "unpaid", "expiring", "all"] as const).map((f) => (
             <button
               key={f}
               type="button"

@@ -5,6 +5,7 @@ import { ACCESS_LABELS } from "./labels";
 const FILE: Record<StudentFilter, string> = {
   new: "Yangi oʻquvchilar",
   unpaid: "Toʻlamagan oʻquvchilar",
+  expiring: "Obunasi tugayotgan oʻquvchilar",
   all: "Oʻquvchilar",
 };
 
