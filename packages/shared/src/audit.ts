@@ -8,7 +8,7 @@ export const AUDIT_SECTIONS = {
     label: "Testlar",
     entities: ["WeeklyTest", "WeeklyAttempt", "MockTest", "ExamTemplate", "OfflineTest"],
   },
-  people: { label: "Odamlar", entities: ["User", "Group", "ParentLink"] },
+  people: { label: "Odamlar", entities: ["User", "Group", "ParentLink", "Broadcast"] },
   billing: { label: "Toʻlovlar", entities: ["Payment", "Plan", "AppSetting"] },
 } as const;
 export type AuditSection = keyof typeof AUDIT_SECTIONS;
@@ -24,6 +24,7 @@ export type AuditQuery = z.infer<typeof auditQuery>;
 /** Amal nomlari (foydalanuvchi ko'radi); ro'yxatda yo'q amal o'z kodi bilan chiqadi */
 export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "admin.login": "Admin panelga kirdi",
+  "broadcast.send": "Eʼlon yubordi",
   "attendance.mark": "Davomat belgiladi",
   "billing.card": "Toʻlov kartasini oʻzgartirdi",
   "course.create": "Kurs yaratdi",

@@ -7,6 +7,7 @@ import { ContentModule } from "./content/content.module";
 import { QuestionsModule } from "./questions/questions.module";
 import { TopicTestsModule } from "./topic-tests/topic-tests.module";
 import { BillingModule } from "./billing/billing.module";
+import { BroadcastModule } from "./broadcast/broadcast.module";
 import { WeeklyModule } from "./weekly/weekly.module";
 import { TutorModule } from "./tutor/tutor.module";
 import { MockModule } from "./mock/mock.module";
@@ -50,6 +51,7 @@ export class AppModule {
         QuestionsModule,
         TopicTestsModule,
         BillingModule,
+        BroadcastModule,
         WeeklyModule,
         TutorModule,
         MockModule,

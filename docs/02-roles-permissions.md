@@ -37,6 +37,8 @@ O'quvchining pullik kontentga kirishi rol bilan emas, BR-A04 shartlari bilan bel
 | `admin/dashboard`, `admin/attention`                                                           |   ✅    |    ✅     |    —    |   —    |
 | `admin/audit` (jurnal)                                                                         |   ✅    |     —     |    —    |   —    |
 | `admin/staff` (yordamchilar)                                                                   |   ✅    |     —     |    —    |   —    |
+| `admin/income` (oylik tushum, T-109)                                                           |   ✅    |     —     |    —    |   —    |
+| `admin/broadcast` (eʼlon yuborish, T-116)                                                      |   ✅    |     —     |    —    |   —    |
 | `me/profile`, `me/name`, `me/stats`, `me/mistakes`, `me/recommendations`, `me/offline-results` |    —    |     —     |   ✅    |   —    |
 | `topics/:id/attempts`, `attempts/*` (mavzu testi)                                              |    —    |     —     |   ✅    |   —    |
 | `billing` (tarif tanlash, chek yuborish)                                                       |    —    |     —     |   ✅    |   —    |

@@ -12,6 +12,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { ParentsPage } from "./pages/ParentsPage";
 import { PaymentsPage } from "./pages/PaymentsPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { BroadcastPage } from "./pages/BroadcastPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { GroupPage } from "./pages/GroupPage";
 import { GroupsPage } from "./pages/GroupsPage";
@@ -64,6 +65,7 @@ export function App() {
               <Route path="settings" element={<SettingsPage />} />
               <Route path="audit" element={<AuditPage />} />
               <Route path="trash" element={<TrashPage />} />
+              <Route path="broadcast" element={<BroadcastPage />} />
               <Route path="weekly" element={<WeeklyListPage />} />
               <Route path="weekly/new" element={<WeeklyEditPage />} />
               <Route path="weekly/:id" element={<WeeklyEditPage />} />
