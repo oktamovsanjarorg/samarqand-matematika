@@ -15,6 +15,8 @@ const apiEnv = {
   RATE_LIMIT_AUTH_PER_MIN: "10000",
   // Hamma testlar bitta IP'dan: 600/daq chegarasi CI'da tez yugurishda 429 berardi
   RATE_LIMIT_PER_MIN: "10000",
+  // T-092: testlardagi tasodifiy Telegram ID'larga haqiqiy xabar ketmasin
+  NOTIFY_TRANSPORT: "off",
 };
 
 export default defineConfig({
