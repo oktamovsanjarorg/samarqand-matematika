@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
+import { Ticker } from "../common/ticker";
 import { ENV, type Env } from "../config/env";
 import { PERSON_SELECT, personName } from "../common/person";
 import {
@@ -23,7 +24,7 @@ type Due = { id: string; userId: string; endsAt: Date };
 @Injectable()
 export class SubscriptionReminders implements OnModuleInit, OnModuleDestroy {
   private readonly log = new Logger("Subscription");
-  private timer?: NodeJS.Timeout;
+  private readonly ticker = new Ticker(this.log);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -32,16 +33,11 @@ export class SubscriptionReminders implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit() {
-    if (this.env.WEEKLY_TICK_SEC === 0) return;
-    this.timer = setInterval(() => {
-      this.tick(new Date()).catch((e: unknown) =>
-        this.log.warn(`tick: ${e instanceof Error ? e.name : "xato"}`),
-      );
-    }, this.env.WEEKLY_TICK_SEC * 1000);
+    this.ticker.start(this.env.WEEKLY_TICK_SEC, () => this.tick(new Date()));
   }
 
   onModuleDestroy() {
-    clearInterval(this.timer);
+    return this.ticker.stop();
   }
 
   async tick(now: Date) {

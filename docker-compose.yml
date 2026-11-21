@@ -49,7 +49,11 @@ services:
     # Migratsiyalar har ishga tushishda qo'llanadi (allaqachon qo'llanganlari o'tkazib yuboriladi)
     volumes:
       - media:/app/media
-    command: sh -c "cd packages/db && npx prisma migrate deploy && cd /app && node apps/api/dist/main.js"
+    # T-136: init (tini) signalni uzatadi, exec: node sh o'rniga ishlaydi va SIGTERM ni o'zi oladi.
+    # Scheduler tick'i (ko'p xabar) tugashi uchun 30 s beriladi
+    command: sh -c "cd packages/db && npx prisma migrate deploy && cd /app && exec node apps/api/dist/main.js"
+    init: true
+    stop_grace_period: 30s
     depends_on:
       postgres: { condition: service_healthy }
     healthcheck:
@@ -72,6 +76,7 @@ services:
       API_INTERNAL_URL: http://api:4300/api
       MINIAPP_URL: https://${DOMAIN}
     command: node apps/bot/dist/main.js
+    init: true
     depends_on:
       api: { condition: service_healthy }
 

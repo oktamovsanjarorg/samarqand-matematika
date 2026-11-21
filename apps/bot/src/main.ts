@@ -115,3 +115,9 @@ setupMenu().catch((e: unknown) => console.error("Menyu sozlanmadi:", e instanceo
 
 // Bot faqat bitta nusxada ishlaydi: ikkinchi nusxa Telegram'dan 409 oladi
 void bot.start({ onStart: (me) => console.info(`Bot: @${me.username}`) });
+
+// T-136: docker stop (SIGTERM): joriy xabar ishlovi tugaydi, long polling to'xtaydi; 10 s kutib SIGKILL bo'lmaydi
+for (const signal of ["SIGTERM", "SIGINT"] as const)
+  process.once(signal, () => {
+    void bot.stop().finally(() => process.exit(0));
+  });

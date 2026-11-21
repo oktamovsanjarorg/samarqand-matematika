@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
+import { Ticker } from "../common/ticker";
 import { AccessService } from "../access/access.service";
 import { ENV, type Env } from "../config/env";
 import { weeklyOpenText, weeklyReminderText, weeklyResultText, weeklyStaffSummary } from "../notify/messages";
@@ -17,8 +18,7 @@ const HOUR = 60 * 60 * 1000;
 @Injectable()
 export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
   private readonly log = new Logger("Weekly");
-  private timer?: NodeJS.Timeout;
-  private busy = false;
+  private readonly ticker = new Ticker(this.log);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -30,19 +30,12 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit() {
-    if (this.env.WEEKLY_TICK_SEC === 0) return;
-    // AI tekshiruvi daqiqadan uzoq cho'zilishi mumkin: oldingi tick tugamaguncha yangisi boshlanmaydi
-    this.timer = setInterval(() => {
-      if (this.busy) return;
-      this.busy = true;
-      this.tick(new Date())
-        .catch((e: unknown) => this.log.warn(`tick: ${e instanceof Error ? e.name : "xato"}`))
-        .finally(() => (this.busy = false));
-    }, this.env.WEEKLY_TICK_SEC * 1000);
+    // AI tekshiruvi daqiqadan uzoq cho'zilishi mumkin: Ticker ustma-ust tick'ni o'tkazib yuboradi
+    this.ticker.start(this.env.WEEKLY_TICK_SEC, () => this.tick(new Date()));
   }
 
   onModuleDestroy() {
-    clearInterval(this.timer);
+    return this.ticker.stop();
   }
 
   async tick(now: Date) {
