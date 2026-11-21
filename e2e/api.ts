@@ -85,6 +85,7 @@ export async function requestParentLink(request: APIRequestContext, studentTg: n
     data: { code, from: parent, contact: { phone_number: phone, user_id: parent.id } },
   });
   expect(((await res.json()) as { status: string }).status).toBe("created");
+  return parent;
 }
 
 /** Ustoz o'quvchiga FREE kirish beradi (to'lovsiz to'liq kirish) */

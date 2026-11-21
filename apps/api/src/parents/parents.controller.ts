@@ -10,6 +10,7 @@ import { CurrentUser, JwtUser, Public, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { InternalGuard } from "../staff/internal.guard";
 import { AdminParentsService } from "./admin-parents.service";
+import { ChildSummaryService } from "./child-summary.service";
 import { ParentLinkService } from "./parent-link.service";
 
 const asStatus = (s?: string) => PARENT_LINK_STATUSES.find((x) => x === s) as ParentLinkStatus | undefined;
@@ -18,6 +19,7 @@ const asStatus = (s?: string) => PARENT_LINK_STATUSES.find((x) => x === s) as Pa
 export class ParentsController {
   constructor(
     private readonly links: ParentLinkService,
+    private readonly summary: ChildSummaryService,
     private readonly admin: AdminParentsService,
   ) {}
 
@@ -43,6 +45,13 @@ export class ParentsController {
   @Get("me/children")
   children(@CurrentUser() u: JwtUser) {
     return this.links.children(u.sub);
+  }
+
+  /** Ota-ona kabineti: tasdiqlangan farzandning faktli holati (T-069, BR-PA01) */
+  @Roles("PARENT")
+  @Get("me/children/:studentId")
+  child(@CurrentUser() u: JwtUser, @Param("studentId") studentId: string) {
+    return this.summary.get(u.sub, studentId);
   }
 
   @Roles("TEACHER", "ASSISTANT")

@@ -1,3 +1,6 @@
+import type { StudentOfflineResult } from "./offline";
+import type { MySchool } from "./profile";
+import type { AttemptSummary } from "./stats";
 import { z } from "zod";
 import { telegramProfileSchema } from "./telegram-profile";
 
@@ -54,4 +57,26 @@ export interface AdminParentLink {
 export interface ChildView {
   studentId: string;
   name: string;
+}
+
+/** Ota-ona kabineti: farzandning yopilgan haftalik natijasi (T-069) */
+export interface ChildWeeklyRow {
+  id: string;
+  title: string;
+  closesAt: string;
+  total: number;
+  submitted: boolean;
+  score: number;
+}
+
+/** Ota-ona kabineti: faqat faktlar, AI shubhasisiz (BR-PA01) */
+export interface ChildSummary {
+  tests: number;
+  averagePercent: number | null;
+  recent: AttemptSummary[];
+  group: MySchool["group"];
+  attendance: MySchool["attendance"];
+  weekly: ChildWeeklyRow[];
+  offline: StudentOfflineResult[];
+  weak: { topicTitle: string; percent: number; total: number }[];
 }
