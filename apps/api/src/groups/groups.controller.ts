@@ -1,7 +1,15 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from "@nestjs/common";
-import { attendanceBody, groupInput, groupMembersBody, groupPatch, isoDate } from "@samarqand/shared";
+import {
+  attendanceBody,
+  attendanceMonthQuery,
+  groupInput,
+  groupMembersBody,
+  groupPatch,
+  isoDate,
+} from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
+import { AttendanceMonthService } from "./attendance-month.service";
 import { AttendanceService } from "./attendance.service";
 import { GroupsService } from "./groups.service";
 
@@ -12,6 +20,7 @@ export class GroupsController {
   constructor(
     private readonly groups: GroupsService,
     private readonly attendance: AttendanceService,
+    private readonly month: AttendanceMonthService,
   ) {}
 
   @Get()
@@ -47,6 +56,12 @@ export class GroupsController {
   @Get(":id/attendance")
   sheet(@Param("id") id: string, @Query("date") date: unknown) {
     return this.attendance.sheet(id, parseBody(isoDate, date));
+  }
+
+  /** Oylik jadval (T-108) */
+  @Get(":id/attendance/month")
+  monthSheet(@Param("id") id: string, @Query("month") month: unknown) {
+    return this.month.get(id, parseBody(attendanceMonthQuery, month));
   }
 
   @Put(":id/attendance")

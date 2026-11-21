@@ -1,4 +1,4 @@
-import type { AttendanceSheet } from "@samarqand/shared";
+import type { AttendanceMonth, AttendanceSheet } from "@samarqand/shared";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { weeklyFixture } from "./weekly-fixture";
 
@@ -95,5 +95,45 @@ describe("davomat (T-055, BR-G02, BR-G03)", () => {
     expect((await f.call("GET", `/admin/groups/${g}/attendance?date=${DATE}`, a.headers)).statusCode).toBe(
       403,
     );
+  });
+});
+
+describe("oylik davomat (T-108)", () => {
+  it("o'quvchi × kun jadvali, jami sonlar; guruhdan chiqqan ham ko'rinadi; boshqa oy kirmaydi", async () => {
+    const [a, b] = [await f.student(), await f.student()];
+    await f.prisma.studentProfile.update({ where: { userId: a.id }, data: { fullName: "Oylik Aziz" } });
+    const g = await groupWith(a, b);
+    await put(g, [
+      { userId: a.id, status: "PRESENT" },
+      { userId: b.id, status: "ABSENT" },
+    ]);
+    await put(g, [{ userId: a.id, status: "LATE" }], "2026-11-05");
+    await put(g, [{ userId: a.id, status: "ABSENT" }], "2026-10-30");
+    await f.call("DELETE", `/admin/groups/${g}/students/${b.id}`, f.teacher);
+
+    const res = await f.call("GET", `/admin/groups/${g}/attendance/month?month=2026-11`, f.teacher);
+    expect(res.statusCode).toBe(200);
+    const m = res.json() as AttendanceMonth;
+    expect(m.dates).toEqual(["2026-11-02", "2026-11-05"]);
+    expect(m.rows.map((r) => [r.userId, r.left])).toEqual([
+      [a.id, false],
+      [b.id, true],
+    ]);
+    expect(m.rows[0]).toMatchObject({
+      name: "Oylik Aziz",
+      marks: { "2026-11-02": "PRESENT", "2026-11-05": "LATE" },
+      counts: { PRESENT: 1, LATE: 1, ABSENT: 0, EXCUSED: 0 },
+    });
+    expect(m.rows[1]?.counts.ABSENT).toBe(1);
+  });
+
+  it("noto'g'ri oy 400, yo'q guruh 404, o'quvchiga 403, tokensiz 401", async () => {
+    const g = await groupWith();
+    const url = (q: string, id = g) => `/admin/groups/${id}/attendance/month?month=${q}`;
+    expect((await f.call("GET", url("2026-13"), f.teacher)).statusCode).toBe(400);
+    expect((await f.call("GET", url("2026-11", "yoq"), f.teacher)).statusCode).toBe(404);
+    const s = await f.student();
+    expect((await f.call("GET", url("2026-11"), s.headers)).statusCode).toBe(403);
+    expect((await f.call("GET", url("2026-11"), {})).statusCode).toBe(401);
   });
 });
