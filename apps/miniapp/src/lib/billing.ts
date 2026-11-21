@@ -3,26 +3,30 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "./api";
 import { compressImage, imageInit } from "./image";
 
-export const useBilling = () =>
-  useQuery({ queryKey: ["billing"], queryFn: () => api<BillingView>("/billing"), staleTime: 0 });
+/** O'quvchining o'z sahifasi yoki ota-onaning farzand uchun sahifasi (T-121) */
+export const billingBase = (studentId?: string) =>
+  studentId ? `/me/children/${studentId}/billing` : "/billing";
 
-export function useSubmitReceipt() {
+export const useBilling = (base: string) =>
+  useQuery({ queryKey: ["billing", base], queryFn: () => api<BillingView>(base), staleTime: 0 });
+
+export function useSubmitReceipt(base: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (p: { planId: string; file: File; note: string }) => {
       const body = await compressImage(p.file);
       const q = new URLSearchParams({ planId: p.planId, ...(p.note.trim() ? { note: p.note.trim() } : {}) });
-      return api<MyPayment>(`/billing/payments?${q}`, imageInit("POST", body));
+      return api<MyPayment>(`${base}/payments?${q}`, imageInit("POST", body));
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["billing"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["billing", base] }),
   });
 }
 
-export function useCancelPayment() {
+export function useCancelPayment(base: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => api<null>(`/billing/payments/${id}`, { method: "DELETE" }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["billing"] }),
+    mutationFn: (id: string) => api<null>(`${base}/payments/${id}`, { method: "DELETE" }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["billing", base] }),
   });
 }
 

@@ -159,3 +159,4 @@
 | T-118 | Mock yopilishiga 24 soat qolganda topshirmagan to'liq kirishli o'quvchilarga bir marta eslatma (`MockTest.remindedAt`); qisqa oynada (12 soatdan kam ochiq) yo'q            | ✅    |
 | T-119 | Guruh sahifasida "Guruhga eʼlon" (faqat ustozga): eʼlon sahifasi shu guruh tanlangan holda ochiladi                                                                         | ✅    |
 | T-120 | Ota-ona farzandi uchun toʻlaydi (API): `me/children/:id/billing`, `Payment.submittedById`, ustozga "ota-onasi yubordi", natija ota-onaga ham                                | ✅    |
+| T-121 | Ota-ona toʻlovi (Mini App): kabinetda "Obunani toʻlash", farzand uchun tarif, karta, chek, tarix; kim yuborgani koʻrinadi; adminda "Chekni ota-onasi yubordi"               | ✅    |

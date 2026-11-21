@@ -31,12 +31,12 @@ function usePreview(file: File | null) {
 }
 
 /** Uch qadam: tarif → kartaga o'tkazish → chek rasmi (BR-B01) */
-export function ReceiptForm({ view }: { view: BillingView }) {
+export function ReceiptForm({ view, base }: { view: BillingView; base: string }) {
   const [planId, setPlanId] = useState(view.plans[0]?.id ?? "");
   const [file, setFile] = useState<File | null>(null);
   const [note, setNote] = useState("");
   const preview = usePreview(file);
-  const submit = useSubmitReceipt();
+  const submit = useSubmitReceipt(base);
   if (!view.card || view.plans.length === 0)
     return <p className="card text-sm text-hint">Toʻlov hali sozlanmagan. Ustozga murojaat qiling.</p>;
 

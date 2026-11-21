@@ -63,6 +63,7 @@ function PaymentCard({ p, onDone }: { p: AdminPayment; onDone: () => void }) {
         <p className="text-sm">
           <b>{p.planName}</b> · {formatSum(p.amountUzs)} soʻm
         </p>
+        {p.submittedBy && <p className="text-sm">Chekni ota-onasi yubordi: {p.submittedBy}</p>}
         {p.payerNote && <p className="text-sm text-hint">Izoh: {p.payerNote}</p>}
         {p.activeUntil && <p className="text-sm text-success">Obuna: {formatDate(p.activeUntil)} gacha</p>}
         {p.status === "REJECTED" && p.reviewNote && (
