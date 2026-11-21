@@ -3,7 +3,7 @@ import { LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import type { Session } from "../lib/session";
-import { currentLabel, navGroups, type NavGroup } from "./layout/nav";
+import { navGroups, type NavGroup } from "./layout/nav";
 import { SideNav } from "./layout/SideNav";
 
 function Brand({ session }: { session: Session }) {
@@ -80,9 +80,7 @@ export function AdminLayout({ session, onLogout }: { session: Session; onLogout:
       </aside>
       <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-hint/15 bg-section/95 px-4 py-2 backdrop-blur lg:hidden">
         <img src="/admin/logo.jpg" alt="" className="h-9 w-9 rounded-lg" />
-        <p className="min-w-0 flex-1 truncate font-bold">
-          {currentLabel(groups, pathname) || "Samarqand matematika"}
-        </p>
+        <p className="min-w-0 flex-1 truncate font-extrabold text-brand">Samarqand matematika</p>
         <button
           type="button"
           onClick={() => setOpen(true)}

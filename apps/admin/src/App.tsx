@@ -10,6 +10,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { ParentsPage } from "./pages/ParentsPage";
 import { PaymentsPage } from "./pages/PaymentsPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { DashboardPage } from "./pages/DashboardPage";
 import { GroupPage } from "./pages/GroupPage";
 import { GroupsPage } from "./pages/GroupsPage";
 import { MockEditPage } from "./pages/MockEditPage";
@@ -47,7 +48,7 @@ export function App() {
           <Route path="/login" element={<LoginPage onLogin={refresh} />} />
           {session ? (
             <Route element={<AdminLayout session={session} onLogout={logout} />}>
-              <Route index element={<Navigate to="/content" replace />} />
+              <Route index element={<DashboardPage />} />
               <Route path="content" element={<ContentPage />} />
               <Route path="content/lessons/:id" element={<LessonEditorPage />} />
               <Route path="content/topics/:topicId/questions" element={<QuestionsPage />} />
