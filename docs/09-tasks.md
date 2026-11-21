@@ -135,3 +135,4 @@
 | T-094 | Admin o'quvchi kartasida faol obuna qachongacha ekani (uzaytirilganda eng oxirgisi)                                                                                         | ✅    |
 | T-095 | Haftalik yoki mock testdagi savolni o'chirish 500 emas, 409 qaytaradi; FK xatosi uchun zaxira filtr                                                                         | ✅    |
 | T-096 | Savollar bankida qidiruv: matn yoki teg bo'yicha, barcha kurslarda; haftalik va mock savol tanlagichida                                                                     | ✅    |
+| T-097 | Kontent sahifasida savolni qidirib tahrirga o'tish (matn yoki teg, nashrda emas belgisi)                                                                                    | ✅    |

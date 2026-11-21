@@ -87,3 +87,29 @@ test("BR-Q01..Q03: ustoz savol yaratadi, tahrirlaydi, tartiblaydi", async ({ pag
   await adminNav(page, "Kontent");
   await expect(page.getByRole("link", { name: "Mavzu testi savollari (3)" })).toBeVisible();
 });
+
+test("T-097: kontent sahifasida savolni qidirib tahrirga o'tish", async ({ page, request }) => {
+  const admin = await adminHeaders(request);
+  const course = await apiPost<{ id: string }>(request, "/admin/courses", admin, {
+    title: `${E2E_PREFIX}Qidiruv ${Date.now()}`,
+  });
+  const topic = await apiPost<{ id: string }>(request, `/admin/courses/${course.id}/topics`, admin, {
+    title: "Tenglamalar",
+  });
+  const word = `Topiladigan${Date.now()}`;
+  await apiPost(request, `/admin/topics/${topic.id}/questions`, admin, {
+    type: "NUMERIC",
+    text: `${word}: $3x=12$ boʻlsa, $x$ = ?`,
+    answer: { value: "4" },
+  });
+  await loginAdmin(page, request, "content");
+  await page.getByLabel("Savolni qidirish").fill(word.slice(0, -3).toLowerCase());
+  const hits = page.getByTestId("question-hits").getByRole("link");
+  await expect(hits).toHaveCount(1);
+  await expect(hits).toContainText("Tenglamalar · Son javob");
+  await expect(hits).toContainText("Nashrda emas");
+  await page.screenshot({ path: "e2e/.results/admin-content-search.png", fullPage: true });
+  await hits.click();
+  await expect(page).toHaveURL(/\/content\/questions\/[a-z0-9]+$/);
+  await expect(page.getByLabel("Savol matni")).toHaveValue(new RegExp(`^${word}`));
+});
