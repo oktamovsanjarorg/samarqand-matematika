@@ -3,7 +3,9 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { parseExpression, parseNumber } from "@samarqand/math";
 import {
   ERROR_CODES,
+  QUESTION_SEARCH_LIMIT,
   type AdminQuestionDetail,
+  type AdminQuestionHit,
   type AdminQuestionRow,
   type QuestionInput,
 } from "@samarqand/shared";
@@ -62,6 +64,21 @@ export class AdminQuestionsService {
       select: ROW,
     });
     return rows.map(toRow);
+  }
+
+  /** Matnda uchragan yoki teg aynan mos savollar, kontent tartibida (T-096) */
+  async search(q: string): Promise<AdminQuestionHit[]> {
+    const rows = await this.prisma.question.findMany({
+      where: { OR: [{ text: { contains: q, mode: "insensitive" } }, { skills: { has: q.toLowerCase() } }] },
+      orderBy: [{ topic: { course: { order: "asc" } } }, { topic: { order: "asc" } }, { order: "asc" }],
+      take: QUESTION_SEARCH_LIMIT,
+      select: { ...ROW, topic: { select: { id: true, title: true, course: { select: { title: true } } } } },
+    });
+    return rows.map(({ topic, ...r }) => ({
+      ...toRow(r),
+      topicId: topic.id,
+      topicTitle: `${topic.course.title} · ${topic.title}`,
+    }));
   }
 
   async get(id: string): Promise<AdminQuestionDetail> {

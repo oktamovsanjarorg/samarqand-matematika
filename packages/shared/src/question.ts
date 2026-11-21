@@ -126,6 +126,17 @@ export interface AdminQuestionRow {
 
 export type AdminQuestionDetail = QuestionInput & { id: string; topicId: string; order: number };
 
+/** Savollar bankida qidiruv (T-096): matn yoki teg bo'yicha, barcha kurslarda */
+export const QUESTION_SEARCH_LIMIT = 30;
+export const questionSearch = z.object({
+  q: z.string().trim().min(2, "Qidirish uchun kamida 2 ta belgi").max(100),
+});
+export interface AdminQuestionHit extends AdminQuestionRow {
+  topicId: string;
+  /** "Kurs · Mavzu" */
+  topicTitle: string;
+}
+
 /** O'quvchiga yuboriladigan savol: to'g'ri javob va yechim yo'q */
 export interface QuestionView {
   id: string;

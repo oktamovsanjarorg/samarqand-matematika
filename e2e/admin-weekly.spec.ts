@@ -30,7 +30,7 @@ async function seed(request: APIRequestContext) {
     answer: { value: "3/4" },
   });
 
-  return { admin, course, questionIds: [q1.id, q2.id] };
+  return { admin, course, topicId: t.id, questionIds: [q1.id, q2.id] };
 }
 
 test("BR-W01, BR-W09, T-076: ustoz haftalik test tuzadi, natijalarni ko'radi, boshlangan test savoli o'zgarmaydi", async ({
@@ -120,4 +120,25 @@ test("T-089: ustoz haftalik testdan nusxa oladi: savollar ko'chadi, oyna keyingi
   const row = page.getByTestId("weekly").filter({ hasText: `${n + 1}-hafta ${E2E_PREFIX}nusxa` });
   await expect(row).toContainText("Ochilmagan");
   await expect(row).toContainText("2 ta savol");
+});
+
+test("T-096: savollar bankida matn bo'yicha qidirib testga qo'shish", async ({ page, request }) => {
+  const { admin, course, topicId } = await seed(request);
+  const word = `Qidiruvsoz${Date.now()}`;
+  await apiPost(request, `/admin/topics/${topicId}/questions`, admin, {
+    type: "NUMERIC",
+    text: `${word}: $2x=6$ boʻlsa, $x$ ni toping`,
+    answer: { value: "3" },
+  });
+  await loginAdmin(page, request, "weekly");
+  await page.getByRole("link", { name: "Yangi test" }).click();
+  await page.getByLabel("Savolni qidirish").fill(word.toLowerCase());
+  await expect(page.getByTestId("pick")).toHaveCount(1);
+  await expect(page.getByTestId("pick")).toContainText(`${course} · Kasrlar`);
+  await expect(page.getByLabel("Mavzu")).toBeHidden();
+  await page.getByTestId("pick").getByRole("checkbox").check();
+  await expect(page.getByTestId("selected").getByRole("listitem")).toHaveCount(1);
+  await page.screenshot({ path: "e2e/.results/admin-question-search.png", fullPage: true });
+  await page.getByLabel("Savolni qidirish").fill("");
+  await expect(page.getByLabel("Mavzu")).toBeVisible();
 });
