@@ -3,7 +3,13 @@ import { Logger } from "@nestjs/common";
 export interface LinkButton {
   text: string;
   url: string;
+  /** Mini App'ni Telegram ichida ochadi (`web_app` tugmasi, T-093); aks holda oddiy havola */
+  webApp?: boolean;
 }
+
+const markup = (b: LinkButton) => ({
+  inline_keyboard: [[b.webApp ? { text: b.text, web_app: { url: b.url } } : { text: b.text, url: b.url }]],
+});
 
 /** Telegram'ga xabar yuborish. Testlarda soxta transport bilan almashtiriladi */
 export interface TelegramTransport {
@@ -28,7 +34,7 @@ export function botApiTransport(botToken: string, fetchFn: typeof fetch = fetch)
             text: html,
             parse_mode: "HTML",
             link_preview_options: { is_disabled: true },
-            ...(button ? { reply_markup: { inline_keyboard: [[button]] } } : {}),
+            ...(button ? { reply_markup: markup(button) } : {}),
           }),
           signal: AbortSignal.timeout(10_000),
         });

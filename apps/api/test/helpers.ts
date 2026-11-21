@@ -6,7 +6,11 @@ import { FastifyAdapter, type NestFastifyApplication } from "@nestjs/platform-fa
 import { Test } from "@nestjs/testing";
 import { signInitData } from "@samarqand/shared/server";
 import { AppModule } from "../src/app.module";
-import { TELEGRAM_TRANSPORT, type TelegramTransport } from "../src/notify/telegram-transport";
+import {
+  TELEGRAM_TRANSPORT,
+  type LinkButton,
+  type TelegramTransport,
+} from "../src/notify/telegram-transport";
 import { loadEnv } from "../src/config/env";
 import { configureApp } from "../src/setup";
 import type { SolutionVerdict } from "@samarqand/shared";
@@ -17,7 +21,7 @@ export const TEST_MEDIA_DIR = join(tmpdir(), "samarqand-test-media");
 export const OWNER = "e2e_owner";
 
 /** Testlar Telegram'ga chiqmaydi: yuborilgan xabarlar shu ro'yxatga yoziladi */
-export const sentMessages: { chatId: bigint; html: string; button?: { text: string; url: string } }[] = [];
+export const sentMessages: { chatId: bigint; html: string; button?: LinkButton }[] = [];
 const fakeTransport: TelegramTransport = {
   send: async (chatId, html, button) => {
     sentMessages.push({ chatId, html, ...(button ? { button } : {}) });
@@ -53,6 +57,7 @@ export async function createApp(extraControllers: Type[] = []) {
     MEDIA_DIR: TEST_MEDIA_DIR,
     // Rejalashtiruvchi testlarda o'zi ishlamaydi: tick() to'g'ridan-to'g'ri chaqiriladi
     WEEKLY_TICK_SEC: "0",
+    MINIAPP_URL: "https://miniapp.test",
   });
   const mod = await Test.createTestingModule({
     imports: [AppModule.forRoot(env)],

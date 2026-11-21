@@ -23,6 +23,7 @@
 
 - Manzil: `https://app.samarqandmatematika.uz` (Mini App, `/api`, `/admin`). DNS Eskiz'da (ns1/ns2.eskiz.uz); `app`, `admin` va asosiy domen A yozuvi 13.62.27.178 ga, `www` CNAME. Pochta (`mail`, MX) Eskiz hostingida qoladi.
 - Serverdagi `.env`: `DOMAIN=app.samarqandmatematika.uz`, `ADMIN_HOST=admin.samarqandmatematika.uz` (→ `/admin/`), `REDIRECT_HOSTS` (asosiy domen, `www`, eski `13-62-27-178.sslip.io` → `DOMAIN`). Caddy har biriga Let's Encrypt sertifikatini o'zi oladi.
+- API ham `MINIAPP_URL` ni oladi (compose `https://${DOMAIN}` dan): xabarlardagi "ilovada ochish" tugmasi uchun (T-093).
 - Bot menyusidagi Mini App manzili (`MINIAPP_URL`) bot ishga tushganda `setChatMenuButton` bilan yangilanadi.
 - Serverda: `~/samarqand` (git clone, read-only deploy key), sirlar `~/samarqand/.env` da (chmod 600, serverda yaratilgan).
 - Konteynerlar: `postgres`, `redis`, `api` (ishga tushishda `prisma migrate deploy`), `bot`, `web` (Caddy: Mini App `/`, admin `/admin/`, `/api` proxy).

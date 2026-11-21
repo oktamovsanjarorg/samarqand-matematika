@@ -65,7 +65,8 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
       });
       if (!claimed.count) continue;
       const to = await this.access.fullAccessStudentIds();
-      await Promise.all(to.map((id) => this.notify.toUser(id, weeklyOpenText(t.title, t.closesAt))));
+      const open = this.notify.appButton("Testni ochish", `weekly/${t.id}`);
+      await Promise.all(to.map((id) => this.notify.toUser(id, weeklyOpenText(t.title, t.closesAt), open)));
     }
   }
 
@@ -95,9 +96,9 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
       });
       const skip = new Set(done.map((d) => d.userId));
       const to = (await this.access.fullAccessStudentIds()).filter((id) => !skip.has(id));
-      await Promise.all(
-        to.map((id) => this.notify.toUser(id, weeklyReminderText(t.title, stage === 2 ? 3 : 24))),
-      );
+      const open = this.notify.appButton("Testni ochish", `weekly/${t.id}`);
+      const text = weeklyReminderText(t.title, stage === 2 ? 3 : 24);
+      await Promise.all(to.map((id) => this.notify.toUser(id, text, open)));
     }
   }
 
@@ -123,9 +124,10 @@ export class WeeklyScheduler implements OnModuleInit, OnModuleDestroy {
         where: { weeklyTestId: t.id },
         select: { userId: true, score: true },
       });
+      const result = this.notify.appButton("Natijani koʻrish", `weekly/${t.id}`);
       await Promise.all(
         rows.map((r) =>
-          this.notify.toUser(r.userId, weeklyResultText(t.title, r.score ?? 0, t._count.questions)),
+          this.notify.toUser(r.userId, weeklyResultText(t.title, r.score ?? 0, t._count.questions), result),
         ),
       );
       await this.parents.send({ id: t.id, title: t.title, total: t._count.questions });

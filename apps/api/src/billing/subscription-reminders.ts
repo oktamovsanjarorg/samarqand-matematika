@@ -48,13 +48,13 @@ export class SubscriptionReminders implements OnModuleInit, OnModuleDestroy {
     const soon = await this.due(1, { gt: now, lte: new Date(now.getTime() + RENEW_REMINDER_DAYS * DAY) });
     for (const s of soon)
       if (await this.claim(s, 1)) {
-        await this.notify.toUser(s.userId, subscriptionEndingText(s.endsAt));
+        await this.notify.toUser(s.userId, subscriptionEndingText(s.endsAt), this.renew());
         await this.toParents(s);
       }
     // Bir kundan eski tugaganlar (masalan server o'chiq turgan bo'lsa) endi eslatilmaydi
     const ended = await this.due(2, { gt: new Date(now.getTime() - DAY), lte: now });
     for (const s of ended)
-      if (await this.claim(s, 2)) await this.notify.toUser(s.userId, subscriptionEndedText);
+      if (await this.claim(s, 2)) await this.notify.toUser(s.userId, subscriptionEndedText, this.renew());
   }
 
   /** Bosqichi hali yuborilmagan, AUTO rejimdagi faol o'quvchining eng oxirgi obunasi */
@@ -80,6 +80,10 @@ export class SubscriptionReminders implements OnModuleInit, OnModuleDestroy {
     });
     const last = new Map(latest.map((l) => [l.userId, l._max.endsAt?.getTime() ?? 0]));
     return rows.filter((r) => r.endsAt.getTime() >= (last.get(r.userId) ?? 0));
+  }
+
+  private renew() {
+    return this.notify.appButton("Obunani uzaytirish", "billing");
   }
 
   private async claim(s: Due, stage: 1 | 2): Promise<boolean> {

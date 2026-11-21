@@ -66,7 +66,8 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
       });
       if (!claimed.count) continue;
       const to = await this.access.fullAccessStudentIds();
-      await Promise.all(to.map((id) => this.notify.toUser(id, mockOpenText(t.title, t.closesAt))));
+      const open = this.notify.appButton("Mockni ochish", `mocks/${t.id}`);
+      await Promise.all(to.map((id) => this.notify.toUser(id, mockOpenText(t.title, t.closesAt), open)));
     }
   }
 
@@ -136,7 +137,13 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
       }),
     );
     await Promise.all(
-      [...results].map(([userId, r]) => this.notify.toUser(userId, mockResultText(m.title, r))),
+      [...results].map(([userId, r]) =>
+        this.notify.toUser(
+          userId,
+          mockResultText(m.title, r),
+          this.notify.appButton("Natijani koʻrish", `mocks/${id}`),
+        ),
+      ),
     );
     await this.reportParents(m.title, results);
   }

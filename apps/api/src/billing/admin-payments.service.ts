@@ -107,7 +107,11 @@ export class AdminPaymentsService {
       entityId: id,
       data: { endsAt: endsAt.toISOString() },
     });
-    await this.notify.toUser(view.student.id, paymentApprovedText(day(endsAt)));
+    await this.notify.toUser(
+      view.student.id,
+      paymentApprovedText(day(endsAt)),
+      this.notify.appButton("Ilovani ochish", ""),
+    );
     return view;
   }
 
@@ -125,7 +129,11 @@ export class AdminPaymentsService {
       entityId: id,
       data: { reason },
     });
-    await this.notify.toUser(view.student.id, paymentRejectedText(reason));
+    await this.notify.toUser(
+      view.student.id,
+      paymentRejectedText(reason),
+      this.notify.appButton("Chekni qayta yuborish", "billing"),
+    );
     return view;
   }
 

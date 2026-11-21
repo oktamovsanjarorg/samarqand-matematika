@@ -44,6 +44,7 @@ services:
       API_PORT: "4300"
       MEDIA_DIR: /app/media
       ADMIN_URL: https://${DOMAIN:?DOMAIN kerak}/admin
+      MINIAPP_URL: https://${DOMAIN}
       CORS_ORIGINS: https://${DOMAIN}
     # Migratsiyalar har ishga tushishda qo'llanadi (allaqachon qo'llanganlari o'tkazib yuboriladi)
     volumes:

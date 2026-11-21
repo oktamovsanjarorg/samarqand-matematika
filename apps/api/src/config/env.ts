@@ -22,6 +22,12 @@ const base = z.object({
     ),
   // Admin panel manzili: bot yuboradigan bir martalik kirish havolasi uchun
   ADMIN_URL: z.string().url().default("http://127.0.0.1:5191/admin"),
+  // Mini App manzili: o'quvchi xabarlaridagi "ilovada ochish" tugmasi uchun (T-093). Yo'q bo'lsa tugma qo'yilmaydi
+  MINIAPP_URL: z
+    .string()
+    .url()
+    .startsWith("https://", "MINIAPP_URL https:// bilan boshlanishi kerak")
+    .optional(),
   ADMIN_JWT_TTL: z.string().default("12h"),
   // Bitta IP'dan daqiqasiga kirish so'rovlari (maktab Wi-Fi'da butun sinf bitta IP'da bo'ladi)
   RATE_LIMIT_AUTH_PER_MIN: z.coerce.number().int().min(10).default(120),

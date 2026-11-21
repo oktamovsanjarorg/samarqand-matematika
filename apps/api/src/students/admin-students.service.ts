@@ -84,7 +84,11 @@ export class AdminStudentsService {
       create: { userId: id, acceptedAt: now, acceptedById: actorId },
     });
     await this.audit.log({ actorId, action: "student.accept", entity: "User", entityId: id });
-    await this.notify.toUser(id, acceptedText(await this.access.facts(id)));
+    await this.notify.toUser(
+      id,
+      acceptedText(await this.access.facts(id)),
+      this.notify.appButton("Ilovani ochish", ""),
+    );
     return this.get(id);
   }
 

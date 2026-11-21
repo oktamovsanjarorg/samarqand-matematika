@@ -46,6 +46,10 @@ describe("Yangi dars haqida xabar (T-091)", () => {
       expect.stringContaining("Yangi dars: <b>Kasrlarni qoʻshish</b>"),
     ]);
     expect(f.messagesTo(locked.telegramId)).toEqual([]);
+    // T-093: Mini App'da darsning o'zini ochadigan tugma
+    expect(f.buttonsTo(full.telegramId)).toEqual([
+      { text: "Darsni ochish", url: `https://miniapp.test/lessons/${l.id}`, webApp: true },
+    ]);
 
     expect((await announce(l.id)).statusCode).toBe(409);
     const detail = (await f.call("GET", `/admin/lessons/${l.id}`, f.teacher)).json() as AdminLessonDetail;

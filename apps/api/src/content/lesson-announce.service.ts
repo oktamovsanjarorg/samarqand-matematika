@@ -46,7 +46,8 @@ export class LessonAnnounceService {
       topic: l.topic.title,
       isFree: l.isFree,
     });
-    await Promise.all(ids.map((u) => this.notify.toUser(u, text)));
+    const open = this.notify.appButton("Darsni ochish", `lessons/${id}`);
+    await Promise.all(ids.map((u) => this.notify.toUser(u, text, open)));
     await this.audit.log({
       actorId,
       action: "lesson.announce",
