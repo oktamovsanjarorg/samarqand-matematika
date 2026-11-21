@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { botApiTransport } from "../src/notify/telegram-transport";
+import { botApiTransport, rateLimited } from "../src/notify/telegram-transport";
 
 describe("botApiTransport", () => {
   it("sendMessage'ga HTML va tugma bilan yuboradi", async () => {
@@ -44,5 +44,38 @@ describe("botApiTransport", () => {
       throw new TypeError("fetch failed");
     }) as unknown as typeof fetch;
     expect(await botApiTransport("1:T", down).send(1n, "x")).toBe(false);
+  });
+
+  it("T-115: 429 bo'lsa Telegram aytgan vaqtni kutib qayta yuboradi (ko'pi bilan 2 marta)", async () => {
+    let calls = 0;
+    const fetchFn = (async () => {
+      calls += 1;
+      return calls === 1
+        ? new Response(JSON.stringify({ ok: false, parameters: { retry_after: 2 } }), { status: 429 })
+        : new Response("{}");
+    }) as unknown as typeof fetch;
+    const waits: number[] = [];
+    const wait = async (ms: number) => {
+      waits.push(ms);
+    };
+    expect(await botApiTransport("1:T", fetchFn, wait).send(1n, "x")).toBe(true);
+    expect(waits).toEqual([2000]);
+
+    const always = (async () => new Response("{}", { status: 429 })) as unknown as typeof fetch;
+    waits.length = 0;
+    expect(await botApiTransport("1:T", always, wait).send(1n, "x")).toBe(false);
+    expect(waits).toEqual([1000, 1000]);
+  });
+});
+
+describe("rateLimited (T-115)", () => {
+  it("ommaviy yuborishda xabarlar orasida oraliq saqlanadi", async () => {
+    const sent: bigint[] = [];
+    const inner = { send: async (id: bigint) => (sent.push(id), true) };
+    const waits: number[] = [];
+    const t = rateLimited(inner, 10, { now: () => 0, wait: async (ms) => void waits.push(ms) });
+    await Promise.all([1n, 2n, 3n].map((id) => t.send(id, "x")));
+    expect(sent).toEqual([1n, 2n, 3n]);
+    expect(waits).toEqual([100, 200]);
   });
 });

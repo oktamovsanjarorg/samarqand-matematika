@@ -18,6 +18,7 @@
 ## Telegram
 
 - Bot: `@samarqandmatematikabot`. Token faqat `.env` va serverdagi `.env` da turadi, repoga tushmaydi.
+- Ommaviy xabarlar (haftalik ochilishi, e'lon, hisobotlar) sekundiga 25 tadan yuboriladi (Telegram chegarasi ~30/s). 429 kelsa `retry_after` kutilib, 2 martagacha qayta yuboriladi (T-115). 500 o'quvchiga xabar taxminan 20 soniya oladi.
 
 ## Deploy (T-011)
 

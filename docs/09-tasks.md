@@ -153,3 +153,4 @@
 | T-112 | O'quvchi kartasida oynasi yopilgan mock'lar: shkala balli, daraja, Rasch bo'lmasa "taxminiy" (BR-M05)                                                                       | ✅    |
 | T-113 | O'quvchi kartasida bepul yoki yopiq rejimda kirish qadamlari hal qilmasligi tushuntiriladi (BR-A04)                                                                         | ✅    |
 | T-114 | Ota-ona kabinetida farzandning oynasi yopilgan mock natijalari (ball, daraja, "taxminiy"); hisob o'quvchi kartasi bilan umumiy                                              | ✅    |
+| T-115 | Bot xabarlari sekundiga 25 tadan (navbat bilan), 429 da `retry_after` kutib qayta yuborish: ommaviy xabarlar 30+ o'quvchida yo'qolmasin                                     | ✅    |
