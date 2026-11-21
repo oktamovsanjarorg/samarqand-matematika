@@ -96,6 +96,6 @@
 | T-060 | Admin karkasi: kompyuterda guruhlangan yon panel, telefonda tepa panel va ochiladigan menyu                                                                           | ✅    |
 | T-061 | Admin bosh sahifa: ustozni kutayotgan ishlar (yangi o'quvchilar, cheklar, yozma javoblar navbati, ota-ona so'rovlari, moslanmagan offline qatorlar) va menyuda sonlar | ✅    |
 | T-062 | O'quvchiga tavsiya: kuchsiz mavzular (mavzu testi, haftalik, mock) faktlar bilan, dars va mavzu testiga havola; Asosiy sahifada                                       | ✅    |
-| T-063 | Ustozga tavsiya: e'tibor kerak o'quvchilar (7+ kun faolsiz, natijasi tushgan, ketma-ket dars qoldirgan, haftalikni topshirmagan), sababi bilan                        | ⬜    |
+| T-063 | Ustozga tavsiya: e'tibor kerak o'quvchilar (7+ kun faolsiz, natijasi tushgan, ketma-ket dars qoldirgan, haftalikni topshirmagan), sababi bilan                        | ✅    |
 | T-064 | Mini App Asosiy sahifa dizayni: salomlashuv va holat bloki, keyingi qadam                                                                                             | ⬜    |
 | T-065 | Mini App Profil: guruh, ota-ona holati, natijalar tarixi (haftalik, mock, offline)                                                                                    | ⬜    |

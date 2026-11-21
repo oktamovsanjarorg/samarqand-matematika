@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { AttentionList } from "../components/dashboard/AttentionList";
 import { ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { useDashboard } from "../lib/dashboard";
 
@@ -115,6 +116,7 @@ export function DashboardPage() {
               </ul>
             )}
           </section>
+          <AttentionList />
           <section className="space-y-2" aria-label="Holat">
             <h2 className="font-bold">Holat</h2>
             <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
