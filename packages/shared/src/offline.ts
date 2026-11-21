@@ -152,3 +152,15 @@ export interface AdminOfflineResultRow {
 export interface AdminOfflineTestDetail extends AdminOfflineTestRow {
   rows: AdminOfflineResultRow[];
 }
+
+/** O'quvchining o'z offline natijasi (T-056c): bo'limlar va testdagi o'rni */
+export interface StudentOfflineResult {
+  id: string;
+  title: string;
+  date: string;
+  sections: string[];
+  scores: number[];
+  total: number;
+  place: number;
+  participants: number;
+}

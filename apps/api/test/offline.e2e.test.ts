@@ -1,4 +1,9 @@
-import type { AdminOfflineTestDetail, AdminOfflineTestRow, OfflinePreview } from "@samarqand/shared";
+import type {
+  AdminOfflineTestDetail,
+  AdminOfflineTestRow,
+  OfflinePreview,
+  StudentOfflineResult,
+} from "@samarqand/shared";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { weeklyFixture } from "./weekly-fixture";
 
@@ -70,6 +75,19 @@ describe("tashqi test importi (T-056, BR-G04)", () => {
     const list = (await f.call("GET", "/admin/offline-tests", f.teacher)).json() as AdminOfflineTestRow[];
     expect(list.find((x) => x.id === t.id)).toMatchObject({ matched: 3, count: 3 });
 
+    // O'quvchi faqat o'z natijasini ko'radi: bo'limlar va o'rni (T-056c)
+    const own = (await f.call("GET", "/me/offline-results", b.headers)).json() as StudentOfflineResult[];
+    expect(own).toEqual([
+      expect.objectContaining({
+        title: "Oktabr offline",
+        sections: ["Algebra", "Geometriya"],
+        scores: [7, 0],
+        total: 7,
+        place: 2,
+        participants: 3,
+      }),
+    ]);
+    expect((await f.call("GET", "/me/offline-results", f.teacher)).statusCode).toBe(403);
     expect((await f.call("DELETE", `/admin/offline-tests/${t.id}`, f.teacher)).statusCode).toBe(204);
     expect((await f.call("GET", `/admin/offline-tests/${t.id}`, f.teacher)).statusCode).toBe(404);
   });

@@ -87,6 +87,6 @@
 | T-055b | Admin: guruh sahifasida davomat belgilash                                                                                                                                                                   | ✅    |
 | T-056  | Tashqi test importi API: CSV parser, telefon/ism bo'yicha moslash, oldindan ko'rish, saqlash, qo'lda biriktirish (Q-12, BR-G04)                                                                             | ✅    |
 | T-056b | Admin: tashqi test importi sahifasi (fayl, oldindan ko'rish, moslanmaganlarni biriktirish)                                                                                                                  | ✅    |
-| T-056c | Mini App: o'quvchi o'z offline test natijasini bo'limlar bo'yicha ko'radi                                                                                                                                   | ⬜    |
+| T-056c | Mini App: o'quvchi o'z offline test natijasini bo'limlar bo'yicha ko'radi                                                                                                                                   | ✅    |
 
 5-bosqich (ko'rsatmalar) 4-bosqich oxirida vazifalarga bo'linadi.

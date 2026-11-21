@@ -1,4 +1,5 @@
 import { MockRow } from "../components/mock/MockRow";
+import { OfflineResults } from "../components/mock/OfflineResults";
 import { EmptyState, ErrorState } from "../components/states";
 import { useBackButton } from "../hooks/useBackButton";
 import { useMockList } from "../lib/mock";
@@ -27,6 +28,7 @@ export function MockListPage() {
           </li>
         ))}
       </ul>
+      <OfflineResults />
     </div>
   );
 }
