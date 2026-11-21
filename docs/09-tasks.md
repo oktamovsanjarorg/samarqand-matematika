@@ -116,3 +116,4 @@
 | T-075 | Admin jurnali (faqat ustoz): xodimlar amallari kun bo'yicha, obyekt nomi va havolasi, bo'lim va xodim filtri, sahifalash                                                    | ✅    |
 | T-076 | Haftalik va mock natijalarini Excel'ga (CSV) yuklab olish: BOM, `;`, o'nlik vergul, formula-injeksiyadan himoya                                                             | ✅    |
 | T-077 | Mini App: ifoda javobi yozilayotganda formula ko'rinishi (KaTeX), tushunilmasa darhol ogohlantirish                                                                         | ✅    |
+| T-078 | O'quvchilar ro'yxatini Excel'ga yuklab olish (filtr va qidiruv bo'yicha, telefon matn ko'rinishida)                                                                         | ✅    |

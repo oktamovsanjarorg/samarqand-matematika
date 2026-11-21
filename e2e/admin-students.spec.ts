@@ -1,10 +1,11 @@
+import { downloadText } from "./download";
 import { expect, test } from "@playwright/test";
 import { createStudent, loginAdmin, requestParentLink } from "./api";
 
 const unique = () => Math.random().toString(36).slice(2, 7).replace(/\d/g, "x");
 
 test.describe("Admin: o'quvchilar", () => {
-  test("BR-S03: yangi o'quvchini qabul qiladi va kirishni ochadi", async ({ page, request }) => {
+  test("BR-S03, T-078: yangi o'quvchini qabul qiladi va kirishni ochadi", async ({ page, request }) => {
     const name = `Sardor ${unique()}ov`;
     await createStudent(request, { fullName: name, phone: "998901234567" });
     await loginAdmin(page, request, "students");
@@ -28,6 +29,14 @@ test.describe("Admin: o'quvchilar", () => {
       "FREE",
     );
     await page.screenshot({ path: "e2e/.results/admin-students.png", fullPage: true });
+
+    // T-078: qidiruv natijasi Excel'ga, telefon matn ko'rinishida
+    await expect(page.getByTestId("student")).toHaveCount(1);
+    const csv = await downloadText(page, page.getByRole("button", { name: "Excel'ga yuklab olish" }));
+    expect(csv.name).toBe("Oʻquvchilar.csv");
+    expect(csv.text).toContain("Ism;Telegram;Telefon;Guruh;Kirish");
+    expect(csv.text).toContain(`${name};`);
+    expect(csv.text).toContain(";998 90 123 45 67;");
   });
 });
 

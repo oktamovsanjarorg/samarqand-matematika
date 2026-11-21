@@ -16,3 +16,7 @@ export function downloadCsv(title: string, rows: CsvCell[][]) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+/** Telefon matn bo'lib qolsin (Excel uzun sonni 9,98E+11 qilib yubormasin): 998 90 123 45 67 */
+export const csvPhone = (p: string | null) =>
+  p ? p.replace(/^\+?(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})$/, "$1 $2 $3 $4 $5") : null;
