@@ -46,6 +46,7 @@ for (const theme of ["light", "dark"] as const)
       "/weekly",
       "/mocks",
       "/tutor",
+      "/mistakes",
     ];
     const found: string[] = [];
     for (const path of [...paths, "/billing", "/profile"]) {

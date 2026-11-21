@@ -45,7 +45,7 @@ async function seedTopic(request: APIRequestContext) {
   return { admin, title };
 }
 
-test("BR-Q01, BR-Q03, BR-P03: o'quvchi mavzu testini yechadi va natijani ko'radi", async ({
+test("BR-Q01, BR-Q03, BR-P03, T-079: o'quvchi mavzu testini yechadi va natijani ko'radi", async ({
   page,
   request,
 }) => {
@@ -118,6 +118,13 @@ async function checkStats(page: Page, courseTitle: string) {
   await expect(page.getByTestId("tiles")).toContainText("67%");
   await expect(page.getByTestId("topics")).toContainText("Kasrlar");
   await page.screenshot({ path: "e2e/.results/miniapp-profile.png" });
+  // T-079: xato ishlangan son savol "Xatolarim"da, to'g'ri javobi bilan
+  await page.getByRole("link", { name: /Xatolarim/ }).click();
+  const mistakes = page.getByTestId("mistake-topic").filter({ hasText: "Kasrlar" });
+  await expect(mistakes.getByTestId("result-item")).toHaveCount(1);
+  await expect(mistakes).toContainText("Toʻgʻri javob: 3/4");
+  await expect(mistakes).toContainText("1 marta xato");
+  await page.screenshot({ path: "e2e/.results/miniapp-mistakes.png", fullPage: true });
   // T-067: Darslar ro'yxatida mavzuning eng yaxshi natijasi
   await nav.getByRole("link", { name: "Darslar" }).click();
   const topic = page.getByTestId("course").filter({ hasText: courseTitle }).getByTestId("topic");

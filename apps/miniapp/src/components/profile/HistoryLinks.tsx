@@ -1,7 +1,15 @@
-import { CalendarCheck, ChevronRight, ClipboardList, CreditCard, type LucideIcon } from "lucide-react";
+import {
+  CalendarCheck,
+  ChevronRight,
+  ClipboardList,
+  CreditCard,
+  RotateCcw,
+  type LucideIcon,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const LINKS: { to: string; icon: LucideIcon; title: string; hint: string }[] = [
+  { to: "/mistakes", icon: RotateCcw, title: "Xatolarim", hint: "Xato ishlangan savollar: yechimi bilan" },
   { to: "/weekly", icon: CalendarCheck, title: "Haftalik testlar", hint: "Ball va oʻrin, yopilgandan keyin" },
   { to: "/mocks", icon: ClipboardList, title: "Mock va offline imtihonlar", hint: "Barcha natijalar" },
   { to: "/billing", icon: CreditCard, title: "Obuna va toʻlovlar", hint: "Tarif, chek, muddat" },

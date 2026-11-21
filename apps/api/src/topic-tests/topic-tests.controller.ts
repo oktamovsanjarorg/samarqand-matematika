@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, Param, Post, Put } from "@nestjs/commo
 import { saveAnswerBody } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
+import { MistakesService } from "./mistakes.service";
 import { StatsService } from "./stats.service";
 import { TopicTestsService } from "./topic-tests.service";
 
@@ -11,12 +12,20 @@ export class TopicTestsController {
   constructor(
     private readonly tests: TopicTestsService,
     private readonly stats: StatsService,
+    private readonly mistakes: MistakesService,
   ) {}
 
   @Get("me/stats")
   @Roles("STUDENT")
   myStats(@CurrentUser() u: JwtUser) {
     return this.stats.my(u.sub);
+  }
+
+  /** Xatolarim (T-079) */
+  @Get("me/mistakes")
+  @Roles("STUDENT")
+  myMistakes(@CurrentUser() u: JwtUser) {
+    return this.mistakes.list(u.sub);
   }
 
   @Post("topics/:id/attempts")

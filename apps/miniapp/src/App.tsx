@@ -12,6 +12,7 @@ import { LessonPage } from "./pages/LessonPage";
 import { LessonsPage } from "./pages/LessonsPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { TopicTestPage } from "./pages/TopicTestPage";
+import { MistakesPage } from "./pages/MistakesPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { TutorPage } from "./pages/TutorPage";
 import { MockListPage } from "./pages/MockListPage";
@@ -57,6 +58,7 @@ export function App() {
         <Route path="mocks/:id" element={<MockTestPage />} />
         <Route path="tutor" element={<TutorPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="mistakes" element={<MistakesPage />} />
       </Route>
       {import.meta.env.DEV && (
         <Route
