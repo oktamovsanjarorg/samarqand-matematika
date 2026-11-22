@@ -97,8 +97,8 @@ export function QuestionImport({
         <FileUp size={16} /> Excel'dan import
       </summary>
       <p className="text-sm text-hint">
-        Excel (.xlsx) yoki CSV fayl. Ustunlar: Tur, Savol, A–H variantlar, Javob, Yechim, Qiyinlik, Teglar.
-        Faqat «Savol» majburiy. {importNote(!!onSaved)}
+        Excel (.xlsx, .xls) yoki CSV fayl. Ustunlar: Tur, Savol, A–H variantlar, Javob, Yechim, Qiyinlik,
+        Teglar. Faqat «Savol» majburiy. {importNote(!!onSaved)}
       </p>
       <Button variant="secondary" onClick={() => downloadExcel("Savollar namunasi", TEMPLATE)}>
         <Download size={16} /> Namuna fayl
