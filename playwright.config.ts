@@ -51,12 +51,14 @@ export default defineConfig({
       command: "pnpm --filter @samarqand/miniapp dev",
       url: "http://127.0.0.1:5190",
       // .env.local dagi dev kirish (VITE_DEV_INIT_DATA) testga aralashmasin: kirish faqat Telegram stub orqali
-      env: { VITE_DEV_INIT_DATA: "" },
+      env: { VITE_DEV_INIT_DATA: "", VITE_ADMIN_URL: "http://127.0.0.1:5191/admin" },
       reuseExistingServer: false,
     },
     {
       command: "pnpm --filter @samarqand/admin dev",
       url: "http://127.0.0.1:5191/admin/",
+      // T-158: "O'quvchi ko'rinishi" havolasi (testda ilovalar har xil portda)
+      env: { VITE_MINIAPP_URL: "http://127.0.0.1:5190/" },
       reuseExistingServer: !CI,
     },
   ],

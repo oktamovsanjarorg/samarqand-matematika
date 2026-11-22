@@ -61,4 +61,5 @@ export const api = {
 
 export const adminApi = {
   exchangeLink: (token: string) => api.post<AuthResponse>("/auth/admin-link", { token }),
+  fromTelegram: (initData: string) => api.post<AuthResponse>("/auth/admin-telegram", { initData }),
 };

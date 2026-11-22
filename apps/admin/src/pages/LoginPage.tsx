@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminApi } from "../lib/api";
-import { loadSession, saveSession } from "../lib/session";
+import { loadSession, markFromMiniApp, saveSession } from "../lib/session";
 import { CenteredCard } from "./CenteredCard";
 
-/** /admin/login#t=<token>: bot yuborgan bir martalik havola. Token hash'da: server loglariga tushmaydi */
+/**
+ * /admin/login#t=<token>: bot yuborgan bir martalik havola; #tg=<initData>: Mini App ichidan (T-158).
+ * Ikkalasi ham hash'da: server loglariga tushmaydi
+ */
 export function LoginPage({ onLogin }: { onLogin: () => void }) {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
@@ -14,14 +17,17 @@ export function LoginPage({ onLogin }: { onLogin: () => void }) {
     // StrictMode effektni ikki marta chaqiradi: token bir martalik, ikkinchi so'rov uni "ishlatilgan" qiladi
     if (started.current) return;
     started.current = true;
-    const token = new URLSearchParams(window.location.hash.slice(1)).get("t");
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    const token = hash.get("t");
+    // T-158: Mini App ichidan ochildi — Telegram imzolagan initData
+    const initData = hash.get("tg");
     window.history.replaceState(null, "", window.location.pathname);
-    if (!token) {
+    if (!token && !initData) {
       setError("Havola notoʻgʻri. Botga /admin deb yozing.");
       return;
     }
-    adminApi
-      .exchangeLink(token)
+    if (initData) markFromMiniApp();
+    (initData ? adminApi.fromTelegram(initData) : adminApi.exchangeLink(token ?? ""))
       .then((auth) => {
         saveSession(auth.token, auth.user);
         onLogin();
