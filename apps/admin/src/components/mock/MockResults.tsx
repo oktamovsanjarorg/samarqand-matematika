@@ -1,7 +1,7 @@
 import type { AdminMockResults } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../lib/api";
-import { csvTime, downloadCsv } from "../../lib/download";
+import { csvTime, downloadExcel } from "../../lib/download";
 import { formatDate } from "../../lib/labels";
 import { ExportButton } from "../ExportButton";
 import { Badge } from "../ui";
@@ -65,7 +65,7 @@ export function MockResults({ id, title }: { id: string; title: string }) {
   const d = r.data;
   if (!d) return null;
   const exportCsv = () =>
-    downloadCsv(title, [
+    downloadExcel(title, [
       ["#", "Oʻquvchi", "Topshirgan", "Ball", "Daraja", "Xom ball", ...d.sectionTitles],
       ...d.rows.map((x, i) => [
         i + 1,

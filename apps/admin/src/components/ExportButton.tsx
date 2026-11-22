@@ -1,6 +1,6 @@
 import { Download } from "lucide-react";
 
-/** Natijalarni Excel'ga (CSV) yuklab olish tugmasi (T-076) */
+/** Natijalarni Excel'ga (.xlsx) yuklab olish tugmasi (T-076, T-154) */
 export function ExportButton({ onClick }: { onClick: () => void }) {
   return (
     <button

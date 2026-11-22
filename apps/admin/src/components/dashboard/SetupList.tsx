@@ -10,7 +10,7 @@ const STEPS: Step[] = [
   {
     key: "questions",
     title: "Savollar qoʻshing",
-    hint: "Mavzu testi uchun; Excel (CSV) dan import ham bor",
+    hint: "Mavzu testi uchun; Excel'dan import ham bor",
     to: "/content",
   },
   {

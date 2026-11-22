@@ -22,7 +22,7 @@
 | FR-C07 | Yangi dars haqida o'quvchilarga bot xabari (ustoz tugmasi bilan)                                                   | BR-C05         | T-091        | ✅    |
 | FR-C03 | Savollar banki: 6 tur, namunaviy yechim, qiyinlik, ko'nikma teglari; matn va teg bo'yicha qidiruv                  | BR-Q01..Q03    | T-022, T-096 | ✅    |
 | FR-C04 | Javobni avtomatik tekshirish: son (kasr, vergul), ifoda (ekvivalentlik), moslashtirish; qolganini ustoz tekshiradi | BR-M04, BR-Q03 | T-014, T-074 | ✅    |
-| FR-C05 | Excel (CSV) dan savol import (T-100); Word'dan import (T-026, pandoc kerak)                                        | BR-Q04         | T-100, T-026 | 🟨    |
+| FR-C05 | Excel (.xlsx yoki CSV) dan savol import (T-100, T-154); Word'dan import (T-026, pandoc kerak)                      | BR-Q04         | T-100, T-026 | 🟨    |
 | FR-C06 | Darsda himoyalangan video (HLS, belgi)                                                                             |                |              | ⬜    |
 
 ## Testlar (FR-T)
@@ -37,7 +37,7 @@
 | FR-T06 | Reyting: test bo'yicha va umumiy; natija oyna yopilgandan keyin                                                         | BR-W08, W10      | T-035               | ✅    |
 | FR-T07 | Mock (Milliy sertifikat): shablon, bo'limlar, server vaqti, avtomatik topshirish, Rasch yoki taxminiy ball, daraja      | BR-M01..M07      | T-050..T-053        | ✅    |
 | FR-T08 | Offline test natijalarini CSV'dan import qilish va o'quvchiga moslash                                                   | BR-G04           | T-056               | ✅    |
-| FR-T09 | Natijalarni Excel'ga (CSV) yuklab olish: haftalik, mock, o'quvchilar ro'yxati                                           |                  | T-076, T-078        | ✅    |
+| FR-T09 | Natijalarni Excel'ga (.xlsx, T-154) yuklab olish: haftalik, mock, o'quvchilar ro'yxati                                  |                  | T-076, T-078        | ✅    |
 | FR-T10 | "Xatolarim": oxirgi javobi xato savollar to'g'ri javob va yechim bilan; Asosiy'da turtki; faqat xatolarni qayta ishlash |                  | T-079, T-083, T-104 | ✅    |
 
 ## AI yordamchi (FR-Y)

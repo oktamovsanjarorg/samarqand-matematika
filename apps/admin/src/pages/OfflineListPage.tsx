@@ -14,7 +14,7 @@ export function OfflineListPage() {
       {list.isPending && <SkeletonList rows={3} />}
       {list.isError && <ErrorState message={list.error.message} onRetry={() => list.refetch()} />}
       {list.data?.length === 0 && (
-        <EmptyState title="Hali yuklanmagan" hint="Skaner yoki Excel natijasini CSV qilib yuklang" />
+        <EmptyState title="Hali yuklanmagan" hint="Skaner yoki Excel natijasini yuklang" />
       )}
       <ul className="space-y-2">
         {list.data?.map((t) => (

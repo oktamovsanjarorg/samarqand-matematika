@@ -87,7 +87,7 @@ test("BR-W01, BR-W09, T-076: ustoz haftalik test tuzadi, natijalarni ko'radi, bo
     page,
     page.getByTestId("standings").getByRole("button", { name: "Excel'ga yuklab olish" }),
   );
-  expect(csv.name).toBe(`${title}.csv`);
+  expect(csv.name).toBe(`${title}.xlsx`);
   expect(csv.text).toContain("#;Oʻquvchi;Topshirgan;Toʻgʻri javob;Ball;Savollar");
   expect(csv.text).toMatch(/1;Haftalik Yechuvchi;\d{4}-\d{2}-\d{2} \d{2}:\d{2};\d+;1;2/);
   await page.getByRole("button", { name: "2-savolni olib tashlash" }).click();

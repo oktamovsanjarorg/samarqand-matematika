@@ -3,9 +3,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Download, FileUp } from "lucide-react";
 import { useState } from "react";
 import { api } from "../lib/api";
-import { downloadCsv } from "../lib/download";
+import { downloadExcel } from "../lib/download";
 import { TYPE_LABELS } from "../lib/questions";
-import { CsvPicker } from "./CsvPicker";
+import { TablePicker } from "./TablePicker";
 import { MathText } from "./MathText";
 import { Button } from "./ui";
 
@@ -46,7 +46,7 @@ function Preview({ r }: { r: QuestionImportResult }) {
   );
 }
 
-/** Excel (CSV) dan savollarni qoralama sifatida qo'shish (T-100) */
+/** Excel (.xlsx yoki CSV) dan savollarni qoralama sifatida qo'shish (T-100) */
 export function QuestionImport({ topicId }: { topicId: string }) {
   const qc = useQueryClient();
   const [csv, setCsv] = useState("");
@@ -70,13 +70,13 @@ export function QuestionImport({ topicId }: { topicId: string }) {
         <FileUp size={16} /> Excel'dan import
       </summary>
       <p className="text-sm text-hint">
-        Excel jadvalini “CSV” qilib saqlang. Ustunlar: Tur, Savol, A–H variantlar, Javob, Yechim, Qiyinlik,
-        Teglar. Faqat «Savol» majburiy. Savollar qoralama boʻlib tushadi: koʻrib chiqib nashr qiling.
+        Excel (.xlsx) yoki CSV fayl. Ustunlar: Tur, Savol, A–H variantlar, Javob, Yechim, Qiyinlik, Teglar.
+        Faqat «Savol» majburiy. Savollar qoralama boʻlib tushadi: koʻrib chiqib nashr qiling.
       </p>
-      <Button variant="secondary" onClick={() => downloadCsv("Savollar namunasi", TEMPLATE)}>
+      <Button variant="secondary" onClick={() => downloadExcel("Savollar namunasi", TEMPLATE)}>
         <Download size={16} /> Namuna fayl
       </Button>
-      <CsvPicker onText={onText} />
+      <TablePicker onText={onText} />
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => check.mutate()} busy={check.isPending} disabled={!csv}>
           Tekshirish

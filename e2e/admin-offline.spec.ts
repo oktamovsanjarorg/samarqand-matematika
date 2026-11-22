@@ -24,7 +24,7 @@ test("T-056, BR-G04: ustoz CSV yuklaydi, tekshiradi, saqlaydi va moslanmaganni b
   await loginAdmin(page, request, "offline");
   await page.getByLabel("Test nomi").fill(`${E2E_PREFIX}Offline ${t}`);
   await page
-    .getByLabel("CSV fayl")
+    .getByLabel("Excel yoki CSV fayl")
     .setInputFiles({ name: "natija.csv", mimeType: "text/csv", buffer: Buffer.from(csv) });
   await page.getByRole("button", { name: "Tekshirish" }).click();
   const preview = page.getByTestId("offline-preview");
@@ -45,7 +45,7 @@ test("T-056: xatoli CSV saqlanmaydi, qator raqami ko'rinadi", async ({ page, req
   await loginAdmin(page, request, "offline");
   await page.getByLabel("Test nomi").fill(`${E2E_PREFIX}Xato`);
   await page
-    .getByLabel("CSV fayl")
+    .getByLabel("Excel yoki CSV fayl")
     .setInputFiles({ name: "x.csv", mimeType: "text/csv", buffer: Buffer.from("Ism;A\nAli;abc") });
   await page.getByRole("button", { name: "Tekshirish" }).click();
   await expect(page.getByTestId("offline-preview")).toContainText('2-qator: 1-boʻlim balli son emas: "abc"');

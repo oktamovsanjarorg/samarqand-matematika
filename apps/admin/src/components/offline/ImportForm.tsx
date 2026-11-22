@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import { tashkentToday, useGroups } from "../../lib/groups";
 import { Badge, Button } from "../ui";
-import { CsvPicker } from "../CsvPicker";
+import { TablePicker } from "../TablePicker";
 import { ScoresTable } from "./ScoresTable";
 
 const field = "min-h-11 w-full rounded-xl border border-hint/25 bg-section px-3 text-sm";
@@ -75,7 +75,7 @@ function HeadFields({ v, set }: { v: Head; set: (h: Head) => void }) {
   );
 }
 
-/** CSV faylini tanlash → oldindan ko'rish → saqlash (T-056) */
+/** Excel yoki CSV faylini tanlash → oldindan ko'rish → saqlash (T-056) */
 export function ImportForm() {
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -102,11 +102,11 @@ export function ImportForm() {
     <section className="card space-y-3">
       <h2 className="font-bold">Natijalarni yuklash</h2>
       <p className="text-sm text-hint">
-        Excel jadvalini “CSV” qilib saqlang. Birinchi qator: ism ustuni (Ism yoki F.I.O), ixtiyoriy Telefon,
-        qolgan ustunlar boʻlimlar.
+        Excel (.xlsx) yoki CSV fayl. Birinchi qator: ism ustuni (Ism yoki F.I.O), ixtiyoriy Telefon, qolgan
+        ustunlar boʻlimlar.
       </p>
       <HeadFields v={head} set={setHead} />
-      <CsvPicker onText={onText} />
+      <TablePicker onText={onText} />
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => preview.mutate()} busy={preview.isPending} disabled={!csv}>
           Tekshirish
