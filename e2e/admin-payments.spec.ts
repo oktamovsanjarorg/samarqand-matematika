@@ -68,7 +68,7 @@ test("BR-B01, BR-B03..B05, T-109, T-111: ustoz tarif va kartani sozlaydi, chekni
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "e2e/.results/admin-income.png" });
   const download = page.waitForEvent("download");
-  await income.getByRole("button", { name: "Excel'ga yuklab olish" }).click();
+  await income.getByRole("button", { name: "Excelʼga yuklab olish" }).click();
   expect((await download).suggestedFilename()).toMatch(/^Tushum \d{4}-\d{2}\.xlsx$/);
 
   const second = page.getByTestId("payment").filter({ hasText: "Tolov Ikkinchi" });

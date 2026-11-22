@@ -85,7 +85,7 @@ test("BR-W01, BR-W09, T-076: ustoz haftalik test tuzadi, natijalarni ko'radi, bo
   // T-076: natijalar Excel'ga (CSV)
   const csv = await downloadText(
     page,
-    page.getByTestId("standings").getByRole("button", { name: "Excel'ga yuklab olish" }),
+    page.getByTestId("standings").getByRole("button", { name: "Excelʼga yuklab olish" }),
   );
   expect(csv.name).toBe(`${title}.xlsx`);
   expect(csv.text).toContain("#;Oʻquvchi;Topshirgan;Toʻgʻri javob;Ball;Savollar");

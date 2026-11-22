@@ -68,7 +68,7 @@ test("T-053b, T-076, T-112, T-113: ustoz mock natijalarini bo'limlar bo'yicha ko
   await expect(row).toContainText("50/75");
   await expect(row).toContainText("C");
   // T-076: natijalar Excel'ga (CSV), bo'limlar ustunlari bilan
-  const csv = await downloadText(page, results.getByRole("button", { name: "Excel'ga yuklab olish" }));
+  const csv = await downloadText(page, results.getByRole("button", { name: "Excelʼga yuklab olish" }));
   expect(csv.text).toContain("#;Oʻquvchi;Topshirgan;Ball;Daraja;Xom ball");
   expect(csv.text).toContain(";Natija Mockchi;");
   await page.screenshot({ path: "e2e/.results/admin-mock-results.png", fullPage: true });

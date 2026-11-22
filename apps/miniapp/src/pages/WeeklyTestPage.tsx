@@ -47,7 +47,7 @@ function ItemExtras({ item, attemptId }: { item: WeeklyResult["items"][number]; 
   return (
     <>
       {item.noPhoto && item.result !== "CORRECT" && (
-        <p className="text-sm font-semibold text-danger">Yechim rasmi yuklanmagan: 0 ball</p>
+        <p className="text-sm font-semibold text-danger">Yechim rasmi yoʻq: 0 ball</p>
       )}
       {!item.noPhoto && (
         <div className="flex flex-wrap gap-2">

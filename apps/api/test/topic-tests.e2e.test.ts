@@ -86,7 +86,7 @@ describe("Mavzu testi", () => {
     expect((await call("POST", `/topics/${topicId}/attempts`, assistant)).json().id).toBe(view.id);
   });
 
-  it("javob saqlash, topshirish va natija izohlar bilan", async () => {
+  it("BR-P01: javob saqlash, topshirish, natija izohlar bilan; topshirgandan keyin qayta ishlash yangi urinish", async () => {
     const { topicId, qs } = await setup();
     const { id } = (await call("POST", `/topics/${topicId}/attempts`, assistant)).json();
     const [s, n, w] = qs as [{ id: string }, { id: string }, { id: string }];
