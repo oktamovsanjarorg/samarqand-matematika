@@ -17,11 +17,22 @@ async function parseError(res: Response): Promise<ApiError> {
   return new ApiError(res.status, body?.message ?? "Xatolik yuz berdi", body?.code);
 }
 
+/** T-150: tarmoq xatosi ("Failed to fetch") o'rniga o'zbekcha xabar; status 0 */
+export const OFFLINE_MESSAGE = "Internetga ulanib boʻlmadi. Qayta urinib koʻring.";
+
+async function request(url: string, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch {
+    throw new ApiError(0, OFFLINE_MESSAGE);
+  }
+}
+
 /** initData orqali kirish: token va foydalanuvchi store'ga yoziladi */
 export async function login(): Promise<Me> {
   const initData = getInitData();
   if (!initData) throw new ApiError(401, "Ilovani Telegram ichida oching");
-  const res = await fetch("/api/auth/telegram", {
+  const res = await request("/api/auth/telegram", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ initData }),
@@ -35,7 +46,7 @@ export async function login(): Promise<Me> {
 /** Token bilan so'rov; token eskirgan bo'lsa bir marta qayta kirib takrorlanadi */
 export async function api<T>(path: string, init: RequestInit = {}, retried = false): Promise<T> {
   const token = useAuth.getState().token;
-  const res = await fetch(`/api${path}`, {
+  const res = await request(`/api${path}`, {
     ...init,
     headers: {
       ...(init.body ? { "Content-Type": "application/json" } : {}),
@@ -60,7 +71,7 @@ export const put = <T>(path: string, body: object) =>
 /** Himoyalangan fayl (rasm) — blob */
 export async function apiBlob(path: string): Promise<Blob> {
   const token = useAuth.getState().token;
-  const res = await fetch(`/api${path}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  const res = await request(`/api${path}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
   if (!res.ok) throw await parseError(res);
   return res.blob();
 }
