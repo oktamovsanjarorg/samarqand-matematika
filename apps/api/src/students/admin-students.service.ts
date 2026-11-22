@@ -16,7 +16,13 @@ const SELECT = {
   createdAt: true,
   lastSeenAt: true,
   student: {
-    select: { fullName: true, accessMode: true, acceptedAt: true, group: { select: { name: true } } },
+    select: {
+      fullName: true,
+      accessMode: true,
+      acceptedAt: true,
+      group: { select: { name: true } },
+      parents: { where: { status: "APPROVED" }, orderBy: { createdAt: "asc" }, select: { phone: true } },
+    },
   },
   // Eng oxirgi tugaydigan obuna: hozirdan keyin bo'lsa faol (T-110)
   subscriptions: { orderBy: { endsAt: "desc" }, take: 1, select: { endsAt: true } },
@@ -50,6 +56,7 @@ const toRow = (u: Row): AdminStudentRow => ({
   acceptedAt: iso(u.student?.acceptedAt),
   groupName: u.student?.group?.name ?? null,
   paidUntil: activeUntil(u),
+  parentPhones: u.student?.parents.map((p) => p.phone) ?? [],
   createdAt: u.createdAt.toISOString(),
   lastSeenAt: iso(u.lastSeenAt),
 });

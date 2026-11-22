@@ -149,6 +149,26 @@ describe("Admin: o'quvchilar", () => {
     expect((await ids("nimadir")).length).toBe(5);
   });
 
+  it("T-123: qatorda faqat tasdiqlangan ota-onalar telefoni", async () => {
+    const s = await newStudent();
+    await call("POST", `/admin/students/${s.id}/accept`, teacher);
+    const { id: studentId } = await prisma.studentProfile.findUniqueOrThrow({
+      where: { userId: s.id },
+      select: { id: true },
+    });
+    const [ok, wait] = [await newStudent(), await newStudent()];
+    await prisma.parentLink.createMany({
+      data: [
+        { parentId: ok.id, studentId, status: "APPROVED", phone: "+998901110123" },
+        { parentId: wait.id, studentId, status: "PENDING", phone: "+998901110124" },
+      ],
+    });
+    const row = (await call("GET", `/admin/students/${s.id}`, teacher)).json() as {
+      student: AdminStudentRow;
+    };
+    expect(row.student.parentPhones).toEqual(["+998901110123"]);
+  });
+
   it("mavjud boʻlmagan oʻquvchi 404", async () => {
     expect((await call("POST", "/admin/students/yoq/accept", teacher)).statusCode).toBe(404);
   });

@@ -78,7 +78,7 @@
 | FR-U03 | O'quvchiga faktli tavsiya: kuchsiz mavzular, dars va testga havola                                            | BR-R01 | T-062                      | ✅    |
 | FR-U04 | Audit jurnali: kim, qachon, nimani o'zgartirdi (bo'lim va xodim bo'yicha filtr)                               | BR-C04 | T-075                      | ✅    |
 | FR-U05 | Axlat qutisi: o'chirilgan kurs, mavzu, dars va savolni 30 kun ichida qaytarish                                | BR-C06 | T-099                      | ✅    |
-| FR-U06 | O'quvchilar ro'yxatida "To'lamagan" filtri va obuna muddati (Excel'da ham)                                    | BR-A04 | T-110                      | ✅    |
+| FR-U06 | O'quvchilar ro'yxatida "To'lamagan" filtri, obuna muddati va ota-ona telefoni (Excel'da ham)                  | BR-A04 | T-110, T-123               | ✅    |
 
 ## Nofunksional (NFR)
 
