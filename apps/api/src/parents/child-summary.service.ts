@@ -9,6 +9,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { MySchoolService } from "../students/my-school.service";
 import { StatsService } from "../topic-tests/stats.service";
 import { weeklyHistory } from "../weekly/weekly-history";
+import { openTests } from "./open-tests";
 
 /**
  * Ota-ona kabineti (T-069, BR-PA01): faqat tasdiqlangan farzand, faqat faktlar.
@@ -32,7 +33,7 @@ export class ChildSummaryService {
     });
     if (!link) throw new NotFoundException("Farzand topilmadi");
     const { userId, user } = link.student;
-    const [access, stats, school, offline, recs, weekly, mocks] = await Promise.all([
+    const [access, stats, school, offline, recs, weekly, mocks, open] = await Promise.all([
       this.access(userId, now),
       this.stats.my(userId),
       this.school.get(userId),
@@ -40,6 +41,7 @@ export class ChildSummaryService {
       this.insights.recommendations(userId, now),
       weeklyHistory(this.prisma, userId, user.createdAt, { now, take: 5 }),
       mockHistory(this.prisma, userId, { now, take: 3 }),
+      openTests(this.prisma, userId, now),
     ]);
     return {
       access,
@@ -49,6 +51,8 @@ export class ChildSummaryService {
       group: school.group,
       attendance: school.attendance,
       weekly,
+      // Testlar faqat to'liq kirishli o'quvchiga ochiq (BR-A04): aks holda "boshlamagan" chalg'itadi
+      open: access.full ? open : [],
       mocks,
       offline,
       weak: recs.items.map((w) => ({ topicTitle: w.topicTitle, percent: w.percent, total: w.total })),

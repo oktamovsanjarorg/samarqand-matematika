@@ -1,4 +1,4 @@
-import type { ChildSummary, ChildView } from "@samarqand/shared";
+import type { ChildOpenTest, ChildSummary, ChildView } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import {
   CalendarCheck,
@@ -45,6 +45,37 @@ function Attendance({ s }: { s: ChildSummary }) {
       ) : (
         <p className="text-sm text-hint">Davomat hali belgilanmagan</p>
       )}
+    </Block>
+  );
+}
+
+const OPEN_STATUS: Record<ChildOpenTest["status"], { text: string; tone: string }> = {
+  submitted: { text: "Topshirdi", tone: "text-success" },
+  started: { text: "Boshlagan, hali topshirmagan", tone: "text-accent" },
+  not_started: { text: "Hali boshlamagan", tone: "text-danger" },
+};
+
+/** Hozir ochiq testlar (T-138): muddatdan oldin eslatish uchun; ball oyna yopilgach (BR-W08) */
+function OpenTests({ s }: { s: ChildSummary }) {
+  if (s.open.length === 0) return null;
+  return (
+    <Block icon={<Clock size={16} className="text-accent" />} title="Hozir ochiq testlar">
+      <ul className="divide-y divide-hint/10 text-sm">
+        {s.open.map((t) => (
+          <li key={t.id} className="space-y-0.5 py-1.5" data-testid="child-open-test">
+            <p className="font-semibold">
+              {t.kind === "mock" ? "Mock: " : "Haftalik: "}
+              {t.title}
+            </p>
+            <p className="text-xs">
+              <span className={`font-semibold ${OPEN_STATUS[t.status].tone}`}>
+                {OPEN_STATUS[t.status].text}
+              </span>
+              <span className="text-hint"> · {formatStamp(t.closesAt)} gacha</span>
+            </p>
+          </li>
+        ))}
+      </ul>
     </Block>
   );
 }
@@ -163,6 +194,7 @@ function ChildCard({ c }: { c: ChildView }) {
         <>
           <Access a={q.data.access} studentId={c.studentId} />
           <Attendance s={q.data} />
+          <OpenTests s={q.data} />
           <Results s={q.data} />
           {q.data.weak.length > 0 && (
             <Block icon={<Target size={16} className="text-danger" />} title="Takrorlash kerak">
