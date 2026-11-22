@@ -18,6 +18,7 @@ const PAGES = [
   "groups",
   "offline",
   "tutor",
+  "agent",
   "settings",
   "audit",
   "trash",

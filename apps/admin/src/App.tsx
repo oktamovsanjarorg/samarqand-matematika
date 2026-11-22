@@ -9,6 +9,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { SignInHint } from "./pages/SignInHint";
 
 /** T-132: kirish va bosh sahifadan boshqa sahifalar alohida chunk'larda yuklanadi */
+const AgentPage = lazy(() => import("./pages/AgentPage").then((m) => ({ default: m.AgentPage })));
 const AuditPage = lazy(() => import("./pages/AuditPage").then((m) => ({ default: m.AuditPage })));
 const TrashPage = lazy(() => import("./pages/TrashPage").then((m) => ({ default: m.TrashPage })));
 const ContentPage = lazy(() => import("./pages/ContentPage").then((m) => ({ default: m.ContentPage })));
@@ -53,6 +54,17 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
 });
 
+/** T-153: boshqa tabda qayta kirilsa (bot havolasi), shu tab ham o'sha sahifaga qaytadi, qoralama tiklanadi */
+function useSessionSync(refresh: () => void) {
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === SESSION_KEY) refresh();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [refresh]);
+}
+
 export function App() {
   const [session, setSession] = useState(loadSession);
   const refresh = useCallback(() => setSession(loadSession()), []);
@@ -62,14 +74,7 @@ export function App() {
     setSession(null);
   }, []);
   useEffect(() => setUnauthorizedHandler(logout), [logout]);
-  // T-153: boshqa tabda qayta kirilsa (bot havolasi), shu tab ham o'sha sahifaga qaytadi, qoralama tiklanadi
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === SESSION_KEY) refresh();
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [refresh]);
+  useSessionSync(refresh);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -103,6 +108,7 @@ export function App() {
               <Route path="offline/:id" element={<OfflineTestPage />} />
               <Route path="mocks/new" element={<MockEditPage />} />
               <Route path="mocks/:id" element={<MockEditPage />} />
+              <Route path="agent" element={<AgentPage />} />
               <Route path="tutor" element={<TutorChatsPage />} />
               <Route path="tutor/:id" element={<TutorChatPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />

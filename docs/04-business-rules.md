@@ -89,6 +89,7 @@
 | BR-T02 | Mashq rejimida yordamchi avval ishora beradi. To'liq yechimni faqat o'quvchi o'zi urinib ko'rgandan keyin ko'rsatadi | ✅                                         |
 | BR-T03 | Har o'quvchiga kunlik so'rov limiti qo'yiladi                                                                        | ✅ Q-06 standart (`TUTOR_DAILY_LIMIT`, 30) |
 | BR-T04 | Barcha suhbatlar saqlanadi, ustoz ko'ra oladi                                                                        | ✅                                         |
+| BR-T05 | Admin agenti amalni xodim huquqi bilan, tasdiqdan keyin bajaradi (ADR-0006)                                          | ✅                                         |
 
 ## Imtihon formati (M)
 

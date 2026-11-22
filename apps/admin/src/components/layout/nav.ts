@@ -10,6 +10,7 @@ import {
   History,
   Megaphone,
   Settings,
+  Sparkles,
   Trash2,
   UserRound,
   Users,
@@ -31,7 +32,14 @@ export interface NavGroup {
 /** Admin bo'limlari guruhlab: o'quv jarayoni, odamlar, to'lov va AI */
 export function navGroups(role: RoleName): NavGroup[] {
   const groups: NavGroup[] = [
-    { title: "Asosiy", items: [{ to: "/", label: "Bosh sahifa", Icon: LayoutDashboard }] },
+    {
+      title: "Asosiy",
+      items: [
+        { to: "/", label: "Bosh sahifa", Icon: LayoutDashboard },
+        // T-156: oddiy so'z bilan buyruq, panel amallari
+        { to: "/agent", label: "AI agent", Icon: Sparkles },
+      ],
+    },
     {
       title: "Oʻquv jarayoni",
       items: [

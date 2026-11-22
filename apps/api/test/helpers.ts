@@ -5,6 +5,7 @@ import type { Type } from "@nestjs/common";
 import { FastifyAdapter, type NestFastifyApplication } from "@nestjs/platform-fastify";
 import { Test } from "@nestjs/testing";
 import { signInitData } from "@samarqand/shared/server";
+import { AGENT_MODEL, type AgentModel } from "../src/ai/agent-model";
 import { AppModule } from "../src/app.module";
 import {
   TELEGRAM_TRANSPORT,
@@ -48,6 +49,23 @@ export const testAi = {
   },
 };
 
+/** Testdagi admin agenti modeli (T-156): javoblarni test navbatga qo'yadi, chaqiruvlar yoziladi */
+type AgentSend = AgentModel["send"];
+export const testAgent = {
+  script: [] as Awaited<ReturnType<AgentSend>>[],
+  calls: [] as Parameters<AgentSend>[0][],
+  send(params: Parameters<AgentSend>[0]): ReturnType<AgentSend> {
+    // Keyingi chaqiruv o'zgartirsa ham shu paytdagi holat qolsin
+    this.calls.push(structuredClone(params));
+    return Promise.resolve(
+      this.script.shift() ?? {
+        content: [{ type: "text", text: "Tayyor", citations: null }],
+        stop_reason: "end_turn",
+      },
+    );
+  },
+};
+
 export async function createApp(extraControllers: Type[] = []) {
   const env = loadEnv({
     ...process.env,
@@ -69,6 +87,8 @@ export async function createApp(extraControllers: Type[] = []) {
     .useValue(fakeTransport)
     .overrideProvider(AI_PROVIDER)
     .useValue(testAi)
+    .overrideProvider(AGENT_MODEL)
+    .useValue(testAgent)
     .compile();
   const app = mod.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
   await configureApp(app, { rateLimit: false });

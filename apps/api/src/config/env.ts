@@ -49,6 +49,8 @@ const base = z.object({
   AI_DAILY_LIMIT: z.coerce.number().int().min(0).default(300),
   // AI yordamchi: bir o'quvchiga kuniga nechta xabar (BR-T03, Q-06)
   TUTOR_DAILY_LIMIT: z.coerce.number().int().min(0).default(30),
+  // Admin agenti (T-156): bir xodimga kuniga nechta model chaqiruvi (xarajat chegarasi)
+  AGENT_DAILY_LIMIT: z.coerce.number().int().min(0).default(200),
 });
 
 const schema = base.refine((e) => e.AI_PROVIDER !== "claude" || !!e.ANTHROPIC_API_KEY, {
