@@ -28,3 +28,9 @@ export interface MonthStats {
 }
 
 export const STATS_TOP_MIN_ANSWERS = 20;
+
+/** Ochiq sahifa (T-166, landing): faqat bot havolasi va nashr qilingan kontent soni, shaxsiy ma'lumot yo'q */
+export interface LandingInfo {
+  botLink: string | null;
+  content: { topics: number; lessons: number; questions: number };
+}
