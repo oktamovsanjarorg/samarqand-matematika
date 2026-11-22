@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
+import { Ticker } from "../common/ticker";
 import { gradeOf } from "@samarqand/shared";
 import { ENV, type Env } from "../config/env";
 import { AccessService } from "../access/access.service";
@@ -31,7 +32,7 @@ function toScored(
 @Injectable()
 export class MockScheduler implements OnModuleInit, OnModuleDestroy {
   private readonly log = new Logger("Mock");
-  private timer?: NodeJS.Timeout;
+  private readonly ticker = new Ticker(this.log);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -42,18 +43,16 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit() {
-    if (this.env.WEEKLY_TICK_SEC === 0) return;
-    this.timer = setInterval(() => {
+    this.ticker.start(this.env.WEEKLY_TICK_SEC, async () => {
       const now = new Date();
-      this.announce(now)
-        .then(() => this.remind(now))
-        .then(() => this.close(now))
-        .catch((e: unknown) => this.log.warn(`tick: ${e instanceof Error ? e.name : "xato"}`));
-    }, this.env.WEEKLY_TICK_SEC * 1000);
+      await this.announce(now);
+      await this.remind(now);
+      await this.close(now);
+    });
   }
 
   onModuleDestroy() {
-    clearInterval(this.timer);
+    return this.ticker.stop();
   }
 
   /** Mock ochildi: to'liq kirishli o'quvchilarga bir marta xabar (T-080) */

@@ -44,6 +44,7 @@
 
 ## Zaxira
 
+- To'xtatish (T-136): `api` va `bot` konteynerlarida `init: true`, API `exec node` bilan ishlaydi. `docker stop` (deploy) SIGTERM yuboradi: scheduler boshlangan tick'ni (xabarlar) tugatadi, HTTP server boshlangan so'rovlarni tugatadi, keyin Prisma uziladi. API uchun `stop_grace_period: 30s`. Oldin signal yetib bormasdi: har deployda 10 s kutib SIGKILL.
 - `scripts/backup.sh`, cron har kuni 03:00 (Toshkent): `pg_dump` qilinadi va `pg_restore --list` bilan tekshiriladi.
 - Serverda 14 kunlik nusxa saqlanadi: `~/samarqand-backups`.
 - S3 bucket: `samarqand-matematika-backups-560418470850` (eu-north-1, versioning, shifrlangan, public yopiq).

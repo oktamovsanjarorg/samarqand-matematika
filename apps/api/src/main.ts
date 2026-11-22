@@ -15,6 +15,8 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule.forRoot(env), new FastifyAdapter());
   await configureApp(app, { authPerMinute: env.RATE_LIMIT_AUTH_PER_MIN, perMinute: env.RATE_LIMIT_PER_MIN });
   app.enableCors({ origin: env.CORS_ORIGINS.split(",").map((s) => s.trim()) });
+  // T-136: docker stop (SIGTERM): scheduler tick'i va boshlangan so'rovlar tugab, keyin chiqiladi
+  app.enableShutdownHooks(["SIGTERM", "SIGINT"]);
   await app.listen(env.API_PORT, env.API_HOST);
   console.info(`API: http://${env.API_HOST}:${env.API_PORT}/api`);
 }

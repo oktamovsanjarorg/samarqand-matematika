@@ -174,4 +174,5 @@
 | T-133 | Bosh sahifada oʻlchov: 30 kunda mavzu testini qayta ishlaganda natija oshgan ulush (oʻquvchilar, xatolar ustida ishlashsiz)                                                 | ✅    |
 | T-134 | Mini App: pastki tab sahifalari (Darslar, Profil) brauzer boʻsh turganda oldindan yuklanadi                                                                                 | ✅    |
 | T-135 | Mini App va admin: sahifa xatosida oq ekran oʻrniga xabar va qayta urinish, menyu joyida qoladi (ErrorBoundary)                                                             | ✅    |
+| T-136 | Toʻgʻri toʻxtash: SIGTERM API va botga yetadi (init, exec), scheduler tick'i yarmida uzilmaydi va ustma-ust tushmaydi (Ticker)                                              | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                         | ✅    |
