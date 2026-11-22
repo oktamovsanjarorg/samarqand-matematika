@@ -1,6 +1,6 @@
 import type { AdminGroupDetail } from "@samarqand/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft, Megaphone, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AddStudents } from "../components/groups/AddStudents";
@@ -9,6 +9,7 @@ import { AttendanceMonthReport } from "../components/groups/AttendanceMonth";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
 import { useGroup } from "../lib/groups";
+import { loadSession } from "../lib/session";
 
 const field = "min-h-11 w-full rounded-xl border border-hint/25 bg-section px-3 text-sm";
 
@@ -104,7 +105,18 @@ export function GroupPage() {
       {g.isError && <ErrorState message={g.error.message} onRetry={() => g.refetch()} />}
       {g.data && (
         <>
-          <h1 className="text-xl font-extrabold">{g.data.name}</h1>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h1 className="text-xl font-extrabold">{g.data.name}</h1>
+            {/* T-119: e'lonni faqat ustoz yuboradi (T-116) */}
+            {loadSession()?.user.role === "TEACHER" && (
+              <Link
+                to={`/broadcast?group=${g.data.id}`}
+                className="flex min-h-11 items-center gap-1 text-sm font-semibold text-link"
+              >
+                <Megaphone size={16} /> Guruhga eʼlon
+              </Link>
+            )}
+          </div>
           <Settings key={`${g.data.name}${g.data.schedule}`} g={g.data} />
           <Attendance groupId={g.data.id} />
           <AttendanceMonthReport groupId={g.data.id} groupName={g.data.name} />

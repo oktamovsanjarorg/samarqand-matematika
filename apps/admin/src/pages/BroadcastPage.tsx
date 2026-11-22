@@ -7,6 +7,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Send } from "lucide-react";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { BroadcastHistory, HISTORY_KEY } from "../components/broadcast/BroadcastHistory";
 import { Button, PageTitle } from "../components/ui";
 import { api } from "../lib/api";
@@ -89,14 +90,10 @@ function SendControls(p: { n: number; ready: boolean; busy: boolean; onSend: () 
   );
 }
 
-/** Ustozdan eʼlon (T-116): qabul qilingan o'quvchilar va tasdiqlangan ota-onalarga bot xabari */
-export function BroadcastPage() {
-  const [text, setText] = useState("");
-  const [target, setTarget] = useState<Target>({ audience: "all", groupId: "" });
+/** Yuborish; muvaffaqiyatdan keyin matn tozalanadi va tarix yangilanadi (T-117) */
+function useSend(text: string, target: Target, onDone: () => void) {
   const qc = useQueryClient();
-  const count = useRecipients(target);
-  const n = count.data?.recipients ?? 0;
-  const send = useMutation({
+  return useMutation({
     mutationFn: () =>
       api.post<BroadcastResult>("/admin/broadcast", {
         text,
@@ -105,10 +102,21 @@ export function BroadcastPage() {
         dryRun: false,
       }),
     onSuccess: () => {
-      setText("");
+      onDone();
       void qc.invalidateQueries({ queryKey: HISTORY_KEY });
     },
   });
+}
+
+/** Ustozdan eʼlon (T-116): qabul qilingan o'quvchilar va tasdiqlangan ota-onalarga bot xabari */
+export function BroadcastPage() {
+  const [text, setText] = useState("");
+  // T-119: guruh sahifasidan kelinsa shu guruh tanlangan bo'ladi
+  const [params] = useSearchParams();
+  const [target, setTarget] = useState<Target>({ audience: "all", groupId: params.get("group") ?? "" });
+  const count = useRecipients(target);
+  const n = count.data?.recipients ?? 0;
+  const send = useSend(text, target, () => setText(""));
   return (
     <div className="max-w-2xl space-y-4">
       <PageTitle title="Eʼlon yuborish" />
