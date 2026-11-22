@@ -1,6 +1,6 @@
 import { downloadText } from "./download";
 import { expect, test } from "@playwright/test";
-import { apiPost, createStudent, grantFree, loginAdmin } from "./api";
+import { adminNav, apiPost, createStudent, grantFree, loginAdmin } from "./api";
 import { seedMock, seedMockBase } from "./mock-seed";
 import { E2E_PREFIX } from "./telegram";
 
@@ -46,7 +46,10 @@ test("BR-M01: ustoz shablondan mock tuzadi, har bo'limga faqat mos turdagi savol
   await expect(page.getByTestId("mock-section").nth(1).getByTestId("selected")).toContainText("1");
 });
 
-test("T-053b, T-076: ustoz mock natijalarini bo'limlar bo'yicha ko'radi", async ({ page, request }) => {
+test("T-053b, T-076, T-112: ustoz mock natijalarini bo'limlar bo'yicha ko'radi", async ({
+  page,
+  request,
+}) => {
   const m = await seedMock(request);
   const s = await createStudent(request, { fullName: "Natija Mockchi", phone: "998901112252" });
   await grantFree(request, m.admin, "Natija Mockchi");
@@ -69,6 +72,24 @@ test("T-053b, T-076: ustoz mock natijalarini bo'limlar bo'yicha ko'radi", async 
   expect(csv.text).toContain("#;Oʻquvchi;Topshirgan;Ball;Daraja;Xom ball");
   expect(csv.text).toContain(";Natija Mockchi;");
   await page.screenshot({ path: "e2e/.results/admin-mock-results.png", fullPage: true });
+
+  // T-112: oyna yopilgach mock o'quvchi kartasida ball, daraja va "taxminiy" bilan
+  const at = (ms: number) => new Date(Date.now() + ms).toISOString();
+  const closed = await request.put(`${API}/admin/mocks/${m.id}`, {
+    headers: m.admin,
+    data: { ...m.body, opensAt: at(-2 * 3_600_000), closesAt: at(-60_000) },
+  });
+  expect(closed.ok()).toBe(true);
+  await page.reload();
+  await expect(results).toContainText("Natijalar · topshirgan: 1");
+  await adminNav(page, "Oʻquvchilar");
+  await page.getByRole("tab", { name: "Hammasi" }).click();
+  await page.getByPlaceholder("Ism, username yoki telefon").fill("Natija Mockchi");
+  await page.getByTestId("student").first().getByRole("link", { name: "Natija Mockchi" }).click();
+  const mocks = page.getByTestId("card-mocks");
+  await expect(mocks.getByRole("listitem").first()).toContainText(`${m.body.title}50/75Ctaxminiy`);
+  await mocks.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "e2e/.results/admin-card-mocks.png" });
 });
 
 test("T-098: ustoz mockdan nusxa oladi: shablon va savollar ko'chadi, nomni yangisini yozadi", async ({

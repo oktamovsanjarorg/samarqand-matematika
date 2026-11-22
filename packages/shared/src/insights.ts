@@ -67,4 +67,17 @@ export interface AdminStudentCard {
   weekly: ChildWeeklyRow[];
   /** Oxirgi cheklar (T-111) */
   payments: MyPayment[];
+  /** Yopilgan mock'lar (T-112) */
+  mocks: CardMockRow[];
+}
+
+/** O'quvchi kartasidagi mock natijasi (T-112). approx: kam qatnashchi, Rasch emas (BR-M05) */
+export interface CardMockRow {
+  id: string;
+  title: string;
+  closesAt: string;
+  scaled: number;
+  scaleMax: number;
+  grade: string | null;
+  approx: boolean;
 }
