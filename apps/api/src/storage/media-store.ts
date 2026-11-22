@@ -26,7 +26,7 @@ export function sniffImage(b: Buffer): { ext: string; type: string } | null {
 
 const TYPES: Record<string, string> = { jpg: "image/jpeg", png: "image/png", webp: "image/webp" };
 
-export type MediaFolder = "receipts" | "solutions";
+export type MediaFolder = "receipts" | "solutions" | "tutor";
 
 /** Fayllar MEDIA_DIR/<papka> ichida (cheklar, yechim rasmlari). Yo'l faqat server yaratadi, tashqaridan kelmaydi */
 @Injectable()

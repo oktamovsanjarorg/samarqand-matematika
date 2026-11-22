@@ -2,8 +2,13 @@ import type { AiHealth } from "./ai-health";
 import { request } from "node:https";
 
 /** DeepSeek chat/completions (OpenAI bilan mos) xabarlari */
+/** Rasm (T-170): faqat user xabarida, data URI ko'rinishida */
+export type DsContentPart =
+  { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
+
 export type DsMessage =
-  | { role: "system" | "user"; content: string }
+  | { role: "system"; content: string }
+  | { role: "user"; content: string | DsContentPart[] }
   | { role: "assistant"; content: string | null; tool_calls?: DsToolCall[] }
   | { role: "tool"; tool_call_id: string; content: string };
 
@@ -20,6 +25,8 @@ export interface DsTool {
 
 export interface DsRequest {
   messages: DsMessage[];
+  /** Standart modeldan boshqasi (masalan rasm uchun vision model) */
+  model?: string;
   tools?: DsTool[];
   maxTokens?: number;
 }
@@ -130,7 +137,7 @@ export class DeepSeekClient {
 
   private body(req: DsRequest) {
     return {
-      model: this.model,
+      model: req.model ?? this.model,
       max_tokens: req.maxTokens ?? 4000,
       temperature: 0.3,
       thinking: { type: "disabled" },

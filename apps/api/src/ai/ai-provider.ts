@@ -21,7 +21,7 @@ export interface TutorInput {
   context: string;
   /** Oxirgisi o'quvchining yangi xabari */
   history: { role: "user" | "assistant"; text: string }[];
-  /** REVIEW: o'quvchining yechim rasmlari */
+  /** Oxirgi xabarga biriktiriladigan rasmlar: REVIEW yechim rasmlari va o'quvchi yuborgan rasm (T-170) */
   photos: SolutionPhotoInput[];
 }
 

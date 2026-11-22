@@ -8,14 +8,26 @@ import {
   ServiceUnavailableException,
 } from "@nestjs/common";
 import type { TutorChat } from "@samarqand/db";
-import { ERROR_CODES, type StartTutorInput, type TutorChatView } from "@samarqand/shared";
+import {
+  ERROR_CODES,
+  type StartTutorInput,
+  type TutorChatView,
+  type TutorMessageInput,
+} from "@samarqand/shared";
 import { AI_PROVIDER, type AiProvider, type SolutionPhotoInput } from "../ai/ai-provider";
 import { photoInputs } from "../ai/photos";
 import { tashkentDayStart } from "../common/time";
 import { ENV, type Env } from "../config/env";
 import { PrismaService } from "../prisma/prisma.service";
 import { MediaStore } from "../storage/media-store";
-import { mentionsOpenQuestion, questionContext } from "./tutor-context";
+import {
+  mentionsOpenQuestion,
+  OPEN_TEST_MARK,
+  openTestGuard,
+  PHOTO_ONLY_TEXT,
+  questionContext,
+} from "./tutor-context";
+import { TutorPhotosService } from "./tutor-photos.service";
 import { reviewAnswer, reviewContext } from "./tutor-review";
 
 /** Modelga yuboriladigan oxirgi xabarlar soni (xarajat chegarasi) */
@@ -41,6 +53,7 @@ export class TutorService {
     @Inject(AI_PROVIDER) private readonly ai: AiProvider,
     @Inject(ENV) private readonly env: Env,
     private readonly media: MediaStore,
+    private readonly photos: TutorPhotosService,
   ) {}
 
   async start(userId: string, input: StartTutorInput, now: Date): Promise<TutorChatView> {
@@ -66,14 +79,20 @@ export class TutorService {
     return this.view(await this.own(userId, chatId), now);
   }
 
-  async send(userId: string, chatId: string, text: string, now: Date): Promise<TutorChatView> {
+  async send(userId: string, chatId: string, input: TutorMessageInput, now: Date): Promise<TutorChatView> {
+    const { text } = input;
     const chat = await this.own(userId, chatId);
     if ((await this.remaining(userId, now)) <= 0)
       throw new HttpException(
         { code: ERROR_CODES.AI_LIMIT, message: "Bugungi savollar tugadi. Ertaga davom etamiz" },
         HttpStatus.TOO_MANY_REQUESTS,
       );
-    const { context, photos } = await this.context(chat, text, now);
+    const photo = input.photoId ? await this.photos.pending(chatId, input.photoId) : null;
+    const ctx = await this.context(chat, text, now);
+    // BR-T05: rasmni matn bilan solishtirib bo'lmaydi, ochiq test savollari modelga beriladi
+    const guard = photo ? openTestGuard(await this.openQuestions(now)) : "";
+    const context = [ctx.context, guard].filter(Boolean).join("\n\n");
+    const photos = photo ? [...ctx.photos, photo.input] : ctx.photos;
     const past = await this.prisma.tutorMessage.findMany({
       where: { chatId },
       orderBy: { createdAt: "desc" },
@@ -81,30 +100,41 @@ export class TutorService {
       select: { role: true, text: true },
     });
     // Xabarlar juft saqlanadi (USER, ASSISTANT), tarix doim o'quvchi xabari bilan boshlanadi
-    const history = [...past.reverse(), { role: "USER" as const, text }].map((m) => ({
-      role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
-      text: m.text,
-    }));
+    const history = [...past.reverse(), { role: "USER" as const, text: text || PHOTO_ONLY_TEXT }].map(
+      (m) => ({
+        role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
+        text: m.text,
+      }),
+    );
     const reply = await this.ai.tutor({ mode: chat.mode, context, history, photos });
     if (!reply)
       throw new ServiceUnavailableException({
         code: ERROR_CODES.AI_UNAVAILABLE,
         message: "Yordamchi hozir javob bera olmadi. Birozdan keyin urinib koʻring",
       });
-    await this.prisma.$transaction([
-      this.prisma.tutorMessage.create({ data: { chatId, role: "USER", text, createdAt: now } }),
-      this.prisma.tutorMessage.create({
+    if (photo && reply.includes(OPEN_TEST_MARK)) throw blocked();
+    await this.save(chatId, { text, reply, photoId: photo?.id ?? null }, now);
+    return this.view(chat, now);
+  }
+
+  /** O'quvchi xabari (rasmi bilan) va javob birga saqlanadi */
+  private async save(chatId: string, m: { text: string; reply: string; photoId: string | null }, now: Date) {
+    await this.prisma.$transaction(async (tx) => {
+      const user = await tx.tutorMessage.create({
+        data: { chatId, role: "USER", text: m.text, createdAt: now },
+      });
+      if (m.photoId) await tx.tutorPhoto.update({ where: { id: m.photoId }, data: { messageId: user.id } });
+      await tx.tutorMessage.create({
         data: {
           chatId,
           role: "ASSISTANT",
-          text: reply,
+          text: m.reply,
           provider: this.ai.name,
           createdAt: new Date(now.getTime() + 1),
         },
-      }),
-      this.prisma.tutorChat.update({ where: { id: chatId }, data: { updatedAt: now } }),
-    ]);
-    return this.view(chat, now);
+      });
+      await tx.tutorChat.update({ where: { id: chatId }, data: { updatedAt: now } });
+    });
   }
 
   /** Bugun qolgan xabarlar (BR-T03) */
@@ -119,6 +149,7 @@ export class TutorService {
     const messages = await this.prisma.tutorMessage.findMany({
       where: { chatId: chat.id },
       orderBy: { createdAt: "asc" },
+      include: { photo: { select: { id: true } } },
     });
     return {
       id: chat.id,
@@ -128,6 +159,7 @@ export class TutorService {
         id: m.id,
         role: m.role,
         text: m.text,
+        photoId: m.photo?.id ?? null,
         createdAt: m.createdAt.toISOString(),
       })),
     };
@@ -197,18 +229,17 @@ export class TutorService {
         ),
       };
     }
-    const [weekly, mock] = await Promise.all([
-      this.prisma.weeklyQuestion.findMany({
-        where: { weeklyTest: openWindow(now) },
-        select: { question: { select: { text: true } } },
-      }),
-      this.prisma.mockQuestion.findMany({
-        where: { mockTest: openWindow(now) },
-        select: { question: { select: { text: true } } },
-      }),
-    ]);
-    const open = [...weekly, ...mock].map((o) => o.question.text);
-    if (mentionsOpenQuestion(text, open)) throw blocked();
+    if (mentionsOpenQuestion(text, await this.openQuestions(now))) throw blocked();
     return { context: "Erkin savol. Aniq masala konteksti yo'q.", photos: [] };
+  }
+
+  /** Hozir ochiq haftalik va mock savollari matni (BR-T01) */
+  private async openQuestions(now: Date): Promise<string[]> {
+    const select = { question: { select: { text: true } } };
+    const [weekly, mock] = await Promise.all([
+      this.prisma.weeklyQuestion.findMany({ where: { weeklyTest: openWindow(now) }, select }),
+      this.prisma.mockQuestion.findMany({ where: { mockTest: openWindow(now) }, select }),
+    ]);
+    return [...weekly, ...mock].map((o) => o.question.text);
   }
 }

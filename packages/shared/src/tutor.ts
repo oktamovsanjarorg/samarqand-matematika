@@ -18,12 +18,21 @@ export const startTutorInput = z.discriminatedUnion("mode", [
 ]);
 export type StartTutorInput = z.infer<typeof startTutorInput>;
 
-export const tutorMessageInput = z.object({ text: z.string().trim().min(1).max(TUTOR_MESSAGE_MAX) });
+/** Matn yoki rasm (T-170) bo'lishi shart; rasm avval /tutor/chats/:id/photos ga yuklanadi */
+export const tutorMessageInput = z
+  .object({
+    text: z.string().trim().max(TUTOR_MESSAGE_MAX).default(""),
+    photoId: z.string().uuid().optional(),
+  })
+  .refine((m) => m.text.length > 0 || !!m.photoId, { message: "Savol yozing yoki rasm yuboring" });
+export type TutorMessageInput = z.infer<typeof tutorMessageInput>;
 
 export interface TutorMessageView {
   id: string;
   role: "USER" | "ASSISTANT";
   text: string;
+  /** O'quvchi yuborgan rasm (T-170) */
+  photoId: string | null;
   createdAt: string;
 }
 
