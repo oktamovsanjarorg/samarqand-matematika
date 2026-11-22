@@ -47,6 +47,7 @@
 
 - To'xtatish (T-136): `api` va `bot` konteynerlarida `init: true`, API `exec node` bilan ishlaydi. `docker stop` (deploy) SIGTERM yuboradi: scheduler boshlangan tick'ni (xabarlar) tugatadi, HTTP server boshlangan so'rovlarni tugatadi, keyin Prisma uziladi. API uchun `stop_grace_period: 30s`. Oldin signal yetib bormasdi: har deployda 10 s kutib SIGKILL.
 - `scripts/backup.sh`, cron har kuni 03:00 (Toshkent): `pg_dump` qilinadi va `pg_restore --list` bilan tekshiriladi.
+- Tiklash sinovi (T-144): yakshanba kunlari `scripts/restore-check.sh` nusxani vaqtinchalik Postgres konteyneriga (tarmoqsiz, xotirada) to'liq tiklaydi. Tiklangan jadvallar nusxa mundarijasi bilan bir xil bo'lishi, migratsiyalar asl bazada ham bo'lishi va foydalanuvchilar bo'sh bo'lmasligi kerak. Mos kelmasa, ustozga "Zaxira nusxa olinmadi" xabari boradi. Qo'lda: `RESTORE_CHECK=always scripts/backup.sh`.
 - Serverda 14 kunlik nusxa saqlanadi: `~/samarqand-backups`.
 - S3 bucket: `samarqand-matematika-backups-560418470850` (eu-north-1, versioning, shifrlangan, public yopiq).
   - `db/daily/`: 90 kun saqlanadi.

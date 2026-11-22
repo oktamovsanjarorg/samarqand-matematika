@@ -182,4 +182,5 @@
 | T-141 | API va bot xato logida shaxsiy maʼlumot yoʻq: API'da faqat xato nomi, kodi va stack (Prisma xatosidagi ism, telefon yozilmaydi), botda Telegram xatosining yuborilgan xabarisiz | ✅    |
 | T-142 | A11y: maʼlumotli admin sahifalari ham axe bilan (oʻquvchi kartasi, guruh, savollar, savol va dars tahriri, haftalik va tekshiruv)                                               | ✅    |
 | T-143 | Admin bosh sahifasida o'quvchilarni taklif qilish: bot havolasi (getMe), nusxa olish va Telegramʼda ulashish                                                                    | ✅    |
+| T-144 | Zaxirani haftalik haqiqiy tiklash sinovi: vaqtinchalik konteynerga tiklab, jadvallar, migratsiyalar va foydalanuvchilar tekshiriladi                                            | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                             | ✅    |
