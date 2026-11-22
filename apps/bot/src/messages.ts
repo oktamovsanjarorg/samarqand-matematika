@@ -7,6 +7,16 @@ export function startMessage(opts: { firstName: string; brand: string; miniappUr
   return { text, keyboard };
 }
 
+/**
+ * Botga oddiy matn yozilganda (T-129): bot xabarlarni o'qimaydi, ustozga yetib bormaydi.
+ * Savol uchun ilovadagi AI yordamchi (o'quvchi) yoki kabinet (ota-ona).
+ */
+export function fallbackMessage(miniappUrl: string) {
+  const text =
+    "Bu bot xabarlarni oʻqimaydi va ustozga yetkazmaydi.\n\nMasala boʻyicha savolni ilovadagi AI yordamchiga yozing. Darslar, testlar, natijalar va toʻlov ham ilovada.";
+  return { text, keyboard: new InlineKeyboard().webApp("📐 Ilovani ochish", miniappUrl) };
+}
+
 export const ADMIN_NOT_STAFF = "Boshqaruv paneli faqat ustoz va yordamchilar uchun.";
 export const ADMIN_FAILED = "Hozir havola yaratib boʻlmadi, birozdan keyin urinib koʻring.";
 

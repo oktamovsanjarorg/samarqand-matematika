@@ -10,6 +10,7 @@ import {
   PHONE_REPLIES,
   SHARE_CONTACT_BUTTON,
   adminLinkMessage,
+  fallbackMessage,
   parentInviteMessage,
   startMessage,
 } from "./messages";
@@ -88,6 +89,13 @@ bot.on("message:contact", async (ctx) => {
     logError("raqam", e);
   }
   await ctx.reply(reply, { reply_markup: { remove_keyboard: true } });
+});
+
+// T-129: buyruq bo'lmagan matn (savol, salom). Guruhda jim turadi
+bot.on("message:text", async (ctx) => {
+  if (ctx.chat.type !== "private") return;
+  const { text, keyboard } = fallbackMessage(env.MINIAPP_URL);
+  await ctx.reply(text, { reply_markup: keyboard });
 });
 
 bot.catch((err) => console.error("Bot xatosi:", err.error));
