@@ -54,9 +54,12 @@ type AgentSend = AgentModel["send"];
 export const testAgent = {
   script: [] as Awaited<ReturnType<AgentSend>>[],
   calls: [] as Parameters<AgentSend>[0][],
+  /** T-163: provayder xatosi (masalan, { status: 402 }) */
+  fail: null as { status: number } | null,
   send(params: Parameters<AgentSend>[0]): ReturnType<AgentSend> {
     // Keyingi chaqiruv o'zgartirsa ham shu paytdagi holat qolsin
     this.calls.push(structuredClone(params));
+    if (this.fail) return Promise.reject(Object.assign(new Error("provayder xatosi"), this.fail));
     return Promise.resolve(
       this.script.shift() ?? {
         content: [{ type: "text", text: "Tayyor", citations: null }],

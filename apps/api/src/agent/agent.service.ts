@@ -19,6 +19,7 @@ import {
 } from "@samarqand/shared";
 import type { FastifyInstance } from "fastify";
 import { AGENT_MODEL, type AgentModel } from "../ai/agent-model";
+import { AiHealth, aiErrorText, statusOf } from "../ai/ai-health";
 import type { JwtUser } from "../auth/decorators";
 import { ENV, type Env } from "../config/env";
 import { agentSystem } from "./agent-prompt";
@@ -61,6 +62,7 @@ export class AgentService {
     @Inject(AGENT_MODEL) private readonly model: AgentModel | null,
     @Inject(ENV) private readonly env: Env,
     private readonly host: HttpAdapterHost,
+    private readonly health: AiHealth,
   ) {
     this.signer = new ConfirmSigner(env.JWT_SECRET);
   }
@@ -98,7 +100,7 @@ export class AgentService {
     const system = agentSystem({ role: user.role, now: new Date() });
     for (let step = 0; step < MAX_STEPS; step++) {
       this.count(user.sub);
-      const res = await model.send({
+      const res = await this.send(model, {
         system,
         tools: this.api,
         messages: transcript as Anthropic.Beta.BetaMessageParam[],
@@ -111,6 +113,22 @@ export class AgentService {
       transcript.push({ role: "user", content: [next.result] as unknown as Record<string, unknown>[] });
     }
     return this.reply(transcript, null);
+  }
+
+  /** Model xatosi 500 emas: ustozga sababi bilan 503 (T-163); provayder xato matni chiqmaydi */
+  private async send(model: AgentModel, p: Parameters<AgentModel["send"]>[0]) {
+    try {
+      const res = await model.send(p);
+      this.health.ok();
+      return res;
+    } catch (e) {
+      const status = statusOf(e);
+      this.health.fail(status);
+      throw new ServiceUnavailableException({
+        message: aiErrorText(status),
+        code: ERROR_CODES.AI_UNAVAILABLE,
+      });
+    }
   }
 
   /** Bitta asbob: o'qish — darhol; yozish — sinov (bo'lsa) va tasdiq kutadi */

@@ -18,6 +18,7 @@ afterAll(async () => {
 beforeEach(() => {
   testAgent.script = [];
   testAgent.calls = [];
+  testAgent.fail = null;
 });
 
 /** Model javobi: bitta asbob chaqiruvi */
@@ -164,6 +165,23 @@ describe("Admin agenti (T-156)", () => {
     const qs = await f.prisma.question.findMany({ where: { topicId: t.id } });
     expect(qs).toHaveLength(2);
     expect(qs.every((x) => !x.isPublished)).toBe(true);
+  });
+
+  it("T-163: provayder xatosi 500 emas, sababi bilan 503; bosh sahifada ogohlantirish; tiklansa yo'qoladi", async () => {
+    const advice = async () =>
+      ((await f.call("GET", "/admin/advisor", f.teacher)).json() as { key: string; title: string }[]).find(
+        (a) => a.key === "ai:down",
+      );
+    testAgent.fail = { status: 402 };
+    const res = await chat("salom");
+    expect(res.statusCode).toBe(503);
+    expect(res.json()).toMatchObject({ message: "AI hisobida mablagʻ tugagan: hisobni toʻldirish kerak" });
+    expect(JSON.stringify(res.json())).not.toContain("provayder xatosi");
+    expect((await advice())?.title).toContain("mablagʻ tugagan");
+
+    testAgent.fail = null;
+    expect((await chat("salom")).statusCode).toBe(200);
+    expect(await advice()).toBeUndefined();
   });
 
   it("ruxsatlar: o'quvchiga 403, tokensiz 401; holat yoqilgan; bo'sh xabar 400", async () => {

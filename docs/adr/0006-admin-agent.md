@@ -23,3 +23,7 @@ Ustoz panelda ko'p ishni qo'lda qiladi: o'quvchini topish va qabul qilish, mavzu
 - `AI_PROVIDER=off` bo'lsa sahifa "AI oʻchiq" deydi, panel odatdagidek ishlaydi.
 - Yangi admin endpoint qo'shilsa, agentga asbob alohida qo'shiladi (`read-tools.ts` / `write-tools.ts`).
 - Testlarda model soxta (`testAgent`), pullik chaqiruv yo'q. Haqiqiy model bilan sifat sinovi kalit va ustoz roziligi bilan o'tkaziladi.
+
+## Provayder xatosi (T-163)
+
+Model chaqiruvi xato bersa (pul tugagan 402, kalit 401/403, tarmoq), agent 500 emas, `AI_UNAVAILABLE` kodi bilan 503 qaytaradi. Matn statusdan olinadi, provayderning xato matni ko'rsatilmaydi. Oxirgi xato `AiHealth` da xotirada turadi: pul yoki kalit muammosi bo'lsa darhol, boshqa xato 15 daqiqa davom etsa, ustozning bosh sahifasida "AI ishlamayapti" maslahati chiqadi. Birinchi muvaffaqiyatli javob uni tozalaydi.

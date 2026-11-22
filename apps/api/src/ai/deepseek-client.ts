@@ -1,3 +1,4 @@
+import type { AiHealth } from "./ai-health";
 import { request } from "node:https";
 
 /** DeepSeek chat/completions (OpenAI bilan mos) xabarlari */
@@ -73,7 +74,15 @@ export function httpsTransport(apiKey: string, timeoutMs = 120_000): DsTransport
   };
 }
 
-export class DeepSeekError extends Error {}
+export class DeepSeekError extends Error {
+  /** HTTP status; 0: tarmoq xatosi */
+  constructor(
+    message: string,
+    readonly status = 0,
+  ) {
+    super(message);
+  }
+}
 
 /**
  * DeepSeek (T-159). Fikrlash rejimi o'chiq: asbob chaqiruvlarida reasoning_content'ni qaytarish shart bo'lmasin.
@@ -83,9 +92,21 @@ export class DeepSeekClient {
   constructor(
     private readonly transport: DsTransport,
     readonly model: string,
+    private readonly health?: AiHealth,
   ) {}
 
   async chat(req: DsRequest): Promise<DsChoice> {
+    try {
+      const choice = await this.send(req);
+      this.health?.ok();
+      return choice;
+    } catch (e) {
+      this.health?.fail(e instanceof DeepSeekError ? e.status : 0);
+      throw e;
+    }
+  }
+
+  private async send(req: DsRequest): Promise<DsChoice> {
     const body = this.body(req);
     let last = new DeepSeekError("DeepSeek javob bermadi");
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -101,7 +122,7 @@ export class DeepSeekClient {
       const choice = j?.choices?.[0];
       if (r.status === 200 && choice) return choice;
       // Xato matni logga tushmaydi (unda so'rov parchasi bo'lishi mumkin): faqat status
-      last = new DeepSeekError(`DeepSeek ${r.status}`);
+      last = new DeepSeekError(`DeepSeek ${r.status}`, r.status);
       if (!RETRY.has(r.status)) break;
     }
     throw last;

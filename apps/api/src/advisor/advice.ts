@@ -1,4 +1,5 @@
 import { ADVICE, type Advice } from "@samarqand/shared";
+import { aiErrorText } from "../ai/ai-health";
 
 const pct = (a: number, b: number) => (b ? Math.round((a / b) * 100) : 0);
 const plural = (n: number, word: string) => `${n} ta ${word}`;
@@ -107,6 +108,23 @@ export function participationAdvice(w: LastWeekly | null, teacher: boolean): Adv
       action: teacher
         ? { label: "Eʼlon yuborish", to: "/broadcast" }
         : { label: "Haftalik testlar", to: "/weekly" },
+    },
+  ];
+}
+
+/** AI ishlamayapti (T-163): pul/kalit muammosi darhol, boshqa xato 15 daqiqa davom etsa */
+export function aiAdvice(f: { since: Date; status: number } | null, now: Date): Advice[] {
+  if (!f) return [];
+  const account = f.status === 401 || f.status === 402 || f.status === 403;
+  const minutes = Math.floor((now.getTime() - f.since.getTime()) / 60_000);
+  if (!account && minutes < 15) return [];
+  return [
+    {
+      key: "ai:down",
+      level: "urgent",
+      title: `AI ishlamayapti: ${aiErrorText(f.status)}`,
+      why: `${minutes < 60 ? `${minutes} daqiqadan` : `${Math.floor(minutes / 60)} soatdan`} beri AI yordamchi va AI agent javob bermayapti. Oʻquvchilar yechim rasmlari tekshiruvi sizning navbatingizga tushyapti, platformaning qolgan qismi ishlaydi.`,
+      action: null,
     },
   ];
 }
