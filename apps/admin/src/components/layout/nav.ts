@@ -3,6 +3,7 @@ import {
   Bot,
   BookOpen,
   CalendarCheck,
+  ChartColumn,
   ClipboardList,
   LayoutDashboard,
   CreditCard,
@@ -38,6 +39,8 @@ export function navGroups(role: RoleName): NavGroup[] {
         { to: "/", label: "Bosh sahifa", Icon: LayoutDashboard },
         // T-156: oddiy so'z bilan buyruq, panel amallari
         { to: "/agent", label: "AI agent", Icon: Sparkles },
+        // T-162: oy bo'yicha o'quv natijalari
+        { to: "/stats", label: "Statistika", Icon: ChartColumn },
       ],
     },
     {

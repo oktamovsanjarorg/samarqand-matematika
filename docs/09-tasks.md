@@ -200,3 +200,4 @@
 | T-159 | DeepSeek provayderi (`AI_PROVIDER=deepseek`): AI yordamchi va admin agenti; yechim rasmi ustoz navbatiga (DeepSeek rasm o'qimaydi)                                                                     | ✅    |
 | T-160 | Deploy oldingi deploy tugashini kutadi (12 daqiqagacha): ketma-ket merge'larda deploy yiqilmaydi                                                                                                       | ✅    |
 | T-161 | Maslahatchi: bosh sahifada sinf va platforma bo'yicha faktli tavsiyalar (qiyin mavzu, haftalik reja, testsiz mavzu, qatnashish)                                                                        | ✅    |
+| T-162 | Statistika sahifasi: oy bo'yicha o'quvchilar, davomat, mavzu va haftalik natijalar, eng yaxshilar, 8 haftalik faollik                                                                                  | ✅    |

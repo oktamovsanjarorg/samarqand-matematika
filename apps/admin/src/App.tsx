@@ -10,6 +10,7 @@ import { SignInHint } from "./pages/SignInHint";
 
 /** T-132: kirish va bosh sahifadan boshqa sahifalar alohida chunk'larda yuklanadi */
 const AgentPage = lazy(() => import("./pages/AgentPage").then((m) => ({ default: m.AgentPage })));
+const StatsPage = lazy(() => import("./pages/StatsPage").then((m) => ({ default: m.StatsPage })));
 const AuditPage = lazy(() => import("./pages/AuditPage").then((m) => ({ default: m.AuditPage })));
 const TrashPage = lazy(() => import("./pages/TrashPage").then((m) => ({ default: m.TrashPage })));
 const ContentPage = lazy(() => import("./pages/ContentPage").then((m) => ({ default: m.ContentPage })));
@@ -109,6 +110,7 @@ export function App() {
               <Route path="mocks/new" element={<MockEditPage />} />
               <Route path="mocks/:id" element={<MockEditPage />} />
               <Route path="agent" element={<AgentPage />} />
+              <Route path="stats" element={<StatsPage />} />
               <Route path="tutor" element={<TutorChatsPage />} />
               <Route path="tutor/:id" element={<TutorChatPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
