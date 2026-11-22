@@ -33,7 +33,20 @@ const WeeklyTestPage = lazy(() =>
 // Faqat dev: production bundle'ga tushmaydi
 const KitPage = lazy(() => import("./pages/KitPage").then((m) => ({ default: m.KitPage })));
 
+const LandingPage = lazy(() => import("./pages/LandingPage").then((m) => ({ default: m.LandingPage })));
+
+/** T-166: Telegram'dan tashqarida (oddiy brauzer) landing, ichida ilova */
 export function App() {
+  if (!getInitData())
+    return (
+      <Suspense fallback={<Splash />}>
+        <LandingPage />
+      </Suspense>
+    );
+  return <TelegramApp />;
+}
+
+function TelegramApp() {
   const session = useQuery({ queryKey: ["session"], queryFn: login, staleTime: Infinity, retry: false });
   // T-158: xodim Mini App'ni ochsa admin panelga o'tadi
   const toAdmin = !!session.data && STAFF_ROLES.includes(session.data.role) && !studentView();

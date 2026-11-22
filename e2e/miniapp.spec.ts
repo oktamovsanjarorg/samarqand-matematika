@@ -1,14 +1,38 @@
 import { expect, test } from "@playwright/test";
 import { createStudent, sharePhone } from "./api";
+import { violations } from "./axe";
 import { newTgId, openAsTelegram } from "./telegram";
 
-test.describe("Mini App", () => {
-  test("Telegram'siz ochilsa tushunarli xato ko'rsatiladi", async ({ page }) => {
-    await page.route("https://telegram.org/js/telegram-web-app.js", (r) => r.fulfill({ body: "" }));
-    await page.goto("http://127.0.0.1:5190/");
-    await expect(page.getByText("Ilovani Telegram ichida oching")).toBeVisible();
-  });
+test("T-166: Telegram'siz ochilsa landing: bot tugmasi, kontent soni, ustoz kirishi; WCAG AA", async ({
+  page,
+}) => {
+  await page.route("https://telegram.org/js/telegram-web-app.js", (r) => r.fulfill({ body: "" }));
+  await page.goto("http://127.0.0.1:5190/");
+  // Haqiqiy API: test muhitida bot yo'q, tugma ko'rinmaydi, sahifa baribir ochiladi
+  await expect(page.getByRole("heading", { level: 1, name: "Samarqand matematika" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Ustoz va yordamchilar uchun kirish" })).toHaveAttribute(
+    "href",
+    "/admin/",
+  );
+  await expect(page.getByRole("link", { name: "Telegramʼda ochish" })).toHaveCount(0);
 
+  await page.route("**/api/public/landing", (r) =>
+    r.fulfill({
+      json: { botLink: "https://t.me/sinov_bot", content: { topics: 4, lessons: 12, questions: 230 } },
+    }),
+  );
+  await page.reload();
+  await expect(page.getByRole("link", { name: "Telegramʼda ochish" })).toHaveCount(2);
+  await expect(page.getByRole("link", { name: "Telegramʼda ochish" }).first()).toHaveAttribute(
+    "href",
+    "https://t.me/sinov_bot",
+  );
+  await expect(page.getByLabel("Platformada")).toContainText("230test savoli");
+  expect(await violations(page, "landing")).toEqual([]);
+  await page.screenshot({ path: "e2e/.results/landing.png", fullPage: true });
+});
+
+test.describe("Mini App", () => {
   test("BR-S01, BR-S02, BR-S04: yangi o'quvchi onboarding'dan o'tadi", async ({ page, request }) => {
     const id = newTgId();
     await openAsTelegram(page, { id, first_name: "Yangi" });

@@ -1,3 +1,4 @@
+import { LandingModule } from "./landing/landing.module";
 import { StatsModule } from "./stats/stats.module";
 import { AdvisorModule } from "./advisor/advisor.module";
 import { AgentModule } from "./agent/agent.module";
@@ -66,6 +67,7 @@ export class AppModule {
         AgentModule,
         AdvisorModule,
         StatsModule,
+        LandingModule,
         StudentsModule,
         ParentsModule,
         NotifyModule,
