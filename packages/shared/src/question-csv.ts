@@ -35,6 +35,8 @@ export interface QuestionImportResult {
   errors: QuestionCsvError[];
   /** Saqlangan savollar soni (qoralama sifatida); dryRun yoki xato bo'lsa 0 */
   created: number;
+  /** Saqlangan savollar fayldagi tartibda: haftalik testga darhol qo'shish uchun (T-157) */
+  questions: { id: string; type: QuestionType; text: string }[];
 }
 
 type Field = "type" | "text" | "answer" | "solution" | "difficulty" | "skills";

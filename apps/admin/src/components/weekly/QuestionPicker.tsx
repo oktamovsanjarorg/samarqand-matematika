@@ -7,6 +7,7 @@ import { useTree } from "../../lib/content";
 import { TYPE_LABELS, manualBadge } from "../../lib/questions";
 import { MathText } from "../MathText";
 import { Badge } from "../ui";
+import { ExcelQuestions } from "./ExcelQuestions";
 
 const field = "min-h-11 w-full rounded-xl border border-hint/25 bg-section px-3 text-sm";
 
@@ -143,6 +144,7 @@ export function QuestionPicker({
   taken?: string[];
 }) {
   const [q, setQ] = useState("");
+  const [excel, setExcel] = useState(false);
   const query = useDeferredValue(q.trim());
   const pick: Pick = {
     selected: [...value.map((x) => x.id), ...taken],
@@ -152,6 +154,49 @@ export function QuestionPicker({
   return (
     <div className="space-y-3">
       <SelectedList value={value} onChange={onChange} />
+      {/* Mock bo'limlarida tur cheklovi bor: Excel rejimi faqat haftalik testda (T-157) */}
+      {!types && <SourceSwitch excel={excel} setExcel={setExcel} />}
+      {excel ? (
+        <ExcelQuestions onAdd={(rows) => onChange([...value, ...rows])} />
+      ) : (
+        <BankSearch q={q} setQ={setQ} query={query} pick={pick} />
+      )}
+    </div>
+  );
+}
+
+function SourceSwitch({ excel, setExcel }: { excel: boolean; setExcel: (v: boolean) => void }) {
+  const tab = (on: boolean) =>
+    `tap min-h-11 flex-1 rounded-lg px-3 text-sm font-semibold ${on ? "bg-brand text-white" : "text-hint"}`;
+  return (
+    <div
+      className="flex gap-1 rounded-xl border border-hint/25 bg-section p-1"
+      role="group"
+      aria-label="Savol manbai"
+    >
+      <button type="button" aria-pressed={!excel} onClick={() => setExcel(false)} className={tab(!excel)}>
+        Bankdan tanlash
+      </button>
+      <button type="button" aria-pressed={excel} onClick={() => setExcel(true)} className={tab(excel)}>
+        Excel fayldan
+      </button>
+    </div>
+  );
+}
+
+function BankSearch({
+  q,
+  setQ,
+  query,
+  pick,
+}: {
+  q: string;
+  setQ: (v: string) => void;
+  query: string;
+  pick: Pick;
+}) {
+  return (
+    <>
       <label className="flex min-h-11 items-center gap-2 rounded-xl border border-hint/25 bg-section px-3">
         <Search size={16} className="shrink-0 text-hint" />
         <input
@@ -163,6 +208,6 @@ export function QuestionPicker({
         />
       </label>
       {query.length >= 2 ? <SearchQuestions {...pick} query={query} /> : <TopicBrowse {...pick} />}
-    </div>
+    </>
   );
 }
