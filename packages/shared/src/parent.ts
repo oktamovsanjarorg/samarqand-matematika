@@ -74,6 +74,15 @@ export interface ChildWeeklyRow {
   participants: number;
 }
 
+/** Hozir ochiq test (T-138): ota-onaga faqat holat va muddat, ball yo'q (BR-W08) */
+export interface ChildOpenTest {
+  id: string;
+  kind: "weekly" | "mock";
+  title: string;
+  closesAt: string;
+  status: "submitted" | "started" | "not_started";
+}
+
 /** Ota-ona kabineti: faqat faktlar, AI shubhasisiz (BR-PA01) */
 export interface ChildSummary {
   /** To'liq kirish qadamlari (BR-A04) va faol obuna tugash sanasi (T-070) */
@@ -90,6 +99,8 @@ export interface ChildSummary {
   group: MySchool["group"];
   attendance: MySchool["attendance"];
   weekly: ChildWeeklyRow[];
+  /** Hozir ochiq haftalik va mock (T-138); to'liq kirishsiz farzandda bo'sh (BR-A04) */
+  open: ChildOpenTest[];
   /** Oynasi yopilgan mock'lar (T-114) */
   mocks: CardMockRow[];
   offline: StudentOfflineResult[];

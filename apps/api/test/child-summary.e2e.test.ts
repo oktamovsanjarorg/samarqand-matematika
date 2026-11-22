@@ -78,4 +78,39 @@ describe("ota-ona kabineti (T-069, BR-PA01)", () => {
     expect((await f.call("GET", `/me/children/${pending.studentId}`, other.headers)).statusCode).toBe(404);
     expect((await f.call("GET", `/me/children/${pending.studentId}`, child.headers)).statusCode).toBe(403);
   });
+
+  it("T-138: ochiq haftalik holati ballsiz (boshlamagan, boshlagan, topshirdi); to'liq kirishsiz bo'sh", async () => {
+    const q = await f.questions();
+    const [a, b] = [await f.weekly(q), await f.weekly(q)];
+    const child = await f.student();
+    await f.prisma.studentProfile.update({ where: { userId: child.id }, data: { acceptedAt: new Date() } });
+    const p = await parentOf(child, "APPROVED");
+    const get = async () =>
+      (await f.call("GET", `/me/children/${p.studentId}`, p.headers)).json() as ChildSummary;
+
+    expect((await get()).access.full).toBe(true);
+    const status = async (id: string) => (await get()).open.find((t) => t.id === id);
+    expect(await status(a)).toMatchObject({ kind: "weekly", status: "not_started" });
+    await f.prisma.weeklyAttempt.create({ data: { weeklyTestId: a, userId: child.id } });
+    expect((await status(a))?.status).toBe("started");
+    await f.prisma.weeklyAttempt.create({
+      data: { weeklyTestId: b, userId: child.id, submittedAt: new Date(), correct: 2 },
+    });
+    const done = await status(b);
+    expect(done?.status).toBe("submitted");
+    // Ball yo'q: faqat holat (BR-W08)
+    expect(Object.keys(done ?? {}).sort()).toEqual(["closesAt", "id", "kind", "status", "title"]);
+
+    // To'lov qilmagan (AUTO) farzand: testlar unga yopiq, ro'yxat bo'sh (BR-A04)
+    const unpaid = await f.student(false);
+    await f.prisma.studentProfile.upsert({
+      where: { userId: unpaid.id },
+      update: { acceptedAt: new Date() },
+      create: { userId: unpaid.id, acceptedAt: new Date() },
+    });
+    const up = await parentOf(unpaid, "APPROVED");
+    const locked = (await f.call("GET", `/me/children/${up.studentId}`, up.headers)).json() as ChildSummary;
+    expect(locked.access.full).toBe(false);
+    expect(locked.open).toEqual([]);
+  });
 });

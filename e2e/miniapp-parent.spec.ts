@@ -1,7 +1,8 @@
 import { PrismaClient } from "@samarqand/db";
 import { expect, test } from "@playwright/test";
-import { createStudent, requestParentLink } from "./api";
+import { createStudent, grantFree, requestParentLink } from "./api";
 import { E2E_PREFIX, openAsTelegram } from "./telegram";
+import { seedWeekly } from "./weekly-seed";
 
 const day = (ago: number) => new Date(new Date(Date.now() - ago * 24 * 3600_000).toISOString().slice(0, 10));
 
@@ -71,4 +72,37 @@ test("T-069, T-070, T-073, BR-PA01: ota-ona Asosiy sahifada farzandining davomat
   await expect(page.getByTestId("parent-add")).toContainText("/ota");
   await expect(page.getByTestId("tiles")).toHaveCount(0);
   await page.screenshot({ path: "e2e/.results/miniapp-parent-profile.png", fullPage: true });
+});
+
+test("T-138: ota-ona farzandining hozir ochiq haftalik testini va topshirmaganini ko'radi (ballsiz)", async ({
+  page,
+  request,
+}) => {
+  const w = await seedWeekly(request);
+  try {
+    const name = "Ochiq Farzand";
+    const s = await createStudent(request, { fullName: name, phone: "998901112305" });
+    await grantFree(request, w.admin, name);
+    const parent = await requestParentLink(request, s.tg, "998935550305");
+    const prisma = new PrismaClient();
+    try {
+      const k = await prisma.studentProfile.findFirstOrThrow({
+        where: { user: { telegramId: BigInt(s.tg) } },
+        select: { id: true },
+      });
+      await prisma.parentLink.updateMany({ where: { studentId: k.id }, data: { status: "APPROVED" } });
+    } finally {
+      await prisma.$disconnect();
+    }
+    await openAsTelegram(page, { id: parent.id, first_name: "Ona" }, "/");
+    const child = page.getByTestId("child").filter({ hasText: name });
+    const row = child.getByTestId("child-open-test").filter({ hasText: "Navbat haftasi" });
+    await expect(row).toContainText("Haftalik:");
+    await expect(row).toContainText("Hali boshlamagan");
+    await expect(row).toContainText(/gacha$/);
+    await row.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: "e2e/.results/miniapp-parent-open-tests.png", fullPage: true });
+  } finally {
+    await w.close();
+  }
 });

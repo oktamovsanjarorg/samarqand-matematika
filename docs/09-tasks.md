@@ -176,4 +176,5 @@
 | T-135 | Mini App va admin: sahifa xatosida oq ekran oʻrniga xabar va qayta urinish, menyu joyida qoladi (ErrorBoundary)                                                             | ✅    |
 | T-136 | Toʻgʻri toʻxtash: SIGTERM API va botga yetadi (init, exec), scheduler tick'i yarmida uzilmaydi va ustma-ust tushmaydi (Ticker)                                              | ✅    |
 | T-137 | Eʼlon: "Ota-onasi ulanmagan oʻquvchilarga" auditoriyasi va tayyor matn; bosh sahifadan havola (BR-A04 ulanish ulushi)                                                       | ✅    |
+| T-138 | Ota-ona kabinetida hozir ochiq haftalik va mock: farzand topshirdimi, qachongacha (ballsiz, BR-PA01, BR-W08)                                                                | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                         | ✅    |
