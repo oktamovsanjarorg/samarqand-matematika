@@ -1,3 +1,4 @@
+import { PrismaClient } from "@samarqand/db";
 import { expect, test, type APIRequestContext } from "@playwright/test";
 import { adminHeaders, apiPost, createStudent, grantFree, requestParentLink } from "./api";
 import { shotName, violations } from "./axe";
@@ -25,7 +26,32 @@ async function seed(request: APIRequestContext) {
     answer: { value: "-2" },
     isPublished: true,
   });
+  // To'lov sahifalari shakl bilan tekshirilsin: tarif va karta (T-125)
+  await apiPost(request, "/admin/plans", admin, {
+    name: `${E2E_PREFIX}Kontrast tarif`,
+    priceUzs: 150_000,
+    durationDays: 30,
+  });
+  await request.put("http://127.0.0.1:4300/api/admin/billing-card", {
+    headers: admin,
+    data: { number: "8600000000000000", holder: `${E2E_PREFIX}Ustoz` },
+  });
   return { admin, lessonId: lesson.id, topicId: topic.id };
+}
+
+/** Ota-ona havolasini tasdiqlaydi; farzandning StudentProfile id'si (kabinet manzili) */
+async function approveParent(studentTg: number): Promise<string> {
+  const prisma = new PrismaClient();
+  try {
+    const { id } = await prisma.studentProfile.findFirstOrThrow({
+      where: { user: { telegramId: BigInt(studentTg) } },
+      select: { id: true },
+    });
+    await prisma.parentLink.updateMany({ where: { studentId: id }, data: { status: "APPROVED" } });
+    return id;
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
 for (const theme of ["light", "dark"] as const)
@@ -56,7 +82,9 @@ for (const theme of ["light", "dark"] as const)
       found.push(...(await violations(page, path)));
     }
     const parent = await requestParentLink(request, s.tg, phone);
-    for (const path of ["/", "/profile"]) {
+    const studentId = await approveParent(s.tg);
+    // T-125: tasdiqlangan farzand kartasi va farzand uchun to'lov sahifasi ham (T-121)
+    for (const path of ["/", "/profile", `/children/${studentId}/billing`]) {
       await openAsTelegram(page, parent, path, theme);
       await page.waitForLoadState("networkidle");
       await page.screenshot({
