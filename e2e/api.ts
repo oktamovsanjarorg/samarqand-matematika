@@ -111,3 +111,17 @@ export async function adminNav(page: Page, label: string) {
     .getByRole("link", { name: label, exact: true })
     .click();
 }
+
+/** Bot /start s_<kod> dagidek: yordamchi taklif havolasini ishlatish (T-155) */
+export async function acceptStaffInvite(
+  request: APIRequestContext,
+  from: { id: number; first_name: string },
+  code: string,
+) {
+  const res = await request.post(`${API}/internal/staff-invite`, {
+    headers: internal(),
+    data: { from, code },
+  });
+  expect(res.ok()).toBe(true);
+  return (await res.json()) as { status: string };
+}
