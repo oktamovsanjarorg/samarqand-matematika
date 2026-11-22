@@ -182,6 +182,39 @@ describe("DeepSeek (T-159)", () => {
     expect(await p.checkSolution()).toBeNull();
   }, 10_000);
 
+  it("T-170: rasm oxirgi o'quvchi xabariga data URI bo'lib, vision modelga boradi; rasmsiz standart model", async () => {
+    const f = fake(ok({ content: "Shartni o'qidim" }), ok({ content: "Ha" }));
+    const p = new DeepSeekProvider(f.client, "deepseek-flash");
+    const input = {
+      mode: "FREE" as const,
+      context: "Erkin savol",
+      history: [
+        { role: "user" as const, text: "Salom" },
+        { role: "assistant" as const, text: "Salom!" },
+        { role: "user" as const, text: "Rasmga qara" },
+      ],
+      photos: [{ type: "image/png" as const, data: Buffer.from("abc") }],
+    };
+    expect(await p.tutor(input)).toBe("Shartni o'qidim");
+    const body = f.bodies[0] as { model: string; messages: { role: string; content: unknown }[] };
+    expect(body.model).toBe("deepseek-flash");
+    expect(body.messages[0]?.content).not.toContain("ko'ra olmaysan");
+    expect(body.messages[1]).toEqual({ role: "user", content: "Salom" });
+    expect(body.messages[2]).toEqual({ role: "assistant", content: "Salom!" });
+    expect(body.messages[3]).toEqual({
+      role: "user",
+      content: [
+        {
+          type: "image_url",
+          image_url: { url: `data:image/png;base64,${Buffer.from("abc").toString("base64")}` },
+        },
+        { type: "text", text: "Rasmga qara" },
+      ],
+    });
+    await p.tutor({ ...input, photos: [] });
+    expect((f.bodies[1] as { model: string }).model).toBe("deepseek-test");
+  }, 10_000);
+
   it("AI_PROVIDER=deepseek: kalitsiz ishga tushmaydi; kalit bilan provayder va agent DeepSeek", () => {
     const base = {
       BOT_TOKEN: "1:x",

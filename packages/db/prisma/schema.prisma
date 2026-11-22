@@ -499,6 +499,7 @@ model TutorChat {
   createdAt  DateTime       @default(now()) @db.Timestamptz
   updatedAt  DateTime       @updatedAt @db.Timestamptz
   messages   TutorMessage[]
+  photos     TutorPhoto[]
 
   @@index([userId, updatedAt])
 }
@@ -512,8 +513,24 @@ model TutorMessage {
   /// Javob bergan provayder (ASSISTANT)
   provider  String?
   createdAt DateTime  @default(now()) @db.Timestamptz
+  photo     TutorPhoto?
 
   @@index([chatId, createdAt])
+}
+
+/// Yordamchiga yuborilgan rasm (T-170): avval yuklanadi (messageId bo'sh), xabar yuborilganda unga bog'lanadi
+model TutorPhoto {
+  id        String        @id
+  chatId    String
+  chat      TutorChat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  messageId String?       @unique
+  message   TutorMessage? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  /// MEDIA_DIR ichidagi nisbiy yo'l
+  path      String
+  bytes     Int
+  createdAt DateTime      @default(now()) @db.Timestamptz
+
+  @@index([chatId])
 }
 
 /// Imtihon shabloni (T-050, BR-M01): bo'limlar va darajalar JSON'da, shared `examTemplateInput` bilan tekshiriladi

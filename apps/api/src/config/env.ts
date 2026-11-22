@@ -49,6 +49,8 @@ const base = z.object({
   // DeepSeek (T-159): matnli ishlar (yordamchi, admin agenti); yechim rasmini o'qimaydi
   DEEPSEEK_API_KEY: optionalKey,
   DEEPSEEK_MODEL: z.string().min(1).default("deepseek-v4-pro"),
+  /** Rasmli so'rovlar (T-170): deepseek-flash rasm ko'radi */
+  DEEPSEEK_VISION_MODEL: z.string().min(1).default("deepseek-flash"),
   // Baholash to'plamida modellarni solishtirish uchun
   AI_MODEL: z.string().min(1).default("claude-opus-5-5"),
   // Kuniga ko'pi bilan nechta AI tekshiruvi (xarajat chegarasi)

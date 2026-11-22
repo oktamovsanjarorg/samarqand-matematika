@@ -16,7 +16,8 @@ const deepseek = (env: Env, health?: AiHealth) =>
 export function createAiProvider(env: Env, health?: AiHealth): AiProvider {
   if (env.AI_PROVIDER === "claude")
     return new ClaudeProvider(new Anthropic({ apiKey: env.ANTHROPIC_API_KEY }), env.AI_MODEL);
-  if (env.AI_PROVIDER === "deepseek") return new DeepSeekProvider(deepseek(env, health));
+  if (env.AI_PROVIDER === "deepseek")
+    return new DeepSeekProvider(deepseek(env, health), env.DEEPSEEK_VISION_MODEL);
   return new DisabledAiProvider();
 }
 

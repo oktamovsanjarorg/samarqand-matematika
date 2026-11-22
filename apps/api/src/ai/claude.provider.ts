@@ -52,10 +52,12 @@ export class ClaudeProvider implements AiProvider {
 
   /** Yordamchi: rejim qoidasi + server tuzgan kontekst tizimda; suhbat tarixi xabarlarda */
   async tutor(input: TutorInput): Promise<string | null> {
+    const last = input.history.length - 1;
+    // Rasmlar (yechim rasmlari, T-170: o'quvchi yuborgan rasm) oxirgi o'quvchi xabariga biriktiriladi
     const messages: Anthropic.Beta.BetaMessageParam[] = input.history.map((m, i) => ({
       role: m.role,
       content:
-        i === 0 && input.photos.length
+        i === last && input.photos.length
           ? [...imageBlocks(input.photos), { type: "text" as const, text: m.text }]
           : m.text,
     }));

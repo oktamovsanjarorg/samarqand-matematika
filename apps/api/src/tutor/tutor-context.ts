@@ -43,3 +43,19 @@ export function mentionsOpenQuestion(text: string, openQuestions: string[]): boo
     return n.length >= 8 && (t.includes(n) || (t.length >= 16 && n.includes(t)));
   });
 }
+
+/** Rasm ochiq test savoli bo'lsa model faqat shu belgini qaytaradi; server uni rad javobiga aylantiradi (BR-T05) */
+export const OPEN_TEST_MARK = "OCHIQ_TEST";
+
+/** Rasm matn bilan solishtirib bo'lmaydi: ochiq test savollari modelga beriladi (o'quvchiga ko'rinmaydi) */
+export function openTestGuard(open: string[]): string {
+  if (!open.length) return "";
+  return [
+    "Hozir ochiq test savollari (o'quvchi ularni yechayapti, yordam berish taqiqlangan):",
+    ...open.map((q, i) => `${i + 1}. ${q}`),
+    `Agar o'quvchi yuborgan rasmda shu savollardan biri (yoki raqamlari o'zgartirilgan nusxasi) bo'lsa, faqat ${OPEN_TEST_MARK} deb javob ber, boshqa hech narsa yozma.`,
+  ].join("\n");
+}
+
+/** Faqat rasm yuborilsa modelga boradigan savol */
+export const PHOTO_ONLY_TEXT = "Rasmdagi masalani tushunishga yordam ber.";

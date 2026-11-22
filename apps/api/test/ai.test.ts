@@ -93,7 +93,7 @@ describe("AI provayderi (ADR-0004)", () => {
     expect(t).toContain("O'quvchi belgilagan javob: —");
   });
 
-  it("yordamchi: rejim qoidasi keshlanadi, kontekst alohida, rasm birinchi xabarda; rad etilsa null", async () => {
+  it("yordamchi: rejim qoidasi keshlanadi, kontekst alohida, rasm oxirgi xabarda (T-170); rad etilsa null", async () => {
     const { client, sent } = stubClient("end_turn", "Qaysi formula kerak?");
     const p = new ClaudeProvider(client);
     const reply = await p.tutor({
@@ -118,9 +118,11 @@ describe("AI provayderi (ADR-0004)", () => {
     expect(body.system[1]).toEqual({ type: "text", text: "Kontekst:\nSavol: 2+2" });
     expect(body.output_config).toEqual({ effort: "medium" });
     expect(body.fallbacks).toBe("default");
-    expect(JSON.stringify(body.messages[0]?.content)).toContain('"type":"image"');
+    expect(body.messages[0]?.content).toBe("Qayerda xato qildim?");
     expect(body.messages.map((m) => m.role)).toEqual(["user", "assistant", "user"]);
-    expect(body.messages[2]?.content).toBe("Tushunmadim");
+    const last = body.messages[2]?.content as { type: string; text?: string }[];
+    expect(last.map((c) => c.type)).toEqual(["image", "text"]);
+    expect(last[1]?.text).toBe("Tushunmadim");
 
     const refused = new ClaudeProvider(stubClient("refusal", "").client);
     expect(

@@ -37,7 +37,10 @@ export class AdminTutorService {
   async get(id: string): Promise<AdminTutorChat> {
     const c = await this.prisma.tutorChat.findUnique({
       where: { id },
-      select: { ...CHAT_SELECT, messages: { orderBy: { createdAt: "asc" } } },
+      select: {
+        ...CHAT_SELECT,
+        messages: { orderBy: { createdAt: "asc" }, include: { photo: { select: { id: true } } } },
+      },
     });
     if (!c) throw new NotFoundException("Suhbat topilmadi");
     return {
@@ -50,6 +53,7 @@ export class AdminTutorService {
         id: m.id,
         role: m.role,
         text: m.text,
+        photoId: m.photo?.id ?? null,
         createdAt: m.createdAt.toISOString(),
       })),
     };
