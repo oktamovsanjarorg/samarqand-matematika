@@ -58,6 +58,7 @@
 | FR-G03 | Ota-ona kabineti: farzandlar, davomat, natijalar (mavzu, haftalik, mock, offline), takrorlash kerak mavzular                                                                   | BR-PA01     | T-069, T-073, T-114 | ✅    |
 | FR-G04 | Ota-onaga hisobot: haftalik va mock natijasi                                                                                                                                   |             | T-035, T-082        | ✅    |
 | FR-G05 | Ustozdan eʼlon: qabul qilingan o'quvchilar va tasdiqlangan ota-onalarga (guruh bo'yicha), oldindan soni bilan; yuborilganlar tarixi; ota-onasi ulanmaganlarga eslatma (BR-A04) |             | T-116, T-117, T-137 | ✅    |
+| FR-G06 | Ustoz va yordamchiga ertalabki xulosa (Toshkent 08:00 dan keyin, kuniga bir marta): kutayotgan ishlar soni, ish bo'lmasa xabar yo'q                                            |             | T-139               | ✅    |
 
 ## To'lov (FR-B)
 

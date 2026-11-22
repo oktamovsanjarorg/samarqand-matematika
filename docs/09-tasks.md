@@ -177,4 +177,5 @@
 | T-136 | Toʻgʻri toʻxtash: SIGTERM API va botga yetadi (init, exec), scheduler tick'i yarmida uzilmaydi va ustma-ust tushmaydi (Ticker)                                              | ✅    |
 | T-137 | Eʼlon: "Ota-onasi ulanmagan oʻquvchilarga" auditoriyasi va tayyor matn; bosh sahifadan havola (BR-A04 ulanish ulushi)                                                       | ✅    |
 | T-138 | Ota-ona kabinetida hozir ochiq haftalik va mock: farzand topshirdimi, qachongacha (ballsiz, BR-PA01, BR-W08)                                                                | ✅    |
+| T-139 | Ertalabki xulosa: Toshkent 08:00 dan keyin ustoz va yordamchiga kutayotgan ishlar soni (bot, kuniga bir marta, ish bo'lmasa yo'q)                                           | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                         | ✅    |
