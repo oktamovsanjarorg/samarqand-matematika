@@ -3,7 +3,7 @@ import { lazy, useCallback, useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminLayout } from "./components/AdminLayout";
 import { setUnauthorizedHandler } from "./lib/api";
-import { clearSession, loadSession } from "./lib/session";
+import { SESSION_KEY, clearSession, loadSession } from "./lib/session";
 import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { SignInHint } from "./pages/SignInHint";
@@ -62,6 +62,14 @@ export function App() {
     setSession(null);
   }, []);
   useEffect(() => setUnauthorizedHandler(logout), [logout]);
+  // T-153: boshqa tabda qayta kirilsa (bot havolasi), shu tab ham o'sha sahifaga qaytadi, qoralama tiklanadi
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === SESSION_KEY) refresh();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [refresh]);
 
   return (
     <QueryClientProvider client={queryClient}>

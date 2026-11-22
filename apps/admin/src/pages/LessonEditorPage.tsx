@@ -1,13 +1,14 @@
 import type { AdminLessonDetail } from "@samarqand/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { MathText } from "../components/MathText";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
 import { TREE_KEY } from "../lib/content";
 import { LessonAnnounce } from "../components/LessonAnnounce";
+import { DraftRestored } from "../components/DraftRestored";
+import { useLocalDraft } from "../lib/draft";
 
 type Draft = Pick<AdminLessonDetail, "title" | "body" | "videoUrl" | "isFree" | "isPublished">;
 const pick = (l: AdminLessonDetail): Draft => ({
@@ -84,15 +85,16 @@ function useLessonActions(id: string) {
 }
 
 function Editor({ lesson }: { lesson: AdminLessonDetail }) {
-  const [draft, setDraft] = useState<Draft>(() => pick(lesson));
-  useEffect(() => setDraft(pick(lesson)), [lesson]);
-  const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setDraft((d) => ({ ...d, [k]: v }));
+  const local = useLocalDraft(`lesson:${lesson.id}`, pick(lesson));
+  const draft = local.value;
+  const set = <K extends keyof Draft>(k: K, v: Draft[K]) => local.set((d) => ({ ...d, [k]: v }));
   const dirty = JSON.stringify(draft) !== JSON.stringify(pick(lesson));
   const { save, remove } = useLessonActions(lesson.id);
   const error = save.error ?? remove.error;
 
   return (
     <div className="space-y-4">
+      {local.restored && <DraftRestored onDiscard={local.discard} />}
       <input
         value={draft.title}
         onChange={(e) => set("title", e.target.value)}
