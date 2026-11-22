@@ -102,8 +102,8 @@ export function ImportForm() {
     <section className="card space-y-3">
       <h2 className="font-bold">Natijalarni yuklash</h2>
       <p className="text-sm text-hint">
-        Excel (.xlsx) yoki CSV fayl. Birinchi qator: ism ustuni (Ism yoki F.I.O), ixtiyoriy Telefon, qolgan
-        ustunlar boʻlimlar.
+        Excel (.xlsx, .xls) yoki CSV fayl. Birinchi qator: ism ustuni (Ism yoki F.I.O), ixtiyoriy Telefon,
+        qolgan ustunlar boʻlimlar.
       </p>
       <HeadFields v={head} set={setHead} />
       <TablePicker onText={onText} />

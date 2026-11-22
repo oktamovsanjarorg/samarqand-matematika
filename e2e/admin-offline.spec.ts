@@ -51,3 +51,20 @@ test("T-056: xatoli CSV saqlanmaydi, qator raqami ko'rinadi", async ({ page, req
   await expect(page.getByTestId("offline-preview")).toContainText('2-qator: 1-boʻlim balli son emas: "abc"');
   await expect(page.getByRole("button", { name: "Saqlash" })).toBeDisabled();
 });
+
+test("T-165: eski Excel (.xls) fayldan natija: o'nlik son va bo'sh katak to'g'ri o'qiladi", async ({
+  page,
+  request,
+}) => {
+  await loginAdmin(page, request, "offline");
+  await page.getByLabel("Test nomi").fill(`${E2E_PREFIX}Xls ${tag()}`);
+  // xlwt bilan yaratilgan haqiqiy BIFF8 fayl (apps/admin/src/lib/fixtures/make-xls.py)
+  await page.getByLabel("Excel yoki CSV fayl").setInputFiles("e2e/fixtures/offline-results.xls");
+  await page.getByRole("button", { name: "Tekshirish" }).click();
+  const preview = page.getByTestId("offline-preview");
+  await expect(preview).toContainText("2 qator");
+  await expect(preview).not.toContainText("son emas");
+  await expect(preview.getByTestId("offline-row").first()).toContainText("19,5");
+  await page.screenshot({ path: "e2e/.results/admin-offline-xls.png", fullPage: true });
+  await expect(page.getByRole("button", { name: "Saqlash" })).toBeEnabled();
+});
