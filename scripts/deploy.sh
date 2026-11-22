@@ -8,7 +8,12 @@ APP_DIR="${APP_DIR:-/home/ubuntu/samarqand}"
 cd "$APP_DIR"
 
 exec 9>/tmp/samarqand-deploy.lock
-flock -n 9 || { echo "Boshqa deploy ishlayapti"; exit 1; }
+# T-160: ketma-ket merge'larda oldingi deploy tugashini kutadi (12 daqiqagacha), keyin main'ning eng oxirgisini oladi.
+# CI'da bekor qilingan run serverdagi deploy'ni to'xtatmaydi: kutmasa keyingisi yiqilardi.
+if ! flock -n 9; then
+  echo "Oldingi deploy tugashini kutyapman..."
+  flock -w 720 9 || { echo "Boshqa deploy 12 daqiqadan beri ishlayapti"; exit 1; }
+fi
 
 before="$(git rev-parse --short HEAD)"
 git fetch --quiet origin main
