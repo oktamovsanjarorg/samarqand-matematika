@@ -31,6 +31,13 @@ export class AdminQuestionsController {
     return this.importer.run(u.sub, topicId, parseBody(questionImportInput, body));
   }
 
+  /** Mavzudagi barcha qoralamalarni nashr qilish (T-103) */
+  @Post("topics/:id/questions/publish")
+  @HttpCode(200)
+  publishAll(@CurrentUser() u: JwtUser, @Param("id") topicId: string) {
+    return this.questions.publishAll(u.sub, topicId);
+  }
+
   @Get("questions")
   search(@Query() query: unknown) {
     return this.questions.search(parseBody(questionSearch, query).q);

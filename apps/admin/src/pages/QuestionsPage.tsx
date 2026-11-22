@@ -4,6 +4,7 @@ import { ArrowLeft, Plus } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { MathText } from "../components/MathText";
 import { RowActions } from "../components/RowActions";
+import { PublishDrafts } from "../components/PublishDrafts";
 import { QuestionImport } from "../components/QuestionImport";
 import { Badge, EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
@@ -76,6 +77,7 @@ export function QuestionsPage() {
         </Link>
       </PageTitle>
       <QuestionImport topicId={topicId} />
+      <PublishDrafts topicId={topicId} drafts={rows.filter((q) => !q.isPublished).length} />
       {error && (
         <p className="text-sm text-danger" role="alert">
           {error.message}

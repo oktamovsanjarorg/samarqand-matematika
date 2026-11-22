@@ -54,6 +54,23 @@ describe("Excel'dan savol import (T-100)", () => {
     expect(audit?.data).toEqual({ count: 2 });
   });
 
+  it("T-103: mavzudagi qoralamalar bitta so'rov bilan nashr qilinadi; qayta bosilsa 0", async () => {
+    const drafts = await f.prisma.question.count({ where: { topicId, isPublished: false } });
+    expect(drafts).toBeGreaterThan(0);
+    const res = await f.call("POST", `/admin/topics/${topicId}/questions/publish`, f.teacher);
+    expect(res.statusCode).toBe(200);
+    expect(res.json()).toEqual({ published: drafts });
+    expect(await f.prisma.question.count({ where: { topicId, isPublished: false } })).toBe(0);
+    expect((await f.call("POST", `/admin/topics/${topicId}/questions/publish`, f.teacher)).json()).toEqual({
+      published: 0,
+    });
+    const s = await f.student();
+    expect((await f.call("POST", `/admin/topics/${topicId}/questions/publish`, s.headers)).statusCode).toBe(
+      403,
+    );
+    expect((await f.call("POST", "/admin/topics/yoq/questions/publish", f.teacher)).statusCode).toBe(404);
+  });
+
   it("BR-Q04: bitta qator xato bo'lsa hech narsa saqlanmaydi; o'qilmaydigan ifoda va son qator raqami bilan", async () => {
     const stamp = Date.now();
     const csv = `${head}\nifoda;Xato ${stamp} a;;;2x+*;\nson;Xato ${stamp} b;;;besh;\n;Xato ${stamp} c;;;7;\n`;
