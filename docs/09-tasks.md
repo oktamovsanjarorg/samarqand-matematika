@@ -155,3 +155,4 @@
 | T-114 | Ota-ona kabinetida farzandning oynasi yopilgan mock natijalari (ball, daraja, "taxminiy"); hisob o'quvchi kartasi bilan umumiy                                              | ✅    |
 | T-115 | Bot xabarlari sekundiga 25 tadan (navbat bilan), 429 da `retry_after` kutib qayta yuborish: ommaviy xabarlar 30+ o'quvchida yo'qolmasin                                     | ✅    |
 | T-116 | Ustozdan eʼlon: matn, kimga (o'quvchi, ota-ona, hammasi) va guruh; yuborishdan oldin soni va tasdiqlash; faqat ustoz; jurnalga matni bilan                                  | ✅    |
+| T-117 | Eʼlon sahifasida yuborilgan eʼlonlar tarixi (oxirgi 20 ta): vaqt, kimga, guruh, nechtasiga yetdi, matn; jurnaldan                                                           | ✅    |

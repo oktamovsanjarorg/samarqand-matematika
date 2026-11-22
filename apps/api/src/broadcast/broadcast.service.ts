@@ -1,9 +1,26 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import type { Prisma } from "@samarqand/db";
-import type { BroadcastInput, BroadcastResult } from "@samarqand/shared";
+import {
+  BROADCAST_AUDIENCES,
+  type BroadcastInput,
+  type BroadcastLogRow,
+  type BroadcastResult,
+} from "@samarqand/shared";
+import { z } from "zod";
 import { AuditService } from "../audit/audit.service";
 import { esc, NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
+
+/** Jurnalga yozilgan e'lon ma'lumoti; buzilgan yozuv tarixda ko'rsatilmaydi */
+const logData = z.object({
+  audience: z.enum(BROADCAST_AUDIENCES),
+  groupId: z.string().nullable(),
+  recipients: z.number(),
+  sent: z.number(),
+  text: z.string(),
+});
+
+const HISTORY = 20;
 
 /**
  * Ustozdan e'lon (T-116): qabul qilingan o'quvchilar va ularning tasdiqlangan ota-onalariga bot xabari.
@@ -40,6 +57,31 @@ export class BroadcastService {
       },
     });
     return { recipients: ids.length, sent };
+  }
+
+  /** Oxirgi e'lonlar, yangisi birinchi (T-117) */
+  async history(): Promise<BroadcastLogRow[]> {
+    const logs = await this.prisma.auditLog.findMany({
+      where: { action: "broadcast.send" },
+      orderBy: { createdAt: "desc" },
+      take: HISTORY,
+      select: { id: true, createdAt: true, data: true },
+    });
+    const rows = logs.flatMap((l) => {
+      const d = logData.safeParse(l.data);
+      return d.success ? [{ id: l.id, at: l.createdAt, ...d.data }] : [];
+    });
+    const groupIds = [...new Set(rows.flatMap((r) => (r.groupId ? [r.groupId] : [])))];
+    const groups = await this.prisma.group.findMany({
+      where: { id: { in: groupIds } },
+      select: { id: true, name: true },
+    });
+    const name = new Map(groups.map((g) => [g.id, g.name]));
+    return rows.map(({ groupId, at, ...r }) => ({
+      ...r,
+      at: at.toISOString(),
+      groupName: groupId ? (name.get(groupId) ?? "oʻchirilgan guruh") : null,
+    }));
   }
 
   /** Qabul qilingan, bloklanmagan o'quvchilar (guruh bo'yicha) va ularning tasdiqlangan ota-onalari */

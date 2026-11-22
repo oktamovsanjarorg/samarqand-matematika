@@ -4,9 +4,10 @@ import {
   type BroadcastAudience,
   type BroadcastResult,
 } from "@samarqand/shared";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Send } from "lucide-react";
 import { useState } from "react";
+import { BroadcastHistory, HISTORY_KEY } from "../components/broadcast/BroadcastHistory";
 import { Button, PageTitle } from "../components/ui";
 import { api } from "../lib/api";
 import { useGroups } from "../lib/groups";
@@ -92,6 +93,7 @@ function SendControls(p: { n: number; ready: boolean; busy: boolean; onSend: () 
 export function BroadcastPage() {
   const [text, setText] = useState("");
   const [target, setTarget] = useState<Target>({ audience: "all", groupId: "" });
+  const qc = useQueryClient();
   const count = useRecipients(target);
   const n = count.data?.recipients ?? 0;
   const send = useMutation({
@@ -102,7 +104,10 @@ export function BroadcastPage() {
         groupId: target.groupId || null,
         dryRun: false,
       }),
-    onSuccess: () => setText(""),
+    onSuccess: () => {
+      setText("");
+      void qc.invalidateQueries({ queryKey: HISTORY_KEY });
+    },
   });
   return (
     <div className="max-w-2xl space-y-4">
@@ -141,6 +146,7 @@ export function BroadcastPage() {
           </p>
         )}
       </section>
+      <BroadcastHistory />
     </div>
   );
 }

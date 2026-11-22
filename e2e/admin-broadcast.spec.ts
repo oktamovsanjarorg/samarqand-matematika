@@ -33,4 +33,9 @@ test("T-116: ustoz guruhga eʼlon yozadi, kimga borishini koʻradi va tasdiqlab 
   // e2e'da bot o'chiq (T-092): Telegram qabul qilmaydi, lekin qabul qiluvchi soni to'g'ri
   await expect(page.getByTestId("broadcast-done")).toContainText("Yuborildi: 0/1");
   await expect(page.getByLabel("Eʼlon matni")).toHaveValue("");
+  // T-117: tarixda yangi e'lon birinchi turadi
+  const row = page.getByTestId("broadcast-row").first();
+  await expect(row).toContainText("Ertaga dars soat 15:00 da");
+  await expect(row).toContainText(`Oʻquvchilarga · ${E2E_PREFIX}Eʼlon ${stamp} · 0/1 yetdi`);
+  await page.screenshot({ path: "e2e/.results/admin-broadcast-history.png", fullPage: true });
 });

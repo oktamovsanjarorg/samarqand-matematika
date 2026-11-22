@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
 import { broadcastInput } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
@@ -9,6 +9,11 @@ import { BroadcastService } from "./broadcast.service";
 @Controller("admin/broadcast")
 export class BroadcastController {
   constructor(private readonly broadcast: BroadcastService) {}
+
+  @Get()
+  history() {
+    return this.broadcast.history();
+  }
 
   @Post()
   @HttpCode(200)

@@ -24,3 +24,15 @@ export interface BroadcastResult {
   /** Telegram qabul qilgan xabarlar (botni bloklaganlarga yetmaydi); dryRun da 0 */
   sent: number;
 }
+
+/** Yuborilgan e'lonlar tarixi (T-117): jurnaldan olinadi */
+export interface BroadcastLogRow {
+  id: string;
+  at: string;
+  audience: BroadcastAudience;
+  /** null: barcha guruhlar; o'chirilgan guruh bo'lsa "o'chirilgan guruh" */
+  groupName: string | null;
+  recipients: number;
+  sent: number;
+  text: string;
+}
