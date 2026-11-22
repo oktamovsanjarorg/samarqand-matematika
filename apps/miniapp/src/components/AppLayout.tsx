@@ -1,5 +1,5 @@
 import { BookOpen, Home, User } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../store/auth";
 
@@ -9,11 +9,31 @@ const TABS = [
   { to: "/profile", label: "Profil", Icon: User },
 ];
 
+/**
+ * T-134: pastki tab sahifalari (T-131 da alohida chunk) brauzer bo'sh turganda oldindan yuklanadi:
+ * tab birinchi bosilganda kutish bo'lmasin. Xato bo'lsa jim: sahifa bosilganda baribir yuklanadi.
+ */
+function usePrefetchTabs(isParent: boolean) {
+  useEffect(() => {
+    const load = () => {
+      void import("../pages/ProfilePage").catch(() => undefined);
+      if (!isParent) void import("../pages/LessonsPage").catch(() => undefined);
+    };
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(load, { timeout: 3000 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const t = setTimeout(load, 1500);
+    return () => clearTimeout(t);
+  }, [isParent]);
+}
+
 /** Pastki navigatsiya: 3 tab, o'rtadagisi "Asosiy" (docs/11-ux.md) */
 export function AppLayout() {
   // Ota-onaga darslar kerak emas (hammasi yopiq ko'rinardi): faqat Asosiy va Profil (T-070)
   const isParent = useAuth((s) => s.user?.role === "PARENT");
   const tabs = isParent ? TABS.filter((t) => t.to !== "/lessons") : TABS;
+  usePrefetchTabs(isParent);
   return (
     <div className="flex h-full flex-col pt-safe-top">
       <main className="flex-1 overflow-y-auto p-4">
