@@ -5,6 +5,7 @@ import { AccessCard } from "../components/home/AccessCard";
 import { Hero } from "../components/home/Hero";
 import { MistakesCard } from "../components/home/MistakesCard";
 import { ParentHome } from "../components/parent/ParentHome";
+import { ProgressSection } from "../components/home/progress/ProgressSection";
 import { Recommendations } from "../components/home/Recommendations";
 import { RecentResults } from "../components/home/RecentResults";
 import { MockRow } from "../components/mock/MockRow";
@@ -122,6 +123,7 @@ function StudentHome() {
       <MockBlock />
       {stats.fetchStatus === "fetching" && !stats.data && <div className="skeleton h-24" aria-busy="true" />}
       {stats.data && <StatsBlock stats={stats.data} />}
+      <ProgressSection />
       <MistakesCard />
       <Recommendations />
       {user?.role === "STUDENT" && <TutorCard />}

@@ -33,3 +33,4 @@ export * from "./http-errors";
 export * from "./agent";
 export * from "./advisor";
 export * from "./month-stats";
+export * from "./progress";

@@ -121,6 +121,7 @@
 | BR-R02 | Ustozga "e'tibor kerak" ro'yxati faqat qabul qilingan o'quvchilardan, faktli sabab bilan: 7+ kun ilovaga kirmagan; oxirgi 3 mavzu testi o'rtachasi oldingi 3 tadan 20+ punkt past; oxirgi 14 kunda 2+ marta kelmagan; oxirgi yopilgan haftalikni (30 kun ichida) to'liq kirishi bo'la turib topshirmagan. AI ishlatilmaydi |
 | BR-R03 | Ustozga maslahat (AI'siz, T-161): sinf 50% dan past (3+ o'quvchi, 15+ javob, 30 kun), oldinda haftalik yo'q, testsiz mavzu, 3 kunlik qoralama, haftalikda qatnashish 50% dan kam                                                                                                                                           |
 | BR-R04 | Statistika (T-162): faqat o'quvchi rolidagilar; 'faqat xatolar' qayta ishlash kirmaydi; oy Toshkent vaqti; eng yaxshilarga kamida 20 javob; pul ma'lumoti yo'q                                                                                                                                                             |
+| BR-R05 | O'quvchi yutuqlari (T-169): faollik kuni = topshirilgan mavzu/haftalik/mock testi (Toshkent kuni); seriya bugun bo'lmasa kechadan sanaladi; o'zlashtirish = eng yaxshi natija 80%+; davomat 30 kun, sababli kirmaydi, kechikkan keldi; faqat o'z ma'lumoti                                                                 |
 
 ## Ota-ona kabineti (PA)
 

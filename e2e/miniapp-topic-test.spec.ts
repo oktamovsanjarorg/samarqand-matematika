@@ -115,6 +115,12 @@ async function checkStats(page: Page, courseTitle: string) {
   await expect(page.getByTestId("continue")).toHaveCount(0);
   await expect(page.getByTestId("access")).toHaveCount(0);
   await page.screenshot({ path: "e2e/.results/miniapp-home.png" });
+  // T-169: yutuqlar: bugun test topshirildi, seriya 1 kun, birinchi nishon olingan
+  await expect(page.getByTestId("streak")).toContainText("1 kun");
+  await expect(page.getByTestId("activity")).toContainText("Bugun shugʻullandingiz");
+  await expect(page.getByTestId("badges").locator('[data-done="true"]')).toContainText("Birinchi qadam");
+  await page.getByTestId("progress").scrollIntoViewIfNeeded();
+  await page.getByTestId("progress").screenshot({ path: "e2e/.results/miniapp-progress.png" });
   await nav.getByRole("link", { name: "Profil" }).click();
   await expect(page.getByTestId("tiles")).toContainText("1");
   await expect(page.getByTestId("tiles")).toContainText("67%");
