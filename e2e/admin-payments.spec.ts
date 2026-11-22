@@ -1,4 +1,4 @@
-import { expect, test, type APIRequestContext, type Browser } from "@playwright/test";
+import { expect, test, type APIRequestContext, type Browser, type Page } from "@playwright/test";
 import { adminHeaders, adminNav, createStudent, loginAdmin } from "./api";
 import { E2E_PREFIX } from "./telegram";
 
@@ -27,7 +27,7 @@ async function sendReceipt(request: APIRequestContext, browser: Browser, planId:
   expect(res.status()).toBe(201);
 }
 
-test("BR-B01, BR-B03..B05, T-109: ustoz tarif va kartani sozlaydi, chekni tasdiqlaydi va rad etadi", async ({
+test("BR-B01, BR-B03..B05, T-109, T-111: ustoz tarif va kartani sozlaydi, chekni tasdiqlaydi va rad etadi", async ({
   page,
   request,
   browser,
@@ -83,4 +83,20 @@ test("BR-B01, BR-B03..B05, T-109: ustoz tarif va kartani sozlaydi, chekni tasdiq
   await expect(page.getByTestId("payment").filter({ hasText: "Tolov Ikkinchi" })).toContainText(
     "Sabab: Summa toʻliq emas",
   );
+
+  await checkCardPayments(page, plan);
 });
+
+/** T-111: o'quvchi kartasida cheklar tarixi, rad etish sababi bilan */
+async function checkCardPayments(page: Page, plan: string) {
+  await adminNav(page, "Oʻquvchilar");
+  await page.getByRole("tab", { name: "Hammasi" }).click();
+  await page.getByPlaceholder("Ism, username yoki telefon").fill("Tolov Ikkinchi");
+  await page.getByTestId("student").first().getByRole("link", { name: "Tolov Ikkinchi" }).click();
+  const history = page.getByTestId("card-payments");
+  await expect(history).toContainText(`${plan} · 150 000 soʻm`);
+  await expect(history).toContainText("Rad etilgan");
+  await expect(history).toContainText("Sabab: Summa toʻliq emas");
+  await history.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "e2e/.results/admin-card-payments.png" });
+}

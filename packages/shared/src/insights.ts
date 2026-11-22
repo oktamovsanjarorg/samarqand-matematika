@@ -1,4 +1,6 @@
+import type { MyPayment } from "./billing";
 import type { StudentOfflineResult } from "./offline";
+import type { ChildWeeklyRow } from "./parent";
 import type { AdminStudentRow, MyProfile, MySchool } from "./profile";
 import type { MyStats } from "./stats";
 /** Tavsiyalar (5-bosqich): faqat faktlardan, AI'siz (BR-R01) */
@@ -61,4 +63,8 @@ export interface AdminStudentCard {
   stats: MyStats;
   school: MySchool;
   offline: StudentOfflineResult[];
+  /** Yopilgan haftalik testlar, o'rni bilan (T-111) */
+  weekly: ChildWeeklyRow[];
+  /** Oxirgi cheklar (T-111) */
+  payments: MyPayment[];
 }

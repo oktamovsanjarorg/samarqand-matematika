@@ -8,6 +8,7 @@ import {
   StatusSection,
   StudySection,
 } from "../components/students/CardSections";
+import { PaymentsSection, WeeklySection } from "../components/students/HistorySections";
 import { StudentCard } from "../components/students/StudentCard";
 import { ErrorState, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
@@ -36,6 +37,8 @@ export function StudentPage() {
             <SchoolSection c={card.data} />
             <StudySection c={card.data} />
             <OfflineSection c={card.data} />
+            <WeeklySection c={card.data} />
+            <PaymentsSection c={card.data} />
           </div>
         </>
       )}
