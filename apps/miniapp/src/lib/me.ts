@@ -1,4 +1,4 @@
-import type { Mistake, MyProfile, MySchool, MyStats } from "@samarqand/shared";
+import type { Mistake, MyProfile, MyProgress, MySchool, MyStats } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../store/auth";
 import { api } from "./api";
@@ -12,6 +12,17 @@ export function useStats() {
   return useQuery({
     queryKey: ["stats"],
     queryFn: () => api<MyStats>("/me/stats"),
+    enabled: isStudent,
+    staleTime: 0,
+  });
+}
+
+/** Yutuqlar (T-169): seriya, 7 kun, nishonlar; test topshirilgach yangilanadi */
+export function useProgress() {
+  const isStudent = useAuth((s) => s.user?.role === "STUDENT");
+  return useQuery({
+    queryKey: ["progress"],
+    queryFn: () => api<MyProgress>("/me/progress"),
     enabled: isStudent,
     staleTime: 0,
   });

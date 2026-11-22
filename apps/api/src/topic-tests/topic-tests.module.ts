@@ -7,5 +7,6 @@ import { TopicTestsService } from "./topic-tests.service";
 @Module({
   controllers: [TopicTestsController],
   providers: [TopicTestsService, StatsService, MistakesService],
+  exports: [StatsService],
 })
 export class TopicTestsModule {}

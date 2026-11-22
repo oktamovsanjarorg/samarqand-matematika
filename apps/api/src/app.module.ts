@@ -1,3 +1,4 @@
+import { ProgressModule } from "./progress/progress.module";
 import { LandingModule } from "./landing/landing.module";
 import { StatsModule } from "./stats/stats.module";
 import { AdvisorModule } from "./advisor/advisor.module";
@@ -68,6 +69,7 @@ export class AppModule {
         AdvisorModule,
         StatsModule,
         LandingModule,
+        ProgressModule,
         StudentsModule,
         ParentsModule,
         NotifyModule,

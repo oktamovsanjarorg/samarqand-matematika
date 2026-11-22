@@ -207,3 +207,4 @@
 | T-166 | Landing: sayt Telegram'dan tashqarida ochilsa platforma haqida sahifa va bot tugmasi; ochiq /api/public/landing                                                                                        | ✅    |
 | T-167 | Audit: matn bir xilligi (Excelʼ, yechim rasmi), BR-Q02/P01/P04 holati ✅, BR ID test nomlarida                                                                                                         | ✅    |
 | T-168 | Xodim Mini App'ni ochsa har doim admin panel: o'quvchi ko'rinishi (?view=student) olib tashlandi                                                                                                       | ✅    |
+| T-169 | O'quvchi Asosiy sahifasida 'Mening yutuqlarim': faollik seriyasi, 7 kunlik grafik, mavzu o'zlashtirish, aniqlik, haftalik o'rni, davomat, nishonlar; /me/progress                                      | ✅    |
