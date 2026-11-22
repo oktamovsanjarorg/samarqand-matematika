@@ -131,9 +131,17 @@ describe("To'lov va obuna", () => {
 
     const first = new Date((await call("GET", "/billing", s.headers)).json().subscription.endsAt).getTime();
     const p2 = (await upload(s.headers, planId, PNG)).json();
-    await call("POST", `/admin/payments/${p2.id}/approve`, teacher);
+    // T-128: ustoz tasdiqdan oldin yangi tugash sanasini ko'radi; tasdiq aynan shu sanani beradi
+    const pending = (await call("GET", "/admin/payments?status=PENDING", teacher)).json() as {
+      id: string;
+      extendsTo: string | null;
+    }[];
+    const preview = new Date(pending.find((x) => x.id === p2.id)?.extendsTo ?? 0).getTime();
+    const done = (await call("POST", `/admin/payments/${p2.id}/approve`, teacher)).json();
+    expect(done.extendsTo).toBeNull();
     const second = new Date((await call("GET", "/billing", s.headers)).json().subscription.endsAt).getTime();
     expect(Math.round((second - first) / 86_400_000)).toBe(30);
+    expect(preview).toBe(second);
   });
 
   it("BR-B04: rad etish sabab talab qiladi, o'quvchiga sabab boradi", async () => {

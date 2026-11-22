@@ -19,6 +19,11 @@ function Actions({ p, onDone }: { p: AdminPayment; onDone: () => void }) {
   return (
     <div className="space-y-2">
       <p className="text-xs text-hint">Kartaga {formatSum(p.amountUzs)} soʻm tushganini tekshiring.</p>
+      {p.extendsTo && (
+        <p className="text-sm" data-testid="extends-to">
+          Tasdiqlansa obuna <b>{formatDate(p.extendsTo).slice(0, 10)}</b> gacha
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
         <Button onClick={() => approve.mutate()} busy={approve.isPending}>
           Tasdiqlash

@@ -54,6 +54,8 @@ test("BR-B01, BR-B03..B05, T-109, T-111: ustoz tarif va kartani sozlaydi, chekni
   await adminNav(page, "Toʻlovlar");
   const first = page.getByTestId("payment").filter({ hasText: "Tolov Birinchi" });
   await expect(first).toContainText("Izoh: Otamning kartasidan");
+  // T-128: tasdiqlansa obuna qaysi sanagacha bo'lishi (yangi o'quvchi: bugundan +tarif kunlari)
+  await expect(first.getByTestId("extends-to")).toContainText(/Tasdiqlansa obuna \d{2}\.\d{2}\.\d{4} gacha/);
   const img = first.getByRole("img", { name: "Toʻlov cheki" });
   await expect(img).toBeVisible();
   expect(await img.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
