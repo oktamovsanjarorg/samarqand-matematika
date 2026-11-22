@@ -1,4 +1,4 @@
-import type { AuthResponse } from "@samarqand/shared";
+import { OFFLINE_MESSAGE, httpErrorMessage, type AuthResponse } from "@samarqand/shared";
 import { clearSession, loadSession } from "./session";
 
 export class ApiError extends Error {
@@ -26,6 +26,9 @@ async function raw(path: string, init: RequestInit = {}): Promise<Response> {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init.headers,
     },
+  }).catch(() => {
+    // T-151: "Failed to fetch" o'rniga o'zbekcha
+    throw new ApiError(0, OFFLINE_MESSAGE);
   });
   if (!res.ok) {
     if (res.status === 401 && token) {
@@ -33,7 +36,7 @@ async function raw(path: string, init: RequestInit = {}): Promise<Response> {
       onUnauthorized();
     }
     const body = (await res.json().catch(() => null)) as { message?: string; code?: string } | null;
-    throw new ApiError(res.status, body?.message ?? "Xatolik yuz berdi", body?.code);
+    throw new ApiError(res.status, httpErrorMessage(res.status, body?.message), body?.code);
   }
   return res;
 }
