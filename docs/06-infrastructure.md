@@ -41,6 +41,7 @@
   - `Authorization` va `Cookie` sarlavhalarini Caddy o'zi `REDACTED` qiladi. Shuning uchun API manzil yoki query'ga sir qo'yilmaydi.
   - Shaxsiy ma'lumot yozilmaydi: qidiruvdagi `?q=` (ism, telefon) `REDACTED`, IP oxirgi qismisiz (IPv4 /24). Xuddi shu filtr Caddy xato logida ham (global `log default`, `docker logs samarqand-web`). Yangi query parametrga shaxsiy ma'lumot qo'yilsa, filtrga ham qo'shiladi.
 - API'dagi kutilmagan xato (T-141): mijozga oddiy 500, logga (`docker logs samarqand-api`) faqat xato nomi, kodi va stack qatorlari. Xabar matni yozilmaydi: Prisma validatsiya xatosida so'rov argumentlari (ism, telefon) bo'ladi. Bot ham shunday: Telegram xatosida faqat metod, kod va tavsif (yuborilgan xabar, `chat_id` yozilmaydi).
+- Admin panel sarlavhalari (T-147): `Content-Security-Policy` (faqat o'z fayllari va `/api`, `frame-ancestors 'none'`) va `X-Frame-Options DENY`. Admin boshqa saytda iframe ichida ochilmaydi va begona skript yuklamaydi. `style-src 'unsafe-inline'` KaTeX'ning `style` atributlari uchun, `img-src blob:` token bilan olingan chek rasmlari uchun. Mini App'ga CSP qo'yilmagan: uni Telegram Web iframe ichida ochadi. Yangi tashqi manba (CDN, shrift) qo'shilsa, siyosat ham yangilanadi.
 - 5xx javoblarni ko'rish: `docker exec samarqand-web grep '"status":5' /data/access.log | tail`.
 
 ## Zaxira
