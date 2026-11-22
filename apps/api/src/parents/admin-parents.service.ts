@@ -79,7 +79,12 @@ export class AdminParentsService {
     });
     const view = toView(row);
     if (data.status === "APPROVED") {
-      await this.notify.toUser(row.parent.id, parentApprovedToParent(view.studentName));
+      // T-126: kabinetni darhol ochish uchun tugma
+      await this.notify.toUser(
+        row.parent.id,
+        parentApprovedToParent(view.studentName),
+        this.notify.appButton("Kabinetni ochish", ""),
+      );
       await this.notify.toUser(row.student.userId, parentApprovedToStudent(view.parentName));
     } else {
       await this.notify.toUser(row.parent.id, parentRejectedToParent(data.rejectReason ?? ""));

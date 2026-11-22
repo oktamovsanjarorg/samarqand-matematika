@@ -82,6 +82,9 @@ describe("Ota-ona xabarlari", () => {
     });
     await post(`/admin/parent-links/${link.id}/approve`, teacher.headers);
     expect(to(BigInt(p.id)).at(-1)?.html).toContain("tasdiqlandingiz");
+    // T-126: kabinet tugmasi va to'lov imkoniyati
+    expect(to(BigInt(p.id)).at(-1)?.html).toContain("obunani oʻzingiz toʻlaysiz");
+    expect(to(BigInt(p.id)).at(-1)?.button).toMatchObject({ text: "Kabinetni ochish", webApp: true });
     expect(to(s.telegramId).at(-1)?.html).toContain("Ota-onangiz");
   });
 
