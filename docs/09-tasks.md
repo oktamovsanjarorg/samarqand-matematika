@@ -162,4 +162,5 @@
 | T-121 | Ota-ona toʻlovi (Mini App): kabinetda "Obunani toʻlash", farzand uchun tarif, karta, chek, tarix; kim yuborgani koʻrinadi; adminda "Chekni ota-onasi yubordi"               | ✅    |
 | T-122 | Ota-onaga "obuna tugayapti" va chek natijasi xabarida farzandning toʻlov sahifasini ochadigan tugma                                                                         | ✅    |
 | T-123 | Oʻquvchi kartasi va roʻyxatida tasdiqlangan ota-ona telefoni (qoʻngʻiroq havolasi), Excel'da "Ota-ona telefoni" ustuni                                                      | ✅    |
+| T-124 | Chek takrorlanishi: rasm SHA-256 (`Payment.receiptHash`), aynan shu chek avval yuborilgan boʻlsa ustoz navbatida ogohlantirish                                              | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                         | ✅    |

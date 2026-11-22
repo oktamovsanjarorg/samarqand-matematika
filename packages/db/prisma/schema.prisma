@@ -328,6 +328,8 @@ model Payment {
   status        PaymentStatus @default(PENDING)
   /// MEDIA_DIR ichidagi nisbiy yo'l: receipts/<id>.jpg
   receiptPath   String?
+  /// Chek rasmi baytlarining SHA-256 (T-124): bir xil chek qayta yuborilsa ustoz ogohlantiriladi
+  receiptHash   String?
   payerNote     String?
   reviewedById  String?
   reviewedBy    User?         @relation("PaymentReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
@@ -342,6 +344,7 @@ model Payment {
 
   @@index([status, createdAt])
   @@index([userId, createdAt])
+  @@index([receiptHash])
 }
 
 /// To'liq kirish davri (BR-A04 "to'lov qilingan"): endsAt > hozir bo'lsa faol

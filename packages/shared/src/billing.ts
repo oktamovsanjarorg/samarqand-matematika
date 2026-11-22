@@ -72,6 +72,8 @@ export interface AdminPayment extends MyPayment {
   activeUntil: string | null;
   /** Chekni yuborgan ota-ona ismi (T-120); null: o'quvchining o'zi */
   submittedBy: string | null;
+  /** Aynan shu rasm avval yuborilgan bo'lsa, eng birinchisi (T-124) */
+  duplicateOf: { student: string; createdAt: string } | null;
 }
 
 /** Oylik tushum (T-109): "YYYY-MM", Toshkent vaqti bo'yicha tasdiqlangan to'lovlar */

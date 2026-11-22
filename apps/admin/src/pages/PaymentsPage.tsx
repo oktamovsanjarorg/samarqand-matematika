@@ -1,6 +1,6 @@
 import { formatSum, type AdminPayment } from "@samarqand/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Phone } from "lucide-react";
+import { Phone, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { IncomeCard } from "../components/billing/IncomeCard";
 import { ReceiptImage } from "../components/ReceiptImage";
@@ -64,6 +64,15 @@ function PaymentCard({ p, onDone }: { p: AdminPayment; onDone: () => void }) {
           <b>{p.planName}</b> · {formatSum(p.amountUzs)} soʻm
         </p>
         {p.submittedBy && <p className="text-sm">Chekni ota-onasi yubordi: {p.submittedBy}</p>}
+        {p.duplicateOf && (
+          <p
+            className="flex items-start gap-1 text-sm font-semibold text-danger"
+            data-testid="receipt-duplicate"
+          >
+            <TriangleAlert size={16} className="mt-0.5 shrink-0" />
+            Bu chek avval yuborilgan: {p.duplicateOf.student}, {formatDate(p.duplicateOf.createdAt)}
+          </p>
+        )}
         {p.payerNote && <p className="text-sm text-hint">Izoh: {p.payerNote}</p>}
         {p.activeUntil && <p className="text-sm text-success">Obuna: {formatDate(p.activeUntil)} gacha</p>}
         {p.status === "REJECTED" && p.reviewNote && (

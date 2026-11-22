@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { formatSum, type BillingView, type MyPayment } from "@samarqand/shared";
 import { paymentSubmittedText } from "../notify/messages";
@@ -95,6 +96,7 @@ export class PaymentsService {
           amountUzs: plan.priceUzs,
           payerNote: note || null,
           submittedById: by ?? null,
+          receiptHash: createHash("sha256").update(body).digest("hex"),
         },
         select: {
           ...MY_PAYMENT_SELECT,

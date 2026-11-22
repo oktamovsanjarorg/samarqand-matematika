@@ -12,6 +12,7 @@ import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { MY_PAYMENT_SELECT, toMyPayment } from "./payments.service";
 import { nextPeriod } from "./period";
+import { receiptDuplicates } from "./receipt-duplicates";
 import { MediaStore } from "../storage/media-store";
 
 const SELECT = {
@@ -29,6 +30,7 @@ const SELECT = {
     },
   },
   submittedBy: { select: { firstName: true, lastName: true } },
+  receiptHash: true,
 } satisfies Prisma.PaymentSelect;
 type Row = Prisma.PaymentGetPayload<{ select: typeof SELECT }>;
 
@@ -40,7 +42,7 @@ const DATE = new Intl.DateTimeFormat("en-GB", {
 });
 const day = (d: Date) => DATE.format(d).replace(/\//g, ".");
 
-function toAdmin(p: Row): AdminPayment {
+function toAdmin(p: Row, duplicateOf: AdminPayment["duplicateOf"] = null): AdminPayment {
   const u = p.user;
   const end = u.subscriptions[0]?.endsAt;
   return {
@@ -56,6 +58,7 @@ function toAdmin(p: Row): AdminPayment {
     submittedBy: p.submittedBy
       ? [p.submittedBy.firstName, p.submittedBy.lastName].filter(Boolean).join(" ")
       : null,
+    duplicateOf,
   };
 }
 
@@ -76,7 +79,8 @@ export class AdminPaymentsService {
       take: 200,
       select: SELECT,
     });
-    return rows.map(toAdmin);
+    const dups = await receiptDuplicates(this.prisma, rows);
+    return rows.map((r) => toAdmin(r, dups.get(r.id)));
   }
 
   async receipt(id: string) {
@@ -164,6 +168,7 @@ export class AdminPaymentsService {
   }
 
   private async one(id: string): Promise<AdminPayment> {
-    return toAdmin(await this.prisma.payment.findUniqueOrThrow({ where: { id }, select: SELECT }));
+    const row = await this.prisma.payment.findUniqueOrThrow({ where: { id }, select: SELECT });
+    return toAdmin(row, (await receiptDuplicates(this.prisma, [row])).get(row.id));
   }
 }
