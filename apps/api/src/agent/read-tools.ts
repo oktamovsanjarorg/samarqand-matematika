@@ -1,3 +1,4 @@
+import { statsMonth } from "@samarqand/shared";
 import { z } from "zod";
 import { id, q, tool } from "./agent-tool";
 
@@ -91,5 +92,44 @@ export const READ_TOOLS = [
     write: false,
     title: () => "Guruhlarni koʻrish",
     request: () => ({ method: "GET", path: "/admin/groups" }),
+  }),
+  tool({
+    name: "group_detail",
+    description:
+      "Bitta guruh: a'zolari (userId, ism). Davomat belgilashdan oldin a'zolar id sini shu yerdan oling.",
+    schema: z.object({ groupId: id }),
+    write: false,
+    title: () => "Guruhni koʻrish",
+    request: (i) => ({ method: "GET", path: `/admin/groups/${q(i.groupId)}` }),
+  }),
+  tool({
+    name: "group_attendance_month",
+    description: "Guruhning oylik davomat jadvali: kunlar va har o'quvchining holati. month: YYYY-MM.",
+    schema: z.object({ groupId: id, month: statsMonth }),
+    write: false,
+    title: (i) => `Davomat jadvali: ${i.month}`,
+    request: (i) => ({
+      method: "GET",
+      path: `/admin/groups/${q(i.groupId)}/attendance/month?month=${i.month}`,
+    }),
+  }),
+  // T-164: statistika va maslahatlar
+  tool({
+    name: "month_stats",
+    description:
+      "Oy statistikasi: o'quvchilar soni va faollari, davomat foizi (guruhlar bo'yicha), mavzu testlarida to'g'ri foiz, haftalik o'rtacha ball, eng yaxshi 5 o'quvchi, oxirgi 8 hafta faolligi. month: YYYY-MM, bo'lmasa joriy oy.",
+    schema: z.object({ month: statsMonth.optional() }),
+    write: false,
+    title: (i) => `Statistika${i.month ? `: ${i.month}` : ""}`,
+    request: (i) => ({ method: "GET", path: `/admin/stats${i.month ? `?month=${i.month}` : ""}` }),
+  }),
+  tool({
+    name: "advice",
+    description:
+      "Maslahatchi: faktlarga asoslangan tavsiyalar (sinf qiynalayotgan mavzu, rejalashtirilmagan haftalik test, testsiz mavzu, qatnashish past, AI ishlamayapti). Ustoz 'nima qilishim kerak' desa shu.",
+    schema: none,
+    write: false,
+    title: () => "Maslahatlarni koʻrish",
+    request: () => ({ method: "GET", path: "/admin/advisor" }),
   }),
 ];

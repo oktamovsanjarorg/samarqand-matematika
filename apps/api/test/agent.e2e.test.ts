@@ -184,6 +184,45 @@ describe("Admin agenti (T-156)", () => {
     expect(await advice()).toBeUndefined();
   });
 
+  it("T-164: davomat agent orqali: tasdiqda kelmaganlar ismi; tasdiqlangach bazaga yoziladi; statistika va maslahat o'qiladi", async () => {
+    const g = (
+      await f.call("POST", "/admin/groups", f.teacher, { name: `Agent guruhi ${Date.now()}` })
+    ).json() as {
+      id: string;
+    };
+    const [a, b] = [await f.student(), await f.student()];
+    await f.call("POST", `/admin/groups/${g.id}/students`, f.teacher, { userIds: [a.id, b.id] });
+    const marks = [
+      { userId: a.id, name: "Ali", status: "PRESENT" },
+      { userId: b.id, name: "Vali", status: "ABSENT" },
+    ];
+    script(
+      use("s1", "month_stats", {}),
+      use("s2", "advice", {}),
+      use("m1", "mark_attendance", { groupId: g.id, date: "2026-11-02", marks }),
+    );
+    const r = (await chat("bugungi davomatni belgila")).json() as AgentReply;
+    expect(r.items.filter((i) => i.kind === "action")).toEqual([
+      { kind: "action", title: "Statistika", ok: true },
+      { kind: "action", title: "Maslahatlarni koʻrish", ok: true },
+    ]);
+    expect(JSON.stringify(testAgent.calls[1]?.messages.at(-1))).toContain("topicTests");
+    expect(r.pending).toMatchObject({
+      title: "Davomat: 2026-11-02, 2 ta oʻquvchi",
+      lines: ["Keldi: 1, kechikdi: 0, sababli: 0", "Kelmadi: Vali"],
+    });
+    expect(await f.prisma.attendance.count({ where: { groupId: g.id } })).toBe(0);
+
+    script(say("Belgilandi."));
+    expect((await confirm(r)).statusCode).toBe(200);
+    const rows = await f.prisma.attendance.findMany({ where: { groupId: g.id }, orderBy: { status: "asc" } });
+    expect(rows.map((x) => [x.userId, x.status])).toEqual([
+      [a.id, "PRESENT"],
+      [b.id, "ABSENT"],
+    ]);
+    await f.prisma.group.delete({ where: { id: g.id } });
+  });
+
   it("ruxsatlar: o'quvchiga 403, tokensiz 401; holat yoqilgan; bo'sh xabar 400", async () => {
     expect((await f.call("GET", "/admin/agent", f.teacher)).json()).toEqual({ enabled: true });
     const s = await f.student();

@@ -202,3 +202,4 @@
 | T-161 | Maslahatchi: bosh sahifada sinf va platforma bo'yicha faktli tavsiyalar (qiyin mavzu, haftalik reja, testsiz mavzu, qatnashish)                                                                        | ✅    |
 | T-162 | Statistika sahifasi: oy bo'yicha o'quvchilar, davomat, mavzu va haftalik natijalar, eng yaxshilar, 8 haftalik faollik                                                                                  | ✅    |
 | T-163 | AI holati: provayder xatosi agentda sababi bilan 503 (pul tugagan, kalit), bosh sahifada 'AI ishlamayapti' ogohlantirishi                                                                              | ✅    |
+| T-164 | AI agent: statistika, maslahatlar, guruh tarkibi va oylik davomatni o'qiydi; davomatni tasdiq bilan belgilaydi                                                                                         | ✅    |
