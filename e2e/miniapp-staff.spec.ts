@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { E2E_OWNER } from "../playwright.config";
 import { newTgId, openAsTelegram } from "./telegram";
 
-test("T-158: ustoz Mini App'ni ochsa to'g'ridan-to'g'ri admin panel; o'quvchi ko'rinishiga o'ta oladi", async ({
+test("T-158, T-168, BR-A06: ustoz Mini App'ni ochsa to'g'ridan-to'g'ri admin panel, o'quvchi ko'rinishi yo'q", async ({
   page,
 }) => {
   await openAsTelegram(page, { id: newTgId(), first_name: "Ustoz", username: E2E_OWNER });
@@ -11,13 +11,13 @@ test("T-158: ustoz Mini App'ni ochsa to'g'ridan-to'g'ri admin panel; o'quvchi ko
   expect(page.url()).not.toContain("tg=");
   await page.getByRole("button", { name: "Menyu", exact: true }).click();
   await expect(page.getByRole("link", { name: "AI agent" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Oʻquvchi koʻrinishi" })).toHaveCount(0);
   await page.screenshot({ path: "e2e/.results/miniapp-staff-admin.png" });
+});
 
-  await page.getByRole("link", { name: "Oʻquvchi koʻrinishi" }).click();
-  await expect(page).toHaveURL(/127\.0\.0\.1:5190\/\?view=student/);
-  // Qayta yo'naltirilmaydi: Mini App ochiq qoladi
-  await page.waitForTimeout(1500);
-  expect(page.url()).toContain("127.0.0.1:5190");
+test("T-168, BR-A06: ?view=student bilan ochilsa ham xodim admin panelga o'tadi", async ({ page }) => {
+  await openAsTelegram(page, { id: newTgId(), first_name: "Ustoz", username: E2E_OWNER }, "/?view=student");
+  await expect(page).toHaveURL(/127\.0\.0\.1:5191\/admin\/?$/);
 });
 
 test("T-158: o'quvchi Mini App'da qoladi, admin panelga yo'naltirilmaydi", async ({ page }) => {

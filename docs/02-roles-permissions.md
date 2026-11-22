@@ -49,7 +49,7 @@ O'quvchining pullik kontentga kirishi rol bilan emas, BR-A04 shartlari bilan bel
 | `me/children/:id/billing` (farzand uchun toʻlov, T-120)                                        |    —    |     —     |    —    |   ✅   |
 | `me`, `me/school`, `courses`, `lessons/:id`                                                    |   ✅    |    ✅     |   ✅    |   ✅   |
 
-Ustoz va yordamchi o'quvchi oqimlarini (haftalik, mock, yordamchi) sinab ko'rish uchun ochishi mumkin.
+API ustoz va yordamchiga o'quvchi oqimlarining (haftalik, mock, yordamchi) bir qismini ochiq qoldiradi, lekin Mini App xodimni har doim admin panelga o'tkazadi (T-168).
 
 ## Ochiq (`@Public`) endpoint'lar
 

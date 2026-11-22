@@ -12,7 +12,7 @@
 | FR-A03 | Ustoz o'quvchini qabul qiladi, kirish rejimini (AUTO, FREE, CLOSED) tanlaydi; o'quvchiga xabar boradi         | BR-S03, BR-A04   | T-020, T-081 | ✅    |
 | FR-A04 | Ota-ona `/ota` havolasi va o'z raqami bilan ulanadi, ustoz tasdiqlaydi, shubha belgilari ko'rinadi            | BR-S05, S06      | T-020, T-073 | ✅    |
 | FR-A05 | Ustoz yordamchi tayinlaydi (taklif havolasi bilan ham) va olib tashlaydi                                      | BR-A05           | T-086, T-155 | ✅    |
-| FR-A06 | Ustoz va yordamchi Mini App'ni ochsa to'g'ridan-to'g'ri admin panel                                           | BR-A06           | T-158        | ✅    |
+| FR-A06 | Ustoz va yordamchi Mini App'ni ochsa to'g'ridan-to'g'ri admin panel                                           | BR-A06           | T-158, T-168 | ✅    |
 
 ## Kontent va savollar (FR-C)
 

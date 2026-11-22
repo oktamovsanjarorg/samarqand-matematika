@@ -57,8 +57,6 @@ export default defineConfig({
     {
       command: "pnpm --filter @samarqand/admin dev",
       url: "http://127.0.0.1:5191/admin/",
-      // T-158: "O'quvchi ko'rinishi" havolasi (testda ilovalar har xil portda)
-      env: { VITE_MINIAPP_URL: "http://127.0.0.1:5190/" },
       reuseExistingServer: !CI,
     },
   ],

@@ -50,22 +50,3 @@ export function clearSession() {
     // e'tiborsiz
   }
 }
-
-/** T-158: panel Mini App ichidan ochilgan (shu oynada): "O'quvchi ko'rinishi" havolasi shunda ko'rinadi */
-const MINIAPP_KEY = "samarqand-from-miniapp";
-
-export function markFromMiniApp() {
-  try {
-    sessionStorage.setItem(MINIAPP_KEY, "1");
-  } catch {
-    // e'tiborsiz
-  }
-}
-
-export function isFromMiniApp(): boolean {
-  try {
-    return sessionStorage.getItem(MINIAPP_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
