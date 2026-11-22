@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AttentionList } from "../components/dashboard/AttentionList";
+import { BackupAlert } from "../components/dashboard/BackupAlert";
 import { InviteCard } from "../components/dashboard/InviteCard";
 import { SetupList } from "../components/dashboard/SetupList";
 import { ErrorState, PageTitle, SkeletonList } from "../components/ui";
@@ -154,6 +155,7 @@ export function DashboardPage() {
       {d.isError && <ErrorState message={d.error.message} onRetry={() => d.refetch()} />}
       {d.data && (
         <>
+          <BackupAlert since={d.data.todo.backupStaleSince} />
           {/* T-140: tarif va karta faqat ustozda, shuning uchun ro'yxat ham faqat ustozga */}
           {loadSession()?.user.role === "TEACHER" && <SetupList setup={d.data.setup} />}
           <section className="space-y-2" aria-label="Kutayotgan ishlar">

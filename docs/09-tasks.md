@@ -183,4 +183,5 @@
 | T-142 | A11y: maʼlumotli admin sahifalari ham axe bilan (oʻquvchi kartasi, guruh, savollar, savol va dars tahriri, haftalik va tekshiruv)                                               | ✅    |
 | T-143 | Admin bosh sahifasida o'quvchilarni taklif qilish: bot havolasi (getMe), nusxa olish va Telegramʼda ulashish                                                                    | ✅    |
 | T-144 | Zaxirani haftalik haqiqiy tiklash sinovi: vaqtinchalik konteynerga tiklab, jadvallar, migratsiyalar va foydalanuvchilar tekshiriladi                                            | ✅    |
+| T-145 | Zaxira 36 soatdan eskirsa (cron ishlamay qolgan) admin bosh sahifasida va ertalabki xulosada ogohlantirish                                                                      | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                             | ✅    |
