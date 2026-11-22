@@ -1,4 +1,4 @@
-import type { ParentLinkResult } from "@samarqand/shared";
+import type { ParentLinkResult, StaffInviteStatus } from "@samarqand/shared";
 import { internalKey, type TelegramProfile } from "@samarqand/shared/server";
 
 /** API'ning faqat bot chaqira oladigan endpoint'lari (x-internal-key: BOT_TOKEN'dan HMAC) */
@@ -28,6 +28,9 @@ export function createInternalApi(opts: { baseUrl: string; botToken: string; fet
       from: TelegramProfile;
       contact: { phone_number: string; user_id?: number };
     }) => post<ParentLinkResult>("parent-link", body),
+    /** T-155: yordamchi taklif havolasi */
+    staffInvite: (from: TelegramProfile, code: string) =>
+      post<{ status: StaffInviteStatus }>("staff-invite", { from, code }),
   };
 }
 

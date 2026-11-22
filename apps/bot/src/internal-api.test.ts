@@ -44,3 +44,19 @@ describe("profileOf", () => {
     expect(profileOf(from)).toEqual({ id: 1, first_name: "A", last_name: undefined, username: undefined });
   });
 });
+
+describe("staffInvite (T-155)", () => {
+  it("kod va profilni ichki kalit bilan yuboradi, holatni qaytaradi", async () => {
+    const calls: { url: string; body: string; key: string | null }[] = [];
+    const fetchFn = (async (url: string, init: RequestInit) => {
+      calls.push({ url, body: String(init.body), key: new Headers(init.headers).get("x-internal-key") });
+      return new Response(JSON.stringify({ status: "ok" }), { status: 200 });
+    }) as unknown as typeof fetch;
+    const api = createInternalApi({ baseUrl: "http://api/api/", botToken: "1:abc", fetchFn });
+    const code = "A".repeat(22);
+    expect(await api.staffInvite({ id: 5, first_name: "Y" }, code)).toEqual({ status: "ok" });
+    expect(calls[0]?.url).toBe("http://api/api/internal/staff-invite");
+    expect(JSON.parse(calls[0]?.body ?? "{}")).toEqual({ from: { id: 5, first_name: "Y" }, code });
+    expect(calls[0]?.key).toBeTruthy();
+  });
+});

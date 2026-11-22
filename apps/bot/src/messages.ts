@@ -1,3 +1,4 @@
+import type { StaffInviteStatus } from "@samarqand/shared";
 import { InlineKeyboard } from "grammy";
 
 /** /start javobi: salomlashuv va Mini App'ni ochish tugmasi */
@@ -59,3 +60,14 @@ export const PARENT_REPLIES: Record<string, string> = {
   rejected_before: "Oldingi soʻrov rad etilgan. Ustozga murojaat qiling.",
   is_student: "Siz oʻquvchi sifatida roʻyxatdasiz. Ustozga murojaat qiling.",
 };
+
+/** T-155: /start s_<kod> (ustozning yordamchi taklif havolasi) */
+export const STAFF_INVITE_REPLIES: Record<StaffInviteStatus, string> = {
+  ok: "✅ Siz ustoz yordamchisi boʻldingiz. Admin panelga kirish uchun /admin deb yozing.",
+  invalid: "Havola eskirgan yoki ishlatilgan. Ustozdan yangi havola soʻrang.",
+  already: "Siz allaqachon yordamchisiz. Admin panel: /admin",
+  teacher: "Siz ustozsiz, havola kerak emas. Admin panel: /admin",
+  parent: "Ota-ona akkaunti yordamchi boʻla olmaydi. Havolani boshqa Telegram akkauntdan oching.",
+  blocked: "Akkauntingiz bloklangan. Ustozga murojaat qiling.",
+};
+export const STAFF_INVITE_FAILED = "Hozir ulab boʻlmadi, birozdan keyin havolani qayta oching.";

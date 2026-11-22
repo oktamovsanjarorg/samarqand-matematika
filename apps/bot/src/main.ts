@@ -1,4 +1,4 @@
-import { Bot, Keyboard } from "grammy";
+import { Bot, Keyboard, type CommandContext, type Context } from "grammy";
 import { loadBotEnv } from "./env";
 import { createInternalApi, profileOf } from "./internal-api";
 import {
@@ -9,6 +9,8 @@ import {
   PARENT_REPLIES,
   PHONE_REPLIES,
   SHARE_CONTACT_BUTTON,
+  STAFF_INVITE_FAILED,
+  STAFF_INVITE_REPLIES,
   adminLinkMessage,
   fallbackMessage,
   parentInviteMessage,
@@ -24,7 +26,21 @@ const pendingParents = createPendingStore();
 // T-141: logga shaxsiy ma'lumot (ism, chat_id, xabar matni) tushmaydi
 const logError = (where: string, e: unknown) => console.error(`${where}: ${describeBotError(e)}`);
 
+/** T-155: ustozning yordamchi taklif havolasi t.me/<bot>?start=s_<kod> */
+async function acceptStaffInvite(ctx: CommandContext<Context>, code: string) {
+  if (!ctx.from || ctx.chat.type !== "private") return;
+  try {
+    const { status } = await api.staffInvite(profileOf(ctx.from), code);
+    await ctx.reply(STAFF_INVITE_REPLIES[status]);
+  } catch (e) {
+    logError("yordamchi taklifi", e);
+    await ctx.reply(STAFF_INVITE_FAILED);
+  }
+}
+
 bot.command("start", async (ctx) => {
+  const staffCode = /^s_([A-Za-z0-9_-]{22})$/.exec(ctx.match)?.[1];
+  if (staffCode) return acceptStaffInvite(ctx, staffCode);
   // Ota-ona havolasi: t.me/<bot>?start=p_<kod>
   const code = /^p_([0-9A-Fa-f]{8})$/.exec(ctx.match)?.[1];
   if (code && ctx.from && ctx.chat.type === "private") {

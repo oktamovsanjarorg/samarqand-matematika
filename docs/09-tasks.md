@@ -193,3 +193,4 @@
 | T-152 | Deploy paytida 502 yo'q: Caddy API qayta ishga tushguncha `/api` so'rovini 30 s gacha ushlab turadi (faqat ulanmaganda qayta uriniladi, POST tanasi buferda)                                           | ✅    |
 | T-153 | Admin: dars va savol muharririda saqlanmagan matn brauzerda qoladi (sessiya tugasa, sahifa yangilansa); qayta ochilganda "tiklandi" va "Bekor qilish"; boshqa tabda qayta kirilsa shu tab o'zi qaytadi | ✅    |
 | T-154 | Haqiqiy Excel (.xlsx): savol va offline natija importi .xlsx ni qabul qiladi, barcha eksport va namuna fayl .xlsx (matn formatli ustunlar, qalin sarlavha); faqat `fflate`                             | ✅    |
+| T-155 | Yordamchini havola bilan taklif qilish: ustoz Sozlamalarda havola yaratadi (24 soat, bir marta), odam botda ochishi bilan yordamchi boʻladi; avval botga kirgan boʻlishi shart emas                    | ✅    |

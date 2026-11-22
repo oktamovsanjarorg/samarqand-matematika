@@ -11,7 +11,7 @@
 | FR-A02 | O'quvchi onboarding: ism-familiya va telefon (bot tugmasi orqali)                                             | BR-S01, S02, S04 | T-020        | ✅    |
 | FR-A03 | Ustoz o'quvchini qabul qiladi, kirish rejimini (AUTO, FREE, CLOSED) tanlaydi; o'quvchiga xabar boradi         | BR-S03, BR-A04   | T-020, T-081 | ✅    |
 | FR-A04 | Ota-ona `/ota` havolasi va o'z raqami bilan ulanadi, ustoz tasdiqlaydi, shubha belgilari ko'rinadi            | BR-S05, S06      | T-020, T-073 | ✅    |
-| FR-A05 | Ustoz yordamchi tayinlaydi va olib tashlaydi                                                                  | BR-A05           | T-086        | ✅    |
+| FR-A05 | Ustoz yordamchi tayinlaydi (taklif havolasi bilan ham) va olib tashlaydi                                      | BR-A05           | T-086, T-155 | ✅    |
 
 ## Kontent va savollar (FR-C)
 

@@ -5,6 +5,7 @@ import { useDeferredValue, useEffect, useState } from "react";
 import { api } from "../../lib/api";
 import { formatDate } from "../../lib/labels";
 import { Badge, Button, SkeletonList } from "../ui";
+import { StaffInviteCard } from "./StaffInviteCard";
 
 const studentName = (s: AdminStudentRow) => s.fullName ?? s.telegramName;
 
@@ -123,6 +124,8 @@ export function StaffSection() {
           </li>
         ))}
       </ul>
+      <StaffInviteCard />
+      <p className="text-sm font-semibold">Yoki botdan foydalanayotgan odamni tanlang</p>
       <AddAssistant onAdd={(id) => add.mutate(id)} busy={add.isPending} />
       {error && <p className="text-sm text-danger">{error.message}</p>}
     </section>
