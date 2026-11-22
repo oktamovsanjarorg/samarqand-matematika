@@ -12,7 +12,7 @@ User (role: STUDENT | PARENT | ASSISTANT | TEACHER, telegramId, phone, isBlocked
  ├─ Subscription (endsAt, reminderStage) ← Payment (status, amountUzs, receiptPath, submittedById: ota-ona yuborgan bo'lsa) ← Plan
  ├─ LoginToken (admin havolasi, 5 daqiqa, bir martalik)
  └─ AuditLog (actorId, action, entity, entityId, data)
-AppSetting (kalit → JSON): karta, sozlamalar
+AppSetting (kalit → JSON): karta, sozlamalar; `digest:<sana>`: ertalabki xulosa shu kuni yuborilgani (T-139, eskilari o'chiriladi)
 ```
 
 - Haqiqiy ism `StudentProfile.fullName` da; `User.firstName` har kirishda Telegram'dan yangilanadi. Ism `personName()` bilan olinadi.

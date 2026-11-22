@@ -1,4 +1,4 @@
-import { PARENT_FLAGS, type ParentFlag, type StudentAccess } from "@samarqand/shared";
+import { PARENT_FLAGS, type AdminDashboard, type ParentFlag, type StudentAccess } from "@samarqand/shared";
 import { isFullAccess, type AccessFacts } from "../access/access-rules";
 import { esc } from "./notify.service";
 
@@ -196,3 +196,17 @@ export const subscriptionEndedText = `🔒 Obunangiz tugadi: pullik darslar va t
 /** O'quvchilarga: yangi dars (T-091, ustoz tugmasi bilan) */
 export const lessonNewText = (l: { title: string; course: string; topic: string; isFree: boolean }) =>
   `📚 Yangi dars: <b>${esc(l.title)}</b>\n${esc(l.course)} · ${esc(l.topic)}${l.isFree ? "\nBepul: hamma uchun ochiq." : ""}\nIlovada: Darslar boʻlimi.`;
+
+/** Ertalabki xulosa (T-139): faqat sonlar, shaxsiy ma'lumotsiz. Ish bo'lmasa null (xabar yuborilmaydi) */
+export function dailyDigestText(t: AdminDashboard["todo"]): string | null {
+  const review = t.review.reduce((n, r) => n + r.count, 0);
+  const rows: [number, string][] = [
+    [t.newStudents, "yangi oʻquvchi qabulni kutmoqda"],
+    [t.pendingPayments, "toʻlov cheki tekshirilmagan"],
+    [t.pendingParents, "ota-ona soʻrovi kutmoqda"],
+    [review, "yechim rasmi tekshirilmagan"],
+    [t.unmatchedOffline, "offline natija oʻquvchiga moslanmagan"],
+  ];
+  const lines = rows.filter(([n]) => n > 0).map(([n, label]) => `• ${n} ta ${label}`);
+  return lines.length ? ["☀️ <b>Bugungi ishlar</b>", "", ...lines].join("\n") : null;
+}
