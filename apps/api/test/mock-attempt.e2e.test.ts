@@ -1,6 +1,7 @@
 import type {
   AdminMockResults,
   AdminStudentCard,
+  ChildSummary,
   MockOpen,
   MockResult,
   StudentMockRow,
@@ -234,7 +235,7 @@ describe("Mock urinishi (T-051b)", () => {
   });
 });
 
-describe("O'quvchi kartasida mock (T-112)", () => {
+describe("O'quvchi kartasi va ota-ona kabinetida mock (T-112, T-114)", () => {
   it("faqat oynasi yopilgan mock: shkala balli (Rasch bo'lmasa taxminiy), daraja; ochig'i ko'rinmaydi", async () => {
     const s = await f.student();
     const closed = await mock();
@@ -255,8 +256,22 @@ describe("O'quvchi kartasida mock (T-112)", () => {
 
     const card = (await f.call("GET", `/admin/students/${s.id}`, f.teacher)).json() as AdminStudentCard;
     // 1.5 / 4.5 xom ball → 75 lik shkalada 25, daraja C (≥ 20)
-    expect(card.mocks).toEqual([
+    const expected = [
       expect.objectContaining({ id: closed.id, scaled: 25, scaleMax: 75, grade: "C", approx: true }),
-    ]);
+    ];
+    expect(card.mocks).toEqual(expected);
+
+    // T-114: tasdiqlangan ota-ona kabinetida ham xuddi shu natija
+    const parent = await f.student(false);
+    await f.prisma.user.update({ where: { id: parent.id }, data: { role: "PARENT" } });
+    const child = await f.prisma.studentProfile.findUniqueOrThrow({
+      where: { userId: s.id },
+      select: { id: true },
+    });
+    await f.prisma.parentLink.create({
+      data: { parentId: parent.id, studentId: child.id, status: "APPROVED", phone: "998900000002" },
+    });
+    const summary = (await f.call("GET", `/me/children/${child.id}`, parent.headers)).json() as ChildSummary;
+    expect(summary.mocks).toEqual(expected);
   });
 });

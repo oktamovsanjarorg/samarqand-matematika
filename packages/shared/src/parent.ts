@@ -1,3 +1,4 @@
+import type { CardMockRow } from "./insights";
 import type { StudentOfflineResult } from "./offline";
 import type { MySchool } from "./profile";
 import type { AttemptSummary } from "./stats";
@@ -89,6 +90,8 @@ export interface ChildSummary {
   group: MySchool["group"];
   attendance: MySchool["attendance"];
   weekly: ChildWeeklyRow[];
+  /** Oynasi yopilgan mock'lar (T-114) */
+  mocks: CardMockRow[];
   offline: StudentOfflineResult[];
   weak: { topicTitle: string; percent: number; total: number }[];
 }

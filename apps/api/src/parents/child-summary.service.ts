@@ -3,6 +3,7 @@ import type { ChildSummary } from "@samarqand/shared";
 import { isFullAccess } from "../access/access-rules";
 import { AccessService } from "../access/access.service";
 import { StudentInsightsService } from "../insights/student-insights.service";
+import { mockHistory } from "../mock/mock-history";
 import { MyOfflineService } from "../offline/my-offline.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { MySchoolService } from "../students/my-school.service";
@@ -31,13 +32,14 @@ export class ChildSummaryService {
     });
     if (!link) throw new NotFoundException("Farzand topilmadi");
     const { userId, user } = link.student;
-    const [access, stats, school, offline, recs, weekly] = await Promise.all([
+    const [access, stats, school, offline, recs, weekly, mocks] = await Promise.all([
       this.access(userId, now),
       this.stats.my(userId),
       this.school.get(userId),
       this.offline.list(userId),
       this.insights.recommendations(userId, now),
       weeklyHistory(this.prisma, userId, user.createdAt, { now, take: 5 }),
+      mockHistory(this.prisma, userId, { now, take: 3 }),
     ]);
     return {
       access,
@@ -47,6 +49,7 @@ export class ChildSummaryService {
       group: school.group,
       attendance: school.attendance,
       weekly,
+      mocks,
       offline,
       weak: recs.items.map((w) => ({ topicTitle: w.topicTitle, percent: w.percent, total: w.total })),
     };

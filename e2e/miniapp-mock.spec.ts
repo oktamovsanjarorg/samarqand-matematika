@@ -1,12 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { createStudent, grantFree } from "./api";
+import { PrismaClient } from "@samarqand/db";
+import { createStudent, grantFree, requestParentLink } from "./api";
 import { seedMock } from "./mock-seed";
 import { openAsTelegram } from "./telegram";
 
 const API = "http://127.0.0.1:4300/api";
 const at = (ms: number) => new Date(Date.now() + ms).toISOString();
 
-test("BR-M05, BR-M06: o'quvchi mockni vaqt bilan yechadi, natija yopilgach bo'limlar bo'yicha", async ({
+test("BR-M05, BR-M06, T-114: o'quvchi mockni vaqt bilan yechadi, natija yopilgach bo'limlar bo'yicha", async ({
   page,
   request,
 }) => {
@@ -50,4 +51,21 @@ test("BR-M05, BR-M06: o'quvchi mockni vaqt bilan yechadi, natija yopilgach bo'li
   await page.screenshot({ path: "e2e/.results/miniapp-mock-result.png", fullPage: true });
   await page.getByRole("link", { name: "Mocklar" }).click();
   await expect(row).toContainText("Natija: 25 · C");
+
+  // T-114: tasdiqlangan ota-ona kabinetida ham mock natijasi
+  const parent = await requestParentLink(request, s.tg, "998935550311");
+  const prisma = new PrismaClient();
+  try {
+    await prisma.parentLink.updateMany({
+      where: { student: { user: { telegramId: BigInt(s.tg) } } },
+      data: { status: "APPROVED" },
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+  await openAsTelegram(page, { id: parent.id, first_name: "Ota" }, "/");
+  const mock = page.getByTestId("child").getByTestId("child-mock");
+  await expect(mock).toContainText(`${m.body.title}25/75 · Ctaxminiy`);
+  await mock.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "e2e/.results/miniapp-parent-mock.png" });
 });
