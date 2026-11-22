@@ -97,11 +97,16 @@ export class SubscriptionReminders implements OnModuleInit, OnModuleDestroy {
   private async toParents(s: Due) {
     const links = await this.prisma.parentLink.findMany({
       where: { status: "APPROVED", student: { userId: s.userId } },
-      select: { parentId: true, student: { select: { user: { select: PERSON_SELECT } } } },
+      select: { parentId: true, studentId: true, student: { select: { user: { select: PERSON_SELECT } } } },
     });
+    // T-122: ota-ona farzandi uchun o'zi to'lay oladi (BR-B07)
     await Promise.all(
       links.map((l) =>
-        this.notify.toUser(l.parentId, subscriptionEndingParentText(personName(l.student.user), s.endsAt)),
+        this.notify.toUser(
+          l.parentId,
+          subscriptionEndingParentText(personName(l.student.user), s.endsAt),
+          this.notify.appButton("Obunani toʻlash", `children/${l.studentId}/billing`),
+        ),
       ),
     );
   }

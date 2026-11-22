@@ -148,11 +148,19 @@ export class AdminPaymentsService {
     return view;
   }
 
-  /** Chekni ota-ona yuborgan bo'lsa, natija unga ham boradi (T-120) */
+  /** Chekni ota-ona yuborgan bo'lsa, natija unga ham boradi (T-120); tugma farzandning to'lov sahifasiga (T-122) */
   private async toSubmitter(id: string, text: string): Promise<void> {
-    const p = await this.prisma.payment.findUnique({ where: { id }, select: { submittedById: true } });
+    const p = await this.prisma.payment.findUnique({
+      where: { id },
+      select: { submittedById: true, user: { select: { student: { select: { id: true } } } } },
+    });
+    const studentId = p?.user.student?.id;
     if (p?.submittedById)
-      await this.notify.toUser(p.submittedById, text, this.notify.appButton("Kabinetni ochish", ""));
+      await this.notify.toUser(
+        p.submittedById,
+        text,
+        this.notify.appButton("Toʻlov sahifasi", studentId ? `children/${studentId}/billing` : ""),
+      );
   }
 
   private async one(id: string): Promise<AdminPayment> {
