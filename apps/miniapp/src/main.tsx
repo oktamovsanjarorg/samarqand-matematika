@@ -5,6 +5,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
+import { PageBoundary } from "./components/PageBoundary";
 import { reloadOnStaleChunks } from "./lib/stale-chunks";
 import { initTelegram } from "./lib/telegram";
 
@@ -22,7 +23,10 @@ ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <App />
+        {/* T-135: kirish va ro'yxatdan o'tish ekranlari layout'dan tashqarida */}
+        <PageBoundary resetKey="root">
+          <App />
+        </PageBoundary>
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>,

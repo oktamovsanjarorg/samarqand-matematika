@@ -5,6 +5,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import type { Session } from "../lib/session";
 import { navGroups, type NavGroup } from "./layout/nav";
 import { SideNav } from "./layout/SideNav";
+import { PageBoundary } from "./PageBoundary";
 import { SkeletonList } from "./ui";
 
 function Brand({ session }: { session: Session }) {
@@ -97,9 +98,11 @@ export function AdminLayout({ session, onLogout }: { session: Session; onLogout:
       )}
       <main className="mx-auto w-full max-w-5xl min-w-0 flex-1 p-4 lg:p-8">
         {/* T-132: lazy sahifa yuklanguncha menyu joyida qoladi */}
-        <Suspense fallback={<SkeletonList rows={3} />}>
-          <Outlet />
-        </Suspense>
+        <PageBoundary resetKey={pathname}>
+          <Suspense fallback={<SkeletonList rows={3} />}>
+            <Outlet />
+          </Suspense>
+        </PageBoundary>
       </main>
     </div>
   );

@@ -1,7 +1,8 @@
 import { BookOpen, Home, User } from "lucide-react";
 import { Suspense, useEffect } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../store/auth";
+import { PageBoundary } from "./PageBoundary";
 
 const TABS = [
   { to: "/lessons", label: "Darslar", Icon: BookOpen },
@@ -34,13 +35,16 @@ export function AppLayout() {
   const isParent = useAuth((s) => s.user?.role === "PARENT");
   const tabs = isParent ? TABS.filter((t) => t.to !== "/lessons") : TABS;
   usePrefetchTabs(isParent);
+  const { pathname } = useLocation();
   return (
     <div className="flex h-full flex-col pt-safe-top">
       <main className="flex-1 overflow-y-auto p-4">
         {/* T-131: lazy sahifa yuklanguncha navigatsiya joyida qoladi */}
-        <Suspense fallback={<div className="skeleton h-64" aria-busy="true" />}>
-          <Outlet />
-        </Suspense>
+        <PageBoundary resetKey={pathname}>
+          <Suspense fallback={<div className="skeleton h-64" aria-busy="true" />}>
+            <Outlet />
+          </Suspense>
+        </PageBoundary>
       </main>
       <nav
         className={`grid ${isParent ? "grid-cols-2" : "grid-cols-3"} border-t border-hint/15 bg-section pb-safe-bottom`}
