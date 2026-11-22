@@ -139,3 +139,4 @@
 | T-098 | Mockdan nusxa olish: shablon va savollar ko'chadi, oyna keyingi haftaga suriladi, shablonni qayta tanlash mumkin                                                            | ✅    |
 | T-099 | Axlat qutisi (FR-U05, BR-C06): o'chirilgan kurs, mavzu, dars va savol 30 kun tiklanadi                                                                                      | ✅    |
 | T-100 | Excel (CSV) dan savol import: namuna fayl, oldindan tekshirish, xato qator raqami bilan, qoralama sifatida (FR-C05, BR-Q04)                                                 | ✅    |
+| T-101 | Admin'da CSV fayl tanlash o'zbekcha tugma bilan (brauzerning inglizcha "Choose File" o'rniga), offline va savol importida                                                   | ✅    |

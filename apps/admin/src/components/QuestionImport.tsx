@@ -5,6 +5,7 @@ import { useState } from "react";
 import { api } from "../lib/api";
 import { downloadCsv } from "../lib/download";
 import { TYPE_LABELS } from "../lib/questions";
+import { CsvPicker } from "./CsvPicker";
 import { MathText } from "./MathText";
 import { Button } from "./ui";
 
@@ -49,7 +50,6 @@ function Preview({ r }: { r: QuestionImportResult }) {
 export function QuestionImport({ topicId }: { topicId: string }) {
   const qc = useQueryClient();
   const [csv, setCsv] = useState("");
-  const [name, setName] = useState("");
   const send = (dryRun: boolean) =>
     api.post<QuestionImportResult>(`/admin/topics/${topicId}/questions/import`, { csv, dryRun });
   const check = useMutation({ mutationFn: () => send(true) });
@@ -57,9 +57,8 @@ export function QuestionImport({ topicId }: { topicId: string }) {
     mutationFn: () => send(false),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ["questions"] }),
   });
-  const onFile = async (file?: File) => {
-    setCsv(file ? await file.text() : "");
-    setName(file?.name ?? "");
+  const onText = (text: string) => {
+    setCsv(text);
     check.reset();
     save.reset();
   };
@@ -77,17 +76,7 @@ export function QuestionImport({ topicId }: { topicId: string }) {
       <Button variant="secondary" onClick={() => downloadCsv("Savollar namunasi", TEMPLATE)}>
         <Download size={16} /> Namuna fayl
       </Button>
-      <label className="tap flex min-h-11 w-fit max-w-full cursor-pointer items-center gap-2 rounded-xl border border-dashed border-hint/40 bg-section px-4 text-sm font-semibold focus-within:ring-2 focus-within:ring-brand">
-        <FileUp size={16} className="shrink-0" />
-        <span className="truncate">{name || "CSV faylni tanlang"}</span>
-        <input
-          type="file"
-          accept=".csv,.txt,text/csv"
-          aria-label="CSV fayl"
-          onChange={(e) => void onFile(e.target.files?.[0])}
-          className="sr-only"
-        />
-      </label>
+      <CsvPicker onText={onText} />
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => check.mutate()} busy={check.isPending} disabled={!csv}>
           Tekshirish
