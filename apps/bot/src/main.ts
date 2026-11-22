@@ -14,14 +14,15 @@ import {
   parentInviteMessage,
   startMessage,
 } from "./messages";
+import { describeBotError } from "./log";
 import { createPendingStore } from "./pending";
 
 const env = loadBotEnv();
 const bot = new Bot(env.BOT_TOKEN);
 const api = createInternalApi({ baseUrl: env.API_INTERNAL_URL, botToken: env.BOT_TOKEN });
 const pendingParents = createPendingStore();
-const logError = (where: string, e: unknown) =>
-  console.error(`${where}:`, e instanceof Error ? e.message : e);
+// T-141: logga shaxsiy ma'lumot (ism, chat_id, xabar matni) tushmaydi
+const logError = (where: string, e: unknown) => console.error(`${where}: ${describeBotError(e)}`);
 
 bot.command("start", async (ctx) => {
   // Ota-ona havolasi: t.me/<bot>?start=p_<kod>
@@ -98,7 +99,7 @@ bot.on("message:text", async (ctx) => {
   await ctx.reply(text, { reply_markup: keyboard });
 });
 
-bot.catch((err) => console.error("Bot xatosi:", err.error));
+bot.catch((err) => logError("Bot xatosi", err.error));
 
 /** Menyu tugmasi (chap pastda "Ilova") va buyruqlar ro'yxati: har ishga tushishda bir xil holatga keltiriladi */
 async function setupMenu() {
@@ -111,7 +112,7 @@ async function setupMenu() {
   });
 }
 
-setupMenu().catch((e: unknown) => console.error("Menyu sozlanmadi:", e instanceof Error ? e.message : e));
+setupMenu().catch((e: unknown) => logError("Menyu sozlanmadi", e));
 
 // Bot faqat bitta nusxada ishlaydi: ikkinchi nusxa Telegram'dan 409 oladi
 void bot.start({ onStart: (me) => console.info(`Bot: @${me.username}`) });

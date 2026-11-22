@@ -7,8 +7,8 @@ import {
   Logger,
   NotFoundException,
 } from "@nestjs/common";
-import { BaseExceptionFilter } from "@nestjs/core";
 import { Prisma } from "@samarqand/db";
+import { SafeErrorsFilter } from "./safe-errors.filter";
 
 /** Prisma xato kodi → foydalanuvchiga tushunarli javob (qolganlari 500 bo'lib qoladi) */
 const KNOWN: Record<string, () => HttpException> = {
@@ -25,11 +25,12 @@ const KNOWN: Record<string, () => HttpException> = {
  * Asosiy tekshiruv servisda bo'lishi kerak: bu filtr faqat poyga (race) va unutilgan holat uchun.
  */
 @Catch(Prisma.PrismaClientKnownRequestError)
-export class PrismaConflictFilter extends BaseExceptionFilter implements ExceptionFilter {
+export class PrismaConflictFilter extends SafeErrorsFilter implements ExceptionFilter {
   private readonly log = new Logger("PrismaConflict");
 
   override catch(e: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
     const known = KNOWN[e.code];
+    // Noma'lum kod: SafeErrorsFilter (T-141) logga matnsiz yozadi va 500 qaytaradi
     if (!known) return super.catch(e, host);
     this.log.warn(`Prisma ${e.code}: ${String(e.meta?.modelName ?? "")}`);
     return super.catch(known(), host);
