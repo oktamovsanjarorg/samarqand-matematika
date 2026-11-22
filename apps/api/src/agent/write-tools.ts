@@ -1,4 +1,10 @@
-import { toCsv, type BroadcastResult, type QuestionImportResult } from "@samarqand/shared";
+import {
+  ATTENDANCE_STATUSES,
+  isoDate,
+  toCsv,
+  type BroadcastResult,
+  type QuestionImportResult,
+} from "@samarqand/shared";
 import { z } from "zod";
 import { id, q, tool } from "./agent-tool";
 
@@ -187,5 +193,33 @@ export const WRITE_TOOLS = [
       body: { userIds: i.userIds },
     }),
     lines: (i) => i.names.slice(0, 10),
+  }),
+  tool({
+    name: "mark_attendance",
+    description:
+      "Guruh davomatini belgilash (T-164). date: YYYY-MM-DD (odatda bugun). marks: har o'quvchi uchun userId (group_detail dan), name va status: PRESENT keldi, LATE kechikdi, ABSENT kelmadi, EXCUSED sababli. Ota-onalarga xabar boradi.",
+    schema: z.object({
+      groupId: id,
+      date: isoDate,
+      marks: z
+        .array(z.object({ userId: id, name: z.string().max(200), status: z.enum(ATTENDANCE_STATUSES) }))
+        .min(1)
+        .max(100),
+    }),
+    write: true,
+    title: (i) => `Davomat: ${i.date}, ${i.marks.length} ta oʻquvchi`,
+    request: (i) => ({
+      method: "PUT",
+      path: `/admin/groups/${q(i.groupId)}/attendance`,
+      body: { date: i.date, marks: i.marks.map((m) => ({ userId: m.userId, status: m.status })) },
+    }),
+    lines: (i) => {
+      const of = (st: string) => i.marks.filter((m) => m.status === st).map((m) => m.name);
+      const absent = of("ABSENT");
+      return [
+        `Keldi: ${of("PRESENT").length}, kechikdi: ${of("LATE").length}, sababli: ${of("EXCUSED").length}`,
+        absent.length ? `Kelmadi: ${absent.join(", ")}` : "Kelmaganlar yoʻq",
+      ];
+    },
   }),
 ];
