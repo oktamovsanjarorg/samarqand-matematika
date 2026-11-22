@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 /** Env Zod bilan tekshiriladi: majburiy qiymat yo'q bo'lsa API ishga tushmaydi */
+/** .env.example dagi bo'sh kalit (`X=`) — berilmagan deb hisoblanadi */
+const optionalKey = z.preprocess((v) => (v === "" ? undefined : v), z.string().min(1).optional());
+
 const base = z.object({
   NODE_ENV: z.string().default("development"),
   API_PORT: z.coerce.number().default(4300),
@@ -41,8 +44,11 @@ const base = z.object({
   // tasodifiy Telegram ID'lari haqiqiy foydalanuvchiga to'g'ri kelib qolmasin)
   NOTIFY_TRANSPORT: z.enum(["telegram", "off"]).default("telegram"),
   // Yechim tekshiruvi (ADR-0004): off — AI'siz, hamma savol ustoz navbatiga
-  AI_PROVIDER: z.enum(["off", "claude"]).default("off"),
-  ANTHROPIC_API_KEY: z.string().min(1).optional(),
+  AI_PROVIDER: z.enum(["off", "claude", "deepseek"]).default("off"),
+  ANTHROPIC_API_KEY: optionalKey,
+  // DeepSeek (T-159): matnli ishlar (yordamchi, admin agenti); yechim rasmini o'qimaydi
+  DEEPSEEK_API_KEY: optionalKey,
+  DEEPSEEK_MODEL: z.string().min(1).default("deepseek-v4-pro"),
   // Baholash to'plamida modellarni solishtirish uchun
   AI_MODEL: z.string().min(1).default("claude-opus-5-5"),
   // Kuniga ko'pi bilan nechta AI tekshiruvi (xarajat chegarasi)
@@ -53,10 +59,15 @@ const base = z.object({
   AGENT_DAILY_LIMIT: z.coerce.number().int().min(0).default(200),
 });
 
-const schema = base.refine((e) => e.AI_PROVIDER !== "claude" || !!e.ANTHROPIC_API_KEY, {
-  message: "AI_PROVIDER=claude uchun ANTHROPIC_API_KEY kerak",
-  path: ["ANTHROPIC_API_KEY"],
-});
+const schema = base
+  .refine((e) => e.AI_PROVIDER !== "claude" || !!e.ANTHROPIC_API_KEY, {
+    message: "AI_PROVIDER=claude uchun ANTHROPIC_API_KEY kerak",
+    path: ["ANTHROPIC_API_KEY"],
+  })
+  .refine((e) => e.AI_PROVIDER !== "deepseek" || !!e.DEEPSEEK_API_KEY, {
+    message: "AI_PROVIDER=deepseek uchun DEEPSEEK_API_KEY kerak",
+    path: ["DEEPSEEK_API_KEY"],
+  });
 
 export type Env = z.infer<typeof schema>;
 

@@ -16,6 +16,7 @@ Haftalik testda o'quvchi har savolga daftardagi yechim rasmini yuklaydi (BR-W04)
   - system prompt barqaror va keshlanadi (`cache_control`), savol va rasmlar undan keyin keladi;
   - `refusal`, `max_tokens`, tarmoq yoki sxema xatosi — `null` va logda faqat xato turi (kalit va matn yozilmaydi).
 - **Env**: `AI_PROVIDER` = `off` (standart) | `claude`; `claude` uchun `ANTHROPIC_API_KEY` majburiy (zod). Kalit faqat `.env` da.
+- **DeepSeek (T-159)**: `AI_PROVIDER=deepseek`, `DEEPSEEK_API_KEY` majburiy, `DEEPSEEK_MODEL` (standart `deepseek-v4-pro`). Arzon, matnli ishlar uchun: AI yordamchi va admin agenti. DeepSeek rasm o'qimaydi, shuning uchun yechim rasmi tekshirilmaydi (hukm `null`, javob ustoz navbatiga tushadi). Yordamchi REVIEW rejimida rasm borligini biladi, lekin uni ko'rmaydi. So'rov IPv4 orqali yuboriladi, 429/5xx da bir marta qayta uriniladi, logga faqat status yoziladi.
 - **Baholash to'plami** (`apps/api/test/ai-eval.test.ts`, `pnpm --filter @samarqand/api ai:eval`): `AI_EVAL_DIR` dagi holatlar (`case.json` + rasmlar, ustoz hukmi bilan). Real yechimlar shaxsiy ma'lumot, repoga tushmaydi. Natija: aniqlik, ko'chirishni topish va noto'g'ri shubhalar soni. Har prompt yoki model o'zgarganda qayta o'lchanadi.
 
 ## Oqibatlar
