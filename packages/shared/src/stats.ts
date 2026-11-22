@@ -14,7 +14,15 @@ export interface AttemptSummary {
 /** O'quvchining mavzu testlari bo'yicha statistikasi (Asosiy va Profil) */
 export interface MyStats {
   /** Tugallanmagan test: "Davom etish" */
-  open: { attemptId: string; topicId: string; topicTitle: string; answered: number; total: number } | null;
+  open: {
+    attemptId: string;
+    topicId: string;
+    topicTitle: string;
+    answered: number;
+    total: number;
+    /** Xatolar ustida ishlash urinishi (T-104) */
+    mistakes: boolean;
+  } | null;
   /** Topshirilgan testlar soni */
   tests: number;
   /** Topshirilgan testlar o'rtacha foizi (har urinish teng og'irlikda) */

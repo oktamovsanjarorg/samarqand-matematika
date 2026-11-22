@@ -66,7 +66,7 @@ export interface WeeklyWaiting {
 export const MAX_SOLUTION_PHOTOS = 3;
 
 /** Ochiq urinish: savollar, saqlangan javoblar va yuklangan rasmlar (id) */
-export type WeeklyOpen = Omit<AttemptView, "topicId" | "topicTitle" | "questions"> & {
+export type WeeklyOpen = Omit<AttemptView, "topicId" | "topicTitle" | "questions" | "mistakesOnly"> & {
   weeklyTestId: string;
   title: string;
   closesAt: string;

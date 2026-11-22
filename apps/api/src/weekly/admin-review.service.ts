@@ -165,7 +165,7 @@ export class AdminReviewService {
   ) {
     const userIds = attempts.map((a) => a.userId);
     const topic = await this.prisma.topicAttempt.findMany({
-      where: { userId: { in: userIds }, submittedAt: { not: null } },
+      where: { userId: { in: userIds }, submittedAt: { not: null }, mistakesOnly: false },
       select: {
         userId: true,
         correct: true,

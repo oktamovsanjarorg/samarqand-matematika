@@ -24,7 +24,7 @@ export function MistakesPage() {
       <div>
         <h1 className="text-xl font-extrabold">Xatolarim</h1>
         <p className="text-sm text-hint">
-          Mavzu testini qayta toʻgʻri ishlasangiz, savol roʻyxatdan chiqadi.
+          Xatolarni qayta ishlang: toʻgʻri yechilgan savol roʻyxatdan chiqadi.
         </p>
       </div>
       {q.isPending && <div className="skeleton h-40" aria-busy="true" />}
@@ -37,10 +37,10 @@ export function MistakesPage() {
           <div className="flex items-center gap-2">
             <h2 className="min-w-0 flex-1 truncate font-bold">{g.title}</h2>
             <Link
-              to={`/topics/${g.topicId}/test`}
+              to={`/topics/${g.topicId}/test?mistakes=1`}
               className="tap flex min-h-10 items-center gap-1.5 text-sm font-semibold text-link"
             >
-              <RotateCcw size={16} /> Qayta ishlash
+              <RotateCcw size={16} /> Xatolarni ishlash
             </Link>
           </div>
           <ul className="space-y-2">

@@ -8,6 +8,7 @@ export interface AttemptRow {
   startedAt: Date;
   submittedAt: Date | null;
   correct: number | null;
+  mistakesOnly: boolean;
   topic: { title: string };
   answers: { response: unknown; result: CheckResult | null; question: Question }[];
 }
@@ -26,6 +27,7 @@ export function openView(a: AttemptRow): AttemptView {
     topicId: a.topicId,
     topicTitle: a.topic.title,
     startedAt: a.startedAt.toISOString(),
+    mistakesOnly: a.mistakesOnly,
     questions: a.answers.map((x) => ({ question: toView(x.question), response: x.response })),
   };
 }

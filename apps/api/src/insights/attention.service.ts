@@ -66,7 +66,11 @@ export class AttentionService {
   /** Oxirgi 60 kundagi mavzu testlari foizi (faqat avtomatik tekshirilganlar), eskidan yangiga */
   private async percents(ids: string[], now: Date) {
     const attempts = await this.prisma.topicAttempt.findMany({
-      where: { userId: { in: ids }, submittedAt: { gte: new Date(now.getTime() - 60 * DAY) } },
+      where: {
+        userId: { in: ids },
+        submittedAt: { gte: new Date(now.getTime() - 60 * DAY) },
+        mistakesOnly: false,
+      },
       orderBy: { submittedAt: "asc" },
       select: {
         userId: true,

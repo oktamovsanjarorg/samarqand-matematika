@@ -127,10 +127,22 @@ async function checkStats(page: Page, courseTitle: string) {
   await expect(mistakes).toContainText("Toʻgʻri javob: 3/4");
   await expect(mistakes).toContainText("1 marta xato");
   await page.screenshot({ path: "e2e/.results/miniapp-mistakes.png", fullPage: true });
+  // T-104: faqat xato savolni qayta ishlash; to'g'ri yechilsa ro'yxatdan chiqadi, mavzu natijasi o'zgarmaydi
+  await mistakes.getByRole("link", { name: "Xatolarni ishlash" }).click();
+  await expect(page.getByText("Xatolar ustida ishlash · 1/1")).toBeVisible();
+  await page.getByLabel("Javob", { exact: true }).fill("3/4");
+  await page.screenshot({ path: "e2e/.results/miniapp-mistakes-retry.png", fullPage: true });
+  await page.getByRole("button", { name: "Yakunlash" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Topshirish" }).click();
+  await expect(page.getByTestId("score")).toContainText("1/1");
+  await nav.getByRole("link", { name: "Profil" }).click();
+  await page.getByRole("link", { name: /Xatolarim/ }).click();
+  await expect(page.getByText("Xato yoʻq")).toBeVisible();
   // T-067: Darslar ro'yxatida mavzuning eng yaxshi natijasi
   await nav.getByRole("link", { name: "Darslar" }).click();
   const topic = page.getByTestId("course").filter({ hasText: courseTitle }).getByTestId("topic");
   await expect(topic.getByTestId("best")).toHaveText("67%");
+  // T-104: xatolar ustida ishlash mavzu natijasiga kirmaydi
   await expect(topic).toContainText("1 marta ishlangan");
   await topic.scrollIntoViewIfNeeded();
   await page.screenshot({ path: "e2e/.results/miniapp-lessons-progress.png" });

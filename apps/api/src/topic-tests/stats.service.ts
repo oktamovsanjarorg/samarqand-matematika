@@ -24,7 +24,8 @@ export class StatsService {
 
   private async submitted(userId: string): Promise<AttemptSummary[]> {
     const rows = await this.prisma.topicAttempt.findMany({
-      where: { userId, submittedAt: { not: null } },
+      // T-104: xatolar ustida ishlash urinishlari o'rtacha foizni sun'iy oshirmasin
+      where: { userId, submittedAt: { not: null }, mistakesOnly: false },
       orderBy: { submittedAt: "desc" },
       select: {
         id: true,
@@ -52,6 +53,7 @@ export class StatsService {
       select: {
         id: true,
         topicId: true,
+        mistakesOnly: true,
         topic: { select: { title: true } },
         answers: { select: { response: true } },
       },
@@ -63,6 +65,7 @@ export class StatsService {
       topicTitle: a.topic.title,
       answered: a.answers.filter((x) => x.response !== null).length,
       total: a.answers.length,
+      mistakes: a.mistakesOnly,
     };
   }
 }

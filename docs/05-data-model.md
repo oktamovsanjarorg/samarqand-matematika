@@ -34,12 +34,12 @@ Course → Topic → Lesson (body: Markdown + LaTeX, videoUrl, isFree, isPublish
 
 ## Testlar
 
-| Test turi | Test                               | Savollar                          | Urinish                                          | Javob                                               |
-| --------- | ---------------------------------- | --------------------------------- | ------------------------------------------------ | --------------------------------------------------- |
-| Mavzu     | Topic                              | Question (nashr)                  | `TopicAttempt`                                   | `TopicAnswer` (savollar muzlatiladi, BR-P02)        |
-| Haftalik  | `WeeklyTest`                       | `WeeklyQuestion`                  | `WeeklyAttempt` (bitta, BR-W02)                  | `WeeklyAnswer` + `SolutionPhoto` (1–3) + `AiReview` |
-| Mock      | `MockTest` (shablon nusxasi bilan) | `MockQuestion` (bo'lim, `raschB`) | `MockAttempt` (raw, scaled, deadline)            | `MockAnswer`                                        |
-| Offline   | `OfflineTest` (bo'limlar)          | —                                 | `OfflineResult` (CSV qatori, moslangan o'quvchi) | —                                                   |
+| Test turi | Test                               | Savollar                          | Urinish                                                                         | Javob                                               |
+| --------- | ---------------------------------- | --------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Mavzu     | Topic                              | Question (nashr)                  | `TopicAttempt` (`mistakesOnly`: xatolarni qayta ishlash, statistikaga kirmaydi) | `TopicAnswer` (savollar muzlatiladi, BR-P02)        |
+| Haftalik  | `WeeklyTest`                       | `WeeklyQuestion`                  | `WeeklyAttempt` (bitta, BR-W02)                                                 | `WeeklyAnswer` + `SolutionPhoto` (1–3) + `AiReview` |
+| Mock      | `MockTest` (shablon nusxasi bilan) | `MockQuestion` (bo'lim, `raschB`) | `MockAttempt` (raw, scaled, deadline)                                           | `MockAnswer`                                        |
+| Offline   | `OfflineTest` (bo'limlar)          | —                                 | `OfflineResult` (CSV qatori, moslangan o'quvchi)                                | —                                                   |
 
 - `CheckResult`: `CORRECT`, `WRONG`, `MANUAL` (ustoz tekshiradi).
 - Haftalik javobda ustoz qarori (`teacherPoints`, `teacherNote`, `reviewedBy`, `reviewedAt`) avtomatik natija va AI hukmidan ustun (BR-W06). `AiReview.suspected` faqat admin navbatida o'qiladi (BR-W05).

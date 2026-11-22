@@ -1,6 +1,6 @@
 import { ERROR_CODES, type AttemptResult, type AttemptView } from "@samarqand/shared";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Locked } from "../components/Locked";
 import { ErrorState, TestSkeleton } from "../components/states";
 import { Runner } from "../components/test/Runner";
@@ -17,18 +17,21 @@ function useTopicSubmit() {
     const r = await post<AttemptResult>(`/attempts/${attemptId}/submit`);
     qc.setQueryData(["attempt", r.id], r);
     void qc.invalidateQueries({ queryKey: ["stats"] });
+    void qc.invalidateQueries({ queryKey: ["mistakes"] });
     navigate(`/attempts/${r.id}`, { replace: true });
   };
 }
 
 export function TopicTestPage() {
   const { id = "" } = useParams();
-  useBackButton("/lessons");
+  // T-104: Xatolarimdan kelinsa faqat xato qilingan savollar
+  const mistakes = useSearchParams()[0].get("mistakes") === "1";
+  useBackButton(mistakes ? "/mistakes" : "/lessons");
   const submit = useTopicSubmit();
   // Ochiq urinish bo'lsa server shuni qaytaradi: test qayta ochilganda javoblar saqlanib qoladi
   const attempt = useQuery({
-    queryKey: ["topic-test", id],
-    queryFn: () => post<AttemptView>(`/topics/${id}/attempts`),
+    queryKey: ["topic-test", id, mistakes],
+    queryFn: () => post<AttemptView>(`/topics/${id}/attempts`, mistakes ? { mistakes: true } : undefined),
     retry: false,
     staleTime: 0,
     gcTime: 0,
@@ -43,7 +46,7 @@ export function TopicTestPage() {
     <Runner
       attempt={a}
       base="/attempts"
-      kicker="Mavzu testi"
+      kicker={a.mistakesOnly ? "Xatolar ustida ishlash" : "Mavzu testi"}
       title={a.topicTitle}
       onSubmit={submit(a.id)}
       extra={(questionId, flush) => (
