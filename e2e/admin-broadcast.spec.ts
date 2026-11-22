@@ -29,6 +29,8 @@ test("T-116: ustoz guruhga eʼlon yozadi, kimga borishini koʻradi va tasdiqlab 
   await expect(page.getByLabel("Guruh", { exact: true })).toHaveValue(g.id);
   await page.getByLabel("Eʼlon matni").fill("Ertaga dars soat 15:00 da");
   await page.getByLabel("Kimga").selectOption("students");
+  // T-130: tugma standart holatda yoqilgan
+  await expect(page.getByLabel("Xabar ostida “Ilovani ochish” tugmasi")).toBeChecked();
   await expect(page.getByTestId("broadcast-count")).toContainText("1 kishiga boradi");
   await page.getByRole("button", { name: "Yuborish" }).click();
   await expect(page.getByText("1 kishiga yuboriladi. Qaytarib boʻlmaydi.")).toBeVisible();

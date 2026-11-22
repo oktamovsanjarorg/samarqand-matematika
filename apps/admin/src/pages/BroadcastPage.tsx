@@ -91,7 +91,7 @@ function SendControls(p: { n: number; ready: boolean; busy: boolean; onSend: () 
 }
 
 /** Yuborish; muvaffaqiyatdan keyin matn tozalanadi va tarix yangilanadi (T-117) */
-function useSend(text: string, target: Target, onDone: () => void) {
+function useSend(text: string, target: Target & { appButton: boolean }, onDone: () => void) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: () =>
@@ -100,6 +100,7 @@ function useSend(text: string, target: Target, onDone: () => void) {
         audience: target.audience,
         groupId: target.groupId || null,
         dryRun: false,
+        appButton: target.appButton,
       }),
     onSuccess: () => {
       onDone();
@@ -116,7 +117,8 @@ export function BroadcastPage() {
   const [target, setTarget] = useState<Target>({ audience: "all", groupId: params.get("group") ?? "" });
   const count = useRecipients(target);
   const n = count.data?.recipients ?? 0;
-  const send = useSend(text, target, () => setText(""));
+  const [appButton, setAppButton] = useState(true);
+  const send = useSend(text, { ...target, appButton }, () => setText(""));
   return (
     <div className="max-w-2xl space-y-4">
       <PageTitle title="Eʼlon yuborish" />
@@ -136,6 +138,15 @@ export function BroadcastPage() {
           </span>
         </label>
         <TargetPicker value={target} onChange={setTarget} />
+        <label className="flex min-h-11 items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={appButton}
+            onChange={(e) => setAppButton(e.target.checked)}
+            className="h-5 w-5 accent-brand"
+          />
+          Xabar ostida “Ilovani ochish” tugmasi
+        </label>
         <p className="text-sm text-hint" data-testid="broadcast-count">
           {count.isPending ? "Hisoblanmoqda…" : `${n} kishiga boradi`}: faqat qabul qilingan oʻquvchilar va
           tasdiqlangan ota-onalar

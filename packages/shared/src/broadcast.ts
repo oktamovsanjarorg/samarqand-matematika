@@ -16,6 +16,8 @@ export const broadcastInput = z.object({
   /** Faqat shu guruh o'quvchilari (va ularning ota-onalari); bo'lmasa hammasi */
   groupId: z.string().min(1).max(40).nullable(),
   dryRun: z.boolean(),
+  /** Xabar ostida "Ilovani ochish" tugmasi (T-130) */
+  appButton: z.boolean().optional(),
 });
 export type BroadcastInput = z.infer<typeof broadcastInput>;
 
