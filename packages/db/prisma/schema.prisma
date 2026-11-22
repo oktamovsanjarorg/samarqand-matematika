@@ -539,6 +539,8 @@ model MockTest {
   raschN       Int?
   /// O'quvchilarga "mock ochildi" xabari yuborilgan vaqt (T-080)
   announcedAt  DateTime?      @db.Timestamptz
+  /// Topshirmaganlarga "yopilishiga 1 kun qoldi" eslatmasi yuborilgan vaqt (T-118)
+  remindedAt   DateTime?      @db.Timestamptz
   createdAt    DateTime       @default(now()) @db.Timestamptz
   questions    MockQuestion[]
   attempts     MockAttempt[]

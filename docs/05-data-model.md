@@ -43,7 +43,7 @@ Course → Topic → Lesson (body: Markdown + LaTeX, videoUrl, isFree, isPublish
 
 - `CheckResult`: `CORRECT`, `WRONG`, `MANUAL` (ustoz tekshiradi).
 - Haftalik javobda ustoz qarori (`teacherPoints`, `teacherNote`, `reviewedBy`, `reviewedAt`) avtomatik natija va AI hukmidan ustun (BR-W06). `AiReview.suspected` faqat admin navbatida o'qiladi (BR-W05).
-- Rejalashtiruvchi belgilar: `WeeklyTest.announcedAt`, `reminderStage` (0/1/2), `closedAt`; `MockTest.announcedAt`, `closedAt`, `raschN` (null bo'lsa taxminiy ball, BR-M05). Belgi bir marta, shartli `updateMany` bilan qo'yiladi.
+- Rejalashtiruvchi belgilar: `WeeklyTest.announcedAt`, `reminderStage` (0/1/2), `closedAt`; `MockTest.announcedAt`, `remindedAt` (T-118), `closedAt`, `raschN` (null bo'lsa taxminiy ball, BR-M05). Belgi bir marta, shartli `updateMany` bilan qo'yiladi.
 - `ExamTemplate` bo'limlari va darajalari JSON'da; mock yaratilganda nusxa olinadi, shablon keyin o'zgarsa ham natija o'zgarmaydi (BR-M01).
 
 ## Guruhlar va davomat

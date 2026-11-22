@@ -3,12 +3,14 @@ import { gradeOf } from "@samarqand/shared";
 import { ENV, type Env } from "../config/env";
 import { AccessService } from "../access/access.service";
 import { PERSON_SELECT, personName } from "../common/person";
-import { mockOpenText, mockParentReport, mockResultText } from "../notify/messages";
+import { mockOpenText, mockParentReport, mockReminderText, mockResultText } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { snapshotOf } from "./admin-mocks.service";
 import { scoreMock, type ScoredAttempt } from "./mock-scoring";
 import { MocksService } from "./mocks.service";
+
+const HOUR = 3_600_000;
 
 /** Mock yopilishi (T-053): vaqti o'tganlar topshiriladi, shkala balli qo'yiladi, o'quvchiga natija xabari */
 /** Urinish → Rasch qatori (savollar tartibida, to'g'ri = 1); xodim sinovi belgilanadi (T-087) */
@@ -44,6 +46,7 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
     this.timer = setInterval(() => {
       const now = new Date();
       this.announce(now)
+        .then(() => this.remind(now))
         .then(() => this.close(now))
         .catch((e: unknown) => this.log.warn(`tick: ${e instanceof Error ? e.name : "xato"}`));
     }, this.env.WEEKLY_TICK_SEC * 1000);
@@ -68,6 +71,38 @@ export class MockScheduler implements OnModuleInit, OnModuleDestroy {
       const to = await this.access.fullAccessStudentIds();
       const open = this.notify.appButton("Mockni ochish", `mocks/${t.id}`);
       await Promise.all(to.map((id) => this.notify.toUser(id, mockOpenText(t.title, t.closesAt), open)));
+    }
+  }
+
+  /**
+   * Yopilishiga 24 soat qolganda topshirmagan to'liq kirishli o'quvchilarga bir marta eslatma (T-118).
+   * Kamida 12 soat ochiq turgan mock uchun: qisqa oynada "ochildi" xabaridan keyin darhol ikkinchisi ketmasin.
+   */
+  async remind(now: Date) {
+    const due = await this.prisma.mockTest.findMany({
+      where: {
+        isPublished: true,
+        remindedAt: null,
+        opensAt: { lte: new Date(now.getTime() - 12 * HOUR) },
+        closesAt: { gt: now, lte: new Date(now.getTime() + 24 * HOUR) },
+      },
+      select: { id: true, title: true, closesAt: true },
+    });
+    for (const t of due) {
+      const claimed = await this.prisma.mockTest.updateMany({
+        where: { id: t.id, remindedAt: null },
+        data: { remindedAt: now },
+      });
+      if (!claimed.count) continue;
+      const done = await this.prisma.mockAttempt.findMany({
+        where: { mockTestId: t.id, submittedAt: { not: null } },
+        select: { userId: true },
+      });
+      const skip = new Set(done.map((d) => d.userId));
+      const to = (await this.access.fullAccessStudentIds()).filter((id) => !skip.has(id));
+      const open = this.notify.appButton("Mockni ochish", `mocks/${t.id}`);
+      const text = mockReminderText(t.title, t.closesAt);
+      await Promise.all(to.map((id) => this.notify.toUser(id, text, open)));
     }
   }
 
