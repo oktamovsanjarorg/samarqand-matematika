@@ -1,4 +1,5 @@
 import { BookOpen, Home, User } from "lucide-react";
+import { Suspense } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../store/auth";
 
@@ -16,7 +17,10 @@ export function AppLayout() {
   return (
     <div className="flex h-full flex-col pt-safe-top">
       <main className="flex-1 overflow-y-auto p-4">
-        <Outlet />
+        {/* T-131: lazy sahifa yuklanguncha navigatsiya joyida qoladi */}
+        <Suspense fallback={<div className="skeleton h-64" aria-busy="true" />}>
+          <Outlet />
+        </Suspense>
       </main>
       <nav
         className={`grid ${isParent ? "grid-cols-2" : "grid-cols-3"} border-t border-hint/15 bg-section pb-safe-bottom`}
