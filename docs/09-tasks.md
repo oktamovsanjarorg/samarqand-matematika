@@ -188,3 +188,4 @@
 | T-147 | Admin panelga CSP va X-Frame-Options: faqat o'z fayllari, iframe ichida ochilmaydi (clickjacking); Mini App'ga tegilmaydi (Telegram Web iframe)                                 | ✅    |
 | T-148 | Server diski 85% dan ko'p band bo'lsa kunlik zaxira skripti ustozga ogohlantirish yuboradi                                                                                      | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                             | ✅    |
+| T-150 | Internet uzilsa test javobi yoʻqolmaydi: navbatda qoladi, internet qaytganda oʻzi qayta yuboriladi; saqlanmaguncha topshirilmaydi; tarmoq xatosi oʻzbekcha                      | ✅    |

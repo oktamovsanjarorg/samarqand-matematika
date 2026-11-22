@@ -80,7 +80,7 @@ export function Runner(p: RunnerProps) {
       </section>
       {answers.failed && (
         <p className="text-sm text-danger" role="alert">
-          Javob saqlanmadi. Internetni tekshiring.
+          Javob saqlanmadi. Internet qaytishi bilan oʻzi qayta yuboriladi.
         </p>
       )}
       {confirming ? (
