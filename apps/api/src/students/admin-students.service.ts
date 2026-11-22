@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import type { Prisma } from "@samarqand/db";
-import type { AdminStudentPatch, AdminStudentRow, StudentFilter } from "@samarqand/shared";
+import {
+  EXPIRING_DAYS,
+  type AdminStudentPatch,
+  type AdminStudentRow,
+  type StudentFilter,
+} from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
 import { AuditService } from "../audit/audit.service";
 import { acceptedText, accessModeText } from "../notify/messages";
@@ -36,8 +41,15 @@ const activeUntil = (u: Row) => {
 };
 
 /** Filtr sharti: "unpaid" — pullik rejimda qabul qilingan, lekin hozir faol obunasi yo'q */
-function filterWhere(filter: StudentFilter): Prisma.UserWhereInput {
+export function filterWhere(filter: StudentFilter, now = new Date()): Prisma.UserWhereInput {
   if (filter === "new") return { OR: [{ student: null }, { student: { acceptedAt: null } }] };
+  if (filter === "expiring") {
+    const until = new Date(now.getTime() + EXPIRING_DAYS * 86_400_000);
+    return {
+      student: { acceptedAt: { not: null }, accessMode: "AUTO" },
+      subscriptions: { some: { endsAt: { gt: now, lte: until } }, none: { endsAt: { gt: until } } },
+    };
+  }
   if (filter === "unpaid")
     return {
       student: { acceptedAt: { not: null }, accessMode: "AUTO" },
