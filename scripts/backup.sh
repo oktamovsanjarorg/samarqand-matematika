@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Kunlik zaxira (serverda, cron 03:00 Toshkent):
-#  1. pg_dump (custom format), pg_restore --list bilan butunligi tekshiriladi
+#  1. pg_dump (custom format), pg_restore --list bilan butunligi tekshiriladi.
+#     Yakshanba kunlari (yoki RESTORE_CHECK=always) vaqtinchalik konteynerga to'liq tiklab ko'riladi (T-144)
 #  2. Serverda 14 kunlik nusxa qoladi
 #  3. S3: db/daily/ (90 kun), oyning 1-kuni db/monthly/ (2 yil, Glacier IR). Server roli faqat yoza oladi, o'chira olmaydi
 #  4. To'lov cheklari (samarqand_media volume) S3 media/ ga sinxronlanadi (o'chirmasdan)
@@ -41,6 +42,9 @@ FILE="$ROOT/db-$TS.dump"
 docker exec samarqand-postgres pg_dump -U samarqand -d samarqand -Fc -Z 9 > "$FILE" || fail "pg_dump"
 [[ -s "$FILE" ]] || fail "bo'sh nusxa"
 docker exec -i samarqand-postgres pg_restore --list < "$FILE" > /dev/null || fail "nusxa buzuq (pg_restore --list)"
+if [[ "$(date +%u)" == "7" || "${RESTORE_CHECK:-}" == "always" ]]; then
+  "$APP_DIR/scripts/restore-check.sh" "$FILE" || fail "nusxa tiklanmadi (tiklash sinovi)"
+fi
 
 s3 cp --only-show-errors "/backups/$(basename "$FILE")" "s3://$BUCKET/db/daily/$(basename "$FILE")" || fail "S3 ga yuklab bo'lmadi"
 if [[ "$(date +%d)" == "01" ]]; then
