@@ -171,4 +171,5 @@
 | T-130 | Eʼlon ostida ixtiyoriy "Ilovani ochish" tugmasi (standart yoqilgan)                                                                                                         | ✅    |
 | T-131 | Mini App sahifalari `React.lazy` bilan: asosiy chunk 205 → 112 KB (gzip), KaTeX alohida                                                                                     | ✅    |
 | T-132 | Admin sahifalari `React.lazy` bilan: asosiy chunk 220 → 110 KB (gzip)                                                                                                       | ✅    |
+| T-133 | Bosh sahifada oʻlchov: 30 kunda mavzu testini qayta ishlaganda natija oshgan ulush (oʻquvchilar, xatolar ustida ishlashsiz)                                                 | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                         | ✅    |

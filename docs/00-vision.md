@@ -31,7 +31,7 @@ Platforma uchta muammoni hal qiladi:
 
 - Haftalik testni oyna ichida topshirgan to'liq kirishli o'quvchilar ulushi (admin bosh sahifasi, T-105).
 - Ustozning haftalik tekshiruvga sarflagan vaqti (navbatda qolgan javoblar soni, T-084 hisoboti).
-- Kuchsiz mavzu bo'yicha keyingi urinishda natija o'sishi (Xatolarim, tavsiyalar).
+- Kuchsiz mavzu bo'yicha keyingi urinishda natija o'sishi: 30 kunda qayta ishlangan mavzu testlarining necha foizida natija oshgani (admin bosh sahifasi, T-133).
 - Ota-onalarning ulanganlik ulushi (BR-A04 sharti; admin bosh sahifasi, T-105).
 
 ## Hozircha qilinmaydi

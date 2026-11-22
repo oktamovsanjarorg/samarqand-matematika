@@ -20,6 +20,8 @@ export interface AdminDashboard {
     lastWeekly: { testId: string; title: string; submitted: number; eligible: number } | null;
     /** Kamida bitta tasdiqlangan ota-onasi bor o'quvchilar */
     parentsLinked: number;
+    /** Oxirgi 30 kunda mavzu testini qayta ishlash: nechtasida natija oshdi (T-133, 00-vision) */
+    retries: { count: number; improved: number };
     /** Obunasi EXPIRING_DAYS kun ichida tugaydigan, uzaytirmagan o'quvchilar (T-127) */
     expiringSoon: number;
   };
