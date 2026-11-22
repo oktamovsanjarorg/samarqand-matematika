@@ -10,7 +10,7 @@ Telegram ──► bot (grammY) ──internal API──┐
 Admin panel (React) ──HTTPS /api──────────┘     │ rejalashtiruvchilar (setInterval, bazada egallash)
                                           │
                                           ├──► Telegram Bot API (xabarlar, NotifyService)
-                                          ├──► AI provayder (Claude, `AI_PROVIDER=off` bo'lsa yo'q)
+                                          ├──► AI provayder (Claude yoki DeepSeek, `AI_PROVIDER=off` bo'lsa yo'q)
                                           └──► MEDIA_DIR (yechim rasmlari, cheklar)
 ```
 

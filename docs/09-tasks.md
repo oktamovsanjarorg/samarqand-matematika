@@ -197,3 +197,4 @@
 | T-156 | Admin AI agenti (FR-Y05, BR-T05, ADR-0006): ustoz oddiy soʻz bilan yozadi, agent panel amallarini oʻz huquqi bilan bajaradi, oʻzgartirish faqat tasdiqdan keyin                                        | ✅    |
 | T-157 | Excel fayldan haftalik test: savol tanlagichda «Excel fayldan» rejimi, savollar mavzuga qoralama boʻlib saqlanib darhol testga qoʻshiladi                                                              | ✅    |
 | T-158 | Mini App'dan to'g'ridan-to'g'ri admin panel: xodim initData bilan kiradi (1 soatgacha), o'quvchi ko'rinishi havolasi                                                                                   | ✅    |
+| T-159 | DeepSeek provayderi (`AI_PROVIDER=deepseek`): AI yordamchi va admin agenti; yechim rasmi ustoz navbatiga (DeepSeek rasm o'qimaydi)                                                                     | ✅    |

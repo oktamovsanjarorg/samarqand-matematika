@@ -15,6 +15,7 @@ Ustoz panelda ko'p ishni qo'lda qiladi: o'quvchini topish va qabul qilish, mavzu
 - **Suhbat serverda saqlanmaydi:** kliyent uni har so'rovda qaytaradi. Asbob natijasidan telefon raqamlari olib tashlanadi.
 - **AI baho qo'ymaydi.** Baho qo'yadigan asbob yo'q, tekshiruv navbati faqat ko'rsatiladi.
 - Model `AI_MODEL` (standart `claude-opus-5-5`). `effort: medium` ishlatiladi. Rad etilsa server zaxira modelda urinadi (`fallbacks: "default"`). Tizim promptining o'zgarmas qismi keshlanadi.
+- `AI_PROVIDER=deepseek` bo'lsa agent DeepSeek'da ishlaydi (T-159): asboblar OpenAI "function" formatiga o'giriladi, bir qadamda bitta asbob.
 - Har xodimga kunlik chegara: `AGENT_DAILY_LIMIT` (standart 200 ta model chaqiruvi).
 
 ## Oqibatlar
