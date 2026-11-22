@@ -69,3 +69,15 @@ export interface AdminPayment extends MyPayment {
   /** O'quvchining hozirgi obunasi tugash vaqti */
   activeUntil: string | null;
 }
+
+/** Oylik tushum (T-109): "YYYY-MM", Toshkent vaqti bo'yicha tasdiqlangan to'lovlar */
+export const incomeMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Oy YYYY-MM koʻrinishida");
+
+export interface IncomeMonth {
+  month: string;
+  count: number;
+  sumUzs: number;
+  byPlan: { name: string; count: number; sumUzs: number }[];
+  /** Excel uchun: tasdiqlangan to'lovlar, eski birinchi */
+  rows: { student: string; plan: string; amountUzs: number; approvedAt: string }[];
+}

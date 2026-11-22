@@ -62,7 +62,7 @@
 | BR-B02 | Chek faqat JPG, PNG yoki WEBP, 5 MB gacha; turi baytlardan aniqlanadi. Bir o'quvchida bir vaqtda bitta kutilayotgan chek. Tekshirilguncha o'quvchi bekor qila oladi                                                                                                       | ✅    |
 | BR-B03 | Tasdiqlangan chek obuna ochadi: faol obuna bo'lsa uning oxiridan uzayadi, kun yo'qolmaydi. Faol obuna BR-A04 dagi "to'lov qilingan" shartidir                                                                                                                             | ✅    |
 | BR-B04 | Rad etish sababi majburiy va o'quvchiga bot orqali boradi. Bir chek ikki marta tekshirilmaydi (409)                                                                                                                                                                       | ✅    |
-| BR-B05 | Cheklarni ustoz va yordamchi tekshiradi. Tarif va karta sozlamasi faqat ustozda                                                                                                                                                                                           | ✅    |
+| BR-B05 | Cheklarni ustoz va yordamchi tekshiradi. Tarif, karta sozlamasi va oylik tushum (T-109) faqat ustozda                                                                                                                                                                     | ✅    |
 | BR-B06 | Obuna tugashiga 3 kun qolganda o'quvchiga va tasdiqlangan ota-onaga, tugaganda o'quvchiga bir martadan xabar boradi. Faqat eng oxirgi obuna hisoblanadi (uzaytirilgan bo'lsa xabar yo'q); tekshirilayotgan chek bo'lsa yoki rejim FREE/CLOSED bo'lsa yuborilmaydi (T-090) | ✅    |
 
 ## Haftalik test (W)

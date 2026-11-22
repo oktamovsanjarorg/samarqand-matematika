@@ -64,6 +64,7 @@
 | ------ | --------------------------------------------------------------- | ----------- | ----- | ----- |
 | FR-B01 | Qo'lda to'lov: tarif, karta, chek rasmi, tasdiq yoki rad, obuna | BR-B01..B05 | T-025 | ✅    |
 | FR-B03 | Obuna tugashi haqida eslatma: o'quvchi va ota-onaga             | BR-B06      | T-090 | ✅    |
+| FR-B04 | Oylik tushum: tasdiqlangan to'lovlar, tariflar bo'yicha, Excel  | BR-B05      | T-109 | ✅    |
 | FR-B02 | Click va Payme orqali to'lov                                    |             |       | ⬜    |
 
 ## Ustoz uchun (FR-U)

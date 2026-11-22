@@ -2,6 +2,7 @@ import type { NestFastifyApplication } from "@nestjs/platform-fastify";
 import { PrismaClient } from "@samarqand/db";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp, loginAs, sentMessages } from "./helpers";
+import type { IncomeMonth } from "@samarqand/shared";
 
 const prisma = new PrismaClient();
 let app: NestFastifyApplication;
@@ -152,5 +153,36 @@ describe("To'lov va obuna", () => {
         .json()
         .some((x: { id: string }) => x.id === p.id),
     ).toBe(true);
+  });
+
+  it("T-109, BR-B05: oylik tushum faqat ustozga; tasdiqlangan to'lov summaga va ro'yxatga qo'shiladi", async () => {
+    const month = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tashkent" })
+      .format(new Date())
+      .slice(0, 7);
+    const income = async () =>
+      (await call("GET", `/admin/income?month=${month}`, teacher)).json() as IncomeMonth;
+    const before = await income();
+    const s = await student();
+    await prisma.user.update({ where: { id: s.id }, data: { firstName: "Tushum", lastName: "Bobur" } });
+    const p = (await upload(s.headers, await plan(), PNG)).json() as { id: string };
+    // Kutilayotgan chek tushumga kirmaydi
+    expect((await income()).sumUzs).toBe(before.sumUzs);
+    await call("POST", `/admin/payments/${p.id}/approve`, assistant);
+
+    const after = await income();
+    expect(after.count).toBe(before.count + 1);
+    expect(after.sumUzs).toBe(before.sumUzs + 150_000);
+    expect(after.rows.at(-1)).toMatchObject({ student: "Tushum Bobur", plan: "Oylik", amountUzs: 150_000 });
+    expect(after.byPlan.find((x) => x.name === "Oylik")?.sumUzs).toBeGreaterThanOrEqual(150_000);
+    // Boshqa oy
+    expect((await call("GET", "/admin/income?month=2001-01", teacher)).json()).toMatchObject({
+      count: 0,
+      sumUzs: 0,
+    });
+
+    expect((await call("GET", `/admin/income?month=${month}`, assistant)).statusCode).toBe(403);
+    expect((await call("GET", `/admin/income?month=${month}`, s.headers)).statusCode).toBe(403);
+    expect((await call("GET", "/admin/income?month=2026-13", teacher)).statusCode).toBe(400);
+    expect((await call("GET", `/admin/income?month=${month}`, {})).statusCode).toBe(401);
   });
 });

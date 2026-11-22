@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpCode, Param, Patch, Post, Put, Query, Res } from "@nestjs/common";
 import {
   cardInput,
+  incomeMonth,
   PAYMENT_STATUSES,
   planInput,
   rejectPaymentBody,
@@ -10,6 +11,7 @@ import type { FastifyReply } from "fastify";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { AdminPaymentsService } from "./admin-payments.service";
+import { IncomeService } from "./income.service";
 import { PlansService } from "./plans.service";
 
 const asStatus = (s?: string): PaymentStatus =>
@@ -21,12 +23,20 @@ export class AdminBillingController {
   constructor(
     private readonly payments: AdminPaymentsService,
     private readonly plans: PlansService,
+    private readonly income: IncomeService,
   ) {}
 
   @Get("payments")
   @Roles("TEACHER", "ASSISTANT")
   list(@Query("status") status?: string) {
     return this.payments.list(asStatus(status));
+  }
+
+  /** Oylik tushum faqat ustozga (BR-B05: pul va tarif ustozda) */
+  @Get("income")
+  @Roles("TEACHER")
+  incomeOf(@Query("month") month: unknown) {
+    return this.income.month(parseBody(incomeMonth, month));
   }
 
   @Get("payments/:id/receipt")
