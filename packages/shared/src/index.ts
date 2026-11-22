@@ -32,3 +32,4 @@ export * from "./question-csv";
 export * from "./http-errors";
 export * from "./agent";
 export * from "./advisor";
+export * from "./month-stats";
