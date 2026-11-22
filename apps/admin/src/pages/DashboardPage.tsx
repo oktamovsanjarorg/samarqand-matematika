@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AttentionList } from "../components/dashboard/AttentionList";
+import { InviteCard } from "../components/dashboard/InviteCard";
 import { SetupList } from "../components/dashboard/SetupList";
 import { ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { useDashboard } from "../lib/dashboard";
@@ -188,6 +189,7 @@ export function DashboardPage() {
               <Metrics s={d.data.stats} />
             </div>
           </section>
+          <InviteCard />
         </>
       )}
     </div>

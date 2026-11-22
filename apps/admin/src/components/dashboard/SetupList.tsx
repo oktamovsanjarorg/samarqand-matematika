@@ -22,7 +22,7 @@ const STEPS: Step[] = [
   {
     key: "student",
     title: "Birinchi oʻquvchini qabul qiling",
-    hint: "Oʻquvchi botda /start bosadi, siz shu yerda qabul qilasiz",
+    hint: "Pastdagi taklif havolasini yuboring: oʻquvchi botda /start bosadi, siz qabul qilasiz",
     to: "/students",
   },
 ];

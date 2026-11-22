@@ -68,10 +68,29 @@ describe("botApiTransport", () => {
   });
 });
 
+describe("bot nomi (T-143)", () => {
+  it("getMe bir marta so'raladi; xato yoki noto'g'ri javobda null va keyin qayta so'raladi", async () => {
+    const urls: string[] = [];
+    let reply = new Response("", { status: 502 });
+    const fetchFn = (async (url: string) => {
+      urls.push(url);
+      return reply;
+    }) as unknown as typeof fetch;
+    const t = botApiTransport("1:T", fetchFn);
+    expect(await t.botUsername()).toBeNull();
+    reply = new Response(JSON.stringify({ ok: true, result: { username: "bad name<" } }));
+    expect(await t.botUsername()).toBeNull();
+    reply = new Response(JSON.stringify({ ok: true, result: { username: "samarqand_bot" } }));
+    expect(await t.botUsername()).toBe("samarqand_bot");
+    expect(await rateLimited(t, 10).botUsername()).toBe("samarqand_bot");
+    expect(urls).toEqual(Array(3).fill("https://api.telegram.org/bot1:T/getMe"));
+  });
+});
+
 describe("rateLimited (T-115)", () => {
   it("ommaviy yuborishda xabarlar orasida oraliq saqlanadi", async () => {
     const sent: bigint[] = [];
-    const inner = { send: async (id: bigint) => (sent.push(id), true) };
+    const inner = { send: async (id: bigint) => (sent.push(id), true), botUsername: async () => null };
     const waits: number[] = [];
     const t = rateLimited(inner, 10, { now: () => 0, wait: async (ms) => void waits.push(ms) });
     await Promise.all([1n, 2n, 3n].map((id) => t.send(id, "x")));

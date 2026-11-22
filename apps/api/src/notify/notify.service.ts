@@ -29,6 +29,12 @@ export class NotifyService {
     return base ? { text, url: `${base}/${path.replace(/^\//, "")}`, webApp: true } : undefined;
   }
 
+  /** Botga taklif havolasi (T-143): o'quvchi bosib /start qiladi. Bot nomi aniqlanmasa null */
+  async botLink(): Promise<string | null> {
+    const name = await this.transport.botUsername();
+    return name ? `https://t.me/${name}` : null;
+  }
+
   /** Barcha faol ustoz va yordamchilarga */
   async toStaff(html: string, button?: LinkButton): Promise<void> {
     const staff = await this.prisma.user.findMany({

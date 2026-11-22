@@ -14,11 +14,16 @@ const markup = (b: LinkButton) => ({
 /** Telegram'ga xabar yuborish. Testlarda soxta transport bilan almashtiriladi */
 export interface TelegramTransport {
   send(chatId: bigint, html: string, button?: LinkButton): Promise<boolean>;
+  /** Botning @username'i (taklif havolasi uchun, T-143); aniqlanmasa null */
+  botUsername(): Promise<string | null>;
 }
 export const TELEGRAM_TRANSPORT = Symbol("TELEGRAM_TRANSPORT");
 
 /** Hech narsa yubormaydi (NOTIFY_TRANSPORT=off, T-092). Xabar mazmuni logga yozilmaydi */
-export const silentTransport: TelegramTransport = { send: () => Promise.resolve(false) };
+export const silentTransport: TelegramTransport = {
+  send: () => Promise.resolve(false),
+  botUsername: () => Promise.resolve(null),
+};
 
 type Wait = (ms: number) => Promise<void>;
 const sleep: Wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -31,6 +36,25 @@ async function retryAfterMs(res: Response): Promise<number> {
 }
 
 const MAX_RETRIES = 2;
+
+/** getMe bir marta so'raladi va eslab qolinadi; xato bo'lsa null, keyingi chaqiruvda qayta so'raladi */
+function cachedUsername(botToken: string, fetchFn: typeof fetch): () => Promise<string | null> {
+  let known: string | null = null;
+  return async () => {
+    if (known) return known;
+    try {
+      const res = await fetchFn(`https://api.telegram.org/bot${botToken}/getMe`, {
+        signal: AbortSignal.timeout(10_000),
+      });
+      const body = (await res.json().catch(() => null)) as { result?: { username?: unknown } } | null;
+      const name = body?.result?.username;
+      known = res.ok && typeof name === "string" && /^\w{5,32}$/.test(name) ? name : null;
+    } catch {
+      known = null;
+    }
+    return known;
+  };
+}
 
 /**
  * Bot API orqali yuboradi. Token URL ichida: xato logiga URL yozilmaydi, faqat holat kodi.
@@ -56,6 +80,7 @@ export function botApiTransport(
       signal: AbortSignal.timeout(10_000),
     });
   return {
+    botUsername: cachedUsername(botToken, fetchFn),
     async send(chatId, html, button) {
       try {
         for (let attempt = 0; ; attempt++) {
@@ -95,5 +120,6 @@ export function rateLimited(
       if (at > now) await clock.wait(at - now);
       return inner.send(chatId, html, button);
     },
+    botUsername: () => inner.botUsername(),
   };
 }
