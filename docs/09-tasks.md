@@ -180,4 +180,5 @@
 | T-139 | Ertalabki xulosa: Toshkent 08:00 dan keyin ustoz va yordamchiga kutayotgan ishlar soni (bot, kuniga bir marta, ish bo'lmasa yo'q)                                               | ✅    |
 | T-140 | Admin bosh sahifasida "Ishni boshlash": kurs, dars, savol, tarif va karta, birinchi oʻquvchi; faktdan hisoblanadi, bajarilgach yoʻqoladi                                        | ✅    |
 | T-141 | API va bot xato logida shaxsiy maʼlumot yoʻq: API'da faqat xato nomi, kodi va stack (Prisma xatosidagi ism, telefon yozilmaydi), botda Telegram xatosining yuborilgan xabarisiz | ✅    |
+| T-142 | A11y: maʼlumotli admin sahifalari ham axe bilan (oʻquvchi kartasi, guruh, savollar, savol va dars tahriri, haftalik va tekshiruv)                                               | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                             | ✅    |
