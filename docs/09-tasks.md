@@ -148,3 +148,4 @@
 | T-107 | Prisma zaxira filtri: takroriy yozuv (P2002) 409, poygada yo'qolgan yozuv (P2025) 404; ikki xodim bir vaqtda tiklasa yoki tahrirlasa 500 emas                               | ✅    |
 | T-108 | Guruhning oylik davomat jadvali (o'quvchi × kun, jami sonlar, guruhdan chiqqanlar ham) va Excel'ga (CSV) yuklab olish                                                       | ✅    |
 | T-109 | To'lovlar sahifasida oylik tushum (faqat ustozga): tasdiqlangan cheklar soni va summasi, tariflar bo'yicha, Excel'ga yuklab olish                                           | ✅    |
+| T-110 | O'quvchilar ro'yxatida "To'lamagan" filtri (qabul qilingan, AUTO, faol obunasiz), qatorda va Excel'da obuna muddati                                                         | ✅    |

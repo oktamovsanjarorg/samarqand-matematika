@@ -3,6 +3,10 @@ import { z } from "zod";
 import { telegramProfileSchema } from "./telegram-profile";
 
 export const STUDENT_ACCESS = ["AUTO", "FREE", "CLOSED"] as const;
+
+/** O'quvchilar ro'yxati filtri: yangi, hammasi, to'lamagan (qabul qilingan, AUTO, faol obunasiz; T-110) */
+export const STUDENT_FILTERS = ["new", "all", "unpaid"] as const;
+export type StudentFilter = (typeof STUDENT_FILTERS)[number];
 export type StudentAccess = (typeof STUDENT_ACCESS)[number];
 
 /** Ism-familiya: kamida ikki so'z, faqat harflar, apostrof va chiziqcha (BR-S01) */
@@ -57,6 +61,8 @@ export interface AdminStudentRow {
   acceptedAt: string | null;
   /** Offline guruh nomi (T-054) */
   groupName: string | null;
+  /** Faol obuna tugash vaqti; obuna yo'q yoki tugagan bo'lsa null (T-110) */
+  paidUntil: string | null;
   createdAt: string;
   lastSeenAt: string | null;
 }

@@ -1,4 +1,4 @@
-import type { AdminStudentRow } from "@samarqand/shared";
+import type { AdminStudentRow, StudentFilter } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useDeferredValue, useState } from "react";
@@ -8,7 +8,12 @@ import { EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/u
 import { api } from "../lib/api";
 import { exportStudents } from "../lib/students-export";
 
-type Filter = "new" | "all";
+const TABS: Record<StudentFilter, string> = { new: "Yangilar", unpaid: "Toʻlamagan", all: "Hammasi" };
+const EMPTY: Record<StudentFilter, string> = {
+  new: "Yangi oʻquvchi yoʻq",
+  unpaid: "Hamma toʻlagan",
+  all: "Oʻquvchi topilmadi",
+};
 
 function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
@@ -25,7 +30,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
 }
 
 export function StudentsPage() {
-  const [filter, setFilter] = useState<Filter>("new");
+  const [filter, setFilter] = useState<StudentFilter>("new");
   const [q, setQ] = useState("");
   const query = useDeferredValue(q.trim());
   const list = useQuery({
@@ -38,7 +43,7 @@ export function StudentsPage() {
     <div className="space-y-4">
       <PageTitle title="Oʻquvchilar">
         <div className="flex rounded-xl bg-section p-1" role="tablist">
-          {(["new", "all"] as const).map((f) => (
+          {(["new", "unpaid", "all"] as const).map((f) => (
             <button
               key={f}
               type="button"
@@ -47,20 +52,20 @@ export function StudentsPage() {
               onClick={() => setFilter(f)}
               className={`min-h-10 rounded-lg px-3 text-sm font-semibold ${filter === f ? "bg-brand text-white" : "text-hint"}`}
             >
-              {f === "new" ? "Yangilar" : "Hammasi"}
+              {TABS[f]}
             </button>
           ))}
         </div>
       </PageTitle>
       <div className="flex items-center gap-2">
         <SearchBox value={q} onChange={setQ} />
-        {!!list.data?.length && <ExportButton onClick={() => exportStudents(list.data, filter === "all")} />}
+        {!!list.data?.length && <ExportButton onClick={() => exportStudents(list.data, filter)} />}
       </div>
       {list.isPending && <SkeletonList />}
       {list.isError && <ErrorState message={list.error.message} onRetry={() => list.refetch()} />}
       {list.data?.length === 0 && (
         <EmptyState
-          title={filter === "new" ? "Yangi oʻquvchi yoʻq" : "Oʻquvchi topilmadi"}
+          title={EMPTY[filter]}
           hint="Oʻquvchilar botdan ilovani ochganda shu yerda paydo boʻladi"
         />
       )}

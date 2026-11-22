@@ -1,9 +1,8 @@
 import { ATTENDANCE_LABELS, type AdminStudentCard, type AttendanceStatus } from "@samarqand/shared";
 import { AlertTriangle, CheckCircle2, Circle } from "lucide-react";
 import type { ReactNode } from "react";
-import { formatDate } from "../../lib/labels";
+import { formatDate, paidLabel } from "../../lib/labels";
 import { fmtDay } from "../../lib/offline";
-import { toLocalInput } from "../../lib/weekly";
 
 function Section({ title, children, testId }: { title: string; children: ReactNode; testId?: string }) {
   return (
@@ -23,9 +22,7 @@ export function StatusSection({ c }: { c: AdminStudentCard }) {
     { ok: c.access.parentApproved, label: "Ota-ona tasdiqladi" },
     {
       ok: c.access.paid,
-      label: c.paidUntil
-        ? `Obuna ${fmtDay(toLocalInput(c.paidUntil).slice(0, 10))} gacha`
-        : "Obuna toʻlanmagan",
+      label: paidLabel(c.paidUntil),
     },
   ];
   return (
