@@ -55,5 +55,6 @@
   - `db/monthly/`: 2 yil saqlanadi, 30 kundan keyin Glacier IR'ga o'tkaziladi.
 - IAM: `samarqand-backup-role` (instance profile `samarqand-backup-profile`) faqat `db/*` ga yozadi va o'qiydi. O'chirish huquqi yo'q, shuning uchun server buzilsa ham zaxirani o'chirib bo'lmaydi.
 - Xato bo'lsa, ustozlarga bot orqali xabar boradi.
+- Disk (T-148): `backup.sh` har kuni `/` diskini tekshiradi. 85% dan ko'p band bo'lsa (`DISK_WARN_PCT`), ustozga "Server diski N% to'ldi" xabari boradi. Joy tugasa Postgres yoza olmaydi va zaxira ham olinmaydi. Deploy eski image va build keshini o'zi tozalaydi.
 - Eskirgan zaxira (T-145): muvaffaqiyatli zaxiradan keyin `backup.sh` AppSetting `backup:last` ning `updatedAt` qiymatini yangilaydi. 36 soatdan eskirsa (cron ishlamay qolgan bo'lsa, `backup.sh` xato xabarini ham yubora olmaydi), admin bosh sahifasida ogohlantirish chiqadi va ertalabki xulosaning birinchi qatoriga yoziladi. Yozuv umuman bo'lmasa (dev yoki birinchi zaxiragacha) ogohlantirish yo'q.
 - Tiklash: `scripts/restore.sh <fayl | s3://...>` (tasdiq so'raydi).
