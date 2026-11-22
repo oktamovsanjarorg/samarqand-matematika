@@ -38,8 +38,9 @@ export class NotifyService {
     await Promise.all(staff.map((s) => this.transport.send(s.telegramId, html, button)));
   }
 
-  async toUser(userId: string, html: string, button?: LinkButton): Promise<void> {
+  /** true: Telegram qabul qildi (bot bloklangan yoki foydalanuvchi yo'q bo'lsa false) */
+  async toUser(userId: string, html: string, button?: LinkButton): Promise<boolean> {
     const u = await this.prisma.user.findUnique({ where: { id: userId }, select: { telegramId: true } });
-    if (u) await this.transport.send(u.telegramId, html, button);
+    return u ? this.transport.send(u.telegramId, html, button) : false;
   }
 }

@@ -8,6 +8,7 @@ export * from "./profile";
 export * from "./parent";
 export * from "./stats";
 export * from "./billing";
+export * from "./broadcast";
 export * from "./weekly";
 export * from "./ai";
 export * from "./exam";

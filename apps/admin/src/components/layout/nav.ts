@@ -8,6 +8,7 @@ import {
   CreditCard,
   FileSpreadsheet,
   History,
+  Megaphone,
   Settings,
   Trash2,
   UserRound,
@@ -64,6 +65,8 @@ export function navGroups(role: RoleName): NavGroup[] {
       title: "Sozlash",
       items: [
         { to: "/settings", label: "Sozlamalar", Icon: Settings },
+        // T-116: hamma o'quvchi va ota-onaga xabar faqat ustozdan
+        { to: "/broadcast", label: "Eʼlon yuborish", Icon: Megaphone },
         // T-075: yordamchilar amallarini ustoz ko'radi
         { to: "/audit", label: "Jurnal", Icon: History },
       ],

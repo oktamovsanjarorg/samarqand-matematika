@@ -8,6 +8,7 @@ const PAGES = [
   "students",
   "parents",
   "payments",
+  "broadcast",
   "weekly",
   "weekly/new",
   "mocks",
