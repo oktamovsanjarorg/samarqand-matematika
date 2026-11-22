@@ -2,7 +2,7 @@ import { ATTENDANCE_STATUSES, type AttendanceMonth, type AttendanceStatus } from
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { api } from "../../lib/api";
-import { downloadCsv } from "../../lib/download";
+import { downloadExcel } from "../../lib/download";
 import { ATTENDANCE_LABELS, tashkentToday } from "../../lib/groups";
 import { ExportButton } from "../ExportButton";
 
@@ -18,7 +18,7 @@ const day = (date: string) => date.slice(8);
 const human = (date: string) => date.split("-").reverse().slice(0, 2).join(".");
 
 function exportCsv(groupName: string, m: AttendanceMonth) {
-  downloadCsv(`${groupName} davomat ${m.month}`, [
+  downloadExcel(`${groupName} davomat ${m.month}`, [
     ["Oʻquvchi", ...m.dates.map(human), ...ATTENDANCE_STATUSES.map((s) => ATTENDANCE_LABELS[s])],
     ...m.rows.map((r) => [
       r.left ? `${r.name} (guruhdan chiqqan)` : r.name,

@@ -43,7 +43,7 @@ test.describe("Admin: o'quvchilar", () => {
     // T-078: qidiruv natijasi Excel'ga, telefon matn ko'rinishida
     await expect(page.getByTestId("student")).toHaveCount(1);
     const csv = await downloadText(page, page.getByRole("button", { name: "Excel'ga yuklab olish" }));
-    expect(csv.name).toBe("Oʻquvchilar.csv");
+    expect(csv.name).toBe("Oʻquvchilar.xlsx");
     expect(csv.text).toContain("Ism;Telegram;Telefon;Ota-ona telefoni;Guruh;Kirish;Obuna tugashi");
     expect(csv.text).toContain(`${name};`);
     expect(csv.text).toContain(";998 90 123 45 67;");

@@ -129,18 +129,18 @@ test("T-100, T-103, BR-Q04: Excel (CSV) dan savollar import: namuna, xatolar qat
   await loginAdmin(page, request, `content/topics/${topic.id}/questions`);
   await page.getByText("Excel'dan import").click();
   const sample = await downloadText(page, page.getByRole("button", { name: "Namuna fayl" }));
-  expect(sample.name).toBe("Savollar namunasi.csv");
+  expect(sample.name).toBe("Savollar namunasi.xlsx");
   expect(sample.text).toContain("Tur;Savol;A;B;C;D;Javob;Yechim;Qiyinlik;Teglar");
 
   const file = (text: string) => ({ name: "savollar.csv", mimeType: "text/csv", buffer: Buffer.from(text) });
   const head = "Tur;Savol;A;B;Javob";
-  await page.getByLabel("CSV fayl").setInputFiles(file(`${head}\nbitta;$1+1$;1;2;C\n`));
+  await page.getByLabel("Excel yoki CSV fayl").setInputFiles(file(`${head}\nbitta;$1+1$;1;2;C\n`));
   await page.getByRole("button", { name: "Tekshirish" }).click();
   await expect(page.getByRole("alert")).toContainText("2-qator: Javob: Javob variantlar ichida yoʻq");
   await expect(page.getByRole("button", { name: "Qoʻshish" })).toBeDisabled();
 
   await page
-    .getByLabel("CSV fayl")
+    .getByLabel("Excel yoki CSV fayl")
     .setInputFiles(
       file(`${head}\nbitta;$\\frac12$ ga teng?;0,5;2;A\n;$\\frac34$ ni oʻnli kasrda yozing;;;0,75\n`),
     );
@@ -158,4 +158,44 @@ test("T-100, T-103, BR-Q04: Excel (CSV) dan savollar import: namuna, xatolar qat
   await page.getByRole("button", { name: "2 ta qoralamani nashr qilish" }).click();
   await expect(page.getByText("Qoralama", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: /qoralamani nashr qilish/ })).toBeHidden();
+});
+
+test("T-154: haqiqiy Excel (.xlsx) fayldan import: 3/4 matn, manfiy va oʻnli son, boʻsh qator", async ({
+  page,
+  request,
+}) => {
+  const admin = await adminHeaders(request);
+  const course = await apiPost<{ id: string }>(request, "/admin/courses", admin, {
+    title: `${E2E_PREFIX}Xlsx ${Date.now()}`,
+  });
+  const topic = await apiPost<{ id: string }>(request, `/admin/courses/${course.id}/topics`, admin, {
+    title: "Kasrlar",
+  });
+  await loginAdmin(page, request, `content/topics/${topic.id}/questions`);
+  await page.getByText("Excel'dan import").click();
+  // openpyxl bilan yasalgan fayl (Excel kabi sharedStrings, uslublar): o'z yozuvchimizdan mustaqil
+  await page.getByLabel("Excel yoki CSV fayl").setInputFiles("e2e/fixtures/questions-openpyxl.xlsx");
+  await page.getByRole("button", { name: "Tekshirish" }).click();
+  await expect(page.getByTestId("import-preview")).toContainText("4 ta savol tayyor");
+  await expect(page.getByTestId("import-preview")).toContainText("6-qator");
+  await page.screenshot({ path: "e2e/.results/admin-question-import-xlsx.png", fullPage: true });
+  await page.getByRole("button", { name: "4 ta savolni qoʻshish" }).click();
+  await expect(page.getByRole("status")).toHaveText("4 ta savol qoralama sifatida qoʻshildi");
+
+  const list = (await (
+    await request.get(`http://127.0.0.1:4300/api/admin/topics/${topic.id}/questions`, { headers: admin })
+  ).json()) as { id: string }[];
+  const answers = await Promise.all(
+    list.map(async (q) => {
+      const res = await request.get(`http://127.0.0.1:4300/api/admin/questions/${q.id}`, { headers: admin });
+      return ((await res.json()) as { answer: unknown }).answer;
+    }),
+  );
+  expect(answers).toEqual([{ optionId: "a" }, { value: "3/4" }, { value: "-2" }, { value: "0,75" }]);
+
+  // Buzilgan fayl: tushunarli xato, yuborilmaydi
+  await page
+    .getByLabel("Excel yoki CSV fayl")
+    .setInputFiles({ name: "buzuq.xlsx", mimeType: "application/octet-stream", buffer: Buffer.from("emas") });
+  await expect(page.getByRole("alert")).toContainText("Fayl Excel (.xlsx) emas yoki buzilgan");
 });

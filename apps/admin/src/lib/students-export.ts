@@ -1,5 +1,5 @@
 import type { AdminStudentRow, StudentFilter } from "@samarqand/shared";
-import { csvPhone, csvTime, downloadCsv } from "./download";
+import { csvPhone, csvTime, downloadExcel } from "./download";
 import { ACCESS_LABELS } from "./labels";
 
 const FILE: Record<StudentFilter, string> = {
@@ -11,7 +11,7 @@ const FILE: Record<StudentFilter, string> = {
 
 /** O'quvchilar ro'yxati Excel'ga (T-078): ekrandagi filtr va qidiruv bo'yicha */
 export function exportStudents(rows: AdminStudentRow[], filter: StudentFilter) {
-  downloadCsv(FILE[filter], [
+  downloadExcel(FILE[filter], [
     [
       "Ism",
       "Telegram",

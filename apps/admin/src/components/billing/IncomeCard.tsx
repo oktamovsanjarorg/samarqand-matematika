@@ -2,12 +2,12 @@ import { formatSum, type IncomeMonth } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { api } from "../../lib/api";
-import { csvTime, downloadCsv } from "../../lib/download";
+import { csvTime, downloadExcel } from "../../lib/download";
 import { tashkentToday } from "../../lib/groups";
 import { ExportButton } from "../ExportButton";
 
 const exportCsv = (m: IncomeMonth) =>
-  downloadCsv(`Tushum ${m.month}`, [
+  downloadExcel(`Tushum ${m.month}`, [
     ["Tasdiqlangan", "Oʻquvchi", "Tarif", "Summa, soʻm"],
     ...m.rows.map((r) => [csvTime(r.approvedAt), r.student, r.plan, r.amountUzs]),
     [null, null, "Jami", m.sumUzs],

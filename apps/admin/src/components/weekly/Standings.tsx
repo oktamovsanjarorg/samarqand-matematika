@@ -2,7 +2,7 @@ import type { WeeklyStanding } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
-import { csvTime, downloadCsv } from "../../lib/download";
+import { csvTime, downloadExcel } from "../../lib/download";
 import { formatDate } from "../../lib/labels";
 import { ExportButton } from "../ExportButton";
 
@@ -13,7 +13,7 @@ export function Standings({ id, total, title }: { id: string; total: number; tit
     queryFn: () => api.get<WeeklyStanding[]>(`/admin/weekly/${id}/standings`),
   });
   const exportCsv = () =>
-    downloadCsv(title, [
+    downloadExcel(title, [
       ["#", "Oʻquvchi", "Topshirgan", "Toʻgʻri javob", "Ball", "Savollar"],
       ...(rows.data ?? []).map((r, i) => [
         i + 1,

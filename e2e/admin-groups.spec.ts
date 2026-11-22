@@ -83,5 +83,5 @@ test("T-055, T-108, BR-G02: ustoz guruh davomatini belgilaydi va saqlaydi", asyn
   const download = page.waitForEvent("download");
   await month.getByRole("button", { name: "Excel'ga yuklab olish" }).click();
   const file = await download;
-  expect(file.suggestedFilename()).toMatch(/davomat \d{4}-\d{2}\.csv$/);
+  expect(file.suggestedFilename()).toMatch(/davomat \d{4}-\d{2}\.xlsx$/);
 });
