@@ -5,7 +5,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { ErrorState, Splash } from "./components/states";
 import { api, login } from "./lib/api";
-import { adminLoginUrl, studentView } from "./lib/staff";
+import { adminLoginUrl } from "./lib/staff";
 import { getInitData } from "./lib/telegram";
 import { HomePage } from "./pages/HomePage";
 import { OnboardingPage } from "./pages/OnboardingPage";
@@ -48,8 +48,8 @@ export function App() {
 
 function TelegramApp() {
   const session = useQuery({ queryKey: ["session"], queryFn: login, staleTime: Infinity, retry: false });
-  // T-158: xodim Mini App'ni ochsa admin panelga o'tadi
-  const toAdmin = !!session.data && STAFF_ROLES.includes(session.data.role) && !studentView();
+  // T-158, T-168: xodim Mini App'ni ochsa har doim admin panelga o'tadi
+  const toAdmin = !!session.data && STAFF_ROLES.includes(session.data.role);
   useEffect(() => {
     if (toAdmin) window.location.replace(adminLoginUrl(getInitData()));
   }, [toAdmin]);

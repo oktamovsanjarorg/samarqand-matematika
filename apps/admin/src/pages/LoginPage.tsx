@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminApi } from "../lib/api";
-import { loadSession, markFromMiniApp, saveSession } from "../lib/session";
+import { loadSession, saveSession } from "../lib/session";
 import { CenteredCard } from "./CenteredCard";
 
 /**
@@ -26,7 +26,6 @@ export function LoginPage({ onLogin }: { onLogin: () => void }) {
       setError("Havola notoʻgʻri. Botga /admin deb yozing.");
       return;
     }
-    if (initData) markFromMiniApp();
     (initData ? adminApi.fromTelegram(initData) : adminApi.exchangeLink(token ?? ""))
       .then((auth) => {
         saveSession(auth.token, auth.user);
