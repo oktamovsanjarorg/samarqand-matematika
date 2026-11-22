@@ -34,10 +34,10 @@ export function usePhotos(attempt: WeeklyOpen) {
 export type Photos = ReturnType<typeof usePhotos>;
 
 /** Rasm ko'rinishi uchun blob URL (token bilan yuklanadi, sahifadan chiqqanda bo'shatiladi) */
-export function usePhotoUrl(id: string) {
+export function usePhotoUrl(id: string, path = `/weekly-photos/${id}`) {
   const blob = useQuery({
-    queryKey: ["photo", id],
-    queryFn: () => apiBlob(`/weekly-photos/${id}`),
+    queryKey: ["photo", path],
+    queryFn: () => apiBlob(path),
     staleTime: Infinity,
   });
   const [url, setUrl] = useState<string | null>(null);

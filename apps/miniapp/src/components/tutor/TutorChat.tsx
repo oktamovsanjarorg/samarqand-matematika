@@ -1,14 +1,36 @@
-import { TUTOR_MESSAGE_MAX, type StartTutorInput, type TutorMessageView } from "@samarqand/shared";
-import { Bot, SendHorizontal } from "lucide-react";
-import { useState } from "react";
-import { tutorError, useTutor } from "../../lib/tutor";
+import type { StartTutorInput, TutorMessageView } from "@samarqand/shared";
+import { Bot } from "lucide-react";
+import { usePhotoUrl } from "../../lib/photos";
+import { tutorError, useTutor, type TutorDraft } from "../../lib/tutor";
 import { MathText } from "../MathText";
+import { TutorComposer } from "./TutorComposer";
 
-function Bubble({ m }: { m: Pick<TutorMessageView, "role" | "text"> }) {
+/** O'quvchi yuborgan rasm (T-171): bosilsa to'liq o'lchamda ochiladi */
+function SentPhoto({ id }: { id: string }) {
+  const url = usePhotoUrl(id, `/tutor/photos/${id}`);
+  if (!url) return <div className="skeleton h-32 w-32 rounded-xl" />;
+  return (
+    <a href={url} target="_blank" rel="noreferrer" className="block">
+      <img
+        src={url}
+        alt="Yuborilgan rasm"
+        className="max-h-56 rounded-xl object-contain"
+        data-testid="tutor-photo"
+      />
+    </a>
+  );
+}
+
+function Bubble({ m }: { m: Pick<TutorMessageView, "role" | "text" | "photoId"> }) {
   if (m.role === "USER")
     return (
-      <li className="ml-auto max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-brand px-3 py-2 text-white">
-        {m.text}
+      <li className="ml-auto flex max-w-[85%] flex-col items-end gap-1">
+        {m.photoId && <SentPhoto id={m.photoId} />}
+        {m.text && (
+          <span className="whitespace-pre-wrap rounded-2xl rounded-br-md bg-brand px-3 py-2 text-white">
+            {m.text}
+          </span>
+        )}
       </li>
     );
   return (
@@ -24,40 +46,7 @@ const INTRO: Record<StartTutorInput["mode"], string> = {
   FREE: "Matematikadan savol yoz. Masala boʻlsa, avval oʻzing nima qilib koʻrganingni ayt.",
 };
 
-/** Xabar yozish: yuborilgach tozalanadi, xato bo'lsa matn qoladi */
-function Composer({ busy, onSend }: { busy: boolean; onSend: (text: string) => Promise<boolean> }) {
-  const [text, setText] = useState("");
-  return (
-    <form
-      className="flex items-end gap-2"
-      onSubmit={(e) => {
-        e.preventDefault();
-        const t = text.trim();
-        if (t && !busy) void onSend(t).then((ok) => ok && setText(""));
-      }}
-    >
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        maxLength={TUTOR_MESSAGE_MAX}
-        rows={2}
-        placeholder="Savolingni yoz"
-        aria-label="Yordamchiga xabar"
-        className="min-h-11 flex-1 resize-none rounded-xl border border-hint/25 bg-section px-3 py-2 text-[15px]"
-      />
-      <button
-        type="submit"
-        disabled={!text.trim() || busy}
-        aria-label="Yuborish"
-        className="tap grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand text-white disabled:opacity-50"
-      >
-        <SendHorizontal size={20} />
-      </button>
-    </form>
-  );
-}
-
-function Messages({ items, pending }: { items: TutorMessageView[]; pending: string | null }) {
+function Messages({ items, pending }: { items: TutorMessageView[]; pending: TutorDraft | null }) {
   return (
     <ul className="flex flex-col gap-2">
       {items.map((m) => (
@@ -65,7 +54,13 @@ function Messages({ items, pending }: { items: TutorMessageView[]; pending: stri
       ))}
       {pending !== null && (
         <>
-          <Bubble m={{ role: "USER", text: pending }} />
+          <Bubble
+            m={{
+              role: "USER",
+              text: pending.text || (pending.file ? "📷 Rasm yuborilmoqda" : ""),
+              photoId: null,
+            }}
+          />
           <li className="text-sm text-hint" aria-live="polite">
             Yordamchi yozmoqda…
           </li>
@@ -94,9 +89,9 @@ export function TutorChat({
 }) {
   const { chat, send } = useTutor(input);
   const { error, open } = chatState(chat.data?.remaining, chat.error ?? send.error);
-  const onSend = async (t: string) => {
+  const onSend = async (d: TutorDraft) => {
     await beforeSend?.().catch(() => undefined);
-    return send.mutateAsync(t).then(
+    return send.mutateAsync(d).then(
       () => true,
       () => false,
     );
@@ -114,7 +109,7 @@ export function TutorChat({
           {error.text}
         </p>
       )}
-      {open && <Composer busy={send.isPending} onSend={onSend} />}
+      {open && <TutorComposer busy={send.isPending} onSend={onSend} />}
       {chat.data && (
         <p className="text-xs text-hint">Bugun yana {chat.data.remaining} ta savol berish mumkin</p>
       )}

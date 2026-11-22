@@ -52,11 +52,18 @@ test("BR-T02: mavzu testi savolida yordamchi; AI javob bermasa matn saqlanadi; j
       mode: "PRACTICE",
       remaining: 29,
       messages: [
-        { id: "m1", role: "USER", text: "Qaysi formuladan boshlayman?", createdAt: new Date().toISOString() },
+        {
+          id: "m1",
+          role: "USER",
+          text: "Qaysi formuladan boshlayman?",
+          photoId: null,
+          createdAt: new Date().toISOString(),
+        },
         {
           id: "m2",
           role: "ASSISTANT",
           text: "Maxrajlarni tenglashtir: $\\frac{1}{2} = \\frac{?}{4}$. Nechta chiqadi?",
+          photoId: null,
           createdAt: new Date().toISOString(),
         },
       ],
@@ -95,4 +102,65 @@ test("BR-T01: haftalik test yopilgach noto'g'ri savol ostida xato tahlili ochila
   await page.getByRole("button", { name: "Xatoni tushuntir" }).click();
   await expect(page.getByTestId("tutor")).toContainText("Xatoni birga koʻrib chiqamiz");
   await expect(page.getByLabel("Yordamchiga xabar")).toBeVisible();
+});
+
+test("BR-T05, T-171: erkin savolga masala rasmi; AI javob bermasa rasm qoladi; yuborilgan rasm suhbatda ko'rinadi", async ({
+  page,
+  request,
+  browser,
+}) => {
+  const { s } = await seed(request);
+  const png = await notebookPng(browser);
+  await openAsTelegram(page, { id: s.tg, first_name: "Sinov" }, "/tutor");
+  const tutor = page.getByTestId("tutor");
+  await expect(tutor).toContainText("Matematikadan savol yoz");
+  const send = page.getByRole("button", { name: "Yuborish" });
+  await expect(send).toBeDisabled();
+  await page
+    .getByLabel("Rasm tanlash")
+    .setInputFiles({ name: "masala.png", mimeType: "image/png", buffer: png });
+  await expect(page.getByTestId("tutor-preview")).toBeVisible();
+  await expect(send).toBeEnabled();
+
+  // e2e muhitida AI o'chiq: rasm serverga yuklanadi, xabar 503, rasm tanlovi qoladi
+  const upload = page.waitForResponse((r) => r.url().includes("/photos") && r.request().method() === "POST");
+  await send.click();
+  expect((await upload).status()).toBe(201);
+  await expect(page.getByRole("alert")).toContainText("Yordamchi hozir javob bera olmadi");
+  await expect(page.getByTestId("tutor-preview")).toBeVisible();
+
+  // AI javobi soxta, rasm esa haqiqiy yuklangan (o'quvchi o'z rasmini ko'radi)
+  await page.route("**/api/tutor/chats/*/messages", async (route) => {
+    const id = route.request().url().split("/").at(-2) ?? "";
+    const body = route.request().postDataJSON() as { text: string; photoId?: string };
+    const view: TutorChatView = {
+      id,
+      mode: "FREE",
+      remaining: 29,
+      messages: [
+        {
+          id: "m1",
+          role: "USER",
+          text: body.text,
+          photoId: body.photoId ?? null,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: "m2",
+          role: "ASSISTANT",
+          text: "Shartda nima berilgan?",
+          photoId: null,
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    };
+    await route.fulfill({ json: view });
+  });
+  await page.getByLabel("Yordamchiga xabar").fill("Shu masala");
+  await send.click();
+  await expect(page.getByTestId("tutor-photo")).toBeVisible();
+  await expect(page.getByTestId("tutor-preview")).toHaveCount(0);
+  await expect(tutor).toContainText("Shu masala");
+  await expect(page.getByTestId("tutor-reply")).toContainText("Shartda nima berilgan?");
+  await page.screenshot({ path: "e2e/.results/miniapp-tutor-photo.png", fullPage: true });
 });
