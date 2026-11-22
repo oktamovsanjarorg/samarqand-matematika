@@ -31,6 +31,15 @@
 - Qo'lda: `scripts/deploy-remote.sh` (noutbukdan).
 - Qoida: serverda kod qo'lda tahrirlanmaydi.
 
+## Loglar (T-106)
+
+- Konteyner loglari (`docker logs samarqand-api`) har deploy'da yangi konteyner bilan boshlanadi.
+- API so'rovlari logi Caddy'da: `/data/access.log` (`caddy_data` volume), JSON. Deploy'dan keyin ham saqlanadi: 10 MB × 5 fayl, 30 kun.
+  - Faqat `/api/*` yoziladi, statik fayllar yozilmaydi.
+  - `Authorization` va `Cookie` sarlavhalarini Caddy o'zi `REDACTED` qiladi. Shuning uchun API manzil yoki query'ga sir qo'yilmaydi.
+  - Shaxsiy ma'lumot yozilmaydi: qidiruvdagi `?q=` (ism, telefon) `REDACTED`, IP oxirgi qismisiz (IPv4 /24). Xuddi shu filtr Caddy xato logida ham (global `log default`, `docker logs samarqand-web`). Yangi query parametrga shaxsiy ma'lumot qo'yilsa, filtrga ham qo'shiladi.
+- 5xx javoblarni ko'rish: `docker exec samarqand-web grep '"status":5' /data/access.log | tail`.
+
 ## Zaxira
 
 - `scripts/backup.sh`, cron har kuni 03:00 (Toshkent): `pg_dump` qilinadi va `pg_restore --list` bilan tekshiriladi.

@@ -2,6 +2,26 @@
 #   DOMAIN         — asosiy: Mini App, /api, /admin (app.samarqandmatematika.uz)
 #   ADMIN_HOST     — admin panel uchun qisqa manzil, DOMAIN/admin/ ga yo'naltiriladi
 #   REDIRECT_HOSTS — boshqa manzillar (asosiy domen, www, eski sslip.io), DOMAIN ga yo'naltiriladi
+{
+	# T-106: xato loglarida (stderr, docker logs) ham so'rov filtrlanadi: ?q= (ism, telefon) va IP oxiri yashirin
+	log default {
+		format filter {
+			wrap json
+			request>uri query {
+				replace q REDACTED
+			}
+			request>remote_ip ip_mask {
+				ipv4 24
+				ipv6 32
+			}
+			request>client_ip ip_mask {
+				ipv4 24
+				ipv6 32
+			}
+		}
+	}
+}
+
 {$ADMIN_HOST} {
 	redir https://{$DOMAIN}/admin{uri} 302
 }
@@ -13,6 +33,33 @@
 
 {$DOMAIN} {
 	encode zstd gzip
+
+	# API so'rovlari logi (T-106): deploydan keyin ham saqlanadi (caddy_data volume), 5xx xatolarni topish uchun.
+	# Caddy Authorization va Cookie sarlavhalarini o'zi yashiradi; statik fayllar yozilmaydi.
+	# Shaxsiy ma'lumot logga tushmaydi: qidiruvdagi ?q= (ism, telefon) yashiriladi, IP oxirgi qismisiz
+	log {
+		output file /data/access.log {
+			roll_size 10MiB
+			roll_keep 5
+			roll_keep_for 720h
+		}
+		format filter {
+			wrap json
+			request>uri query {
+				replace q REDACTED
+			}
+			request>remote_ip ip_mask {
+				ipv4 24
+				ipv6 32
+			}
+			request>client_ip ip_mask {
+				ipv4 24
+				ipv6 32
+			}
+		}
+	}
+	@static not path /api/*
+	log_skip @static
 
 	header {
 		Strict-Transport-Security "max-age=31536000"
