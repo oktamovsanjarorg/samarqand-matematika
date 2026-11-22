@@ -85,18 +85,23 @@ export class BroadcastService {
     }));
   }
 
-  /** Qabul qilingan, bloklanmagan o'quvchilar (guruh bo'yicha) va ularning tasdiqlangan ota-onalari */
+  /**
+   * Qabul qilingan, bloklanmagan o'quvchilar (guruh bo'yicha) va ularning tasdiqlangan ota-onalari.
+   * unlinked (T-137): faqat tasdiqlangan ota-onasi yo'q o'quvchilar (BR-A04 ulanish ulushi uchun)
+   */
   private async recipients(input: BroadcastInput): Promise<string[]> {
     const student: Prisma.StudentProfileWhereInput = {
       acceptedAt: { not: null },
       user: { isBlocked: false },
       ...(input.groupId ? { groupId: input.groupId } : {}),
     };
+    const unlinked = input.audience === "unlinked";
+    if (unlinked) student.parents = { none: { status: "APPROVED" } };
     const [students, parents] = await Promise.all([
       input.audience === "parents"
         ? []
         : this.prisma.user.findMany({ where: { role: "STUDENT", student }, select: { id: true } }),
-      input.audience === "students"
+      input.audience === "students" || unlinked
         ? []
         : this.prisma.user.findMany({
             where: { role: "PARENT", isBlocked: false, children: { some: { status: "APPROVED", student } } },

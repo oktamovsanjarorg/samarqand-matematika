@@ -45,3 +45,25 @@ test("T-116: ustoz guruhga eʼlon yozadi, kimga borishini koʻradi va tasdiqlab 
   await expect(row).toContainText(`Oʻquvchilarga · ${E2E_PREFIX}Eʼlon ${stamp} · 0/1 yetdi`);
   await page.screenshot({ path: "e2e/.results/admin-broadcast-history.png", fullPage: true });
 });
+
+test("T-137: bosh sahifadan ota-onasi ulanmaganlarga eslatma: auditoriya va matn tayyor", async ({
+  page,
+  request,
+}) => {
+  // Ota-onasi ulanmagan, qabul qilingan o'quvchi: havola ko'rinishi va oluvchi bo'lishi uchun
+  const admin = await adminHeaders(request);
+  const stamp = [...String(Date.now()).slice(-6)].map((d) => "abcdefghij"[Number(d)]).join("");
+  await createStudent(request, { fullName: `Ulanmagan Oquvchi${stamp}` });
+  const found = await request.get(`${API}/admin/students?filter=all&q=${stamp}`, { headers: admin });
+  const [s] = (await found.json()) as { id: string }[];
+  await apiPost(request, `/admin/students/${s?.id}/accept`, admin, {});
+
+  await loginAdmin(page, request);
+  await page.getByRole("link", { name: "Ulanmaganlarga eslatma" }).click();
+  await expect(page).toHaveURL(/\/broadcast\?audience=unlinked$/);
+  await expect(page.getByLabel("Kimga")).toHaveValue("unlinked");
+  await expect(page.getByLabel("Eʼlon matni")).toHaveValue(/botga \/ota yuboring/);
+  await expect(page.getByText(/[1-9]\d* kishiga boradi/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Yuborish" })).toBeEnabled();
+  await page.screenshot({ path: "e2e/.results/admin-broadcast-unlinked.png" });
+});

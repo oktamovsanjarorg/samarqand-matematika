@@ -1,13 +1,18 @@
 import { z } from "zod";
 
 /** Ustozdan e'lon (T-116): kimga yuboriladi */
-export const BROADCAST_AUDIENCES = ["students", "parents", "all"] as const;
+export const BROADCAST_AUDIENCES = ["students", "parents", "all", "unlinked"] as const;
 export type BroadcastAudience = (typeof BROADCAST_AUDIENCES)[number];
 export const BROADCAST_AUDIENCE_LABELS: Record<BroadcastAudience, string> = {
   students: "Oʻquvchilarga",
   parents: "Ota-onalarga",
   all: "Oʻquvchi va ota-onalarga",
+  unlinked: "Ota-onasi ulanmagan oʻquvchilarga",
 };
+
+/** T-137: "ota-onasi ulanmagan" tanlanganda taklif qilinadigan matn (ustoz o'zgartirishi mumkin) */
+export const UNLINKED_REMINDER_TEXT =
+  "Assalomu alaykum! Ota-onangiz natijalaringiz va davomatingizni koʻrib turishi uchun ularni ulang: botga /ota yuboring va kelgan havolani ota-onangizga joʻnating.";
 
 /** dryRun: faqat qabul qiluvchilar sonini qaytaradi (yuborishdan oldin tasdiqlash uchun) */
 export const broadcastInput = z.object({
