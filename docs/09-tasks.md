@@ -43,7 +43,7 @@
 | T-025  | Qo'lda to'lov va obuna (API): tariflar, karta, chek yuklash, tasdiq/rad, obuna uzayishi (BR-B01–B05)                                                                 | ✅    |
 | T-025b | Admin: "To'lovlar" (cheklar navbati, rasm, tasdiq/rad), "Sozlamalar" (tariflar, karta; faqat ustoz). Cheklar kunlik zaxirada (S3 media/)                             | ✅    |
 | T-025c | Mini App "Obuna": tarif tanlash, karta (nusxalash), chek rasmi (1600px JPEG'ga siqiladi), holat, bekor qilish; Asosiy va Profildan havola                            | ✅    |
-| T-026  | Word/Excel'dan savol import (pandoc, OMML → LaTeX)                                                                                                                   | ⬜    |
+| T-026  | Word'dan savol import (pandoc, OMML → LaTeX). Excel (CSV) qismi T-100 da                                                                                             | ⬜    |
 | T-027  | Bot xabarnomalari: ustozga yangi o'quvchi va ota-ona so'rovi, ota-onaga va o'quvchiga natija (NotifyService)                                                         | ✅    |
 
 ## 2-bosqich: haftalik test va AI tekshiruvi
@@ -138,3 +138,4 @@
 | T-097 | Kontent sahifasida savolni qidirib tahrirga o'tish (matn yoki teg, nashrda emas belgisi)                                                                                    | ✅    |
 | T-098 | Mockdan nusxa olish: shablon va savollar ko'chadi, oyna keyingi haftaga suriladi, shablonni qayta tanlash mumkin                                                            | ✅    |
 | T-099 | Axlat qutisi (FR-U05, BR-C06): o'chirilgan kurs, mavzu, dars va savol 30 kun tiklanadi                                                                                      | ✅    |
+| T-100 | Excel (CSV) dan savol import: namuna fayl, oldindan tekshirish, xato qator raqami bilan, qoralama sifatida (FR-C05, BR-Q04)                                                 | ✅    |

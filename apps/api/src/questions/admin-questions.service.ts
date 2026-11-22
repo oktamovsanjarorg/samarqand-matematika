@@ -1,6 +1,5 @@
 import type { Prisma } from "@samarqand/db";
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { parseExpression, parseNumber } from "@samarqand/math";
 import {
   ERROR_CODES,
   QUESTION_SEARCH_LIMIT,
@@ -12,6 +11,7 @@ import {
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { TrashService } from "../trash/trash.service";
+import { checkIssue } from "./checkable";
 import { toDetail, toStorage } from "./codec";
 
 const ROW = {
@@ -37,16 +37,11 @@ function toRow({ answer, ...q }: Prisma.QuestionGetPayload<{ select: typeof ROW 
   return { ...q, manual };
 }
 
-/** Son javobi, chegarasi va ifoda (T-074) o'qiladigan bo'lishi shart: aks holda hech kim to'g'ri javob bera olmaydi */
 function assertCheckable(q: QuestionInput) {
-  if (q.type === "EXPRESSION" && !q.answer.manual && !parseExpression(q.answer.value))
-    throw new BadRequestException(
-      "answer.value: ifoda sifatida oʻqilmadi. Shakl muhim boʻlsa «Ustoz tekshiradi» ni belgilang",
-    );
-  if (q.type !== "NUMERIC") return;
-  if (!parseNumber(q.answer.value)) throw new BadRequestException("answer.value: son sifatida oʻqilmadi");
-  if (q.answer.tolerance !== undefined && !parseNumber(q.answer.tolerance))
-    throw new BadRequestException("answer.tolerance: son sifatida oʻqilmadi");
+  const issue = checkIssue(q);
+  if (!issue) return;
+  const hint = q.type === "EXPRESSION" ? ". Shakl muhim boʻlsa «Ustoz tekshiradi» ni belgilang" : "";
+  throw new BadRequestException(`${issue.path}: ${issue.message}${hint}`);
 }
 
 /** Admin: savollar banki (T-022). Ustoz ham, yordamchi ham boshqaradi */

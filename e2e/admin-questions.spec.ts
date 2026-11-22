@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { downloadText } from "./download";
 import { adminHeaders, adminNav, apiPost, loginAdmin } from "./api";
 import { E2E_PREFIX } from "./telegram";
 
@@ -112,4 +113,45 @@ test("T-097: kontent sahifasida savolni qidirib tahrirga o'tish", async ({ page,
   await hits.click();
   await expect(page).toHaveURL(/\/content\/questions\/[a-z0-9]+$/);
   await expect(page.getByLabel("Savol matni")).toHaveValue(new RegExp(`^${word}`));
+});
+
+test("T-100, BR-Q04: Excel (CSV) dan savollar import: namuna, xatolar qator bilan, qoralama sifatida qo'shish", async ({
+  page,
+  request,
+}) => {
+  const admin = await adminHeaders(request);
+  const course = await apiPost<{ id: string }>(request, "/admin/courses", admin, {
+    title: `${E2E_PREFIX}Import ${Date.now()}`,
+  });
+  const topic = await apiPost<{ id: string }>(request, `/admin/courses/${course.id}/topics`, admin, {
+    title: "Kasrlar",
+  });
+  await loginAdmin(page, request, `content/topics/${topic.id}/questions`);
+  await page.getByText("Excel'dan import").click();
+  const sample = await downloadText(page, page.getByRole("button", { name: "Namuna fayl" }));
+  expect(sample.name).toBe("Savollar namunasi.csv");
+  expect(sample.text).toContain("Tur;Savol;A;B;C;D;Javob;Yechim;Qiyinlik;Teglar");
+
+  const file = (text: string) => ({ name: "savollar.csv", mimeType: "text/csv", buffer: Buffer.from(text) });
+  const head = "Tur;Savol;A;B;Javob";
+  await page.getByLabel("CSV fayl").setInputFiles(file(`${head}\nbitta;$1+1$;1;2;C\n`));
+  await page.getByRole("button", { name: "Tekshirish" }).click();
+  await expect(page.getByRole("alert")).toContainText("2-qator: Javob: Javob variantlar ichida yoʻq");
+  await expect(page.getByRole("button", { name: "Qoʻshish" })).toBeDisabled();
+
+  await page
+    .getByLabel("CSV fayl")
+    .setInputFiles(
+      file(`${head}\nbitta;$\\frac12$ ga teng?;0,5;2;A\n;$\\frac34$ ni oʻnli kasrda yozing;;;0,75\n`),
+    );
+  await page.getByRole("button", { name: "Tekshirish" }).click();
+  await expect(page.getByTestId("import-preview")).toContainText("2 ta savol tayyor");
+  await expect(page.getByTestId("import-preview").locator(".katex").first()).toBeVisible();
+  await page.screenshot({ path: "e2e/.results/admin-question-import.png", fullPage: true });
+  await page.getByRole("button", { name: "2 ta savolni qoʻshish" }).click();
+  await expect(page.getByRole("status")).toHaveText("2 ta savol qoralama sifatida qoʻshildi");
+  const rows = page.getByTestId("question");
+  await expect(rows).toHaveCount(2);
+  await expect(rows.nth(0)).toContainText("Qoralama");
+  await expect(rows.nth(1)).toContainText("Son javob");
 });
