@@ -46,7 +46,7 @@ test("BR-M01: ustoz shablondan mock tuzadi, har bo'limga faqat mos turdagi savol
   await expect(page.getByTestId("mock-section").nth(1).getByTestId("selected")).toContainText("1");
 });
 
-test("T-053b, T-076, T-112: ustoz mock natijalarini bo'limlar bo'yicha ko'radi", async ({
+test("T-053b, T-076, T-112, T-113: ustoz mock natijalarini bo'limlar bo'yicha ko'radi", async ({
   page,
   request,
 }) => {
@@ -86,6 +86,8 @@ test("T-053b, T-076, T-112: ustoz mock natijalarini bo'limlar bo'yicha ko'radi",
   await page.getByRole("tab", { name: "Hammasi" }).click();
   await page.getByPlaceholder("Ism, username yoki telefon").fill("Natija Mockchi");
   await page.getByTestId("student").first().getByRole("link", { name: "Natija Mockchi" }).click();
+  // T-113: bepul rejimda qadamlar kirishga ta'sir qilmasligi aytiladi
+  await expect(page.getByTestId("card-status")).toContainText("Ustoz bepul ochgan");
   const mocks = page.getByTestId("card-mocks");
   await expect(mocks.getByRole("listitem").first()).toContainText(`${m.body.title}50/75Ctaxminiy`);
   await mocks.scrollIntoViewIfNeeded();
