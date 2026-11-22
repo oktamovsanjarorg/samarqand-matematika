@@ -1,5 +1,6 @@
 import { filterWhere } from "../students/admin-students.service";
 import { retryGrowth } from "./retry-growth";
+import { setupSteps } from "./setup-steps";
 import { Injectable } from "@nestjs/common";
 import type { AdminDashboard } from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
@@ -21,15 +22,18 @@ export class DashboardService {
     const dayStart = tashkentDayStart(now);
     const today = new Date(dayStart.getTime() + 5 * 3600_000).toISOString().slice(0, 10);
     const p = this.prisma;
-    const [newStudents, pendingParents, pendingPayments, unmatchedOffline, review] = await Promise.all([
-      p.user.count({
-        where: { role: "STUDENT", OR: [{ student: null }, { student: { acceptedAt: null } }] },
-      }),
-      p.parentLink.count({ where: { status: "PENDING" } }),
-      p.payment.count({ where: { status: "PENDING" } }),
-      p.offlineResult.count({ where: { userId: null } }),
-      this.review(now),
-    ]);
+    const [newStudents, pendingParents, pendingPayments, unmatchedOffline, review, setup] = await Promise.all(
+      [
+        p.user.count({
+          where: { role: "STUDENT", OR: [{ student: null }, { student: { acceptedAt: null } }] },
+        }),
+        p.parentLink.count({ where: { status: "PENDING" } }),
+        p.payment.count({ where: { status: "PENDING" } }),
+        p.offlineResult.count({ where: { userId: null } }),
+        this.review(now),
+        setupSteps(p),
+      ],
+    );
     const [
       students,
       activeToday,
@@ -54,6 +58,7 @@ export class DashboardService {
       retryGrowth(p, now),
     ]);
     return {
+      setup,
       todo: { newStudents, pendingParents, pendingPayments, unmatchedOffline, review },
       stats: {
         students,
