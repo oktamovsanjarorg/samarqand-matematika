@@ -72,6 +72,12 @@
 		reverse_proxy api:4300 {
 			# API rate limit haqiqiy IP bo'yicha ishlaydi (apps/api/src/setup.ts)
 			header_up X-Real-IP {remote_host}
+			# T-152: deploy paytida API konteyneri qayta ishga tushguncha (migratsiya bilan bir necha soniya) so'rov kutadi,
+			# foydalanuvchi 502 ko'rmaydi. Faqat ulanib bo'lmaganda qayta uriniladi: API'ga yetgan so'rov takrorlanmaydi.
+			lb_try_duration 30s
+			lb_try_interval 500ms
+			# POST tanasi (javob, chek rasmi ≤5 MB, MAX_RECEIPT_BYTES) qayta yuborish uchun xotirada turadi
+			request_buffers 6MiB
 		}
 	}
 
