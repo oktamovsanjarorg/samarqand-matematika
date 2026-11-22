@@ -146,3 +146,4 @@
 | T-105 | Admin bosh sahifasida muvaffaqiyat o'lchovlari: oxirgi yopilgan haftalikni topshirganlar (to'liq kirishlilardan) va ota-onasi ulangan o'quvchilar                           | ✅    |
 | T-106 | Caddy'da API so'rovlari logi faylga (deploy'dan keyin ham saqlanadi, aylanma, Authorization yashirin): production'dagi 5xx xatolarni topish uchun                           | ✅    |
 | T-107 | Prisma zaxira filtri: takroriy yozuv (P2002) 409, poygada yo'qolgan yozuv (P2025) 404; ikki xodim bir vaqtda tiklasa yoki tahrirlasa 500 emas                               | ✅    |
+| T-108 | Guruhning oylik davomat jadvali (o'quvchi × kun, jami sonlar, guruhdan chiqqanlar ham) va Excel'ga (CSV) yuklab olish                                                       | ✅    |

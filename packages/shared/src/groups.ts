@@ -63,6 +63,23 @@ export const attendanceBody = z.object({
 });
 export type AttendanceBody = z.infer<typeof attendanceBody>;
 
+/** Oylik davomat (T-108): "YYYY-MM" */
+export const attendanceMonthQuery = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Oy YYYY-MM koʻrinishida");
+
+export interface AttendanceMonth {
+  month: string;
+  /** Kamida bitta belgi qo'yilgan kunlar, o'sish tartibida */
+  dates: string[];
+  rows: {
+    userId: string;
+    name: string;
+    /** Guruhda hozir yo'q, lekin shu oyda belgisi bor */
+    left: boolean;
+    marks: Record<string, AttendanceStatus>;
+    counts: Record<AttendanceStatus, number>;
+  }[];
+}
+
 export interface AttendanceSheet {
   date: string;
   rows: { userId: string; name: string; status: AttendanceStatus | null; note: string | null }[];

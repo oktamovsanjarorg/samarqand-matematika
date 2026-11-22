@@ -47,7 +47,10 @@ function Sheet({ groupId, sheet }: { groupId: string; sheet: AttendanceSheet }) 
         date: sheet.date,
         marks: Object.entries(draft).map(([userId, status]) => ({ userId, status })),
       }),
-    onSuccess: (s) => qc.setQueryData(["attendance", groupId, sheet.date], s),
+    onSuccess: (s) => {
+      qc.setQueryData(["attendance", groupId, sheet.date], s);
+      void qc.invalidateQueries({ queryKey: ["attendance-month", groupId] });
+    },
   });
   const allPresent = () =>
     setDraft(Object.fromEntries(sheet.rows.map((r) => [r.userId, draft[r.userId] ?? "PRESENT"])));

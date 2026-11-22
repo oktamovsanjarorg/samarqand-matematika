@@ -36,7 +36,7 @@ test("T-054: ustoz guruh tuzadi, o'quvchini qidirib qo'shadi va chiqaradi", asyn
   await expect(members).toContainText("Oʻquvchilar (0)");
 });
 
-test("T-055, BR-G02: ustoz guruh davomatini belgilaydi va saqlaydi", async ({ page, request }) => {
+test("T-055, T-108, BR-G02: ustoz guruh davomatini belgilaydi va saqlaydi", async ({ page, request }) => {
   const admin = await adminHeaders(request);
   // Ismda raqam bo'lmaydi: vaqt belgisini harflarga aylantiramiz
   const stamp = [...String(Date.now()).slice(-6)].map((d) => "abcdefghij"[Number(d)]).join("");
@@ -72,4 +72,16 @@ test("T-055, BR-G02: ustoz guruh davomatini belgilaydi va saqlaydi", async ({ pa
       .getByRole("radiogroup", { name: names[0], exact: true })
       .getByRole("radio", { name: "Kelmadi", exact: true }),
   ).toHaveAttribute("aria-checked", "true");
+
+  // T-108: oylik jadvalda bugungi belgi va jami sonlar; Excel'ga yuklab olinadi
+  const month = page.getByLabel("Oylik davomat");
+  const first = month.getByTestId("month-row").filter({ hasText: names[0] });
+  await expect(first.getByRole("cell").first()).toHaveText("Y");
+  await expect(month.getByTestId("month-row")).toHaveCount(2);
+  await month.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "e2e/.results/admin-attendance-month.png" });
+  const download = page.waitForEvent("download");
+  await month.getByRole("button", { name: "Excel'ga yuklab olish" }).click();
+  const file = await download;
+  expect(file.suggestedFilename()).toMatch(/davomat \d{4}-\d{2}\.csv$/);
 });

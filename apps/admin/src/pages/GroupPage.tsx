@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AddStudents } from "../components/groups/AddStudents";
 import { Attendance } from "../components/groups/Attendance";
+import { AttendanceMonthReport } from "../components/groups/AttendanceMonth";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
 import { useGroup } from "../lib/groups";
@@ -106,6 +107,7 @@ export function GroupPage() {
           <h1 className="text-xl font-extrabold">{g.data.name}</h1>
           <Settings key={`${g.data.name}${g.data.schedule}`} g={g.data} />
           <Attendance groupId={g.data.id} />
+          <AttendanceMonthReport groupId={g.data.id} groupName={g.data.name} />
           <Members g={g.data} />
           <AddStudents groupId={g.data.id} groupName={g.data.name} />
         </>
