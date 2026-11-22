@@ -14,8 +14,31 @@ permissions:
   contents: read
 
 jobs:
+  # T-149: main'ga push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi
+  verified:
+    name: PR'da tekshirilganmi
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+    outputs:
+      skip: ${{ steps.find.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: find
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: scripts/ci-verified.sh >> "$GITHUB_OUTPUT"
+
   check:
     name: Lint, typecheck, test, build
+    needs: [verified]
+    if: ${{ !cancelled() && needs.verified.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -55,6 +78,8 @@ jobs:
 
   e2e:
     name: Browser (Playwright)
+    needs: [verified]
+    if: ${{ !cancelled() && needs.verified.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -90,8 +115,12 @@ jobs:
 
   deploy:
     name: Deploy (production)
-    needs: [check, e2e]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [verified, check, e2e]
+    # PR'da tekshirilgan (skip) yoki shu yerda check va e2e o'tgan bo'lsa
+    if: >-
+      ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      ((needs.verified.result == 'success' && needs.verified.outputs.skip == 'true') ||
+      (needs.check.result == 'success' && needs.e2e.result == 'success')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     concurrency:

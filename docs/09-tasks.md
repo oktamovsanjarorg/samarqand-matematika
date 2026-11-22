@@ -161,3 +161,4 @@
 | T-120 | Ota-ona farzandi uchun toʻlaydi (API): `me/children/:id/billing`, `Payment.submittedById`, ustozga "ota-onasi yubordi", natija ota-onaga ham                                | ✅    |
 | T-121 | Ota-ona toʻlovi (Mini App): kabinetda "Obunani toʻlash", farzand uchun tarif, karta, chek, tarix; kim yuborgani koʻrinadi; adminda "Chekni ota-onasi yubordi"               | ✅    |
 | T-122 | Ota-onaga "obuna tugayapti" va chek natijasi xabarida farzandning toʻlov sahifasini ochadigan tugma                                                                         | ✅    |
+| T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                         | ✅    |
