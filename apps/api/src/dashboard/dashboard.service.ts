@@ -1,4 +1,5 @@
 import { filterWhere } from "../students/admin-students.service";
+import { backupStaleSince } from "./backup-status";
 import { retryGrowth } from "./retry-growth";
 import { setupSteps } from "./setup-steps";
 import { Injectable } from "@nestjs/common";
@@ -22,18 +23,7 @@ export class DashboardService {
     const dayStart = tashkentDayStart(now);
     const today = new Date(dayStart.getTime() + 5 * 3600_000).toISOString().slice(0, 10);
     const p = this.prisma;
-    const [newStudents, pendingParents, pendingPayments, unmatchedOffline, review, setup] = await Promise.all(
-      [
-        p.user.count({
-          where: { role: "STUDENT", OR: [{ student: null }, { student: { acceptedAt: null } }] },
-        }),
-        p.parentLink.count({ where: { status: "PENDING" } }),
-        p.payment.count({ where: { status: "PENDING" } }),
-        p.offlineResult.count({ where: { userId: null } }),
-        this.review(now),
-        setupSteps(p),
-      ],
-    );
+    const [todo, setup] = await Promise.all([this.todo(now), setupSteps(p)]);
     const [
       students,
       activeToday,
@@ -59,7 +49,7 @@ export class DashboardService {
     ]);
     return {
       setup,
-      todo: { newStudents, pendingParents, pendingPayments, unmatchedOffline, review },
+      todo,
       stats: {
         students,
         activeToday,
@@ -71,6 +61,30 @@ export class DashboardService {
         expiringSoon,
         retries: { count: retry.retries, improved: retry.improved },
       },
+    };
+  }
+
+  /** Ustozni kutayotgan ishlar (T-061) va eskirgan zaxira (T-145) */
+  private async todo(now: Date): Promise<AdminDashboard["todo"]> {
+    const p = this.prisma;
+    const [newStudents, pendingParents, pendingPayments, unmatchedOffline, review, backup] =
+      await Promise.all([
+        p.user.count({
+          where: { role: "STUDENT", OR: [{ student: null }, { student: { acceptedAt: null } }] },
+        }),
+        p.parentLink.count({ where: { status: "PENDING" } }),
+        p.payment.count({ where: { status: "PENDING" } }),
+        p.offlineResult.count({ where: { userId: null } }),
+        this.review(now),
+        backupStaleSince(p, now),
+      ]);
+    return {
+      newStudents,
+      pendingParents,
+      pendingPayments,
+      unmatchedOffline,
+      review,
+      backupStaleSince: backup,
     };
   }
 

@@ -9,6 +9,8 @@ export interface AdminDashboard {
     unmatchedOffline: number;
     /** Yopilgan haftalik testlarda ustoz hali ko'rmagan yechim rasmlari */
     review: { testId: string; title: string; count: number }[];
+    /** Zaxira 36 soatdan beri olinmagan bo'lsa oxirgi muvaffaqiyatli zaxira vaqti (T-145), aks holda null */
+    backupStaleSince: string | null;
   };
   stats: {
     students: number;

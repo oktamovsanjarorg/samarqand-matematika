@@ -12,7 +12,14 @@ afterAll(async () => {
   await f.cleanup();
 });
 
-const empty = { newStudents: 0, pendingParents: 0, pendingPayments: 0, unmatchedOffline: 0, review: [] };
+const empty = {
+  newStudents: 0,
+  pendingParents: 0,
+  pendingPayments: 0,
+  unmatchedOffline: 0,
+  review: [],
+  backupStaleSince: null,
+};
 
 describe("ertalabki xulosa (T-139)", () => {
   it("faqat noldan katta ishlar; hammasi 0 bo'lsa xabar yo'q", () => {
@@ -28,6 +35,12 @@ describe("ertalabki xulosa (T-139)", () => {
       }),
     ).toBe(
       "☀️ <b>Bugungi ishlar</b>\n\n• 2 ta yangi oʻquvchi qabulni kutmoqda\n• 4 ta yechim rasmi tekshirilmagan",
+    );
+  });
+
+  it("T-145: zaxira eskirgan bo'lsa birinchi qatorda, boshqa ish bo'lmasa ham", () => {
+    expect(dailyDigestText({ ...empty, backupStaleSince: "2031-03-03T22:00:00Z" })).toBe(
+      "☀️ <b>Bugungi ishlar</b>\n\n⚠️ Zaxira nusxa <b>04-mart, 03:00</b> dan beri olinmagan: serverni tekshiring",
     );
   });
 

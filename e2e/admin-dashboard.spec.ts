@@ -113,3 +113,20 @@ test("T-143: bosh sahifada o'quvchilarni taklif qilish havolasi, nusxa va ulashi
   await expect(page.getByLabel("Holat")).toBeVisible();
   await expect(page.getByTestId("invite")).toHaveCount(0);
 });
+
+test("T-145: zaxira 36 soatdan eskirgan bo'lsa bosh sahifada ogohlantirish", async ({ page, request }) => {
+  // backup.sh dev'da ishlamaydi: faqat todo.backupStaleSince ni almashtiramiz, qolgani serverdan
+  await page.route("**/api/admin/dashboard", async (route) => {
+    const res = await route.fetch();
+    const body = (await res.json()) as { todo: object };
+    route.fulfill({
+      response: res,
+      json: { ...body, todo: { ...body.todo, backupStaleSince: "2026-11-20T22:00:00.000Z" } },
+    });
+  });
+  await loginAdmin(page, request);
+  const alert = page.getByTestId("backup-stale");
+  await expect(alert).toContainText("Zaxira nusxa olinmayapti");
+  await expect(alert).toContainText("21.11.2026, 03:00");
+  await page.screenshot({ path: "e2e/.results/admin-backup-stale.png" });
+});

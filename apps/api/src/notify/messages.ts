@@ -208,5 +208,10 @@ export function dailyDigestText(t: AdminDashboard["todo"]): string | null {
     [t.unmatchedOffline, "offline natija oʻquvchiga moslanmagan"],
   ];
   const lines = rows.filter(([n]) => n > 0).map(([n, label]) => `• ${n} ta ${label}`);
+  // T-145: cron ishlamay qolsa backup.sh xato xabarini ham yubora olmaydi: bu yerda ko'rinadi
+  if (t.backupStaleSince)
+    lines.unshift(
+      `⚠️ Zaxira nusxa <b>${uzDateTime(new Date(t.backupStaleSince))}</b> dan beri olinmagan: serverni tekshiring`,
+    );
   return lines.length ? ["☀️ <b>Bugungi ishlar</b>", "", ...lines].join("\n") : null;
 }

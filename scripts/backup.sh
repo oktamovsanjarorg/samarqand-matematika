@@ -6,6 +6,7 @@
 #  3. S3: db/daily/ (90 kun), oyning 1-kuni db/monthly/ (2 yil, Glacier IR). Server roli faqat yoza oladi, o'chira olmaydi
 #  4. To'lov cheklari (samarqand_media volume) S3 media/ ga sinxronlanadi (o'chirmasdan)
 #  5. Xato bo'lsa ustoz(lar)ga bot orqali xabar boradi
+#  6. Muvaffaqiyat vaqti AppSetting "backup:last" ga yoziladi: eskirsa admin ogohlantiradi (T-145)
 # Tiklash: scripts/restore.sh <fayl yoki s3://...>
 set -Eeuo pipefail
 
@@ -56,4 +57,10 @@ docker run --rm -v samarqand_media:/media:ro amazon/aws-cli:2.27.50 \
   s3 sync --only-show-errors /media "s3://$BUCKET/media/" || fail "cheklarni S3 ga yuklab bo'lmadi"
 
 find "$ROOT" -name 'db-*.dump' -mtime +14 -delete
+
+# T-145: muvaffaqiyatli zaxira vaqti. Cron ishlamay qolsa xato xabari ham ketmaydi: admin va ertalabki
+# xulosa shu vaqt 36 soatdan eskirganini ko'rib ogohlantiradi
+docker exec samarqand-postgres psql -U samarqand -d samarqand -qtAc \
+  "insert into \"AppSetting\" (key, value, \"updatedAt\") values ('backup:last', 'true', now())
+   on conflict (key) do update set \"updatedAt\" = now()" > /dev/null || echo "!!! zaxira vaqti bazaga yozilmadi"
 echo "=== $(date -Is) tayyor: $(basename "$FILE") ($(du -h "$FILE" | cut -f1))"
