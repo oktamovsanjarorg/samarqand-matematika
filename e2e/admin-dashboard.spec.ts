@@ -82,3 +82,34 @@ test("T-140: ustozga 'Ishni boshlash' ro'yxati; hammasi bajarilsa yo'qoladi", as
   await expect(page.getByRole("region", { name: "Kutayotgan ishlar" })).toBeVisible();
   await expect(page.getByRole("region", { name: "Ishni boshlash" })).toHaveCount(0);
 });
+
+test("T-143: bosh sahifada o'quvchilarni taklif qilish havolasi, nusxa va ulashish", async ({
+  page,
+  request,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  // e2e'da bot Telegram'ga chiqmaydi (bot nomi yo'q): havolani shu yerda beramiz
+  await page.route("**/api/admin/dashboard/invite", (route) =>
+    route.fulfill({ json: { link: "https://t.me/samarqand_e2e_bot" } }),
+  );
+  await loginAdmin(page, request);
+  const card = page.getByTestId("invite");
+  await expect(card.getByTestId("invite-link")).toHaveText("https://t.me/samarqand_e2e_bot");
+  await expect(card.getByRole("link", { name: "Telegramʼda ulashish" })).toHaveAttribute(
+    "href",
+    /^https:\/\/t\.me\/share\/url\?url=https%3A%2F%2Ft\.me%2Fsamarqand_e2e_bot&text=/,
+  );
+  await card.getByRole("button", { name: "Nusxa olish" }).click();
+  await expect(card.getByRole("button", { name: "Nusxa olindi" })).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("https://t.me/samarqand_e2e_bot");
+  await card.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "e2e/.results/admin-invite.png" });
+
+  // Bot nomi aniqlanmasa karta ko'rinmaydi
+  await page.unroute("**/api/admin/dashboard/invite");
+  await page.route("**/api/admin/dashboard/invite", (route) => route.fulfill({ json: { link: null } }));
+  await page.reload();
+  await expect(page.getByLabel("Holat")).toBeVisible();
+  await expect(page.getByTestId("invite")).toHaveCount(0);
+});

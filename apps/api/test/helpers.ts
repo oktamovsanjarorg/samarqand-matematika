@@ -20,6 +20,7 @@ export const BOT_TOKEN = "123456:E2E_TEST_TOKEN";
 export const TEST_MEDIA_DIR = join(tmpdir(), "samarqand-test-media");
 export const OWNER = "e2e_owner";
 
+export const TEST_BOT_USERNAME = "samarqand_test_bot";
 /** Testlar Telegram'ga chiqmaydi: yuborilgan xabarlar shu ro'yxatga yoziladi */
 export const sentMessages: { chatId: bigint; html: string; button?: LinkButton }[] = [];
 const fakeTransport: TelegramTransport = {
@@ -27,6 +28,7 @@ const fakeTransport: TelegramTransport = {
     sentMessages.push({ chatId, html, ...(button ? { button } : {}) });
     return true;
   },
+  botUsername: async () => TEST_BOT_USERNAME,
 };
 
 /** Testdagi AI: hukmni test o'zi beradi (savol matni bo'yicha), chaqiruvlar yoziladi, tarmoq yo'q */

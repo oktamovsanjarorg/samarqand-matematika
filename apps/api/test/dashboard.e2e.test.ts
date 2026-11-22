@@ -1,5 +1,6 @@
 import type { AdminDashboard } from "@samarqand/shared";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { TEST_BOT_USERNAME } from "./helpers";
 import { weeklyFixture } from "./weekly-fixture";
 
 let f: Awaited<ReturnType<typeof weeklyFixture>>;
@@ -101,6 +102,19 @@ describe("admin bosh sahifa (T-061)", () => {
   it("o'quvchi va ota-onaga 403", async () => {
     const s = await f.student();
     expect((await f.call("GET", "/admin/dashboard", s.headers)).statusCode).toBe(403);
+  });
+
+  it("T-143: taklif havolasi ustoz va yordamchiga; o'quvchiga 403, tokensiz 401", async () => {
+    const res = await f.call("GET", "/admin/dashboard/invite", f.teacher);
+    expect(res.statusCode).toBe(200);
+    expect(res.json()).toEqual({ link: `https://t.me/${TEST_BOT_USERNAME}` });
+    const helper = await f.student(false);
+    await f.prisma.user.update({ where: { id: helper.id }, data: { role: "ASSISTANT" } });
+    expect((await f.call("GET", "/admin/dashboard/invite", helper.headers)).statusCode).toBe(200);
+    expect((await f.call("GET", "/admin/dashboard/invite", (await f.student()).headers)).statusCode).toBe(
+      403,
+    );
+    expect((await f.call("GET", "/admin/dashboard/invite", {})).statusCode).toBe(401);
   });
 
   it("T-140: setup qadamlari javobda; savol yaratilgach course true", async () => {

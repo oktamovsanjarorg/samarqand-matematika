@@ -37,3 +37,8 @@ export const dashboardBadges = (d: AdminDashboard): Record<string, number> => ({
   "/offline": d.todo.unmatchedOffline,
   "/weekly": d.todo.review.reduce((s, r) => s + r.count, 0),
 });
+
+/** Botga taklif havolasi (T-143): bot nomi aniqlanmasa null */
+export interface BotInvite {
+  link: string | null;
+}
