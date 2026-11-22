@@ -1,19 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { createAgentModel, createAiProvider } from "../src/ai/ai.module";
 import { DeepSeekAgentModel, toDeepSeek } from "../src/ai/deepseek-agent";
+import { AiHealth } from "../src/ai/ai-health";
 import { DeepSeekClient, DeepSeekError, type DsTransport } from "../src/ai/deepseek-client";
 import { DeepSeekProvider } from "../src/ai/deepseek.provider";
 import { loadEnv } from "../src/config/env";
 
 /** Soxta DeepSeek: javoblar navbatda, so'rovlar yoziladi */
 function fake(...replies: { status: number; json: unknown }[]) {
+  const health = new AiHealth();
   const bodies: Record<string, unknown>[] = [];
   const transport: DsTransport = (body) => {
     bodies.push(structuredClone(body) as Record<string, unknown>);
     const r = replies.shift();
     return r ? Promise.resolve(r) : Promise.reject(new Error("ECONNRESET"));
   };
-  return { bodies, client: new DeepSeekClient(transport, "deepseek-test") };
+  return { bodies, health, client: new DeepSeekClient(transport, "deepseek-test", health) };
 }
 const ok = (message: object, finish_reason = "stop") => ({
   status: 200,
@@ -140,11 +142,27 @@ describe("DeepSeek (T-159)", () => {
       { status: 401, json: { error: { message: "maxfiy: sk-123" } } },
       ok({ content: "yo'q" }),
     );
-    await expect(bad.client.chat({ messages: [] })).rejects.toThrow(new DeepSeekError("DeepSeek 401"));
+    await expect(bad.client.chat({ messages: [] })).rejects.toThrow(new DeepSeekError("DeepSeek 401", 401));
     expect(bad.bodies).toHaveLength(1);
 
     const down = fake();
     await expect(down.client.chat({ messages: [] })).rejects.toBeInstanceOf(DeepSeekError);
+  }, 10_000);
+
+  it("T-163: xato holati yoziladi (402: pul tugagan), muvaffaqiyatli javob tozalaydi; boshlanish vaqti saqlanadi", async () => {
+    const d = fake({ status: 402, json: null }, { status: 402, json: null }, ok({ content: "Salom" }));
+    await expect(d.client.chat({ messages: [] })).rejects.toMatchObject({ status: 402 });
+    const first = d.health.get();
+    expect(first?.status).toBe(402);
+    expect(d.bodies).toHaveLength(1);
+    await expect(d.client.chat({ messages: [] })).rejects.toBeInstanceOf(DeepSeekError);
+    expect(d.health.get()?.since).toBe(first?.since);
+    await d.client.chat({ messages: [] });
+    expect(d.health.get()).toBeNull();
+
+    const net = fake();
+    await expect(net.client.chat({ messages: [] })).rejects.toMatchObject({ status: 0 });
+    expect(net.health.get()?.status).toBe(0);
   }, 10_000);
 
   it("yordamchi: rasm bo'lsa model buni biladi; xato bo'lsa null; yechim rasmiga hukm bermaydi", async () => {

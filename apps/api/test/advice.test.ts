@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  aiAdvice,
   draftAdvice,
   noTestTopicsAdvice,
   participationAdvice,
@@ -79,5 +80,18 @@ describe("Maslahatchi qoidalari (T-161, BR-R03)", () => {
   it("qoralamalar: 0 bo'lsa jim", () => {
     expect(draftAdvice(0)).toEqual([]);
     expect(draftAdvice(7)[0]).toMatchObject({ level: "info", title: "7 ta savol qoralamada qolib ketgan" });
+  });
+
+  it("AI ishlamayapti (T-163): pul/kalit darhol; tarmoq xatosi 15 daqiqadan keyin", () => {
+    const now = new Date("2026-11-22T12:00:00Z");
+    const ago = (m: number) => new Date(now.getTime() - m * 60_000);
+    expect(aiAdvice(null, now)).toEqual([]);
+    const [pay] = aiAdvice({ since: ago(0), status: 402 }, now);
+    expect(pay).toMatchObject({ key: "ai:down", level: "urgent", action: null });
+    expect(pay?.title).toBe("AI ishlamayapti: AI hisobida mablagʻ tugagan: hisobni toʻldirish kerak");
+    expect(aiAdvice({ since: ago(0), status: 401 }, now)[0]?.title).toContain("kaliti");
+    expect(aiAdvice({ since: ago(14), status: 0 }, now)).toEqual([]);
+    expect(aiAdvice({ since: ago(15), status: 503 }, now)[0]?.why).toMatch(/^15 daqiqadan beri/);
+    expect(aiAdvice({ since: ago(150), status: 0 }, now)[0]?.why).toMatch(/^2 soatdan beri/);
   });
 });

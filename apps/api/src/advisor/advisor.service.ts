@@ -1,9 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { ADVICE, sortAdvice, type Advice } from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
+import { AiHealth } from "../ai/ai-health";
 import { RANKED } from "../common/ranked";
 import { PrismaService } from "../prisma/prisma.service";
 import {
+  aiAdvice,
   draftAdvice,
   noTestTopicsAdvice,
   participationAdvice,
@@ -20,6 +22,7 @@ export class AdvisorService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly access: AccessService,
+    private readonly health: AiHealth,
   ) {}
 
   async list(teacher: boolean, now = new Date()): Promise<Advice[]> {
@@ -34,6 +37,7 @@ export class AdvisorService {
     const titles = new Map(topics.map((t) => [t.id, t.title]));
     const eligible = students.length;
     return sortAdvice([
+      ...aiAdvice(this.health.get(), now),
       ...weeklyPlanAdvice({ planned, students: eligible }),
       ...weakTopicAdvice(answers, titles),
       ...participationAdvice(last && { ...last, eligible }, teacher),
