@@ -1,4 +1,4 @@
-import type { AuthResponse, Me } from "@samarqand/shared";
+import { OFFLINE_MESSAGE, httpErrorMessage, type AuthResponse, type Me } from "@samarqand/shared";
 import { useAuth } from "../store/auth";
 import { getInitData } from "./telegram";
 
@@ -14,12 +14,10 @@ export class ApiError extends Error {
 
 async function parseError(res: Response): Promise<ApiError> {
   const body = (await res.json().catch(() => null)) as { message?: string; code?: string } | null;
-  return new ApiError(res.status, body?.message ?? "Xatolik yuz berdi", body?.code);
+  return new ApiError(res.status, httpErrorMessage(res.status, body?.message), body?.code);
 }
 
 /** T-150: tarmoq xatosi ("Failed to fetch") o'rniga o'zbekcha xabar; status 0 */
-export const OFFLINE_MESSAGE = "Internetga ulanib boʻlmadi. Qayta urinib koʻring.";
-
 async function request(url: string, init?: RequestInit): Promise<Response> {
   try {
     return await fetch(url, init);
