@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AttentionList } from "../components/dashboard/AttentionList";
+import { SetupList } from "../components/dashboard/SetupList";
 import { ErrorState, PageTitle, SkeletonList } from "../components/ui";
 import { useDashboard } from "../lib/dashboard";
 import { loadSession } from "../lib/session";
@@ -152,6 +153,8 @@ export function DashboardPage() {
       {d.isError && <ErrorState message={d.error.message} onRetry={() => d.refetch()} />}
       {d.data && (
         <>
+          {/* T-140: tarif va karta faqat ustozda, shuning uchun ro'yxat ham faqat ustozga */}
+          {loadSession()?.user.role === "TEACHER" && <SetupList setup={d.data.setup} />}
           <section className="space-y-2" aria-label="Kutayotgan ishlar">
             <h2 className="font-bold">Kutayotgan ishlar</h2>
             {list.length === 0 ? (

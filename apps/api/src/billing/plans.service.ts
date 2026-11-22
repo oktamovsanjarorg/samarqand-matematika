@@ -9,7 +9,7 @@ import {
 import { AuditService } from "../audit/audit.service";
 import { PrismaService } from "../prisma/prisma.service";
 
-const CARD_KEY = "billing.card";
+export const CARD_KEY = "billing.card";
 const PLAN_SELECT = { id: true, name: true, priceUzs: true, durationDays: true, description: true } as const;
 
 /** Tariflar va to'lov kartasi (ustoz sozlaydi). Karta raqami auditga to'liq yozilmaydi */

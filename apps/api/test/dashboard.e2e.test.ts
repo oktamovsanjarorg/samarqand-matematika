@@ -102,4 +102,11 @@ describe("admin bosh sahifa (T-061)", () => {
     const s = await f.student();
     expect((await f.call("GET", "/admin/dashboard", s.headers)).statusCode).toBe(403);
   });
+
+  it("T-140: setup qadamlari javobda; savol yaratilgach course true", async () => {
+    await f.questions();
+    const d = (await f.call("GET", "/admin/dashboard", f.teacher)).json() as AdminDashboard;
+    expect(Object.keys(d.setup).sort()).toEqual(["billing", "course", "lesson", "questions", "student"]);
+    expect(d.setup.course).toBe(true);
+  });
 });

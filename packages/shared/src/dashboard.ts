@@ -1,5 +1,7 @@
 /** Admin bosh sahifa (T-061): ustozni kutayotgan ishlar va qisqa holat */
 export interface AdminDashboard {
+  /** Ishni boshlash qadamlari (T-140): faktdan hisoblanadi */
+  setup: { course: boolean; lesson: boolean; questions: boolean; billing: boolean; student: boolean };
   todo: {
     newStudents: number;
     pendingParents: number;

@@ -60,3 +60,25 @@ test("T-063, BR-R02: bosh sahifada e'tibor kerak o'quvchi sababi bilan", async (
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.screenshot({ path: "e2e/.results/admin-student-card-desktop.png", fullPage: true });
 });
+
+test("T-140: ustozga 'Ishni boshlash' ro'yxati; hammasi bajarilsa yo'qoladi", async ({ page, request }) => {
+  let setup = { course: true, lesson: false, questions: false, billing: false, student: false };
+  // Baza holatiga bog'lanmaslik uchun faqat setup qismini almashtiramiz, qolgani serverdan
+  await page.route("**/api/admin/dashboard", async (route) => {
+    const res = await route.fetch();
+    route.fulfill({ response: res, json: { ...((await res.json()) as object), setup } });
+  });
+  await loginAdmin(page, request);
+  const list = page.getByRole("region", { name: "Ishni boshlash" });
+  await expect(list).toContainText("1/5");
+  await expect(list.getByTestId("setup-step")).toHaveCount(5);
+  await expect(list.locator('[data-done="true"]')).toContainText("Kurs va mavzu yarating");
+  await page.screenshot({ path: "e2e/.results/admin-setup.png", fullPage: true });
+  await list.getByRole("link", { name: /Tarif va karta raqamini kiriting/ }).click();
+  await expect(page).toHaveURL(/\/settings$/);
+
+  setup = { course: true, lesson: true, questions: true, billing: true, student: true };
+  await page.goto("http://127.0.0.1:5191/admin/");
+  await expect(page.getByRole("region", { name: "Kutayotgan ishlar" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Ishni boshlash" })).toHaveCount(0);
+});
