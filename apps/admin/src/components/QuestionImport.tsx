@@ -46,8 +46,32 @@ function Preview({ r }: { r: QuestionImportResult }) {
   );
 }
 
-/** Excel (.xlsx yoki CSV) dan savollarni qoralama sifatida qo'shish (T-100) */
-export function QuestionImport({ topicId }: { topicId: string }) {
+const importNote = (toTest: boolean) =>
+  toTest
+    ? "Savollar shu mavzuga qoralama boʻlib saqlanadi (mashqda koʻrinmaydi) va testga qoʻshiladi."
+    : "Savollar qoralama boʻlib tushadi: koʻrib chiqib nashr qiling.";
+
+function Saved({ count, toTest }: { count: number; toTest: boolean }) {
+  return (
+    <p className="text-sm font-semibold text-success" role="status">
+      {count} ta savol qoralama sifatida qoʻshildi{toTest ? " va testga kiritildi" : ""}
+    </p>
+  );
+}
+
+/**
+ * Excel (.xlsx yoki CSV) dan savollarni qoralama sifatida qo'shish (T-100).
+ * onSaved: saqlangan savollar bilan (T-157: haftalik testga darhol qo'shiladi); open: yopilmagan holda
+ */
+export function QuestionImport({
+  topicId,
+  onSaved,
+  open = false,
+}: {
+  topicId: string;
+  onSaved?: (r: QuestionImportResult) => void;
+  open?: boolean;
+}) {
   const qc = useQueryClient();
   const [csv, setCsv] = useState("");
   const send = (dryRun: boolean) =>
@@ -55,7 +79,10 @@ export function QuestionImport({ topicId }: { topicId: string }) {
   const check = useMutation({ mutationFn: () => send(true) });
   const save = useMutation({
     mutationFn: () => send(false),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ["questions"] }),
+    onSuccess: (r) => {
+      void qc.invalidateQueries({ queryKey: ["questions"] });
+      onSaved?.(r);
+    },
   });
   const onText = (text: string) => {
     setCsv(text);
@@ -65,13 +92,13 @@ export function QuestionImport({ topicId }: { topicId: string }) {
   const ok = !!check.data && check.data.errors.length === 0 && check.data.ready.length > 0;
   const error = check.error ?? save.error;
   return (
-    <details className="card space-y-3">
+    <details className="card space-y-3" open={open || undefined}>
       <summary className="flex min-h-11 cursor-pointer items-center gap-2 font-semibold">
         <FileUp size={16} /> Excel'dan import
       </summary>
       <p className="text-sm text-hint">
         Excel (.xlsx) yoki CSV fayl. Ustunlar: Tur, Savol, A–H variantlar, Javob, Yechim, Qiyinlik, Teglar.
-        Faqat «Savol» majburiy. Savollar qoralama boʻlib tushadi: koʻrib chiqib nashr qiling.
+        Faqat «Savol» majburiy. {importNote(!!onSaved)}
       </p>
       <Button variant="secondary" onClick={() => downloadExcel("Savollar namunasi", TEMPLATE)}>
         <Download size={16} /> Namuna fayl
@@ -86,11 +113,7 @@ export function QuestionImport({ topicId }: { topicId: string }) {
         </Button>
       </div>
       {error && <p className="text-sm text-danger">{error.message}</p>}
-      {save.data && (
-        <p className="text-sm font-semibold text-success" role="status">
-          {save.data.created} ta savol qoralama sifatida qoʻshildi
-        </p>
-      )}
+      {save.data && <Saved count={save.data.created} toTest={!!onSaved} />}
       {check.data && !save.data && <Preview r={check.data} />}
     </details>
   );

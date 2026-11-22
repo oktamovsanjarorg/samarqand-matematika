@@ -142,3 +142,43 @@ test("T-096: savollar bankida matn bo'yicha qidirib testga qo'shish", async ({ p
   await page.getByLabel("Savolni qidirish").fill("");
   await expect(page.getByLabel("Mavzu")).toBeVisible();
 });
+
+test("T-157: ustoz Excel fayldan to'g'ridan-to'g'ri haftalik test tuzadi; savollar qoralama, mashqda ko'rinmaydi", async ({
+  page,
+  request,
+}) => {
+  const { admin, course, topicId, questionIds } = await seed(request);
+  await loginAdmin(page, request, "weekly/new");
+  const title = `${E2E_PREFIX}Excel test ${Date.now()}`;
+  await page.getByLabel("Nomi").fill(title);
+  // Bankdan bitta savol, qolgani fayldan: tartib saqlanadi
+  await page.getByLabel("Mavzu").selectOption({ label: `${course} · Kasrlar` });
+  await page.getByTestId("pick").first().getByRole("checkbox").check();
+
+  await page.getByRole("button", { name: "Excel fayldan" }).click();
+  await expect(page.getByRole("button", { name: "Excel fayldan" })).toHaveAttribute("aria-pressed", "true");
+  await page.getByLabel("Savollar saqlanadigan mavzu").selectOption({ label: `${course} · Kasrlar` });
+  await page.getByLabel("Excel yoki CSV fayl").setInputFiles("e2e/fixtures/questions-openpyxl.xlsx");
+  await page.getByRole("button", { name: "Tekshirish" }).click();
+  await expect(page.getByTestId("import-preview")).toContainText("4 ta savol tayyor");
+  await page.getByRole("button", { name: "4 ta savolni qoʻshish" }).click();
+  await expect(page.getByRole("status")).toHaveText(
+    "4 ta savol qoralama sifatida qoʻshildi va testga kiritildi",
+  );
+  const selected = page.getByTestId("selected").getByRole("listitem");
+  await expect(selected).toHaveCount(5);
+  await expect(selected.nth(0)).toContainText("1+1");
+  await page.screenshot({ path: "e2e/.results/admin-weekly-excel.png", fullPage: true });
+
+  await page.getByRole("button", { name: "Saqlash" }).click();
+  await expect(page.getByTestId("weekly").filter({ hasText: title })).toContainText("5 ta savol");
+  const list = (await (
+    await request.get(`${API}/admin/topics/${topicId}/questions`, { headers: admin })
+  ).json()) as {
+    id: string;
+    isPublished: boolean;
+  }[];
+  const imported = list.filter((q) => !questionIds.includes(q.id));
+  expect(imported).toHaveLength(4);
+  expect(imported.every((q) => !q.isPublished)).toBe(true);
+});

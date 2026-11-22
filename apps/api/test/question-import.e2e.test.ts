@@ -32,18 +32,23 @@ describe("Excel'dan savol import (T-100)", () => {
       ],
       errors: [],
       created: 0,
+      questions: [],
     });
     expect(await f.prisma.question.count({ where: { topicId } })).toBe(before);
 
     const res = await send(csv, false);
     expect(res.statusCode).toBe(200);
-    expect((res.json() as QuestionImportResult).created).toBe(2);
+    const saved = res.json() as QuestionImportResult;
+    expect(saved.created).toBe(2);
     const added = await f.prisma.question.findMany({
       where: { topicId, text: { startsWith: `Import ${stamp}` } },
       orderBy: { order: "asc" },
-      select: { order: true, isPublished: true, type: true, solution: true },
+      select: { id: true, order: true, isPublished: true, type: true, solution: true },
     });
-    expect(added).toEqual([
+    // T-157: saqlangan savollar id si fayl tartibida qaytadi (testga darhol qo'shish uchun)
+    expect(saved.questions.map((q) => q.id)).toEqual(added.map((q) => q.id));
+    expect(saved.questions[1]).toMatchObject({ type: "NUMERIC", text: `Import ${stamp} ikkinchi` });
+    expect(added.map(({ id: _id, ...q }) => q)).toEqual([
       { order: before, isPublished: false, type: "SINGLE", solution: "Chunki 2" },
       { order: before + 1, isPublished: false, type: "NUMERIC", solution: "" },
     ]);

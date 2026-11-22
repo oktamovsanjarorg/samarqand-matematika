@@ -36,13 +36,15 @@ export class QuestionImportService {
     });
     errors.sort((a, b) => a.line - b.line);
     const ready = ok.map((r) => ({ line: r.line, type: r.input.type, text: r.input.text.slice(0, 300) }));
-    if (input.dryRun || errors.length > 0 || ok.length === 0) return { ready, errors, created: 0 };
+    if (input.dryRun || errors.length > 0 || ok.length === 0)
+      return { ready, errors, created: 0, questions: [] };
 
     const order = await this.prisma.question.count({ where: { topicId } });
-    await this.prisma.$transaction(
+    const saved = await this.prisma.$transaction(
       ok.map((r, i) =>
         this.prisma.question.create({
           data: { ...toStorage({ ...r.input, isPublished: false }), topicId, order: order + i },
+          select: { id: true, type: true, text: true },
         }),
       ),
     );
@@ -53,6 +55,6 @@ export class QuestionImportService {
       entityId: topicId,
       data: { count: ok.length },
     });
-    return { ready, errors, created: ok.length };
+    return { ready, errors, created: ok.length, questions: saved };
   }
 }
