@@ -1,3 +1,4 @@
+import { AdvisorModule } from "./advisor/advisor.module";
 import { AgentModule } from "./agent/agent.module";
 import { DynamicModule, Global, Module } from "@nestjs/common";
 import { AccessModule } from "./access/access.module";
@@ -62,6 +63,7 @@ export class AppModule {
         InsightsModule,
         AiModule,
         AgentModule,
+        AdvisorModule,
         StudentsModule,
         ParentsModule,
         NotifyModule,

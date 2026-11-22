@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { AdviceList } from "../components/dashboard/AdviceList";
 import { AttentionList } from "../components/dashboard/AttentionList";
 import { BackupAlert } from "../components/dashboard/BackupAlert";
 import { InviteCard } from "../components/dashboard/InviteCard";
@@ -173,6 +174,7 @@ export function DashboardPage() {
               </ul>
             )}
           </section>
+          <AdviceList />
           <AttentionList />
           <section className="space-y-2" aria-label="Holat">
             <h2 className="font-bold">Holat</h2>

@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { PrismaClient } from "@samarqand/db";
-import { createStudent, loginAdmin } from "./api";
+import { adminHeaders, apiPost, createStudent, loginAdmin } from "./api";
+import { E2E_PREFIX } from "./telegram";
 
 test("T-061, T-105: bosh sahifada kutayotgan ishlar, bosilsa bo'limga o'tadi", async ({ page, request }) => {
   // Yangi (qabul qilinmagan) o'quvchi: "Yangi o'quvchilar" kartasi chiqadi
@@ -129,4 +130,36 @@ test("T-145: zaxira 36 soatdan eskirgan bo'lsa bosh sahifada ogohlantirish", asy
   await expect(alert).toContainText("Zaxira nusxa olinmayapti");
   await expect(alert).toContainText("21.11.2026, 03:00");
   await page.screenshot({ path: "e2e/.results/admin-backup-stale.png" });
+});
+
+test("T-161: bosh sahifada maslahat: darsi bor, testi yo'q mavzu; havola savollar sahifasiga olib boradi", async ({
+  page,
+  request,
+}) => {
+  const admin = await adminHeaders(request);
+  const c = await apiPost<{ id: string }>(request, "/admin/courses", admin, {
+    title: `${E2E_PREFIX}Maslahat ${Date.now()}`,
+  });
+  const t = await apiPost<{ id: string }>(request, `/admin/courses/${c.id}/topics`, admin, {
+    title: "Testsiz mavzu",
+  });
+  const l = await apiPost<{ id: string }>(request, `/admin/topics/${t.id}/lessons`, admin, {
+    title: "Dars",
+    body: "Matn",
+  });
+  for (const path of [`/admin/lessons/${l.id}`, `/admin/courses/${c.id}`]) {
+    const res = await request.patch(`http://127.0.0.1:4300/api${path}`, {
+      headers: admin,
+      data: { isPublished: true },
+    });
+    expect(res.status()).toBe(200);
+  }
+  await loginAdmin(page, request);
+  const advice = page.getByTestId("advice").filter({ hasText: "dars bor, lekin test yoʻq" });
+  await expect(advice).toBeVisible();
+  await expect(advice).toContainText("Muhim");
+  await advice.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "e2e/.results/admin-advice.png", fullPage: true });
+  await advice.getByRole("link", { name: "Savol qoʻshish" }).click();
+  await expect(page).toHaveURL(/\/admin\/content\/topics\/[^/]+\/questions$/);
 });
