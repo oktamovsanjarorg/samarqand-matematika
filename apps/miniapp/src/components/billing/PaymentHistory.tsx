@@ -7,12 +7,25 @@ const STATUS: Record<PaymentStatus, { label: string; tone: string }> = {
   REJECTED: { label: "Rad etildi", tone: "bg-danger/10 text-danger" },
 };
 
-export function PaymentHistory({ payments }: { payments: MyPayment[] }) {
-  const cancel = useCancelPayment();
+/** Kim yuborgani (T-121): ota-ona sahifasida farzand yuborgani, o'quvchida ota-ona yuborgani belgilanadi */
+const by = (p: MyPayment, parent: boolean) =>
+  parent ? (p.byParent ? null : "Farzandingiz yubordi") : p.byParent ? "Ota-onangiz yubordi" : null;
+
+/** parent: ota-ona faqat o'zi yuborgan chekni bekor qiladi (BR-B07) */
+export function PaymentHistory({
+  payments,
+  base,
+  parent,
+}: {
+  payments: MyPayment[];
+  base: string;
+  parent: boolean;
+}) {
+  const cancel = useCancelPayment(base);
   if (payments.length === 0) return null;
   return (
     <section className="card space-y-3" data-testid="history">
-      <h2 className="font-bold">Toʻlovlarim</h2>
+      <h2 className="font-bold">Toʻlovlar</h2>
       <ul className="space-y-3">
         {payments.map((p) => (
           <li key={p.id} className="space-y-1">
@@ -24,9 +37,12 @@ export function PaymentHistory({ payments }: { payments: MyPayment[] }) {
                 {STATUS[p.status].label}
               </span>
             </div>
-            <p className="text-xs text-hint">{formatDate(p.createdAt)}</p>
+            <p className="text-xs text-hint">
+              {formatDate(p.createdAt)}
+              {by(p, parent) && ` · ${by(p, parent)}`}
+            </p>
             {p.reviewNote && <p className="text-sm text-danger">Sabab: {p.reviewNote}</p>}
-            {p.status === "PENDING" && (
+            {p.status === "PENDING" && (!parent || p.byParent) && (
               <button
                 type="button"
                 onClick={() => cancel.mutate(p.id)}

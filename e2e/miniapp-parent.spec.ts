@@ -50,7 +50,10 @@ test("T-069, T-070, T-073, BR-PA01: ota-ona Asosiy sahifada farzandining davomat
   await expect(child.getByTestId("child-access")).toContainText(
     "Pullik darslar yopiq: ustoz qabul qilmagan, obuna toʻlanmagan",
   );
-  await expect(child.getByTestId("child-access")).toContainText("Profil → Obuna va toʻlovlar");
+  // T-121: ota-ona obunani o'zi to'laydi
+  await expect(
+    child.getByTestId("child-access").getByRole("link", { name: "Obunani toʻlash" }),
+  ).toBeVisible();
   await expect(page.getByTestId("child-pending").filter({ hasText: "Kichik Farzand" })).toContainText(
     "ustoz tasdigʻini kutmoqda",
   );

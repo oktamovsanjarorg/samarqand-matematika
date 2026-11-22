@@ -52,6 +52,7 @@ export function App() {
         <Route path="topics/:id/test" element={<TopicTestPage />} />
         <Route path="attempts/:id" element={<AttemptResultPage />} />
         <Route path="billing" element={<BillingPage />} />
+        <Route path="children/:studentId/billing" element={<BillingPage />} />
         <Route path="weekly" element={<WeeklyListPage />} />
         <Route path="weekly/:id" element={<WeeklyTestPage />} />
         <Route path="mocks" element={<MockListPage />} />

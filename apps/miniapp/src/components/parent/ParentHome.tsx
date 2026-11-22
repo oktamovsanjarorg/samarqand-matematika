@@ -11,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { formatDay } from "../../lib/me";
 import { useChildren } from "../../lib/parent";
@@ -96,7 +97,19 @@ function Results({ s }: { s: ChildSummary }) {
 }
 
 /** BR-A04: to'liq kirish holati va obuna muddati; yetishmayotgan qadam aniq yoziladi */
-function Access({ a }: { a: ChildSummary["access"] }) {
+/** T-121: ota-ona chekni o'zi yuboradi (BR-B07) */
+function PayLink({ studentId, renew }: { studentId: string; renew: boolean }) {
+  return (
+    <Link
+      to={`/children/${studentId}/billing`}
+      className="tap ml-6 flex min-h-11 w-fit items-center text-sm font-semibold text-link"
+    >
+      {renew ? "Obunani uzaytirish" : "Obunani toʻlash"}
+    </Link>
+  );
+}
+
+function Access({ a, studentId }: { a: ChildSummary["access"]; studentId: string }) {
   const missing = [
     !a.accepted && "ustoz qabul qilmagan",
     !a.parentApproved && "ota-ona tasdiqlanmagan",
@@ -104,21 +117,22 @@ function Access({ a }: { a: ChildSummary["access"] }) {
   ].filter(Boolean);
   if (a.full)
     return (
-      <p className="flex items-center gap-2 text-sm" data-testid="child-access">
-        <CheckCircle2 size={16} className="shrink-0 text-success" />
-        {a.paidUntil ? `Obuna faol: ${formatStamp(a.paidUntil).split(",")[0]} gacha` : "Barcha darslar ochiq"}
-      </p>
+      <div data-testid="child-access">
+        <p className="flex items-center gap-2 text-sm">
+          <CheckCircle2 size={16} className="shrink-0 text-success" />
+          {a.paidUntil
+            ? `Obuna faol: ${formatStamp(a.paidUntil).split(",")[0]} gacha`
+            : "Barcha darslar ochiq"}
+        </p>
+        {a.paidUntil && <PayLink studentId={studentId} renew />}
+      </div>
     );
   return (
     <div className="space-y-1" data-testid="child-access">
       <p className="flex items-center gap-2 text-sm">
         <Lock size={16} className="shrink-0 text-danger" /> Pullik darslar yopiq: {missing.join(", ")}
       </p>
-      {!a.paid && (
-        <p className="pl-6 text-xs text-hint">
-          Obunani farzandingiz ilovada “Profil → Obuna va toʻlovlar” boʻlimidan chek yuborib faollashtiradi
-        </p>
-      )}
+      {!a.paid && <PayLink studentId={studentId} renew={false} />}
     </div>
   );
 }
@@ -147,7 +161,7 @@ function ChildCard({ c }: { c: ChildView }) {
       {q.isError && <p className="text-sm text-danger">{q.error.message}</p>}
       {q.data && (
         <>
-          <Access a={q.data.access} />
+          <Access a={q.data.access} studentId={c.studentId} />
           <Attendance s={q.data} />
           <Results s={q.data} />
           {q.data.weak.length > 0 && (
