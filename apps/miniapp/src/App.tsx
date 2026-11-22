@@ -1,10 +1,12 @@
-import type { MyProfile } from "@samarqand/shared";
+import { STAFF_ROLES, type MyProfile } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { ErrorState, Splash } from "./components/states";
 import { api, login } from "./lib/api";
+import { adminLoginUrl, studentView } from "./lib/staff";
+import { getInitData } from "./lib/telegram";
 import { HomePage } from "./pages/HomePage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 
@@ -33,10 +35,15 @@ const KitPage = lazy(() => import("./pages/KitPage").then((m) => ({ default: m.K
 
 export function App() {
   const session = useQuery({ queryKey: ["session"], queryFn: login, staleTime: Infinity, retry: false });
+  // T-158: xodim Mini App'ni ochsa admin panelga o'tadi
+  const toAdmin = !!session.data && STAFF_ROLES.includes(session.data.role) && !studentView();
+  useEffect(() => {
+    if (toAdmin) window.location.replace(adminLoginUrl(getInitData()));
+  }, [toAdmin]);
   const profile = useQuery({
     queryKey: ["profile"],
     queryFn: () => api<MyProfile>("/me/profile"),
-    enabled: session.isSuccess,
+    enabled: session.isSuccess && !toAdmin,
   });
 
   const failed = session.error ?? profile.error;
@@ -47,7 +54,7 @@ export function App() {
         onRetry={() => void session.refetch().then(() => profile.refetch())}
       />
     );
-  if (!profile.data) return <Splash />;
+  if (toAdmin || !profile.data) return <Splash />;
   // BR-S04: ism yoki telefon yo'q o'quvchi avval onboarding'dan o'tadi
   if (profile.data.needsOnboarding) return <OnboardingPage profile={profile.data} />;
 

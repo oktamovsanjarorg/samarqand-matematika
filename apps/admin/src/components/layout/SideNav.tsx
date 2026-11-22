@@ -1,5 +1,7 @@
 import { dashboardBadges } from "@samarqand/shared";
+import { Smartphone } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { isFromMiniApp } from "../../lib/session";
 import { useDashboard } from "../../lib/dashboard";
 import type { NavGroup } from "./nav";
 
@@ -37,6 +39,14 @@ export function SideNav({ groups, onNavigate }: { groups: NavGroup[]; onNavigate
           ))}
         </div>
       ))}
+      {isFromMiniApp() && (
+        <a
+          href={`${import.meta.env.VITE_MINIAPP_URL ?? "/"}?view=student`}
+          className="tap flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold text-text hover:bg-hint/10"
+        >
+          <Smartphone size={18} /> <span className="flex-1">Oʻquvchi koʻrinishi</span>
+        </a>
+      )}
     </nav>
   );
 }
