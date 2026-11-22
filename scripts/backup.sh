@@ -6,7 +6,8 @@
 #  3. S3: db/daily/ (90 kun), oyning 1-kuni db/monthly/ (2 yil, Glacier IR). Server roli faqat yoza oladi, o'chira olmaydi
 #  4. To'lov cheklari (samarqand_media volume) S3 media/ ga sinxronlanadi (o'chirmasdan)
 #  5. Xato bo'lsa ustoz(lar)ga bot orqali xabar boradi
-#  6. Muvaffaqiyat vaqti AppSetting "backup:last" ga yoziladi: eskirsa admin ogohlantiradi (T-145)
+#  6. Disk 85% dan ko'p band bo'lsa ogohlantiradi (T-148)
+#  7. Muvaffaqiyat vaqti AppSetting "backup:last" ga yoziladi: eskirsa admin ogohlantiradi (T-145)
 # Tiklash: scripts/restore.sh <fayl yoki s3://...>
 set -Eeuo pipefail
 
@@ -24,14 +25,26 @@ owners() {
     "select \"telegramId\" from \"User\" where role='TEACHER' and \"isBlocked\"=false" 2>/dev/null || true
 }
 
-fail() {
-  echo "!!! $(date -Is) zaxira xato: $1"
+notify() {
   for chat in $(owners); do
     curl -s -m 30 -o /dev/null "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
-      --data-urlencode "chat_id=${chat}" --data-urlencode "text=⚠️ Zaxira nusxa olinmadi: $1" || true
+      --data-urlencode "chat_id=${chat}" --data-urlencode "text=$1" || true
   done
+}
+
+fail() {
+  echo "!!! $(date -Is) zaxira xato: $1"
+  notify "⚠️ Zaxira nusxa olinmadi: $1"
   exit 1
 }
+
+# T-148: disk to'lsa Postgres yozolmay qoladi va zaxira ham olinmaydi: oldindan ogohlantiriladi
+DISK_WARN_PCT="${DISK_WARN_PCT:-85}"
+disk_pct="$(df --output=pcent / | tail -1 | tr -dc '0-9' || true)"
+if [[ -n "$disk_pct" && "$disk_pct" -ge "$DISK_WARN_PCT" ]]; then
+  echo "!!! $(date -Is) disk ${disk_pct}% band"
+  notify "⚠️ Server diski ${disk_pct}% toʻldi. Dasturchiga xabar bering: joy tugasa ilova ishlamay qoladi."
+fi
 trap 'fail "kutilmagan xato (qator $LINENO)"' ERR
 
 s3() {

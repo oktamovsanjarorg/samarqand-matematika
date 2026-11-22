@@ -186,4 +186,5 @@
 | T-145 | Zaxira 36 soatdan eskirsa (cron ishlamay qolgan) admin bosh sahifasida va ertalabki xulosada ogohlantirish                                                                      | ✅    |
 | T-146 | A11y: haftalik test va mock ekranlari ikkala rejimda (savol, tanlangan javob, topshirish oynasi, kutish, yopilgandan keyingi natija)                                            | ✅    |
 | T-147 | Admin panelga CSP va X-Frame-Options: faqat o'z fayllari, iframe ichida ochilmaydi (clickjacking); Mini App'ga tegilmaydi (Telegram Web iframe)                                 | ✅    |
+| T-148 | Server diski 85% dan ko'p band bo'lsa kunlik zaxira skripti ustozga ogohlantirish yuboradi                                                                                      | ✅    |
 | T-149 | CI daqiqalarini tejash: `main` push'da kod PR'da aynan shu holatda tekshirilgan bo'lsa lint/test/e2e takrorlanmaydi, to'g'ri deploy                                             | ✅    |
