@@ -194,3 +194,4 @@
 | T-153 | Admin: dars va savol muharririda saqlanmagan matn brauzerda qoladi (sessiya tugasa, sahifa yangilansa); qayta ochilganda "tiklandi" va "Bekor qilish"; boshqa tabda qayta kirilsa shu tab o'zi qaytadi | ✅    |
 | T-154 | Haqiqiy Excel (.xlsx): savol va offline natija importi .xlsx ni qabul qiladi, barcha eksport va namuna fayl .xlsx (matn formatli ustunlar, qalin sarlavha); faqat `fflate`                             | ✅    |
 | T-155 | Yordamchini havola bilan taklif qilish: ustoz Sozlamalarda havola yaratadi (24 soat, bir marta), odam botda ochishi bilan yordamchi boʻladi; avval botga kirgan boʻlishi shart emas                    | ✅    |
+| T-156 | Admin AI agenti (FR-Y05, BR-T05, ADR-0006): ustoz oddiy soʻz bilan yozadi, agent panel amallarini oʻz huquqi bilan bajaradi, oʻzgartirish faqat tasdiqdan keyin                                        | ✅    |

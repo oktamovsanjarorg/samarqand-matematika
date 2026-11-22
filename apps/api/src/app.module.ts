@@ -1,3 +1,4 @@
+import { AgentModule } from "./agent/agent.module";
 import { DynamicModule, Global, Module } from "@nestjs/common";
 import { AccessModule } from "./access/access.module";
 import { AuditModule } from "./audit/audit.module";
@@ -60,6 +61,7 @@ export class AppModule {
         DashboardModule,
         InsightsModule,
         AiModule,
+        AgentModule,
         StudentsModule,
         ParentsModule,
         NotifyModule,
