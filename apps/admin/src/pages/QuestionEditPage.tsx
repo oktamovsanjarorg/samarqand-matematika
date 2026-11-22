@@ -10,8 +10,10 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { MathText } from "../components/MathText";
 import { AnswerEditor } from "../components/question/AnswerEditor";
+import { DraftRestored } from "../components/DraftRestored";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
 import { api } from "../lib/api";
+import { useLocalDraft } from "../lib/draft";
 import {
   DIFFICULTY_LABELS,
   TYPE_LABELS,
@@ -81,7 +83,7 @@ function MetaFields({ q, set }: { q: QuestionInput; set: (patch: Partial<Questio
 }
 
 /** Saqlash: avval brauzerda tekshiriladi, keyin server; muvaffaqiyatda ro'yxatga qaytadi */
-function useSave(q: QuestionInput, topicId: string, id?: string) {
+function useSave(q: QuestionInput, topicId: string, id: string | undefined, clear: () => void) {
   const [invalid, setInvalid] = useState<string | null>(null);
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -89,6 +91,7 @@ function useSave(q: QuestionInput, topicId: string, id?: string) {
     mutationFn: () =>
       id ? api.put(`/admin/questions/${id}`, q) : api.post(`/admin/topics/${topicId}/questions`, q),
     onSuccess: () => {
+      clear();
       void qc.invalidateQueries({ queryKey: ["questions", topicId] });
       navigate(`/content/topics/${topicId}/questions`);
     },
@@ -102,12 +105,14 @@ function useSave(q: QuestionInput, topicId: string, id?: string) {
 }
 
 function Form({ initial, topicId, id }: { initial: QuestionInput; topicId: string; id?: string }) {
-  const [q, setQ] = useState<QuestionInput>(initial);
+  const local = useLocalDraft(`question:${id ?? `new:${topicId}`}`, initial);
+  const [q, setQ] = [local.value, local.set];
   const set = (patch: Partial<QuestionInput>) => setQ((prev) => ({ ...prev, ...patch }) as QuestionInput);
-  const save = useSave(q, topicId, id);
+  const save = useSave(q, topicId, id, local.clear);
 
   return (
     <div className="space-y-4">
+      {local.restored && <DraftRestored onDiscard={local.discard} />}
       <label className="block space-y-1">
         <span className="text-xs font-semibold text-hint">Savol turi</span>
         <select

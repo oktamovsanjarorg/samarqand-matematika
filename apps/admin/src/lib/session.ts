@@ -8,7 +8,8 @@ export interface Session {
   expiresAt: number;
 }
 
-const KEY = "samarqand-admin-session";
+export const SESSION_KEY = "samarqand-admin-session";
+const KEY = SESSION_KEY;
 
 /** JWT payload'idagi exp (soniya) → ms. Imzo bu yerda tekshirilmaydi: buni server qiladi */
 export function jwtExpiry(token: string): number {
