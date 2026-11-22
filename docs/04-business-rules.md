@@ -41,7 +41,7 @@
 | ID     | Qoida                                                                                                                                                                                                                                                     | Holat |
 | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
 | BR-Q01 | To'g'ri javob va namunaviy yechim alohida ustunda saqlanadi. O'quvchi ko'rinishi uchun bu ustunlar bazadan o'qilmaydi, audit jurnaliga ham yozilmaydi                                                                                                     | ✅    |
-| BR-Q02 | Ko'p tanlovli savol faqat tanlangan to'plam aynan to'g'ri to'plamga teng bo'lsa to'g'ri. Qisman ball yo'q                                                                                                                                                 | ⚠️    |
+| BR-Q02 | Ko'p tanlovli savol faqat tanlangan to'plam aynan to'g'ri to'plamga teng bo'lsa to'g'ri. Qisman ball yo'q                                                                                                                                                 | ✅    |
 | BR-Q03 | Avtomatik tekshiruv: SINGLE, MULTIPLE, NUMERIC (BR-M04), MATCHING (BR-M03). EXPRESSION ekvivalentlik bo'yicha (T-074, ADR-0003): o'qilmasa yoki ustoz "Ustoz tekshiradi" belgilasa ustozga. WRITTEN doim ustozga                                          | ✅    |
 | BR-Q04 | Excel (CSV) importi avval tekshiriladi; bitta qator xato bo'lsa hech narsa saqlanmaydi va xato qator raqami bilan ko'rsatiladi. Import qilingan savol qoralama bo'ladi (nashr qilinmagan), mavzu oxiriga qo'shiladi. Bir faylda 300 tagacha savol (T-100) | ✅    |
 
@@ -49,10 +49,10 @@
 
 | ID     | Qoida                                                                                                                                                      | Holat |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| BR-P01 | Mavzu testi mashq: vaqt limiti yo'q, topshirgandan keyin qayta ishlash mumkin. Ochiq urinish bo'lsa, yangisi o'rniga o'sha davom etadi                     | ⚠️    |
+| BR-P01 | Mavzu testi mashq: vaqt limiti yo'q, topshirgandan keyin qayta ishlash mumkin. Ochiq urinish bo'lsa, yangisi o'rniga o'sha davom etadi                     | ✅    |
 | BR-P02 | Testga boshlanganda nashr qilingan savollar muzlatiladi. Keyin qo'shilgan savol shu urinishga kirmaydi                                                     | ✅    |
 | BR-P03 | Topshirilguncha to'g'ri javob va yechim yuborilmaydi (BR-Q01). Topshirgandan keyin har savol bo'yicha to'g'ri javob va namunaviy yechim ko'rsatiladi       | ✅    |
-| BR-P04 | Mavzu testi to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED`                                                                                  | ⚠️    |
+| BR-P04 | Mavzu testi to'liq kirish (BR-A04) bilan ochiladi, aks holda 403 `LOCKED`                                                                                  | ✅    |
 | BR-P05 | O'quvchi faqat o'z urinishini ko'radi; boshqaniki 404. Urinishda yoki haftalik/mock testda ishlatilgan savol o'chirilmaydi (409), nashrdan olinadi (T-095) | ✅    |
 
 ## To'lov va obuna (B)

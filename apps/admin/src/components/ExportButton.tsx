@@ -6,7 +6,7 @@ export function ExportButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      aria-label="Excel'ga yuklab olish"
+      aria-label="Excelʼga yuklab olish"
       className="tap inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2 text-sm font-semibold text-link"
     >
       <Download size={16} /> Excel
