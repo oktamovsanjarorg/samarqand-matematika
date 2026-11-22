@@ -70,6 +70,34 @@ describe("admin bosh sahifa (T-061)", () => {
     expect((await dashboard()).todo.review.find((r) => r.testId === id)).toBeUndefined();
   });
 
+  it("T-105: oxirgi yopilgan haftalikda qatnashish (xodimsiz) va ota-onasi ulangan o'quvchilar", async () => {
+    const before = await dashboard();
+    const id = await f.weekly(await f.questions());
+    const [a, b, staff] = [await f.student(), await f.student(), await f.student()];
+    await f.prisma.user.update({ where: { id: staff.id }, data: { role: "ASSISTANT" } });
+    await f.prisma.weeklyAttempt.createMany({
+      data: [a, b, staff].map((u) => ({ weeklyTestId: id, userId: u.id, submittedAt: new Date() })),
+    });
+    await f.prisma.weeklyTest.update({
+      where: { id },
+      data: { opensAt: new Date(Date.now() - 3600_000), closesAt: new Date(Date.now() - 1000) },
+    });
+    const parent = await f.student(false);
+    await f.prisma.user.update({ where: { id: parent.id }, data: { role: "PARENT" } });
+    const child = await f.prisma.studentProfile.findUniqueOrThrow({
+      where: { userId: a.id },
+      select: { id: true },
+    });
+    await f.prisma.parentLink.create({
+      data: { parentId: parent.id, studentId: child.id, status: "APPROVED", phone: "998900000001" },
+    });
+
+    const after = await dashboard();
+    expect(after.stats.lastWeekly).toMatchObject({ testId: id, title: "1-hafta", submitted: 2 });
+    expect(after.stats.lastWeekly?.eligible).toBeGreaterThanOrEqual(2);
+    expect(after.stats.parentsLinked).toBe(before.stats.parentsLinked + 1);
+  });
+
   it("o'quvchi va ota-onaga 403", async () => {
     const s = await f.student();
     expect((await f.call("GET", "/admin/dashboard", s.headers)).statusCode).toBe(403);

@@ -70,7 +70,7 @@
 
 | ID     | Talab                                                                           | BR     | T            | Holat |
 | ------ | ------------------------------------------------------------------------------- | ------ | ------------ | ----- |
-| FR-U01 | Bosh sahifa: kutayotgan ishlar va menyu belgilari                               |        | T-061        | ✅    |
+| FR-U01 | Bosh sahifa: kutayotgan ishlar, menyu belgilari va muvaffaqiyat o'lchovlari     |        | T-061, T-105 | ✅    |
 | FR-U02 | "E'tibor kerak" o'quvchilar faktli sabab bilan; o'quvchi kartasi                | BR-R02 | T-063, T-068 | ✅    |
 | FR-U03 | O'quvchiga faktli tavsiya: kuchsiz mavzular, dars va testga havola              | BR-R01 | T-062        | ✅    |
 | FR-U04 | Audit jurnali: kim, qachon, nimani o'zgartirdi (bo'lim va xodim bo'yicha filtr) | BR-C04 | T-075        | ✅    |
