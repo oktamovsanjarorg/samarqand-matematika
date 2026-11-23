@@ -28,7 +28,7 @@ const say = (h: Record<string, string>, id: string, body: object) =>
   f.call("POST", `/tutor/chats/${id}/messages`, h, body);
 
 describe("Yordamchiga rasm (T-170)", () => {
-  it("BR-T05: rasm yuklanadi, xabar bilan AI'ga boradi; matnsiz ham bo'ladi; ustoz ko'radi, boshqasi yo'q", async () => {
+  it("BR-T06: rasm yuklanadi, xabar bilan AI'ga boradi; matnsiz ham bo'ladi; ustoz ko'radi, boshqasi yo'q", async () => {
     const s = await f.student();
     const chat = await freeChat(s.headers);
     const up = await upload(s.headers, chat.id);
@@ -80,7 +80,7 @@ describe("Yordamchiga rasm (T-170)", () => {
     expect(testAi.tutorCalls[0]?.history.at(-1)?.text).toBe("Shu");
   });
 
-  it("BR-T05: ochiq test savollari modelga beriladi; model OCHIQ_TEST desa rad etiladi, xabar saqlanmaydi", async () => {
+  it("BR-T06: ochiq test savollari modelga beriladi; model OCHIQ_TEST desa rad etiladi, xabar saqlanmaydi", async () => {
     const qids = await f.questions();
     await f.weekly(qids);
     const s = await f.student();

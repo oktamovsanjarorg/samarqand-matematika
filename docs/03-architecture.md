@@ -24,6 +24,7 @@ Production'da hammasi bitta serverda Docker Compose bilan ishlaydi (`06-infrastr
 | `apps/bot`           | grammY: `/start`, `/admin` (kirish havolasi), `/ota` (ota-ona havolasi), telefon kontakti. API'ga `internal/*` orqali murojaat qiladi |
 | `apps/miniapp`       | O'quvchi va ota-ona uchun Telegram Mini App (React 18, Vite, React Query, Tailwind)                                                   |
 | `apps/admin`         | Ustoz va yordamchi paneli (React 18, Vite, React Query)                                                                               |
+| `apps/landing`       | Sayt (T-173): build paytida statik HTML, sitemap va robots; asosiy domenda Caddy beradi                                               |
 | `packages/db`        | Prisma sxemasi va migratsiyalar                                                                                                       |
 | `packages/shared`    | Zod sxemalar va tiplar (API va UI bitta sxemadan), rollar, baholash, CSV                                                              |
 | `packages/math`      | Son va ifoda ekvivalentligi, ifoda parseri va LaTeX ko'rinishi, Rasch (ADR-0003, ADR-0005)                                            |

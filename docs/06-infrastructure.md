@@ -23,7 +23,8 @@
 ## Deploy (T-011)
 
 - Manzil: `https://app.samarqandmatematika.uz` (Mini App, `/api`, `/admin`). DNS Eskiz'da (ns1/ns2.eskiz.uz); `app`, `admin` va asosiy domen A yozuvi 13.62.27.178 ga, `www` CNAME. Pochta (`mail`, MX) Eskiz hostingida qoladi.
-- Serverdagi `.env`: `DOMAIN=app.samarqandmatematika.uz`, `ADMIN_HOST=admin.samarqandmatematika.uz` (→ `/admin/`), `REDIRECT_HOSTS` (asosiy domen, `www`, eski `13-62-27-178.sslip.io` → `DOMAIN`). Caddy har biriga Let's Encrypt sertifikatini o'zi oladi.
+- Serverdagi `.env`: `DOMAIN=app.samarqandmatematika.uz`, `ADMIN_HOST=admin.samarqandmatematika.uz` (→ `/admin/`), `REDIRECT_HOSTS` (eski `13-62-27-178.sslip.io` → `DOMAIN`), `LANDING_HOST=samarqandmatematika.uz` (T-173: sayt, `www` unga 301). Caddy har biriga Let's Encrypt sertifikatini o'zi oladi.
+- Sayt (T-173): `apps/landing` build paytida React'dan statik HTML yasaydi (`index.html`, `sitemap.html`, `sitemap.xml`, `robots.txt`). Manzillar Caddy `templates` bilan qo'yiladi (`{{.Host}}`, `{{env `DOMAIN`}}`), bot havolasi `/api/public/landing` dan kichik skript bilan. Saytda yo'q yo'l (masalan `/admin`) ilovaga yo'naltiriladi. Ilova hostida `robots.txt` hammasini yopadi: Google faqat saytni indekslaydi. Search Console'ga `https://samarqandmatematika.uz/sitemap.xml` beriladi.
 - API ham `MINIAPP_URL` ni oladi (compose `https://${DOMAIN}` dan): xabarlardagi "ilovada ochish" tugmasi uchun (T-093).
 - Bot menyusidagi Mini App manzili (`MINIAPP_URL`) bot ishga tushganda `setChatMenuButton` bilan yangilanadi.
 - Serverda: `~/samarqand` (git clone, read-only deploy key), sirlar `~/samarqand/.env` da (chmod 600, serverda yaratilgan).

@@ -386,6 +386,46 @@ importers:
         specifier: 4.1.12
         version: 4.1.12(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(vite@7.3.7(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1))
 
+  apps/landing:
+    dependencies:
+      '@fontsource-variable/manrope':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@samarqand/ui-tokens':
+        specifier: workspace:*
+        version: link:../../packages/ui-tokens
+      lucide-react:
+        specifier: 0.456.0
+        version: 0.456.0(react@18.3.1)
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: 18.3.1
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@types/react':
+        specifier: 18.3.31
+        version: 18.3.31
+      '@types/react-dom':
+        specifier: 18.3.7
+        version: 18.3.7(@types/react@18.3.31)
+      autoprefixer:
+        specifier: 10.6.2
+        version: 10.6.2(postcss@8.5.32)
+      postcss:
+        specifier: 8.5.32
+        version: 8.5.32
+      tailwindcss:
+        specifier: 3.4.19
+        version: 3.4.19(yaml@2.9.1)
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vite:
+        specifier: 7.3.7
+        version: 7.3.7(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1)
+
   apps/miniapp:
     dependencies:
       '@fontsource-variable/manrope':

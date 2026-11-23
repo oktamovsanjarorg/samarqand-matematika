@@ -89,6 +89,7 @@ services:
       DOMAIN: ${DOMAIN}
       ADMIN_HOST: ${ADMIN_HOST:?ADMIN_HOST kerak}
       REDIRECT_HOSTS: ${REDIRECT_HOSTS:?REDIRECT_HOSTS kerak}
+      LANDING_HOST: ${LANDING_HOST:?LANDING_HOST kerak}
     ports:
       - "80:80"
       - "443:443"

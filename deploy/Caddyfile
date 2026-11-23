@@ -1,7 +1,8 @@
 # Hostlar .env dan keladi:
 #   DOMAIN         — asosiy: Mini App, /api, /admin (app.samarqandmatematika.uz)
 #   ADMIN_HOST     — admin panel uchun qisqa manzil, DOMAIN/admin/ ga yo'naltiriladi
-#   REDIRECT_HOSTS — boshqa manzillar (asosiy domen, www, eski sslip.io), DOMAIN ga yo'naltiriladi
+#   REDIRECT_HOSTS — boshqa manzillar (eski sslip.io), DOMAIN ga yo'naltiriladi
+#   LANDING_HOST   — sayt (T-173): statik landing, sitemap va robots; www shu yerga yo'naltiriladi
 {
 	# T-106: xato loglarida (stderr, docker logs) ham so'rov filtrlanadi: ?q= (ism, telefon) va IP oxiri yashirin
 	log default {
@@ -29,6 +30,46 @@
 {$REDIRECT_HOSTS} {
 	# Eski havolalar (bot xabarlari) va Telegram initData (#...) yo'qolmaydi
 	redir https://{$DOMAIN}{uri} 302
+}
+
+www.{$LANDING_HOST} {
+	redir https://{$LANDING_HOST}{uri} 301
+}
+
+# T-173: Google indekslaydigan sayt. Sahifalar build paytida HTML'ga aylangan (apps/landing),
+# manzillar Caddy shabloni bilan qo'yiladi: {{.Host}} va {{env `DOMAIN`}}.
+{$LANDING_HOST} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+		X-Frame-Options DENY
+		-Server
+	}
+
+	# Bot havolasi (tugmalar) shu yerdan olinadi
+	handle /api/public/* {
+		reverse_proxy api:4300 {
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	handle {
+		root * /srv/landing
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		@pages path / /index.html /sitemap.html /sitemap.xml /robots.txt
+		header @pages Cache-Control "no-cache"
+		templates @pages {
+			mime text/html text/plain application/xml text/xml
+		}
+		# Eski havolalar (masalan /admin) ilovaga o'tadi
+		@missing not file {path} {path}/index.html
+		redir @missing https://{$DOMAIN}{uri} 302
+		file_server
+	}
 }
 
 {$DOMAIN} {
