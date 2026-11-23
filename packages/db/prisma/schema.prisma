@@ -410,7 +410,8 @@ model WeeklyAttempt {
   score        Int?
   answers      WeeklyAnswer[]
 
-  @@unique([weeklyTestId, userId])
+  @@unique([weeklyTestId, userId])  /// O'quvchi bo'yicha so'rovlar (T-172): statistika, tarix, yordamchida mock tekshiruvi
+  @@index([userId, submittedAt])
 }
 
 model WeeklyAnswer {
@@ -602,7 +603,8 @@ model MockAttempt {
   scaled      Float?
   answers     MockAnswer[]
 
-  @@unique([mockTestId, userId])
+  @@unique([mockTestId, userId])  /// O'quvchi bo'yicha so'rovlar (T-172): statistika, tarix, yordamchida mock tekshiruvi
+  @@index([userId, submittedAt])
 }
 
 model MockAnswer {
