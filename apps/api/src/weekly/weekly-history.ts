@@ -11,10 +11,15 @@ export async function weeklyHistory(
   prisma: Pick<PrismaClient, "weeklyTest">,
   userId: string,
   since: Date,
-  opts: { now: Date; take: number },
+  opts: { now: Date; take: number; submittedOnly?: boolean },
 ): Promise<ChildWeeklyRow[]> {
   const tests = await prisma.weeklyTest.findMany({
-    where: { isPublished: true, closesAt: { lte: opts.now, gte: since } },
+    where: {
+      isPublished: true,
+      closesAt: { lte: opts.now, gte: since },
+      // T-172: faqat o'quvchi topshirgan testlar (o'rni bo'lmagan testlar kerak bo'lmasa)
+      ...(opts.submittedOnly ? { attempts: { some: { userId, submittedAt: { not: null } } } } : {}),
+    },
     orderBy: { closesAt: "desc" },
     take: opts.take,
     select: {

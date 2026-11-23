@@ -31,7 +31,7 @@ export class ProgressService {
       this.stats.my(userId),
       this.availableTopics(),
       this.answers(userId),
-      weeklyHistory(this.prisma, userId, new Date(0), { now, take: 50 }),
+      weeklyHistory(this.prisma, userId, new Date(0), { now, take: 50, submittedOnly: true }),
       this.attendance(userId, now),
     ]);
     const best = my.topics.filter((t) => available.has(t.topicId)).map((t) => t.bestPercent);

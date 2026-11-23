@@ -210,3 +210,4 @@
 | T-169 | O'quvchi Asosiy sahifasida 'Mening yutuqlarim': faollik seriyasi, 7 kunlik grafik, mavzu o'zlashtirish, aniqlik, haftalik o'rni, davomat, nishonlar; /me/progress                                      | ✅    |
 | T-170 | AI yordamchiga rasm: yuklash, DeepSeek vision (deepseek-flash), ochiq test himoyasi (BR-T05), ustoz rasmni ko'radi                                                                                     | ✅    |
 | T-171 | Mini App: yordamchiga rasm tugmasi (siqib yuklash, ko'rinish, xatoda qoladi); admin suhbatda rasm                                                                                                      | ✅    |
+| T-172 | Tezlik: shared `sideEffects:false` (Mini App va admin asosiy bundle gzip 115→84 KB), onboarding lazy, urinishlarga `(userId, submittedAt)` indeks, yutuqlar faqat topshirilgan haftaliklarni o'qiydi   | ✅    |

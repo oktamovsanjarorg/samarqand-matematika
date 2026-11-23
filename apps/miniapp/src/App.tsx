@@ -8,9 +8,11 @@ import { api, login } from "./lib/api";
 import { adminLoginUrl } from "./lib/staff";
 import { getInitData } from "./lib/telegram";
 import { HomePage } from "./pages/HomePage";
-import { OnboardingPage } from "./pages/OnboardingPage";
 
 /** T-131: sahifalar alohida chunk'larda: birinchi ochilishda faqat Asosiy yuklanadi, KaTeX esa kerak bo'lganda */
+const OnboardingPage = lazy(() =>
+  import("./pages/OnboardingPage").then((m) => ({ default: m.OnboardingPage })),
+);
 const AttemptResultPage = lazy(() =>
   import("./pages/AttemptResultPage").then((m) => ({ default: m.AttemptResultPage })),
 );
@@ -69,7 +71,13 @@ function TelegramApp() {
     );
   if (toAdmin || !profile.data) return <Splash />;
   // BR-S04: ism yoki telefon yo'q o'quvchi avval onboarding'dan o'tadi
-  if (profile.data.needsOnboarding) return <OnboardingPage profile={profile.data} />;
+  // Onboarding alohida yuklanadi (T-172): zod faqat shu yerda kerak, asosiy fayl yengil
+  if (profile.data.needsOnboarding)
+    return (
+      <Suspense fallback={<Splash />}>
+        <OnboardingPage profile={profile.data} />
+      </Suspense>
+    );
 
   return (
     <Routes>
