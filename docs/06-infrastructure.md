@@ -32,6 +32,7 @@
 - **Avtomatik:** `main` ga push → CI yashil → `deploy` job SSH orqali `scripts/deploy.sh` ni chaqiradi. CI kaliti serverda faqat shu skriptni ishga tushira oladi (`authorized_keys` dagi `command=`). Skript eski image'larni o'chiradi va Docker build keshini 4 GB gacha qisqartiradi (aks holda disk to'ladi). Bir vaqtda bitta deploy ishlaydi (`flock`). Ketma-ket merge bo'lsa, keyingisi oldingisi tugashini 12 daqiqagacha kutadi, keyin `main`ning oxirgi holatini oladi (T-160).
 - Takroriy CI yo'q (T-149): `main` ga push'da `verified` job (`scripts/ci-verified.sh`) commit'ning fayl daraxtini merge qilingan PR'ning oxirgi commit'i bilan solishtiradi. Bir xil bo'lsa va shu commit uchun PR'da CI muvaffaqiyatli o'tgan bo'lsa, lint/test/e2e takrorlanmaydi, darhol deploy qilinadi (GitHub Actions daqiqalarining taxminan yarmi). Daraxt farq qilsa (rebase'siz merge), PR topilmasa yoki API xato bersa, to'liq tekshiruv ishlaydi. Qo'lda sinash: `REPO=owner/repo SHA=<commit> scripts/ci-verified.sh`.
 - Qo'lda: `scripts/deploy-remote.sh` (noutbukdan).
+- Kesh (T-174): `/assets/*` dagi mavjud fayllar bir yilga (`immutable`), qolgan hamma narsa (`index.html`, sahifa manzillari) `no-cache`. Yo'q asset (deploydan keyin eski chunk nomi) `index.html` emas, keshsiz 404 oladi. Mini App `index.html` dagi kichik skript asosiy skript yuklanmasa sahifani bir marta qayta yuklaydi: Telegram eski versiyani xotiradan ochsa ham oq ekran qolmaydi.
 - Qoida: serverda kod qo'lda tahrirlanmaydi.
 
 ## Loglar (T-106)

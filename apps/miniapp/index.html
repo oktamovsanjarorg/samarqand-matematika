@@ -9,6 +9,26 @@
       content="Matematikadan imtihon va milliy sertifikatga tayyorgarlik: darslar, testlar va haftalik reyting Telegram ichida."
     />
     <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+    <script>
+      // T-174: Telegram eski index.html'ni xotiradan ochsa, asosiy skript (eski nom) serverda yo'q va ekran oq qoladi.
+      // O'z skriptimiz yuklanmasa sahifa bir marta qayta yuklanadi (initData #hash'da saqlanadi).
+      // 10 soniyalik cheklov stale-chunks.ts bilan bitta kalitda: cheksiz aylanish bo'lmaydi.
+      addEventListener(
+        "error",
+        function (event) {
+          var el = event.target;
+          if (!el || el.tagName !== "SCRIPT" || el.src.indexOf(location.origin + "/") !== 0) return;
+          try {
+            if (Date.now() - Number(sessionStorage.getItem("stale-reload-at") || 0) < 10000) return;
+            sessionStorage.setItem("stale-reload-at", String(Date.now()));
+          } catch (_) {
+            return; // saqlash yopiq: hisoblab bo'lmaydi, aylanib qolmaslik uchun qayta yuklamaymiz
+          }
+          location.reload();
+        },
+        true,
+      );
+    </script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
