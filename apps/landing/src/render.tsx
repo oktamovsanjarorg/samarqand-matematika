@@ -38,7 +38,6 @@ const SITEMAP_LINKS = [
   ["/#imkoniyatlar", "Imkoniyatlar"],
   ["/#qanday", "Qanday boshlash"],
   ["/#ota-onalar", "Ota-onalar uchun"],
-  ["/#ustozlar", "Ustoz va yordamchilar uchun"],
   ["/#savollar", "Koʻp beriladigan savollar"],
 ] as const;
 

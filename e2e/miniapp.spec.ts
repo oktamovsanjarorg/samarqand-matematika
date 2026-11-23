@@ -3,17 +3,15 @@ import { createStudent, sharePhone } from "./api";
 import { violations } from "./axe";
 import { newTgId, openAsTelegram } from "./telegram";
 
-test("T-166: Telegram'siz ochilsa landing: bot tugmasi, kontent soni, ustoz kirishi; WCAG AA", async ({
+test("T-166: Telegram'siz ochilsa landing: bot tugmasi, kontent soni, xodim havolasisiz; WCAG AA", async ({
   page,
 }) => {
   await page.route("https://telegram.org/js/telegram-web-app.js", (r) => r.fulfill({ body: "" }));
   await page.goto("http://127.0.0.1:5190/");
   // Haqiqiy API: test muhitida bot yo'q, tugma ko'rinmaydi, sahifa baribir ochiladi
   await expect(page.getByRole("heading", { level: 1, name: "Samarqand matematika" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Ustoz va yordamchilar uchun kirish" })).toHaveAttribute(
-    "href",
-    "/admin/",
-  );
+  // T-174: landing o'quvchi va ota-ona uchun, xodim paneliga havola yo'q
+  await expect(page.locator('a[href*="admin"]')).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Telegramʼda ochish" })).toHaveCount(0);
 
   await page.route("**/api/public/landing", (r) =>
