@@ -17,8 +17,6 @@ interface TgWebApp {
   /** Bot API 6.9+: raqamni botga ulashish oynasi. Raqam botga xabar bo'lib boradi */
   requestContact?(cb?: (shared: boolean) => void): void;
   openLink?(url: string): void;
-  /** android, ios, tdesktop, macos, weba, webk, unigram, unknown */
-  platform?: string;
 }
 
 declare global {

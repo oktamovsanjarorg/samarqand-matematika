@@ -157,9 +157,11 @@ www.{$LANDING_HOST} {
 		# T-147: admin boshqa saytda iframe ichida ochilmaydi (clickjacking) va faqat o'z fayllarini yuklaydi.
 		# style 'unsafe-inline': KaTeX formulalarida style atributi. blob: — token bilan olingan chek rasmlari.
 		# Mini App'ga qo'yilmaydi: uni Telegram Web iframe ichida ochadi.
+		# T-176: xodim Mini App'dan panelga o'tadi, Telegram Web va Telegram Desktop (Linux Wayland qobig'i,
+		# origin https://web.telegram.org) Mini App'ni iframe'da ochadi: faqat shu origin'ga ruxsat. X-Frame-Options
+		# ruxsat ro'yxatini bilmaydi, shuning uchun yo'q; frame-ancestors uni hamma zamonaviy brauzerda almashtiradi.
 		header {
-			Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
-			X-Frame-Options DENY
+			Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self' https://web.telegram.org"
 		}
 		import assets
 		import spa
