@@ -1,5 +1,3 @@
-import { APP_URL } from "../content";
-
 export function Footer() {
   return (
     <footer className="border-t border-hint/15">
@@ -11,12 +9,6 @@ export function Footer() {
           </a>
           <a href="/#savollar" className="hover:text-brand">
             Savollar
-          </a>
-          <a href="/sitemap.html" className="hover:text-brand">
-            Sayt xaritasi
-          </a>
-          <a href={`${APP_URL}/admin/`} className="hover:text-brand">
-            Ustozlar uchun kirish
           </a>
         </nav>
       </div>

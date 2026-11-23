@@ -212,3 +212,4 @@
 | T-171 | Mini App: yordamchiga rasm tugmasi (siqib yuklash, ko'rinish, xatoda qoladi); admin suhbatda rasm                                                                                                        | ✅    |
 | T-172 | Tezlik: shared `sideEffects:false` (Mini App va admin asosiy bundle gzip 115→84 KB), onboarding lazy, urinishlarga `(userId, submittedAt)` indeks, yutuqlar faqat topshirilgan haftaliklarni o'qiydi     | ✅    |
 | T-173 | Professional sayt: `apps/landing` statik HTML (SEO teglari, JSON-LD, FAQ), `sitemap.xml`, `sitemap.html`, `robots.txt`; asosiy domen (`LANDING_HOST`), www → sayt; BR-T05 dublikati: rasm qoidasi BR-T06 | ✅    |
+| T-174 | Sayt va Mini App landing faqat o'quvchi va ota-ona uchun: ustoz/admin bo'limi, panelga havola va "Sayt xaritasi" tugmasi olib tashlandi (sitemap.html Google uchun qoladi)                               | ✅    |

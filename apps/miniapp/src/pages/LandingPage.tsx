@@ -173,9 +173,6 @@ export function LandingPage() {
 
         <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-hint/20 pt-4 text-sm text-hint">
           <span>© {new Date().getFullYear()} Samarqand matematika</span>
-          <a href="/admin/" className="text-link underline">
-            Ustoz va yordamchilar uchun kirish
-          </a>
         </footer>
       </main>
     </div>

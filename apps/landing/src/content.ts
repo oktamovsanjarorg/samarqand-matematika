@@ -86,13 +86,6 @@ export const PARENTS = [
   "Ulanish oddiy: farzandingiz profilidan havola yuboradi",
 ];
 
-export const TEACHERS = [
-  "Savollarni Excel faylidan yuklash, formulalar bilan",
-  "Ochiq javoblarni tekshirish navbati, AI faqat yordamchi",
-  "Davomat, toʻlov cheklari va obunalar bir joyda",
-  "Oylik statistika va oʻquvchilar boʻyicha maslahatlar",
-];
-
 export const FAQ = [
   {
     q: "Ilova oʻrnatish kerakmi?",

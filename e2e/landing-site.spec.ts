@@ -28,6 +28,9 @@ test("T-173: sayt sahifasi statik HTML: SEO teglari, bo'limlar, bot havolasi; WC
   await expect(bot).toHaveCount(2);
   for (const a of await bot.all()) await expect(a).toHaveAttribute("href", "https://t.me/sinov_bot");
 
+  // T-174: sahifa o'quvchi va ota-ona uchun: xodim paneli va sayt xaritasi tugmasi ko'rinmaydi
+  await expect(page.locator('a[href*="admin"]')).toHaveCount(0);
+  await expect(page.getByText(/ustoz va yordamchilar|boshqaruv paneli|sayt xaritasi/i)).toHaveCount(0);
   await page.getByText("Ilova oʻrnatish kerakmi?").click();
   await expect(page.getByText("Platforma Telegram ichida ochiladi")).toBeVisible();
   expect(await violations(page, "landing")).toEqual([]);
