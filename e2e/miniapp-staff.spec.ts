@@ -34,25 +34,3 @@ test("T-158: admin panel bot havolasisiz, faqat soxta initData bilan ochilmaydi"
   // Rad etilgan initData ham manzil satrida (tarix, skrinshot) qolmaydi
   expect(page.url()).not.toContain("tg=");
 });
-
-test("T-175, BR-A06: kompyuterdagi Telegram'da ustoz panelni tugma bilan brauzerda ochadi, oq ekran yo'q", async ({
-  page,
-}) => {
-  await page.addInitScript(() => {
-    (window as unknown as { __tgPlatform: string }).__tgPlatform = "tdesktop";
-  });
-  await openAsTelegram(page, { id: newTgId(), first_name: "Ustoz", username: E2E_OWNER });
-  await expect(page.getByRole("heading", { name: "Boshqaruv paneli" })).toBeVisible();
-  // Mini App oynasi panelga o'tmaydi
-  expect(page.url()).toContain("127.0.0.1:5190");
-  await page.screenshot({ path: "e2e/.results/miniapp-staff-desktop.png" });
-
-  await page.getByRole("button", { name: "Admin panelni ochish" }).click();
-  await expect(page.getByRole("status")).toHaveText("Panel brauzerda ochildi. Bu oynani yopishingiz mumkin.");
-  const link = await page.evaluate(() => (window as unknown as { __openedLink: string }).__openedLink);
-  expect(link).toMatch(/^http:\/\/127\.0\.0\.1:5191\/admin\/login#tg=/);
-
-  // Brauzerda havola ochilsa panelga kiriladi
-  await page.goto(link);
-  await expect(page).toHaveURL(/127\.0\.0\.1:5191\/admin\/?$/);
-});

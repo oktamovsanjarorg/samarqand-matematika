@@ -213,4 +213,5 @@
 | T-172 | Tezlik: shared `sideEffects:false` (Mini App va admin asosiy bundle gzip 115→84 KB), onboarding lazy, urinishlarga `(userId, submittedAt)` indeks, yutuqlar faqat topshirilgan haftaliklarni o'qiydi     | ✅    |
 | T-173 | Professional sayt: `apps/landing` statik HTML (SEO teglari, JSON-LD, FAQ), `sitemap.xml`, `sitemap.html`, `robots.txt`; asosiy domen (`LANDING_HOST`), www → sayt; BR-T05 dublikati: rasm qoidasi BR-T06 | ✅    |
 | T-174 | Oq ekran: deploydan keyin yo'q asset `index.html` (200, 1 yil kesh) o'rniga keshsiz 404; sahifa manzillari `no-cache`; Mini App asosiy skripti yuklanmasa bir marta qayta yuklanadi                      | ✅    |
-| T-175 | Kompyuterdagi Telegram'da ustoz uchun oq ekran: admin panelga avtomatik o'tish o'rniga tugma, panel brauzerda (`openLink`); telefonda avvalgidek                                                         | ✅    |
+| T-175 | Kompyuterda ustozga brauzer tugmasi (T-176 bilan almashtirildi)                                                                                                                                          | ✅    |
+| T-176 | Admin CSP `frame-ancestors 'self' https://web.telegram.org`, `X-Frame-Options` yo'q: Telegram Desktop (Wayland) va Web iframe'ida ustoz panelga Mini App ichida o'tadi                                   | ✅    |

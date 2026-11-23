@@ -5,9 +5,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { ErrorState, Splash } from "./components/states";
 import { api, login } from "./lib/api";
-import { StaffGate } from "./components/StaffGate";
-import { adminInBrowser, adminLoginUrl } from "./lib/staff";
-import { getInitData, tg } from "./lib/telegram";
+import { adminLoginUrl } from "./lib/staff";
+import { getInitData } from "./lib/telegram";
 import { HomePage } from "./pages/HomePage";
 
 /** T-131: sahifalar alohida chunk'larda: birinchi ochilishda faqat Asosiy yuklanadi, KaTeX esa kerak bo'lganda */
@@ -53,11 +52,9 @@ function TelegramApp() {
   const session = useQuery({ queryKey: ["session"], queryFn: login, staleTime: Infinity, retry: false });
   // T-158, T-168: xodim Mini App'ni ochsa har doim admin panelga o'tadi
   const toAdmin = !!session.data && STAFF_ROLES.includes(session.data.role);
-  // T-175: kompyuterdagi Telegram panelni oynada ochmaydi: u yerda tugma bilan brauzerda
-  const viaBrowser = toAdmin && adminInBrowser(tg?.platform);
   useEffect(() => {
-    if (toAdmin && !viaBrowser) window.location.replace(adminLoginUrl(getInitData()));
-  }, [toAdmin, viaBrowser]);
+    if (toAdmin) window.location.replace(adminLoginUrl(getInitData()));
+  }, [toAdmin]);
   const profile = useQuery({
     queryKey: ["profile"],
     queryFn: () => api<MyProfile>("/me/profile"),
@@ -72,7 +69,6 @@ function TelegramApp() {
         onRetry={() => void session.refetch().then(() => profile.refetch())}
       />
     );
-  if (viaBrowser) return <StaffGate />;
   if (toAdmin || !profile.data) return <Splash />;
   // BR-S04: ism yoki telefon yo'q o'quvchi avval onboarding'dan o'tadi
   // Onboarding alohida yuklanadi (T-172): zod faqat shu yerda kerak, asosiy fayl yengil
