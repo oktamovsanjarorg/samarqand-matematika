@@ -89,7 +89,7 @@ export class TutorService {
       );
     const photo = input.photoId ? await this.photos.pending(chatId, input.photoId) : null;
     const ctx = await this.context(chat, text, now);
-    // BR-T05: rasmni matn bilan solishtirib bo'lmaydi, ochiq test savollari modelga beriladi
+    // BR-T06: rasmni matn bilan solishtirib bo'lmaydi, ochiq test savollari modelga beriladi
     const guard = photo ? openTestGuard(await this.openQuestions(now)) : "";
     const context = [ctx.context, guard].filter(Boolean).join("\n\n");
     const photos = photo ? [...ctx.photos, photo.input] : ctx.photos;

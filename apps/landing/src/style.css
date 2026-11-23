@@ -1,0 +1,28 @@
+@import "@samarqand/ui-tokens/tokens.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-bg font-sans text-text antialiased;
+  }
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-card border border-hint/15 bg-section p-5;
+  }
+  .btn {
+    @apply inline-flex h-12 items-center justify-center gap-2 rounded-xl px-6 font-bold transition hover:opacity-90 active:scale-[0.98];
+  }
+  .wrap {
+    @apply mx-auto max-w-6xl px-4;
+  }
+}

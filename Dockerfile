@@ -10,6 +10,7 @@ COPY apps/api/package.json apps/api/
 COPY apps/bot/package.json apps/bot/
 COPY apps/miniapp/package.json apps/miniapp/
 COPY apps/admin/package.json apps/admin/
+COPY apps/landing/package.json apps/landing/
 COPY packages/db/package.json packages/db/
 COPY packages/shared/package.json packages/shared/
 COPY packages/math/package.json packages/math/
@@ -24,7 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-cert
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=build /app /app
-RUN rm -rf apps/miniapp apps/admin
+RUN rm -rf apps/miniapp apps/admin apps/landing
 RUN mkdir -p /app/media && chown node:node /app/media
 USER node
 
@@ -33,3 +34,4 @@ FROM caddy:2.10-alpine AS web
 COPY deploy/Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /app/apps/miniapp/dist /srv/miniapp
 COPY --from=build /app/apps/admin/dist /srv/admin
+COPY --from=build /app/apps/landing/dist /srv/landing

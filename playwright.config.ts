@@ -59,5 +59,12 @@ export default defineConfig({
       url: "http://127.0.0.1:5191/admin/",
       reuseExistingServer: !CI,
     },
+    {
+      // T-173: landing build'dan keyin statik ko'rinishda tekshiriladi (Caddy shablonlarisiz)
+      command: "pnpm --filter @samarqand/landing build && pnpm --filter @samarqand/landing preview",
+      url: "http://127.0.0.1:5192",
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
   ],
 });

@@ -104,7 +104,7 @@ test("BR-T01: haftalik test yopilgach noto'g'ri savol ostida xato tahlili ochila
   await expect(page.getByLabel("Yordamchiga xabar")).toBeVisible();
 });
 
-test("BR-T05, T-171: erkin savolga masala rasmi; AI javob bermasa rasm qoladi; yuborilgan rasm suhbatda ko'rinadi", async ({
+test("BR-T06, T-171: erkin savolga masala rasmi; AI javob bermasa rasm qoladi; yuborilgan rasm suhbatda ko'rinadi", async ({
   page,
   request,
   browser,

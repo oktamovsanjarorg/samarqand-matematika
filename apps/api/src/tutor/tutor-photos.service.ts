@@ -6,7 +6,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { MediaStore, sniffImage } from "../storage/media-store";
 
 /**
- * Yordamchiga rasm (T-170, BR-T05): avval yuklanadi, keyin xabar bilan yuboriladi.
+ * Yordamchiga rasm (T-170, BR-T06): avval yuklanadi, keyin xabar bilan yuboriladi.
  * Suhbatda bir vaqtda bitta yuborilmagan rasm turadi: yangisi eskisini almashtiradi (disk to'lmasin).
  */
 @Injectable()

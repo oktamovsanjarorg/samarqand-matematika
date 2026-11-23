@@ -44,7 +44,7 @@ export function mentionsOpenQuestion(text: string, openQuestions: string[]): boo
   });
 }
 
-/** Rasm ochiq test savoli bo'lsa model faqat shu belgini qaytaradi; server uni rad javobiga aylantiradi (BR-T05) */
+/** Rasm ochiq test savoli bo'lsa model faqat shu belgini qaytaradi; server uni rad javobiga aylantiradi (BR-T06) */
 export const OPEN_TEST_MARK = "OCHIQ_TEST";
 
 /** Rasm matn bilan solishtirib bo'lmaydi: ochiq test savollari modelga beriladi (o'quvchiga ko'rinmaydi) */

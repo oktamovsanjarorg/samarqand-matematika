@@ -55,7 +55,7 @@ export default [
     rules: { "@typescript-eslint/consistent-type-imports": "off" },
   },
   {
-    files: ["apps/miniapp/**/*.tsx", "apps/admin/**/*.tsx", "packages/ui/**/*.tsx"],
+    files: ["apps/miniapp/**/*.tsx", "apps/admin/**/*.tsx", "apps/landing/**/*.tsx", "packages/ui/**/*.tsx"],
     plugins: { "react-hooks": reactHooks },
     rules: {
       "react-hooks/rules-of-hooks": "error",
@@ -71,9 +71,19 @@ export default [
       ],
     },
   },
+  {
+    // Build skripti Node'da ishlaydi (T-173)
+    files: ["apps/landing/scripts/**/*.mjs"],
+    languageOptions: { globals: { URL: "readonly", console: "readonly" } },
+  },
   forbid(["packages/**/*.ts", "packages/**/*.tsx"], APPS, "Paketlar ilovalarni import qilmaydi."),
   forbid(
-    ["apps/bot/**/*.ts", "apps/miniapp/**/*.{ts,tsx}", "apps/admin/**/*.{ts,tsx}"],
+    [
+      "apps/bot/**/*.ts",
+      "apps/miniapp/**/*.{ts,tsx}",
+      "apps/admin/**/*.{ts,tsx}",
+      "apps/landing/**/*.{ts,tsx}",
+    ],
     DB,
     "Bot va UI bazaga to'g'ridan-to'g'ri murojaat qilmaydi: faqat API orqali.",
   ),
