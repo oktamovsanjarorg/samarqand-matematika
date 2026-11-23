@@ -53,6 +53,8 @@ export async function openAsTelegram(
     BackButton: { show() {}, hide() {}, onClick() {}, offClick() {} },
     requestContact(cb) { window.__contactRequested = true; if (cb) cb(true); },
     openLink(url) { window.__openedLink = url; },
+    // T-175: platformani test addInitScript bilan beradi (window.__tgPlatform)
+    platform: window.__tgPlatform,
   } };`;
   await page.route("https://telegram.org/js/telegram-web-app.js", (r) =>
     r.fulfill({ contentType: "text/javascript", body: stub }),
