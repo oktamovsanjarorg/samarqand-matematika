@@ -129,7 +129,10 @@ www.{$LANDING_HOST} {
 	@static not path /api/*
 	log_skip @static
 
+	# T-178: ilova va admin qidiruvda chiqmaydi (sayt — LANDING_HOST). robots.txt bilan yopilmaydi:
+	# yopilsa Google sahifani o'qimaydi, noindex'ni ko'rmaydi va manzilni natijalarda qoldiradi.
 	header {
+		X-Robots-Tag "noindex, nofollow"
 		Strict-Transport-Security "max-age=31536000"
 		X-Content-Type-Options nosniff
 		Referrer-Policy strict-origin-when-cross-origin

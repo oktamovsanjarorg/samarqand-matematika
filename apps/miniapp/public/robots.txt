@@ -1,2 +1,3 @@
+# T-178: sahifalar ochiq, chunki Google ulardagi noindex'ni o'qishi kerak
 User-agent: *
-Disallow: /
+Disallow: /api/
