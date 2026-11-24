@@ -31,7 +31,12 @@ test("BR-T04: ustoz o'quvchining yordamchi bilan suhbatini ko'radi", async ({ pa
     await prisma.$disconnect();
   }
 
+  // Pullik API chaqirilmaydi: faqat "AI yoqilgan" holati almashtiriladi
+  await page.route("**/api/admin/agent", (r) => r.fulfill({ json: { enabled: true } }));
+  // T-177: eski manzil yangi bo'limga o'tadi
   await loginAdmin(page, request, "tutor");
+  await expect(page).toHaveURL(/\/admin\/ai\/chats$/);
+  await page.screenshot({ path: "e2e/.results/admin-tutor-list.png" });
   await page.getByRole("tab", { name: "Erkin savol" }).click();
   const row = page.getByTestId("tutor-chat-row").filter({ hasText: "Suhbat Oquvchi" });
   await expect(row).toContainText("1 ta savol");
@@ -40,6 +45,13 @@ test("BR-T04: ustoz o'quvchining yordamchi bilan suhbatini ko'radi", async ({ pa
   await expect(messages).toContainText("Kasrlarni qanday qoʻshamiz?");
   await expect(messages.locator(".katex").first()).toBeVisible();
   await page.screenshot({ path: "e2e/.results/admin-tutor.png", fullPage: true });
+
+  // T-177: savol agentga tayyor holda o'tadi, o'zi yuborilmaydi
+  await page.getByRole("button", { name: "AI bilan tahlil" }).click();
+  await expect(page.getByLabel("AI yordamchiga xabar")).toHaveValue(/^Suhbat Oquvchi AI yordamchidan/);
+  await expect(page.getByTestId("agent-items").locator("li")).toHaveCount(0);
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: "e2e/.results/admin-ai-ask.png", fullPage: true });
 });
 
 test("BR-T04, T-171: ustoz o'quvchi yuborgan rasmni suhbatda ko'radi", async ({ page, request, browser }) => {
@@ -70,6 +82,7 @@ test("BR-T04, T-171: ustoz o'quvchi yuborgan rasmni suhbatda ko'radi", async ({ 
     await prisma.$disconnect();
   }
   await loginAdmin(page, request, `tutor/${chat.id}`);
+  await expect(page).toHaveURL(new RegExp(`/admin/ai/chats/${chat.id}$`));
   const photo = page.getByTestId("tutor-photo").locator("img");
   await expect(photo).toBeVisible();
   expect(await photo.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);

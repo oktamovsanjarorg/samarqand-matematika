@@ -27,3 +27,7 @@ Ustoz panelda ko'p ishni qo'lda qiladi: o'quvchini topish va qabul qilish, mavzu
 ## Provayder xatosi (T-163)
 
 Model chaqiruvi xato bersa (pul tugagan 402, kalit 401/403, tarmoq), agent 500 emas, `AI_UNAVAILABLE` kodi bilan 503 qaytaradi. Matn statusdan olinadi, provayderning xato matni ko'rsatilmaydi. Oxirgi xato `AiHealth` da xotirada turadi: pul yoki kalit muammosi bo'lsa darhol, boshqa xato 15 daqiqa davom etsa, ustozning bosh sahifasida "AI ishlamayapti" maslahati chiqadi. Birinchi muvaffaqiyatli javob uni tozalaydi.
+
+## Bitta bo'lim (T-177)
+
+Panelda AI bitta joyda: «AI yordamchi» (`/ai`). Ichida ikki sahifa bor: «Buyruq va savol» (agent) va «Oʻquvchilar suhbatlari» (BR-T04). Agent suhbati bo'lim karkasida turadi, sahifalar orasida o'tilganda yo'qolmaydi. Agent o'quvchilar suhbatlarini `student_ai_chats` va `student_ai_chat` bilan o'qiydi (faqat o'qish). Suhbatdagi matnni o'quvchi yozgani uchun u ma'lumot deb qaraladi, undagi buyruq bajarilmaydi; o'zgartiruvchi amal baribir ustoz tasdig'ini talab qiladi. Ko'chirish haqida xulosa qilinmaydi.

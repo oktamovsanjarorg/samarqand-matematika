@@ -223,6 +223,31 @@ describe("Admin agenti (T-156)", () => {
     await f.prisma.group.delete({ where: { id: g.id } });
   });
 
+  it("T-177, BR-T04, BR-T05: agent o'quvchining AI yordamchi bilan suhbatini topadi va o'qiydi", async () => {
+    const [s, other] = [await f.student(false), await f.student(false)];
+    const make = (userId: string, text: string) =>
+      f.prisma.tutorChat.create({
+        data: { userId, mode: "FREE", messages: { create: { role: "USER", text } } },
+      });
+    const mine = await make(s.id, "Logarifmni tushunmadim");
+    const others = await make(other.id, "Boshqa savol");
+    script(
+      use("c1", "student_ai_chats", { mode: "FREE", userId: s.id }),
+      use("c2", "student_ai_chat", { chatId: mine.id }),
+      say("Logarifm qiyin."),
+    );
+    const r = (await chat("bu o'quvchi nimani so'ragan?")).json() as AgentReply;
+    expect(r.pending).toBeNull();
+    expect(r.items.filter((i) => i.kind === "action")).toEqual([
+      { kind: "action", title: "Oʻquvchilar suhbatlarini koʻrish", ok: true },
+      { kind: "action", title: "Suhbatni oʻqish", ok: true },
+    ]);
+    const list = JSON.stringify(testAgent.calls[1]?.messages.at(-1));
+    expect(list).toContain(mine.id);
+    expect(list).not.toContain(others.id);
+    expect(lastResult()?.content).toContain("Logarifmni tushunmadim");
+  });
+
   it("ruxsatlar: o'quvchiga 403, tokensiz 401; holat yoqilgan; bo'sh xabar 400", async () => {
     expect((await f.call("GET", "/admin/agent", f.teacher)).json()).toEqual({ enabled: true });
     const s = await f.student();

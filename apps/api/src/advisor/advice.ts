@@ -123,7 +123,7 @@ export function aiAdvice(f: { since: Date; status: number } | null, now: Date): 
       key: "ai:down",
       level: "urgent",
       title: `AI ishlamayapti: ${aiErrorText(f.status)}`,
-      why: `${minutes < 60 ? `${minutes} daqiqadan` : `${Math.floor(minutes / 60)} soatdan`} beri AI yordamchi va AI agent javob bermayapti. Oʻquvchilar yechim rasmlari tekshiruvi sizning navbatingizga tushyapti, platformaning qolgan qismi ishlaydi.`,
+      why: `${minutes < 60 ? `${minutes} daqiqadan` : `${Math.floor(minutes / 60)} soatdan`} beri AI yordamchi javob bermayapti. Oʻquvchilar yechim rasmlari tekshiruvi sizning navbatingizga tushyapti, platformaning qolgan qismi ishlaydi.`,
       action: null,
     },
   ];

@@ -43,13 +43,14 @@
 
 ## AI yordamchi (FR-Y)
 
-| ID     | Talab                                                                                    | BR          | T            | Holat |
-| ------ | ---------------------------------------------------------------------------------------- | ----------- | ------------ | ----- |
-| FR-Y01 | Mashqda Sokratik yordamchi: avval ishora, to'liq yechim urinishdan keyin                 | BR-T02      | T-040, T-041 | ✅    |
-| FR-Y02 | Ochiq haftalik test va mock savollari bo'yicha yordam yo'q; mock paytida butunlay o'chiq | BR-T01, M06 | T-040        | ✅    |
-| FR-Y03 | Test yopilgach "Xatoni tushuntir": o'quvchining rasmi va ustoz izohi asosida             |             | T-043        | ✅    |
-| FR-Y04 | Kunlik limit; barcha suhbatlar saqlanadi, ustoz ko'radi                                  | BR-T03, T04 | T-040, T-042 | ✅    |
-| FR-Y05 | Admin AI agenti: oddiy soʻz bilan buyruq, amal faqat tasdiq bilan                        | BR-T05      | T-156        | ✅    |
+| ID     | Talab                                                                                       | BR          | T            | Holat |
+| ------ | ------------------------------------------------------------------------------------------- | ----------- | ------------ | ----- |
+| FR-Y01 | Mashqda Sokratik yordamchi: avval ishora, to'liq yechim urinishdan keyin                    | BR-T02      | T-040, T-041 | ✅    |
+| FR-Y02 | Ochiq haftalik test va mock savollari bo'yicha yordam yo'q; mock paytida butunlay o'chiq    | BR-T01, M06 | T-040        | ✅    |
+| FR-Y03 | Test yopilgach "Xatoni tushuntir": o'quvchining rasmi va ustoz izohi asosida                |             | T-043        | ✅    |
+| FR-Y04 | Kunlik limit; barcha suhbatlar saqlanadi, ustoz ko'radi                                     | BR-T03, T04 | T-040, T-042 | ✅    |
+| FR-Y05 | Admin AI agenti: oddiy soʻz bilan buyruq, amal faqat tasdiq bilan                           | BR-T05      | T-156        | ✅    |
+| FR-Y06 | Adminda AI bitta bo'limda: agent va o'quvchilar suhbatlari, agent suhbatlarni tahlil qiladi | BR-T04, T05 | T-177        | ✅    |
 
 ## Guruhlar, davomat, ota-ona (FR-G)
 

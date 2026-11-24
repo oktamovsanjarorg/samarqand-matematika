@@ -1,6 +1,7 @@
 import type { AgentItem, AgentPending, AgentReply, AgentTranscript } from "@samarqand/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import { api } from "./api";
 
 export const useAgentStatus = () =>
@@ -24,9 +25,11 @@ export function useAgentChat() {
   const qc = useQueryClient();
   const [state, setState] = useState<State>(EMPTY);
   const [draft, setDraft] = useState<string | null>(null);
+  const [text, setText] = useState("");
   const done = (r: AgentReply) => {
     setState(r);
     setDraft(null);
+    setText("");
     void qc.invalidateQueries({ predicate: (q) => q.queryKey[0] !== "agent" });
   };
   const chat = useMutation({
@@ -47,12 +50,18 @@ export function useAgentChat() {
     onSuccess: done,
   });
   const items: AgentItem[] = draft ? [...state.items, { kind: "user", text: draft }] : state.items;
+  const busy = chat.isPending || confirm.isPending;
   return {
     items,
+    text,
+    setText,
+    send: (message: string) => {
+      if (message.trim() && !busy && !state.pending) chat.mutate(message.trim());
+    },
     pending: state.pending,
     chat,
     confirm,
-    busy: chat.isPending || confirm.isPending,
+    busy,
     error: chat.error ?? confirm.error,
     reset: () => {
       setState(EMPTY);
@@ -61,3 +70,10 @@ export function useAgentChat() {
     },
   };
 }
+
+/** T-177: suhbat AI bo'limi karkasida turadi, ichki sahifaga o'tib qaytilsa yo'qolmaydi */
+export interface AiContext {
+  status: ReturnType<typeof useAgentStatus>;
+  agent: ReturnType<typeof useAgentChat>;
+}
+export const useAi = () => useOutletContext<AiContext>();

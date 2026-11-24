@@ -1,6 +1,5 @@
 import type { RoleName } from "@samarqand/shared";
 import {
-  Bot,
   BookOpen,
   CalendarCheck,
   ChartColumn,
@@ -30,15 +29,15 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-/** Admin bo'limlari guruhlab: o'quv jarayoni, odamlar, to'lov va AI */
+/** Admin bo'limlari guruhlab: o'quv jarayoni, odamlar, to'lov */
 export function navGroups(role: RoleName): NavGroup[] {
   const groups: NavGroup[] = [
     {
       title: "Asosiy",
       items: [
         { to: "/", label: "Bosh sahifa", Icon: LayoutDashboard },
-        // T-156: oddiy so'z bilan buyruq, panel amallari
-        { to: "/agent", label: "AI agent", Icon: Sparkles },
+        // T-177: AI bitta bo'limda — buyruq va savol (T-156), o'quvchilar suhbatlari (T-042)
+        { to: "/ai", label: "AI yordamchi", Icon: Sparkles },
         // T-162: oy bo'yicha o'quv natijalari
         { to: "/stats", label: "Statistika", Icon: ChartColumn },
       ],
@@ -63,11 +62,8 @@ export function navGroups(role: RoleName): NavGroup[] {
       ],
     },
     {
-      title: "Toʻlov va AI",
-      items: [
-        { to: "/payments", label: "Toʻlovlar", Icon: CreditCard },
-        { to: "/tutor", label: "Yordamchi", Icon: Bot },
-      ],
+      title: "Toʻlov",
+      items: [{ to: "/payments", label: "Toʻlovlar", Icon: CreditCard }],
     },
   ];
   // BR-B05: tarif va karta faqat ustozda

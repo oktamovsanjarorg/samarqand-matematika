@@ -2,7 +2,7 @@ import { TUTOR_MODES, type TutorMode } from "@samarqand/shared";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { MathText } from "../components/MathText";
-import { Badge, EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
+import { Badge, EmptyState, ErrorState, SkeletonList } from "../components/ui";
 import { MODE_LABELS, useTutorChats } from "../lib/tutor";
 
 const stamp = (iso: string) =>
@@ -19,7 +19,6 @@ export function TutorChatsPage() {
   const tabs: (TutorMode | null)[] = [null, ...TUTOR_MODES];
   return (
     <div className="space-y-4">
-      <PageTitle title="AI yordamchi" />
       <p className="text-sm text-hint">
         Oʻquvchilar yordamchidan nima soʻragani. Raqam — oʻquvchi savollari soni.
       </p>
@@ -45,7 +44,7 @@ export function TutorChatsPage() {
       <ul className="space-y-2">
         {q.data?.map((c) => (
           <li key={c.id}>
-            <Link to={`/tutor/${c.id}`} className="card block space-y-1" data-testid="tutor-chat-row">
+            <Link to={`/ai/chats/${c.id}`} className="card block space-y-1" data-testid="tutor-chat-row">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="min-w-0 flex-1 font-bold">{c.student.name}</span>
                 <Badge tone="brand">{MODE_LABELS[c.mode]}</Badge>

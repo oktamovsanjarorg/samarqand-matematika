@@ -1,8 +1,9 @@
-import { ArrowLeft } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, Sparkles } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { MathText } from "../components/MathText";
 import { ProtectedImage } from "../components/ProtectedImage";
-import { Badge, ErrorState, SkeletonList } from "../components/ui";
+import { Badge, Button, ErrorState, SkeletonList } from "../components/ui";
+import { useAi } from "../lib/agent";
 import { MODE_LABELS, useTutorChat } from "../lib/tutor";
 
 /** Bitta suhbat: savol va xabarlar (faqat o'qish, BR-T04) */
@@ -11,7 +12,7 @@ export function TutorChatPage() {
   const q = useTutorChat(id);
   return (
     <div className="space-y-4">
-      <Link to="/tutor" className="flex w-fit items-center gap-1 text-sm font-semibold text-link">
+      <Link to="/ai/chats" className="flex w-fit items-center gap-1 text-sm font-semibold text-link">
         <ArrowLeft size={16} /> Suhbatlar
       </Link>
       {q.isPending && <SkeletonList />}
@@ -19,8 +20,9 @@ export function TutorChatPage() {
       {q.data && (
         <>
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="min-w-0 flex-1 text-xl font-extrabold">{q.data.student.name}</h1>
+            <h2 className="min-w-0 flex-1 text-lg font-extrabold">{q.data.student.name}</h2>
             <Badge tone="brand">{MODE_LABELS[q.data.mode]}</Badge>
+            <AskAi name={q.data.student.name} />
           </div>
           {q.data.question && (
             <section className="card">
@@ -56,5 +58,24 @@ export function TutorChatPage() {
         </>
       )}
     </div>
+  );
+}
+
+/** T-177: shu o'quvchi haqida savolni agentga tayyorlab beradi; yuborishni ustoz o'zi bosadi */
+function AskAi({ name }: { name: string }) {
+  const { status, agent } = useAi();
+  const navigate = useNavigate();
+  // Amal tasdiq kutayotgan bo'lsa, yangi savol yozib bo'lmaydi
+  if (!status.data?.enabled || agent.pending || agent.busy) return null;
+  return (
+    <Button
+      variant="secondary"
+      onClick={() => {
+        agent.setText(`${name} AI yordamchidan nimalarni soʻragan? Qaysi mavzu qiyin?`);
+        void navigate("/ai");
+      }}
+    >
+      <Sparkles size={16} /> AI bilan tahlil
+    </Button>
   );
 }

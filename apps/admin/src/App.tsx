@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, useCallback, useEffect, useState } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
 import { AdminLayout } from "./components/AdminLayout";
 import { setUnauthorizedHandler } from "./lib/api";
 import { SESSION_KEY, clearSession, loadSession } from "./lib/session";
@@ -9,6 +9,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { SignInHint } from "./pages/SignInHint";
 
 /** T-132: kirish va bosh sahifadan boshqa sahifalar alohida chunk'larda yuklanadi */
+const AiPage = lazy(() => import("./pages/AiPage").then((m) => ({ default: m.AiPage })));
 const AgentPage = lazy(() => import("./pages/AgentPage").then((m) => ({ default: m.AgentPage })));
 const StatsPage = lazy(() => import("./pages/StatsPage").then((m) => ({ default: m.StatsPage })));
 const AuditPage = lazy(() => import("./pages/AuditPage").then((m) => ({ default: m.AuditPage })));
@@ -66,6 +67,25 @@ function useSessionSync(refresh: () => void) {
   }, [refresh]);
 }
 
+function OldChatLink() {
+  const { id = "" } = useParams();
+  return <Navigate to={`/ai/chats/${id}`} replace />;
+}
+
+/** T-177: AI bo'limi; eski /agent va /tutor manzillari ham shu yerga o'tadi */
+const aiRoutes = (
+  <>
+    <Route path="ai" element={<AiPage />}>
+      <Route index element={<AgentPage />} />
+      <Route path="chats" element={<TutorChatsPage />} />
+      <Route path="chats/:id" element={<TutorChatPage />} />
+    </Route>
+    <Route path="agent" element={<Navigate to="/ai" replace />} />
+    <Route path="tutor" element={<Navigate to="/ai/chats" replace />} />
+    <Route path="tutor/:id" element={<OldChatLink />} />
+  </>
+);
+
 export function App() {
   const [session, setSession] = useState(loadSession);
   const refresh = useCallback(() => setSession(loadSession()), []);
@@ -109,10 +129,8 @@ export function App() {
               <Route path="offline/:id" element={<OfflineTestPage />} />
               <Route path="mocks/new" element={<MockEditPage />} />
               <Route path="mocks/:id" element={<MockEditPage />} />
-              <Route path="agent" element={<AgentPage />} />
+              {aiRoutes}
               <Route path="stats" element={<StatsPage />} />
-              <Route path="tutor" element={<TutorChatsPage />} />
-              <Route path="tutor/:id" element={<TutorChatPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           ) : (

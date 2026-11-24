@@ -19,10 +19,10 @@ export function AgentComposer(p: {
       }}
     >
       <textarea
-        aria-label="Agentga xabar"
+        aria-label="AI yordamchiga xabar"
         value={p.text}
         maxLength={AGENT_MESSAGE_MAX}
-        rows={2}
+        rows={3}
         disabled={p.locked}
         placeholder={
           p.locked ? "Avval amalni tasdiqlang yoki rad eting" : "Masalan: yangi oʻquvchilarni qabul qil"

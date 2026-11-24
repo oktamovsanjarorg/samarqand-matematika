@@ -215,3 +215,4 @@
 | T-174 | Oq ekran: deploydan keyin yo'q asset `index.html` (200, 1 yil kesh) o'rniga keshsiz 404; sahifa manzillari `no-cache`; Mini App asosiy skripti yuklanmasa bir marta qayta yuklanadi                      | ✅    |
 | T-175 | Kompyuterda ustozga brauzer tugmasi (T-176 bilan almashtirildi)                                                                                                                                          | ✅    |
 | T-176 | Admin CSP `frame-ancestors 'self' https://web.telegram.org`, `X-Frame-Options` yo'q: Telegram Desktop (Wayland) va Web iframe'ida ustoz panelga Mini App ichida o'tadi                                   | ✅    |
+| T-177 | Admin: AI bitta «AI yordamchi» bo'limida (`/ai`): buyruq va savol, o'quvchilar suhbatlari; agent suhbatlarni o'qiydi va tahlil qiladi; eski `/agent`, `/tutor` yangi manzilga o'tadi                     | ✅    |

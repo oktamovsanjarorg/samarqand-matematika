@@ -10,7 +10,7 @@ test("T-158, T-168, BR-A06: ustoz Mini App'ni ochsa to'g'ridan-to'g'ri admin pan
   // initData manzil satrida qolmaydi
   expect(page.url()).not.toContain("tg=");
   await page.getByRole("button", { name: "Menyu", exact: true }).click();
-  await expect(page.getByRole("link", { name: "AI agent" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "AI yordamchi" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Oʻquvchi koʻrinishi" })).toHaveCount(0);
   await page.screenshot({ path: "e2e/.results/miniapp-staff-admin.png" });
 });
