@@ -33,7 +33,7 @@ export function AgentItems({ items, busy }: { items: AgentItem[]; busy: boolean 
       })}
       {busy && (
         <li className="flex items-center gap-2 text-sm text-hint">
-          <Loader2 size={16} className="animate-spin" /> Agent ishlayapti…
+          <Loader2 size={16} className="animate-spin" /> AI ishlayapti…
         </li>
       )}
     </ul>
@@ -52,7 +52,7 @@ export function AgentConfirm({
 }) {
   return (
     <section className="card space-y-3 border border-accent/40" aria-label="Tasdiq kutilmoqda">
-      <p className="text-xs font-semibold text-hint">Agent shu amalni bajarmoqchi</p>
+      <p className="text-xs font-semibold text-hint">AI shu amalni bajarmoqchi</p>
       <p className="font-semibold">{pending.title}</p>
       {pending.lines.length > 0 && (
         <ul className="space-y-1 text-sm">

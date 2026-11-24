@@ -1,4 +1,4 @@
-import { statsMonth } from "@samarqand/shared";
+import { adminTutorQuery, statsMonth } from "@samarqand/shared";
 import { z } from "zod";
 import { id, q, tool } from "./agent-tool";
 
@@ -131,5 +131,29 @@ export const READ_TOOLS = [
     write: false,
     title: () => "Maslahatlarni koʻrish",
     request: () => ({ method: "GET", path: "/admin/advisor" }),
+  }),
+  // T-177: o'quvchilarning AI yordamchi bilan suhbatlari (BR-T04) ham shu agentda
+  tool({
+    name: "student_ai_chats",
+    description:
+      "O'quvchilarning AI yordamchi bilan suhbatlari ro'yxati, oxirgisi birinchi: kim, savol, nechta so'ragan. mode: PRACTICE — mashq, REVIEW — xato tahlili, FREE — erkin savol. userId find_students dan, bo'lmasa hamma o'quvchi.",
+    schema: adminTutorQuery,
+    write: false,
+    title: () => "Oʻquvchilar suhbatlarini koʻrish",
+    request: (i) => {
+      const params = new URLSearchParams();
+      if (i.mode) params.set("mode", i.mode);
+      if (i.userId) params.set("userId", i.userId);
+      return { method: "GET", path: `/admin/tutor/chats?${params.toString()}` };
+    },
+  }),
+  tool({
+    name: "student_ai_chat",
+    description:
+      "Bitta suhbatning to'liq matni: o'quvchi nima so'ragani va AI javobi. chatId student_ai_chats dan olinadi.",
+    schema: z.object({ chatId: id }),
+    write: false,
+    title: () => "Suhbatni oʻqish",
+    request: (i) => ({ method: "GET", path: `/admin/tutor/chats/${q(i.chatId)}` }),
   }),
 ];

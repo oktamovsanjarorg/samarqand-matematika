@@ -1,45 +1,34 @@
-import { useState } from "react";
 import { AgentComposer } from "../components/agent/AgentComposer";
 import { AgentConfirm, AgentItems } from "../components/agent/AgentItems";
-import { Button, EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
-import { useAgentChat, useAgentStatus } from "../lib/agent";
+import { Button, EmptyState, ErrorState, SkeletonList } from "../components/ui";
+import { useAi, type AiContext } from "../lib/agent";
 
 const EXAMPLES = [
   "Bugun nima ishlar kutyapti?",
   "Tekshirilmagan toʻlov cheklarini koʻrsat",
+  "Oʻquvchilar koʻproq nimani soʻrayapti?",
   "Algebra kursiga “Kasrlar” mavzusini qoʻsh",
   "Kasrlar mavzusiga 5 ta oson savol tuz",
 ];
 
-/** AI agent (T-156): ustoz oddiy so'z bilan yozadi, agent panel amallarini bajaradi (o'zgartirish — tasdiq bilan) */
+/** Buyruq va savol (T-156): ustoz oddiy so'z bilan yozadi, agent panel amallarini bajaradi (o'zgartirish — tasdiq bilan) */
 export function AgentPage() {
-  const status = useAgentStatus();
+  const { status, agent } = useAi();
   if (status.isPending) return <SkeletonList rows={2} />;
   if (status.isError) return <ErrorState message={status.error.message} onRetry={() => status.refetch()} />;
-  return (
-    <div className="space-y-4">
-      <PageTitle title="AI agent" />
-      {status.data.enabled ? (
-        <Chat />
-      ) : (
-        <EmptyState
-          title="AI oʻchiq"
-          hint="Agent ishlashi uchun serverda AI kaliti sozlanishi kerak. Panelning qolgan qismi odatdagidek ishlaydi."
-        />
-      )}
-    </div>
-  );
+  if (!status.data.enabled)
+    return (
+      <EmptyState
+        title="AI oʻchiq"
+        hint="Buyruq berish uchun serverda AI kaliti sozlanishi kerak. Oʻquvchilar suhbatlari va panelning qolgan qismi odatdagidek ishlaydi."
+      />
+    );
+  return <Chat a={agent} />;
 }
 
-function Chat() {
-  const a = useAgentChat();
-  const [text, setText] = useState("");
-  const send = (message: string) => {
-    if (!message.trim() || a.busy || a.pending) return;
-    a.chat.mutate(message.trim(), { onSuccess: () => setText("") });
-  };
+function Chat({ a }: { a: AiContext["agent"] }) {
   return (
-    <>
+    <div className="space-y-4">
       <p className="text-sm text-hint">
         Nima qilish kerakligini oddiy soʻz bilan yozing. Oʻzgartiradigan har bir amalni avval sizga koʻrsatadi
         va tasdiqlaganingizdan keyingina bajaradi.
@@ -47,7 +36,7 @@ function Chat() {
       {a.items.length === 0 && (
         <div className="flex flex-wrap gap-2">
           {EXAMPLES.map((e) => (
-            <Button key={e} variant="secondary" onClick={() => send(e)}>
+            <Button key={e} variant="secondary" onClick={() => a.send(e)}>
               {e}
             </Button>
           ))}
@@ -63,17 +52,17 @@ function Chat() {
         </p>
       )}
       <AgentComposer
-        text={text}
-        setText={setText}
+        text={a.text}
+        setText={a.setText}
         locked={!!a.pending}
         busy={a.chat.isPending}
-        onSend={send}
+        onSend={a.send}
       />
       {a.items.length > 0 && (
         <Button variant="ghost" onClick={a.reset} disabled={a.busy}>
           Yangi suhbat
         </Button>
       )}
-    </>
+    </div>
   );
 }

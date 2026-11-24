@@ -4,10 +4,10 @@ import { loginAdmin } from "./api";
 import { violations } from "./axe";
 
 test("T-156: AI o'chiq bo'lsa agent sahifasi buni aytadi, xabar maydoni yo'q", async ({ page, request }) => {
-  await loginAdmin(page, request, "agent");
-  await expect(page.getByRole("heading", { name: "AI agent" })).toBeVisible();
+  await loginAdmin(page, request, "ai");
+  await expect(page.getByRole("heading", { name: "AI yordamchi" })).toBeVisible();
   await expect(page.getByText("AI oʻchiq")).toBeVisible();
-  await expect(page.getByLabel("Agentga xabar")).toHaveCount(0);
+  await expect(page.getByLabel("AI yordamchiga xabar")).toHaveCount(0);
   await page.screenshot({ path: "e2e/.results/admin-agent-off.png", fullPage: true });
 });
 
@@ -46,19 +46,26 @@ test("T-156: ustoz yozadi, agent amalni tasdiqqa chiqaradi, tasdiqlangach bajari
   request,
 }) => {
   const bodies = await fakeAgent(page);
-  await loginAdmin(page, request, "agent");
-  const box = page.getByLabel("Agentga xabar");
+  await loginAdmin(page, request, "ai");
+  const box = page.getByLabel("AI yordamchiga xabar");
   await box.fill("Algebra kursini och");
   await box.press("Enter");
-  await expect(page.getByText("Agent ishlayapti…")).toBeVisible();
+  await expect(page.getByText("AI ishlayapti…")).toBeVisible();
 
   const confirm = page.getByRole("region", { name: "Tasdiq kutilmoqda" });
   await expect(confirm).toContainText("Kurs yaratish: Algebra");
   await expect(confirm).toContainText("Nashr qilinmaydi");
   // Tasdiq kutilayotganda yangi xabar yozib bo'lmaydi
   await expect(box).toBeDisabled();
-  expect(await violations(page, "/agent")).toEqual([]);
+  expect(await violations(page, "/ai")).toEqual([]);
   await page.screenshot({ path: "e2e/.results/admin-agent-confirm.png", fullPage: true });
+
+  // T-177: suhbatlar bo'limiga o'tib qaytilsa, tasdiq kutayotgan amal yo'qolmaydi
+  const tabs = page.getByRole("navigation", { name: "AI yordamchi" });
+  await tabs.getByRole("link", { name: "Oʻquvchilar suhbatlari" }).click();
+  await expect(page).toHaveURL(/\/admin\/ai\/chats$/);
+  await tabs.getByRole("link", { name: "Buyruq va savol" }).click();
+  await expect(confirm).toContainText("Kurs yaratish: Algebra");
 
   await confirm.getByRole("button", { name: "Tasdiqlash" }).click();
   await expect(page.getByTestId("agent-items")).toContainText("Kurs yaratish: Algebra");
