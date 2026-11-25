@@ -217,3 +217,4 @@
 | T-176 | Admin CSP `frame-ancestors 'self' https://web.telegram.org`, `X-Frame-Options` yo'q: Telegram Desktop (Wayland) va Web iframe'ida ustoz panelga Mini App ichida o'tadi                                   | ✅    |
 | T-177 | Admin: AI bitta «AI yordamchi» bo'limida (`/ai`): buyruq va savol, o'quvchilar suhbatlari; agent suhbatlarni o'qiydi va tahlil qiladi; eski `/agent`, `/tutor` yangi manzilga o'tadi                     | ✅    |
 | T-178 | Ilova va admin Google natijalarida chiqmaydi: `X-Robots-Tag: noindex` (Caddy) va meta; ilova `robots.txt` sahifalarni yopmaydi, aks holda noindex o'qilmaydi                                             | ✅    |
+| T-179 | Zaxira bucket nomi server `.env` dagi `BACKUP_BUCKET` dan o'qiladi (akkaunt ko'chgach eski bucket'ga yozib, AccessDenied bo'lgan); yozilmagan bo'lsa zaxira xato xabari bilan to'xtaydi                  | ✅    |

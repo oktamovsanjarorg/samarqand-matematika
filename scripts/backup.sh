@@ -13,12 +13,14 @@ set -Eeuo pipefail
 
 APP_DIR="${APP_DIR:-/home/ubuntu/samarqand}"
 ROOT="${BACKUP_ROOT:-/home/ubuntu/samarqand-backups}"
-BUCKET="${BACKUP_BUCKET:-samarqand-matematika-backups-560418470850}"
 TS="$(date +%Y%m%d-%H%M)"
 umask 077
 mkdir -p "$ROOT"
 
-BOT_TOKEN="$(grep -E '^BOT_TOKEN=' "$APP_DIR/.env" | head -1 | cut -d= -f2- | tr -d '"')"
+env_get() { grep -E "^$1=" "$APP_DIR/.env" | head -1 | cut -d= -f2- | tr -d '"' || true; }
+BOT_TOKEN="$(env_get BOT_TOKEN)"
+# T-179: bucket nomi akkauntga bog'liq (server 2026-11-24 da boshqa akkauntga ko'chdi), shuning uchun kodda emas, .env da
+BUCKET="${BACKUP_BUCKET:-$(env_get BACKUP_BUCKET)}"
 
 owners() {
   docker exec samarqand-postgres psql -U samarqand -d samarqand -tAc \
@@ -46,6 +48,7 @@ if [[ -n "$disk_pct" && "$disk_pct" -ge "$DISK_WARN_PCT" ]]; then
   notify "⚠️ Server diski ${disk_pct}% toʻldi. Dasturchiga xabar bering: joy tugasa ilova ishlamay qoladi."
 fi
 trap 'fail "kutilmagan xato (qator $LINENO)"' ERR
+[[ -n "$BUCKET" ]] || fail "BACKUP_BUCKET .env da yozilmagan"
 
 s3() {
   docker run --rm -v "$ROOT:/backups:ro" amazon/aws-cli:2.27.50 s3 "$@"

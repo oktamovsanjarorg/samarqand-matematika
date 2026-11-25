@@ -54,10 +54,10 @@
 - `scripts/backup.sh`, cron har kuni 03:00 (Toshkent): `pg_dump` qilinadi va `pg_restore --list` bilan tekshiriladi.
 - Tiklash sinovi (T-144): yakshanba kunlari `scripts/restore-check.sh` nusxani vaqtinchalik Postgres konteyneriga (tarmoqsiz, xotirada) to'liq tiklaydi. Tiklangan jadvallar nusxa mundarijasi bilan bir xil bo'lishi, migratsiyalar asl bazada ham bo'lishi va foydalanuvchilar bo'sh bo'lmasligi kerak. Mos kelmasa, ustozga "Zaxira nusxa olinmadi" xabari boradi. Qo'lda: `RESTORE_CHECK=always scripts/backup.sh`.
 - Serverda 14 kunlik nusxa saqlanadi: `~/samarqand-backups`.
-- S3 bucket: `samarqand-matematika-backups-560418470850` (eu-north-1, versioning, shifrlangan, public yopiq).
+- S3 bucket: `samarqand-matematika-backups-902020936162` (eu-north-1, versioning, shifrlangan, public yopiq). Nomi server `.env` dagi `BACKUP_BUCKET` dan o'qiladi (T-179). Yozilmagan bo'lsa zaxira boshlanmaydi va ustozga xabar boradi. Server 2026-11-24 da 902020936162 akkauntiga ko'chgan. Eski akkauntdagi bucket nomi kodda qolib ketgani uchun 25-noyabr zaxirasi S3 ga yuklanmagan edi.
   - `db/daily/`: 90 kun saqlanadi.
   - `db/monthly/`: 2 yil saqlanadi, 30 kundan keyin Glacier IR'ga o'tkaziladi.
-- IAM: `samarqand-backup-role` (instance profile `samarqand-backup-profile`) faqat `db/*` ga yozadi va o'qiydi. O'chirish huquqi yo'q, shuning uchun server buzilsa ham zaxirani o'chirib bo'lmaydi.
+- IAM: `samarqand-backup-role` (instance profile `samarqand-backup-profile`) `db/*` va `media/*` (cheklar) ga yozadi va o'qiydi. O'chirish huquqi yo'q, shuning uchun server buzilsa ham zaxirani o'chirib bo'lmaydi.
 - Xato bo'lsa, ustozlarga bot orqali xabar boradi.
 - Disk (T-148): `backup.sh` har kuni `/` diskini tekshiradi. 85% dan ko'p band bo'lsa (`DISK_WARN_PCT`), ustozga "Server diski N% to'ldi" xabari boradi. Joy tugasa Postgres yoza olmaydi va zaxira ham olinmaydi. Deploy eski image va build keshini o'zi tozalaydi.
 - Eskirgan zaxira (T-145): muvaffaqiyatli zaxiradan keyin `backup.sh` AppSetting `backup:last` ning `updatedAt` qiymatini yangilaydi. 36 soatdan eskirsa (cron ishlamay qolgan bo'lsa, `backup.sh` xato xabarini ham yubora olmaydi), admin bosh sahifasida ogohlantirish chiqadi va ertalabki xulosaning birinchi qatoriga yoziladi. Yozuv umuman bo'lmasa (dev yoki birinchi zaxiragacha) ogohlantirish yo'q.
