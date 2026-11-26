@@ -33,6 +33,9 @@ const WeeklyTestPage = lazy(() =>
 );
 
 // Faqat dev: production bundle'ga tushmaydi
+const OfflineResultPage = lazy(() =>
+  import("./pages/OfflineResultPage").then((m) => ({ default: m.OfflineResultPage })),
+);
 const KitPage = lazy(() => import("./pages/KitPage").then((m) => ({ default: m.KitPage })));
 
 const LandingPage = lazy(() => import("./pages/LandingPage").then((m) => ({ default: m.LandingPage })));
@@ -93,6 +96,7 @@ function TelegramApp() {
         <Route path="weekly/:id" element={<WeeklyTestPage />} />
         <Route path="mocks" element={<MockListPage />} />
         <Route path="mocks/:id" element={<MockTestPage />} />
+        <Route path="offline/:id" element={<OfflineResultPage />} />
         <Route path="tutor" element={<TutorPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="mistakes" element={<MistakesPage />} />
