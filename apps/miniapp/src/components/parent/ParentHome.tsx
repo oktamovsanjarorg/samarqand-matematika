@@ -115,12 +115,14 @@ function Results({ s }: { s: ChildSummary }) {
           </li>
         ))}
         {s.offline.map((o) => (
-          <li key={o.id} className="flex items-center gap-2 py-1.5">
-            <span className="min-w-0 flex-1 truncate">{o.title}</span>
-            <span className="font-bold tabular-nums">
-              {o.score}/{o.scaleMax}
-              {o.grade ? ` · ${o.grade}` : ""} · {o.place}/{o.participants}-oʻrin
-            </span>
+          <li key={o.id}>
+            <Link to={`/offline/${o.id}`} className="tap flex items-center gap-2 py-1.5">
+              <span className="min-w-0 flex-1 truncate">{o.title}</span>
+              <span className="font-bold tabular-nums">
+                {o.score}/{o.scaleMax}
+                {o.grade ? ` · ${o.grade}` : ""} · {o.place}/{o.participants}-oʻrin
+              </span>
+            </Link>
           </li>
         ))}
       </ul>
