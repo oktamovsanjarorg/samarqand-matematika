@@ -45,6 +45,22 @@ function NameBlock({ s, link }: { s: AdminStudentRow; link: boolean }) {
   );
 }
 
+function Header({ s, link }: { s: AdminStudentRow; link: boolean }) {
+  return (
+    <div className="flex flex-wrap items-start justify-between gap-2">
+      <NameBlock s={s} link={link} />
+      <div className="flex flex-wrap gap-1">
+        {s.blocked && <Badge tone="danger">Bloklangan</Badge>}
+        {s.acceptedAt ? (
+          <Badge tone="success">{`Qabul qilingan ${formatDate(s.acceptedAt).slice(0, 10)}`}</Badge>
+        ) : (
+          <Badge tone="brand">Yangi</Badge>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /** O'quvchi qatori: qabul qilish va kirish rejimi. Ro'yxatda ism karta sahifasiga havola (T-068) */
 export function StudentCard({ s, link = false }: { s: AdminStudentRow; link?: boolean }) {
   const qc = useQueryClient();
@@ -65,10 +81,7 @@ export function StudentCard({ s, link = false }: { s: AdminStudentRow; link?: bo
 
   return (
     <li className="card space-y-3" data-testid="student">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <NameBlock s={s} link={link} />
-        {s.acceptedAt ? <Badge tone="success">Qabul qilingan</Badge> : <Badge tone="brand">Yangi</Badge>}
-      </div>
+      <Header s={s} link={link} />
       <div className="flex flex-wrap items-center gap-3 text-sm">
         {s.phone ? (
           <a href={`tel:${s.phone}`} className="flex items-center gap-1 font-semibold text-link">
@@ -82,7 +95,7 @@ export function StudentCard({ s, link = false }: { s: AdminStudentRow; link?: bo
             <Phone size={14} /> {p} <span className="font-normal text-hint">ota-ona</span>
           </a>
         ))}
-        {s.groupName && <Badge>{s.groupName}</Badge>}
+        <Badge>{s.groupName ?? "Online (guruhsiz)"}</Badge>
         {/* T-110: pullik rejimdagi qabul qilingan o'quvchining obunasi */}
         {s.acceptedAt && s.accessMode === "AUTO" && (
           <Badge tone={s.paidUntil ? "success" : "danger"}>{paidLabel(s.paidUntil)}</Badge>
