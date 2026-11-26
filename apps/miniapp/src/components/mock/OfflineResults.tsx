@@ -1,6 +1,7 @@
 import type { StudentOfflineResult } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { FileSpreadsheet } from "lucide-react";
+import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { useAuth } from "../../store/auth";
 
@@ -9,20 +10,22 @@ const day = (d: string) => d.split("-").reverse().join(".");
 
 function ResultCard({ r }: { r: StudentOfflineResult }) {
   return (
-    <li className="card flex items-start gap-3" data-testid="offline-result">
-      <FileSpreadsheet size={22} className="mt-0.5 shrink-0 text-brand" />
-      <div className="min-w-0 flex-1">
-        <p className="font-bold">{r.title}</p>
-        <p className="text-xs text-hint">
-          {day(r.date)} · {r.correct}/{r.questionCount} toʻgʻri · {r.place}-oʻrin, {r.participants} kishidan
-        </p>
-      </div>
-      <div className="text-right">
-        <b className="text-lg tabular-nums">{num(r.score)}</b>
-        <p className="text-xs text-hint">
-          {r.scaleMax} dan{r.grade ? ` · ${r.grade}` : ""}
-        </p>
-      </div>
+    <li>
+      <Link to={`/offline/${r.id}`} className="tap card flex items-start gap-3" data-testid="offline-result">
+        <FileSpreadsheet size={22} className="mt-0.5 shrink-0 text-brand" />
+        <div className="min-w-0 flex-1">
+          <p className="font-bold">{r.title}</p>
+          <p className="text-xs text-hint">
+            {day(r.date)} · {r.correct}/{r.questionCount} toʻgʻri · {r.place}-oʻrin, {r.participants} kishidan
+          </p>
+        </div>
+        <div className="text-right">
+          <b className="text-lg tabular-nums">{num(r.score)}</b>
+          <p className="text-xs text-hint">
+            {r.scaleMax} dan{r.grade ? ` · ${r.grade}` : ""}
+          </p>
+        </div>
+      </Link>
     </li>
   );
 }
