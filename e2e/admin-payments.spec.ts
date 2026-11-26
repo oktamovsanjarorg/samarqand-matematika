@@ -95,6 +95,7 @@ async function checkCardPayments(page: Page, plan: string) {
   await page.getByRole("tab", { name: "Hammasi" }).click();
   await page.getByPlaceholder("Ism, username yoki telefon").fill("Tolov Ikkinchi");
   await page.getByTestId("student").first().getByRole("link", { name: "Tolov Ikkinchi" }).click();
+  await page.getByRole("tab", { name: "Toʻlov" }).click();
   const history = page.getByTestId("card-payments");
   await expect(history).toContainText(`${plan} · 150 000 soʻm`);
   await expect(history).toContainText("Rad etilgan");

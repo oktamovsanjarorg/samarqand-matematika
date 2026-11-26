@@ -51,7 +51,9 @@ test.describe("Admin: o'quvchilar", () => {
     await page.reload();
     await expect(page.getByRole("combobox").first()).toHaveValue("FREE");
   });
+});
 
+test.describe("Admin: begona o'quvchi", () => {
   test("T-185: begona yangi kirgan bloklanadi va ro'yxatda belgisi bor", async ({ page, request }) => {
     const name = `Begona ${unique()}ov`;
     await createStudent(request, { fullName: name, phone: "998901112299" });
@@ -61,6 +63,22 @@ test.describe("Admin: o'quvchilar", () => {
     await expect(card).toHaveCount(0);
     await page.getByPlaceholder("Ism, username yoki telefon").fill(name);
     await expect(page.getByTestId("student").filter({ hasText: name })).toContainText("bloklangan");
+
+    // T-187: kartada Sozlamalar tabidan sabab bilan qayta bloklash va chiqarish
+    await page.getByTestId("student").filter({ hasText: name }).click();
+    await expect(page.getByTestId("student")).toContainText("Bloklangan");
+    await page.getByRole("tab", { name: "Sozlamalar" }).click();
+    const control = page.getByTestId("block-control");
+    await expect(control).toContainText("Bloklangan: Begona");
+    await control.getByRole("button", { name: "Blokdan chiqarish" }).click();
+    await control.getByRole("button", { name: "Bloklash…" }).click();
+    await control.getByPlaceholder("Sabab (faqat sizga koʻrinadi)").fill("Toʻlov qilmadi");
+    await control.getByRole("button", { name: "Bloklashni tasdiqlash" }).click();
+    await expect(control).toContainText("Bloklangan: Toʻlov qilmadi");
+    await page.screenshot({ path: "e2e/.results/admin-student-settings.png", fullPage: true });
+    await page.getByRole("tab", { name: "Natijalar" }).click();
+    await expect(page.getByText("Natija hali yoʻq")).toBeVisible();
+    await page.screenshot({ path: "e2e/.results/admin-student-results.png", fullPage: true });
   });
 });
 

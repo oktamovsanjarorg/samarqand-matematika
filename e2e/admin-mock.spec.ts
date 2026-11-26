@@ -88,6 +88,7 @@ test("T-053b, T-076, T-112, T-113: ustoz mock natijalarini bo'limlar bo'yicha ko
   await page.getByTestId("student").first().getByRole("link", { name: "Natija Mockchi" }).click();
   // T-113: bepul rejimda qadamlar kirishga ta'sir qilmasligi aytiladi
   await expect(page.getByTestId("card-status")).toContainText("Ustoz bepul ochgan");
+  await page.getByRole("tab", { name: "Natijalar" }).click();
   const mocks = page.getByTestId("card-mocks");
   await expect(mocks.getByRole("listitem").first()).toContainText(`${m.body.title}50/75Ctaxminiy`);
   await mocks.scrollIntoViewIfNeeded();
