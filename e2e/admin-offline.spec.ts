@@ -43,6 +43,18 @@ test("T-181, BR-G04: ustoz Q1..Qn jadvalini yuklaydi, tekshiradi, saqlaydi va mo
   await page.getByRole("button", { name: new RegExp(`Qolgan Oquvchi${t}`) }).click();
   await expect(page.getByText("3/3 moslangan")).toBeVisible();
   await expect(page.getByTestId("offline-row").first()).toContainText("100%");
+  await expect(page.getByTestId("offline-sections")).toContainText("Algebra (1–2)");
+  await page
+    .getByTestId("offline-row")
+    .filter({ hasText: `ismli oquvchi${t}` })
+    .locator("button[aria-expanded]")
+    .click();
+  const card = page.getByTestId("offline-card");
+  await expect(card).toContainText("Algebra · 1/2");
+  await expect(card).toContainText("Eng zaif boʻlim");
+  await page.getByRole("button", { name: "Xabar yuborish (3)" }).click();
+  await expect(page.getByText(/Yuborildi: \d+ oʻquvchi/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Xabar yuborish" })).toBeDisabled();
   await page.screenshot({ path: "e2e/.results/admin-offline-test.png", fullPage: true });
 });
 

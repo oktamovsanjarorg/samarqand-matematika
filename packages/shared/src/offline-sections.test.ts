@@ -54,5 +54,6 @@ describe("sectionScores", () => {
 
   it("eng zaif bo'lim: foizi eng past", () => {
     expect(weakestSection(sectionScores(sections, "ccwb", 40))?.title).toBe("Geometriya");
+    expect(weakestSection(sectionScores(sections, "cccc", 75))).toBeNull();
   });
 });
