@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { createStudent, loginAdmin } from "./api";
+import { adminHeaders, apiPost, createStudent, loginAdmin } from "./api";
 import { E2E_PREFIX } from "./telegram";
 
 /** Ismda raqam bo'lmaydi: vaqt belgisini harflarga aylantiramiz */
@@ -30,6 +30,11 @@ test("T-181, BR-G04: ustoz Q1..Qn jadvalini yuklaydi, tekshiradi, saqlaydi va mo
   const preview = page.getByTestId("offline-preview");
   await expect(preview).toContainText("3 qator, 2 tasi oʻquvchiga moslandi");
   await expect(preview.getByTestId("offline-row").first()).toContainText(`Telefonli Oquvchi${t}`);
+  await expect(preview).toContainText("Q1..Qn jadval · 4 savol");
+  await page.getByLabel("Fan boʻlimlari").fill("Algebra: 1, 2\nGeometriya: 3-5");
+  await expect(page.getByText("testda 4 ta savol, 5 yoʻq")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Saqlash" })).toBeDisabled();
+  await page.getByLabel("Fan boʻlimlari").fill("Algebra: 1, 2\nGeometriya: 3-4");
   await page.screenshot({ path: "e2e/.results/admin-offline-preview.png", fullPage: true });
   await page.getByRole("button", { name: "Saqlash" }).click();
 
@@ -49,7 +54,7 @@ test("T-181: tanilmagan fayl saqlanmaydi, sababi ko'rinadi", async ({ page, requ
     .setInputFiles({ name: "x.csv", mimeType: "text/csv", buffer: Buffer.from("Ism;A\nAli;abc") });
   await page.getByRole("button", { name: "Tekshirish" }).click();
   await expect(page.getByText("Fayl tanilmadi")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Saqlash" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Saqlash" })).toHaveCount(0);
 });
 
 test("T-165, T-181: eski Excel (.xls) fayldan natija: son katak va bo'sh katak to'g'ri o'qiladi", async ({
@@ -66,4 +71,32 @@ test("T-165, T-181: eski Excel (.xls) fayldan natija: son katak va bo'sh katak t
   await expect(preview.getByTestId("offline-row").first()).toContainText("75%");
   await page.screenshot({ path: "e2e/.results/admin-offline-xls.png", fullPage: true });
   await expect(page.getByRole("button", { name: "Saqlash" })).toBeEnabled();
+});
+
+test("T-182: reyting tabi moslangan o'quvchilarni o'rtacha ball bo'yicha ko'rsatadi", async ({
+  page,
+  request,
+}) => {
+  const t = tag();
+  await createStudent(request, { fullName: `Reyting Birinchi${t}` });
+  await createStudent(request, { fullName: `Reyting Ikkinchi${t}` });
+  const admin = await adminHeaders(request);
+  await apiPost(request, "/admin/offline-tests", admin, {
+    title: `${E2E_PREFIX}Reyting ${t}`,
+    date: "2026-11-25",
+    csv: `Ism;Q1;Q2;Q3\nReyting Ikkinchi${t};1;0;0\nReyting Birinchi${t};1;1;1`,
+    sections: [],
+  });
+  await loginAdmin(page, request, "offline");
+  await page.getByRole("tab", { name: "Reyting" }).click();
+  await page.getByRole("button", { name: "Hammasi" }).click();
+  const list = page.getByTestId("offline-ranking");
+  const first = list.getByRole("listitem").filter({ hasText: `Reyting Birinchi${t}` });
+  const second = list.getByRole("listitem").filter({ hasText: `Reyting Ikkinchi${t}` });
+  await expect(first).toContainText("1 ta test");
+  const all = await list.getByRole("listitem").allInnerTexts();
+  const pos = (name: string) => all.findIndex((x) => x.includes(name));
+  expect(pos(`Reyting Birinchi${t}`)).toBeLessThan(pos(`Reyting Ikkinchi${t}`));
+  await expect(second).toBeVisible();
+  await page.screenshot({ path: "e2e/.results/admin-offline-ranking.png", fullPage: true });
 });
