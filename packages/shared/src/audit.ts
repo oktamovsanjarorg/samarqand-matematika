@@ -46,6 +46,7 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "group.update": "Guruhni tahrirladi",
   "group.add": "Guruhga oʻquvchi qoʻshdi",
   "group.remove": "Guruhdan oʻquvchi chiqardi",
+  "group.delete": "Guruhni oʻchirdi",
   "student.accept": "Oʻquvchini qabul qildi",
   "staff.add": "Yordamchi tayinladi",
   "lesson.announce": "Yangi dars haqida xabar yubordi",

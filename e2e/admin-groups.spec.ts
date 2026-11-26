@@ -85,3 +85,32 @@ test("T-055, T-108, BR-G02: ustoz guruh davomatini belgilaydi va saqlaydi", asyn
   const file = await download;
   expect(file.suggestedFilename()).toMatch(/davomat \d{4}-\d{2}\.xlsx$/);
 });
+
+test("T-188: ustoz guruhni oqibatlarini o'qib o'chiradi, o'quvchi guruhsiz qoladi", async ({
+  page,
+  request,
+}) => {
+  const admin = await adminHeaders(request);
+  const stamp = [...String(Date.now()).slice(-6)].map((d) => "abcdefghij"[Number(d)]).join("");
+  const name = `${E2E_PREFIX}Ochiriladigan ${stamp}`;
+  const student = `Qoldi Guruhsiz${stamp}`;
+  await createStudent(request, { fullName: student });
+  const found = await request.get(`${API}/admin/students?filter=all&q=${stamp}`, { headers: admin });
+  const ids = ((await found.json()) as { id: string }[]).map((s) => s.id);
+  const g = await apiPost<{ id: string }>(request, "/admin/groups", admin, { name });
+  await apiPost(request, `/admin/groups/${g.id}/students`, admin, { userIds: ids });
+
+  await loginAdmin(page, request, `groups/${g.id}`);
+  await page.getByRole("button", { name: "Guruhni oʻchirish" }).click();
+  const confirm = page.getByTestId("delete-group");
+  await expect(confirm).toContainText("1 ta oʻquvchi guruhsiz (online) boʻlib qoladi");
+  await expect(confirm).toContainText("davomati tarixi ham oʻchadi");
+  await page.screenshot({ path: "e2e/.results/admin-group-delete.png", fullPage: true });
+  await confirm.getByRole("button", { name: "Ha, oʻchirish" }).click();
+  await expect(page).toHaveURL(/\/admin\/groups$/);
+  await expect(page.getByTestId("group").filter({ hasText: name })).toHaveCount(0);
+
+  await adminNav(page, "Oʻquvchilar");
+  await page.getByPlaceholder("Ism, username yoki telefon").fill(stamp);
+  await expect(page.getByTestId("student").filter({ hasText: student })).toContainText("online");
+});

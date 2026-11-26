@@ -4,6 +4,7 @@ import { ArrowLeft, Megaphone, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AddStudents } from "../components/groups/AddStudents";
+import { DeleteGroup } from "../components/groups/DeleteGroup";
 import { Attendance } from "../components/groups/Attendance";
 import { AttendanceMonthReport } from "../components/groups/AttendanceMonth";
 import { Button, ErrorState, SkeletonList } from "../components/ui";
@@ -55,6 +56,7 @@ function Settings({ g }: { g: AdminGroupDetail }) {
         <Button variant="ghost" onClick={() => toggle.mutate()} busy={toggle.isPending}>
           {g.isActive ? "Faol emas deb belgilash" : "Faollashtirish"}
         </Button>
+        {loadSession()?.user.role === "TEACHER" && <DeleteGroup g={g} />}
       </div>
       {(save.error ?? toggle.error) && (
         <p className="text-sm text-danger">{(save.error ?? toggle.error)?.message}</p>
