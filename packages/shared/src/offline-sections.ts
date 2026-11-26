@@ -125,9 +125,9 @@ export function sectionScores(
   });
 }
 
-/** Eng zaif bo'lim: foizi eng past (kamida 2 savolli bo'limlardan) */
+/** Eng zaif bo'lim: foizi eng past (kamida 2 savolli, hammasi yechilmagan bo'limlardan) */
 export function weakestSection(list: OfflineSectionScore[]): OfflineSectionScore | null {
-  const pool = list.filter((s) => s.max >= 2);
+  const pool = list.filter((s) => s.max >= 2 && s.percent < 100);
   return [...pool].sort((a, b) => a.percent - b.percent)[0] ?? null;
 }
 

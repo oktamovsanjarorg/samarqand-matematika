@@ -221,5 +221,5 @@
 | T-180 | Offline test fayli (ona tili loyihasidagidek, essesiz): skaner (OMR) eksporti va Q1..Qn matritsa parseri, fan bo'limlari (`Nom: 1-10, 31`), Rasch bahosi                                                 | ✅    |
 | T-181 | Offline API qayta qurildi: har savol javobi, ball va daraja (faol shablon), fan bo'limlari tahriri, tahlil (mediana, taqsimot, har savol, Rasch), reyting, xabar yuborish                                | ✅    |
 | T-182 | Admin offline: import (fayl, nom, sana, guruh, fan bo'limlari, oldindan ko'rish), testlar ro'yxati va reyting tabi                                                                                       | ✅    |
-| T-183 | Admin offline test sahifasi: darajalar, bo'limlar o'rtachasi, eng ko'p xato savollar, har savol, Rasch jadvali, natijalar, natija kartasi, biriktirish                                                   | ⬜    |
+| T-183 | Admin offline test sahifasi: darajalar, bo'limlar o'rtachasi, eng ko'p xato savollar, har savol, Rasch jadvali, natijalar, natija kartasi, biriktirish                                                   | ✅    |
 | T-184 | Mini App offline natija sahifasi: ball, daraja, o'rin, fan bo'limlari, eng zaif bo'lim, har savol; ota-ona ham ko'radi                                                                                   | ⬜    |
