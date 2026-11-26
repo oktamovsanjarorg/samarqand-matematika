@@ -64,7 +64,22 @@ export interface AdminStudentRow {
   parentPhones: string[];
   createdAt: string;
   lastSeenAt: string | null;
+  groupId: string | null;
+  /** Bloklangan: ilovaga kira olmaydi (T-185) */
+  blocked: boolean;
+  blockedReason: string | null;
+  /** Ustoz tasdig'ini kutayotgan ota-ona so'rovlari */
+  parentsPending: number;
+  /** Oxirgi 30 kun davomati: keldi (kechikkan ham), kelmadi, jami belgi */
+  attendance30: { present: number; absent: number; total: number };
 }
+
+/** Qabul qilish: guruhga qo'shib yoki online (guruhsiz) o'quvchi sifatida (T-185) */
+export const studentAcceptBody = z.object({ groupId: z.string().min(1).nullable().optional() });
+export const studentBlockBody = z.object({
+  blocked: z.boolean(),
+  reason: z.string().trim().max(300).nullable().optional(),
+});
 
 /** Profil: offline maktab ma'lumoti (T-065). Faqat o'quvchi o'zi ko'radi */
 export interface MySchool {

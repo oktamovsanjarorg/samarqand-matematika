@@ -5,39 +5,34 @@ import { createStudent, loginAdmin, requestParentLink } from "./api";
 const unique = () => Math.random().toString(36).slice(2, 7).replace(/\d/g, "x");
 
 test.describe("Admin: o'quvchilar", () => {
-  test("BR-S03, T-078, T-110: yangi o'quvchini qabul qiladi va kirishni ochadi", async ({
+  test("BR-S03, T-185, T-078, T-110: yangi kirgan ko'rib chiqiladi, online qabul qilinadi, kartada kirish ochiladi", async ({
     page,
     request,
   }) => {
     const name = `Sardor ${unique()}ov`;
     await createStudent(request, { fullName: name, phone: "998901234567" });
-    await loginAdmin(page, request, "students");
+    await loginAdmin(page, request, "students?filter=new");
 
-    const card = page.getByTestId("student").filter({ hasText: name });
-    await expect(card).toBeVisible();
-    await expect(card.getByText("+998901234567")).toBeVisible();
-    await card.getByRole("button", { name: "Qabul qilish" }).click();
+    const inbox = page.getByTestId("inbox");
+    await expect(inbox).toContainText("Koʻrib chiqish kerak");
+    const card = page.getByTestId("newcomer").filter({ hasText: name });
+    await expect(card).toContainText("+998901234567");
+    await page.screenshot({ path: "e2e/.results/admin-students-inbox.png", fullPage: true });
+    await card.getByRole("button", { name: "Online oʻquvchi" }).click();
     await expect(card).toHaveCount(0);
 
     // T-110: qabul qilingan, lekin to'lamagan o'quvchi "To'lamagan" ro'yxatida, belgi bilan
     await page.getByRole("tab", { name: "Toʻlamagan" }).click();
     await page.getByPlaceholder("Ism, username yoki telefon").fill(name);
     const unpaid = page.getByTestId("student").filter({ hasText: name });
-    await expect(unpaid.getByText("Obuna toʻlanmagan")).toBeVisible();
+    await expect(unpaid).toContainText("Obuna toʻlanmagan");
+    await expect(unpaid).toContainText("ota-ona yoʻq");
     await page.screenshot({ path: "e2e/.results/admin-students-unpaid.png" });
 
+    // Guruhsizlar chipida ham bor
     await page.getByRole("tab", { name: "Hammasi" }).click();
-    await page.getByPlaceholder("Ism, username yoki telefon").fill(name);
-    const accepted = page.getByTestId("student").filter({ hasText: name });
-    await expect(accepted.getByText("Qabul qilingan")).toBeVisible();
-    await accepted.getByRole("combobox").selectOption("FREE");
-    await expect(accepted.getByRole("combobox")).toBeEnabled();
-    await page.reload();
-    await page.getByRole("tab", { name: "Hammasi" }).click();
-    await page.getByPlaceholder("Ism, username yoki telefon").fill(name);
-    await expect(page.getByTestId("student").filter({ hasText: name }).getByRole("combobox")).toHaveValue(
-      "FREE",
-    );
+    await page.getByRole("button", { name: "Online (guruhsiz)" }).click();
+    await expect(page.getByTestId("student").filter({ hasText: name })).toContainText("online");
     await page.screenshot({ path: "e2e/.results/admin-students.png", fullPage: true });
 
     // T-078: qidiruv natijasi Excel'ga, telefon matn ko'rinishida
@@ -47,6 +42,25 @@ test.describe("Admin: o'quvchilar", () => {
     expect(csv.text).toContain("Ism;Telegram;Telefon;Ota-ona telefoni;Guruh;Kirish;Obuna tugashi");
     expect(csv.text).toContain(`${name};`);
     expect(csv.text).toContain(";998 90 123 45 67;");
+
+    // Kartada kirish rejimi
+    await page.getByTestId("student").filter({ hasText: name }).click();
+    const access = page.getByRole("combobox").first();
+    await access.selectOption("FREE");
+    await expect(access).toBeEnabled();
+    await page.reload();
+    await expect(page.getByRole("combobox").first()).toHaveValue("FREE");
+  });
+
+  test("T-185: begona yangi kirgan bloklanadi va ro'yxatda belgisi bor", async ({ page, request }) => {
+    const name = `Begona ${unique()}ov`;
+    await createStudent(request, { fullName: name, phone: "998901112299" });
+    await loginAdmin(page, request, "students?filter=new");
+    const card = page.getByTestId("newcomer").filter({ hasText: name });
+    await card.getByRole("button", { name: "Bloklash" }).click();
+    await expect(card).toHaveCount(0);
+    await page.getByPlaceholder("Ism, username yoki telefon").fill(name);
+    await expect(page.getByTestId("student").filter({ hasText: name })).toContainText("bloklangan");
   });
 });
 
@@ -84,7 +98,8 @@ test.describe("Admin: ota-onalar", () => {
     await page.goto("http://127.0.0.1:5191/admin/students");
     await page.getByRole("tab", { name: "Hammasi" }).click();
     await page.getByPlaceholder("Ism, username yoki telefon").fill(bName);
-    const card = page.getByTestId("student").filter({ hasText: bName });
+    await page.getByTestId("student").filter({ hasText: bName }).click();
+    const card = page.getByTestId("student");
     await expect(card.getByRole("link", { name: "+998977770002 ota-ona" })).toHaveAttribute(
       "href",
       "tel:+998977770002",
