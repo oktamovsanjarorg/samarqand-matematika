@@ -1,4 +1,4 @@
-import { phoneKey, type OfflineCsvRow, type OfflinePreviewRow } from "@samarqand/shared";
+import { phoneKey, type OfflineMatchBy } from "@samarqand/shared";
 
 export interface Candidate {
   id: string;
@@ -6,6 +6,9 @@ export interface Candidate {
   phone: string | null;
   inGroup: boolean;
 }
+
+type Row = { name: string; phone: string | null };
+export type Matched<T> = T & { match: { userId: string; name: string; by: OfflineMatchBy } | null };
 
 /** Ismni solishtirish uchun: kichik harf, apostrof turlari va ortiqcha bo'shliqsiz */
 export const nameKey = (s: string) =>
@@ -23,10 +26,10 @@ function unique(list: Candidate[]): Candidate | null {
 }
 
 /**
- * CSV qatorlarini o'quvchilarga moslaydi (T-056): avval telefon, keyin aniq ism.
+ * Fayl qatorlarini o'quvchilarga moslaydi (BR-G04): avval telefon, keyin aniq ism.
  * Bitta o'quvchi ikki qatorga biriktirilmaydi; noaniq bo'lsa moslanmaydi (ustoz qo'lda tanlaydi).
  */
-export function matchRows(rows: OfflineCsvRow[], candidates: Candidate[]): OfflinePreviewRow[] {
+export function matchRows<T extends Row>(rows: T[], candidates: Candidate[]): Matched<T>[] {
   const byPhone = new Map<string, Candidate[]>();
   const byName = new Map<string, Candidate[]>();
   for (const c of candidates) {

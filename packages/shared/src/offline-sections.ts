@@ -138,3 +138,12 @@ export interface OfflineRasch {
   n: number;
   items: { q: number; b: number; w: number; correctPct: number }[];
 }
+
+/** Har savoldan olingan ball: test bali to'g'ri yechilgan savollarga og'irligiga qarab bo'linadi */
+export function questionPoints(answers: string, score: number, weights: number[] = []): number[] {
+  const marks = [...answers];
+  const got = marks.reduce((s, x, j) => s + (x === "c" ? (weights[j] ?? 1) : 0), 0);
+  return marks.map((x, j) =>
+    x === "c" && got ? Math.round(((score * (weights[j] ?? 1)) / got) * 100) / 100 : 0,
+  );
+}

@@ -1,141 +1,173 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import type { Prisma } from "@samarqand/db";
 import {
-  parseOfflineCsv,
+  offlineSections,
+  parseOfflineFile,
   type AdminOfflineTestDetail,
   type AdminOfflineTestRow,
+  type OfflineFile,
   type OfflineImportInput,
   type OfflinePreview,
+  type OfflineSection,
 } from "@samarqand/shared";
 import { AuditService } from "../audit/audit.service";
 import { personName, PERSON_SELECT } from "../common/person";
 import { PrismaService } from "../prisma/prisma.service";
 import { matchRows, type Candidate } from "./offline-match";
+import { scoreOffline } from "./offline-scoring";
+import { OfflineTemplate } from "./offline-template";
+import {
+  asRasch,
+  asSections,
+  ranked,
+  RESULT_ORDER,
+  RESULT_SELECT,
+  stats,
+  TEST_SELECT,
+  toRow,
+} from "./offline-views";
 
-const ROW_SELECT = {
-  id: true,
-  title: true,
-  date: true,
-  sections: true,
-  group: { select: { name: true } },
-  results: { select: { userId: true } },
-} as const;
+/** Ustozning oxirgi fan bo'limlari: keyingi importda taklif qilinadi */
+const SECTIONS_KEY = "offline.sections";
 
-type TestRow = {
-  id: string;
-  title: string;
-  date: Date;
-  sections: string[];
-  group: { name: string } | null;
-  results: { userId: string | null }[];
-};
-const toRow = (t: TestRow): AdminOfflineTestRow => ({
-  id: t.id,
-  title: t.title,
-  date: t.date.toISOString().slice(0, 10),
-  groupName: t.group?.name ?? null,
-  sections: t.sections,
-  count: t.results.length,
-  matched: t.results.filter((r) => r.userId).length,
-});
-
-/** Tashqi test importi (T-056): CSV → oldindan ko'rish → saqlash, moslanmaganlarni qo'lda biriktirish */
+/** Offline test (T-181, BR-G04): fayl → oldindan ko'rish → saqlash, tahlil, biriktirish, fan bo'limlari */
 @Injectable()
 export class OfflineService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly template: OfflineTemplate,
   ) {}
 
+  private parse(csv: string): OfflineFile {
+    try {
+      return parseOfflineFile(csv);
+    } catch (e) {
+      throw new BadRequestException(e instanceof Error ? e.message : "Fayl oʻqilmadi");
+    }
+  }
+
+  private async graded(csv: string, groupId?: string | null) {
+    const file = this.parse(csv);
+    const t = await this.template.get();
+    const { rasch, rows } = scoreOffline(
+      file.rows.map((r) => r.answers),
+      t,
+    );
+    const scored = file.rows.flatMap((r, i) => {
+      const sc = rows[i];
+      return sc ? [{ ...r, ...sc }] : [];
+    });
+    return { file, t, rasch, rows: matchRows(scored, await this.candidates(groupId)) };
+  }
+
   async preview(csv: string, groupId?: string | null): Promise<OfflinePreview> {
-    const parsed = parseOfflineCsv(csv);
-    if (!parsed.rows.length) return { sections: parsed.sections, rows: [], errors: parsed.errors };
+    const { file, t, rasch, rows } = await this.graded(csv, groupId);
     return {
-      sections: parsed.sections,
-      rows: matchRows(parsed.rows, await this.candidates(groupId)),
-      errors: parsed.errors,
+      format: file.format,
+      exam: file.exam,
+      questionCount: file.questionCount,
+      fileSections: file.sections,
+      savedSections: await this.savedSections(file.questionCount),
+      scaleMax: t.scaleMax,
+      calibrated: rasch.calibrated,
+      rows: rows.map((r) => ({
+        line: r.line,
+        name: r.name,
+        phone: r.phone,
+        correct: r.correct,
+        percent: r.percent,
+        score: r.score,
+        grade: r.grade,
+        match: r.match,
+      })),
     };
   }
 
   async create(actorId: string, input: OfflineImportInput): Promise<AdminOfflineTestDetail> {
     if (input.groupId && !(await this.prisma.group.count({ where: { id: input.groupId } })))
       throw new NotFoundException("Guruh topilmadi");
-    const p = await this.preview(input.csv, input.groupId);
-    if (p.errors.length) {
-      const first = p.errors.slice(0, 3).map((e) => (e.line ? `${e.line}-qator: ${e.message}` : e.message));
-      throw new BadRequestException(first.join("; "));
-    }
-    const t = await this.prisma.offlineTest.create({
+    const { file, t, rasch, rows } = await this.graded(input.csv, input.groupId);
+    const sections = this.checkSections(
+      input.sections.length ? input.sections : file.sections,
+      file.questionCount,
+    );
+    const created = await this.prisma.offlineTest.create({
       data: {
         title: input.title,
         date: new Date(`${input.date}T00:00:00Z`),
         groupId: input.groupId ?? null,
-        sections: p.sections,
+        format: file.format,
+        questionCount: file.questionCount,
+        sections,
+        rasch: rasch as unknown as Prisma.InputJsonValue,
+        scaleMax: t.scaleMax,
         createdById: actorId,
         results: {
-          create: p.rows.map((r) => ({
-            line: r.line,
-            name: r.name,
-            phone: r.phone,
-            scores: r.scores,
-            total: r.total,
-            userId: r.match?.userId ?? null,
-          })),
+          create: rows.map(({ match, ...r }) => ({ ...r, userId: match?.userId ?? null })),
         },
       },
       select: { id: true },
     });
-    const matched = p.rows.filter((r) => r.match).length;
+    if (input.sections.length) await this.saveSections(file.questionCount, input.sections);
+    const matched = rows.filter((r) => r.match).length;
     await this.audit.log({
       actorId,
       action: "offline.import",
       entity: "OfflineTest",
-      entityId: t.id,
-      data: { rows: p.rows.length, matched },
+      entityId: created.id,
+      data: { rows: rows.length, matched },
     });
-    return this.get(t.id);
+    return this.get(created.id);
   }
 
   async list(): Promise<AdminOfflineTestRow[]> {
-    const rows = await this.prisma.offlineTest.findMany({
+    const tests = await this.prisma.offlineTest.findMany({
       orderBy: [{ date: "desc" }, { createdAt: "desc" }],
-      select: ROW_SELECT,
+      select: { ...TEST_SELECT, results: { select: { userId: true, percent: true, score: true } } },
       take: 200,
     });
-    return rows.map(toRow);
+    return tests.map((t) => toRow(t, t.results));
   }
 
   async get(id: string): Promise<AdminOfflineTestDetail> {
     const t = await this.prisma.offlineTest.findUnique({
       where: { id },
       select: {
-        ...ROW_SELECT,
-        results: {
-          orderBy: [{ total: "desc" }, { line: "asc" }],
-          select: {
-            id: true,
-            line: true,
-            name: true,
-            phone: true,
-            scores: true,
-            total: true,
-            userId: true,
-            user: { select: PERSON_SELECT },
-          },
-        },
+        ...TEST_SELECT,
+        format: true,
+        sections: true,
+        rasch: true,
+        results: { orderBy: [...RESULT_ORDER], select: RESULT_SELECT },
       },
     });
     if (!t) throw new NotFoundException("Test topilmadi");
-    const rows = t.results.map(({ user, ...r }) => ({ ...r, userName: user ? personName(user) : null }));
-    return { ...toRow(t), rows };
+    const rows = ranked(t.results);
+    const sections = asSections(t.sections);
+    const grades = (await this.template.get()).grades.map((g) => g.label);
+    return {
+      ...toRow(t, rows),
+      format: t.format === "omr" ? "omr" : "matrix",
+      sections,
+      rasch: asRasch(t.rasch, t.questionCount),
+      stats: stats(rows, sections, grades, t.questionCount),
+      rows,
+    };
+  }
+
+  /** Fan bo'limlarini keyin tahrirlash: ball o'zgarmaydi, faqat bo'limlar bo'yicha hisob */
+  async setSections(actorId: string, id: string, sections: OfflineSection[]) {
+    const t = await this.prisma.offlineTest.findUnique({ where: { id }, select: { questionCount: true } });
+    if (!t) throw new NotFoundException("Test topilmadi");
+    const list = this.checkSections(sections, t.questionCount);
+    await this.prisma.offlineTest.update({ where: { id }, data: { sections: list } });
+    if (list.length) await this.saveSections(t.questionCount, list);
+    await this.audit.log({ actorId, action: "offline.sections", entity: "OfflineTest", entityId: id });
+    return this.get(id);
   }
 
   /** Qatorni o'quvchiga qo'lda biriktirish yoki ajratish; bir o'quvchi bitta qatorda */
-  async match(
-    actorId: string,
-    id: string,
-    resultId: string,
-    userId: string | null,
-  ): Promise<AdminOfflineTestDetail> {
+  async match(actorId: string, id: string, resultId: string, userId: string | null) {
     const r = await this.prisma.offlineResult.findFirst({
       where: { id: resultId, offlineTestId: id },
       select: { id: true },
@@ -149,7 +181,7 @@ export class OfflineService {
       });
       if (taken) throw new BadRequestException("Bu oʻquvchi boshqa qatorga biriktirilgan");
     }
-    await this.prisma.offlineResult.update({ where: { id: resultId }, data: { userId } });
+    await this.prisma.offlineResult.update({ where: { id: resultId }, data: { userId, notifiedAt: null } });
     await this.audit.log({
       actorId,
       action: "offline.match",
@@ -164,6 +196,33 @@ export class OfflineService {
     const { count } = await this.prisma.offlineTest.deleteMany({ where: { id } });
     if (!count) throw new NotFoundException("Test topilmadi");
     await this.audit.log({ actorId, action: "offline.delete", entity: "OfflineTest", entityId: id });
+  }
+
+  private checkSections(list: OfflineSection[], questionCount: number): OfflineSection[] {
+    const parsed = offlineSections.safeParse(list);
+    if (!parsed.success)
+      throw new BadRequestException(parsed.error.issues[0]?.message ?? "Boʻlimlar notoʻgʻri");
+    const big = parsed.data.flatMap((s) => s.questions).find((q) => q > questionCount);
+    if (big !== undefined)
+      throw new BadRequestException(`Testda ${questionCount} ta savol, ${big}-savol yoʻq`);
+    return parsed.data;
+  }
+
+  private async savedSections(questionCount: number): Promise<OfflineSection[] | null> {
+    const row = await this.prisma.appSetting.findUnique({ where: { key: SECTIONS_KEY } });
+    const v = row?.value as { questionCount?: number; sections?: unknown } | undefined;
+    if (v?.questionCount !== questionCount) return null;
+    const parsed = offlineSections.safeParse(v.sections);
+    return parsed.success && parsed.data.length ? parsed.data : null;
+  }
+
+  private async saveSections(questionCount: number, sections: OfflineSection[]) {
+    const value = { questionCount, sections };
+    await this.prisma.appSetting.upsert({
+      where: { key: SECTIONS_KEY },
+      create: { key: SECTIONS_KEY, value },
+      update: { value },
+    });
   }
 
   private async candidates(groupId?: string | null): Promise<Candidate[]> {

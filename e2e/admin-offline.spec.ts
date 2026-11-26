@@ -5,7 +5,7 @@ import { E2E_PREFIX } from "./telegram";
 /** Ismda raqam bo'lmaydi: vaqt belgisini harflarga aylantiramiz */
 const tag = () => [...String(Date.now()).slice(-6)].map((d) => "abcdefghij"[Number(d)]).join("");
 
-test("T-056, BR-G04: ustoz CSV yuklaydi, tekshiradi, saqlaydi va moslanmaganni biriktiradi", async ({
+test("T-181, BR-G04: ustoz Q1..Qn jadvalini yuklaydi, tekshiradi, saqlaydi va moslanmaganni biriktiradi", async ({
   page,
   request,
 }) => {
@@ -15,10 +15,10 @@ test("T-056, BR-G04: ustoz CSV yuklaydi, tekshiradi, saqlaydi va moslanmaganni b
   await createStudent(request, { fullName: `Ismli Oquvchi${t}` });
   await createStudent(request, { fullName: `Qolgan Oquvchi${t}` });
   const csv = [
-    "F.I.O;Telefon;Algebra;Geometriya",
-    `Boshqacha yozilgan;+${phone};12,5;8`,
-    `ismli oquvchi${t};;7;6`,
-    `Q. Oquvchi${t};;3;`,
+    "F.I.O;Telefon;Q1;Q2;Q3;Q4",
+    `Boshqacha yozilgan;+${phone};1;1;1;1`,
+    `ismli oquvchi${t};;1;0;1;`,
+    `Q. Oquvchi${t};;0;0;;1`,
   ].join("\r\n");
 
   await loginAdmin(page, request, "offline");
@@ -37,22 +37,22 @@ test("T-056, BR-G04: ustoz CSV yuklaydi, tekshiradi, saqlaydi va moslanmaganni b
   await page.getByLabel(`Q. Oquvchi${t}: oʻquvchi`).fill(`Qolgan Oquvchi${t}`);
   await page.getByRole("button", { name: new RegExp(`Qolgan Oquvchi${t}`) }).click();
   await expect(page.getByText("3/3 moslangan")).toBeVisible();
-  await expect(page.getByTestId("offline-row").first()).toContainText("20,5");
+  await expect(page.getByTestId("offline-row").first()).toContainText("100%");
   await page.screenshot({ path: "e2e/.results/admin-offline-test.png", fullPage: true });
 });
 
-test("T-056: xatoli CSV saqlanmaydi, qator raqami ko'rinadi", async ({ page, request }) => {
+test("T-181: tanilmagan fayl saqlanmaydi, sababi ko'rinadi", async ({ page, request }) => {
   await loginAdmin(page, request, "offline");
   await page.getByLabel("Test nomi").fill(`${E2E_PREFIX}Xato`);
   await page
     .getByLabel("Excel yoki CSV fayl")
     .setInputFiles({ name: "x.csv", mimeType: "text/csv", buffer: Buffer.from("Ism;A\nAli;abc") });
   await page.getByRole("button", { name: "Tekshirish" }).click();
-  await expect(page.getByTestId("offline-preview")).toContainText('2-qator: 1-boʻlim balli son emas: "abc"');
+  await expect(page.getByText("Fayl tanilmadi")).toBeVisible();
   await expect(page.getByRole("button", { name: "Saqlash" })).toBeDisabled();
 });
 
-test("T-165: eski Excel (.xls) fayldan natija: o'nlik son va bo'sh katak to'g'ri o'qiladi", async ({
+test("T-165, T-181: eski Excel (.xls) fayldan natija: son katak va bo'sh katak to'g'ri o'qiladi", async ({
   page,
   request,
 }) => {
@@ -63,8 +63,7 @@ test("T-165: eski Excel (.xls) fayldan natija: o'nlik son va bo'sh katak to'g'ri
   await page.getByRole("button", { name: "Tekshirish" }).click();
   const preview = page.getByTestId("offline-preview");
   await expect(preview).toContainText("2 qator");
-  await expect(preview).not.toContainText("son emas");
-  await expect(preview.getByTestId("offline-row").first()).toContainText("19,5");
+  await expect(preview.getByTestId("offline-row").first()).toContainText("75%");
   await page.screenshot({ path: "e2e/.results/admin-offline-xls.png", fullPage: true });
   await expect(page.getByRole("button", { name: "Saqlash" })).toBeEnabled();
 });

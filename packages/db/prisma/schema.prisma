@@ -660,23 +660,32 @@ model Attendance {
   @@index([groupId, date])
 }
 
-/// Tashqi (offline) test (T-056): CSV dan import, bo'limlar bo'yicha ball
+/// Offline (qog'ozdagi) test (T-181): skaner eksporti yoki Q1..Qn matritsadan har savol javobi
 model OfflineTest {
-  id          String          @id @default(cuid())
-  title       String
-  date        DateTime        @db.Date
-  groupId     String?
-  group       Group?          @relation(fields: [groupId], references: [id], onDelete: SetNull)
-  sections    String[]
-  createdById String?
-  createdBy   User?           @relation("OfflineTestCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  createdAt   DateTime        @default(now()) @db.Timestamptz
-  results     OfflineResult[]
+  id            String          @id @default(cuid())
+  title         String
+  date          DateTime        @db.Date
+  groupId       String?
+  group         Group?          @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  /// omr (skaner) yoki matrix
+  format        String
+  questionCount Int
+  /// Fan bo'limlari: [{title, questions: number[]}]
+  sections      Json            @default("[]")
+  /// Rasch: {calibrated, n, items: [{q, b, w, correctPct}]}
+  rasch         Json
+  /// Import paytidagi shkala (faol imtihon shablonidan)
+  scaleMax      Float
+  notifiedAt    DateTime?       @db.Timestamptz
+  createdById   String?
+  createdBy     User?           @relation("OfflineTestCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt     DateTime        @default(now()) @db.Timestamptz
+  results       OfflineResult[]
 
   @@index([date])
 }
 
-/// CSV qatori: o'quvchiga telefon yoki ism bo'yicha moslanadi, topilmasa ustoz qo'lda biriktiradi
+/// Fayl qatori: o'quvchiga telefon yoki ism bo'yicha moslanadi, topilmasa ustoz qo'lda biriktiradi
 model OfflineResult {
   id            String      @id @default(cuid())
   offlineTestId String
@@ -686,8 +695,17 @@ model OfflineResult {
   line          Int
   name          String
   phone         String?
-  scores        Float[]
-  total         Float
+  /// Har savolga bitta harf: c to'g'ri, w xato, b bo'sh, - savol yo'q
+  answers       String
+  correct       Int
+  wrong         Int
+  blank         Int
+  percent       Float
+  /// Shkala balli (Rasch)
+  score         Float
+  grade         String?
+  /// O'quvchi va ota-onaga "natija tayyor" xabari yuborilgan payt
+  notifiedAt    DateTime?   @db.Timestamptz
 
   @@index([offlineTestId])
   @@index([userId])
