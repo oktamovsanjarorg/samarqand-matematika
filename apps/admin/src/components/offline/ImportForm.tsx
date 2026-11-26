@@ -14,19 +14,12 @@ function PreviewView({ p }: { p: OfflinePreview }) {
   const matched = p.rows.filter((r) => r.match).length;
   return (
     <div className="space-y-2" data-testid="offline-preview">
-      {p.errors.map((e) => (
-        <p key={`${e.line}${e.message}`} className="text-sm text-danger">
-          {e.line ? `${e.line}-qator: ` : ""}
-          {e.message}
-        </p>
-      ))}
       {p.rows.length > 0 && (
         <p className="text-sm">
           {p.rows.length} qator, {matched} tasi oʻquvchiga moslandi. Qolganini saqlagandan keyin biriktirasiz.
         </p>
       )}
       <ScoresTable
-        sections={p.sections}
         rows={p.rows.map((r) => ({ ...r, key: String(r.line) }))}
         student={(r) => {
           const m = p.rows.find((x) => x.line === r.line)?.match;
@@ -87,7 +80,8 @@ export function ImportForm() {
     mutationFn: () => api.post<OfflinePreview>("/admin/offline-tests/preview", body),
   });
   const save = useMutation({
-    mutationFn: () => api.post<AdminOfflineTestDetail>("/admin/offline-tests", { ...body, title, date }),
+    mutationFn: () =>
+      api.post<AdminOfflineTestDetail>("/admin/offline-tests", { ...body, title, date, sections: [] }),
     onSuccess: (t) => {
       void qc.invalidateQueries({ queryKey: ["offline"] });
       navigate(`/offline/${t.id}`);
@@ -97,13 +91,13 @@ export function ImportForm() {
     setCsv(text);
     preview.reset();
   };
-  const ok = preview.data && !preview.data.errors.length && preview.data.rows.length > 0;
+  const ok = !!preview.data?.rows.length;
   return (
     <section className="card space-y-3">
       <h2 className="font-bold">Natijalarni yuklash</h2>
       <p className="text-sm text-hint">
-        Excel (.xlsx, .xls) yoki CSV fayl. Birinchi qator: ism ustuni (Ism yoki F.I.O), ixtiyoriy Telefon,
-        qolgan ustunlar boʻlimlar.
+        Skaner eksporti (Q 1 Marks …) yoki Excel/CSV jadval: ism ustuni (Ism yoki F.I.O), ixtiyoriy Telefon,
+        Q1, Q2 … ustunlarida 1 (toʻgʻri), 0 (xato) yoki boʻsh.
       </p>
       <HeadFields v={head} set={setHead} />
       <TablePicker onText={onText} />

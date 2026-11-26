@@ -28,11 +28,12 @@ describe("admin bosh sahifa (T-061)", () => {
     await f.prisma.parentLink.create({
       data: { parentId: parent.id, studentId: profile.id, phone: "998900000000" },
     });
-    const csv = "Ism;A\nHech kim topilmaydigan ism;1";
+    const csv = "Ism;Q1\nHech kim topilmaydigan ism;1";
     const t = await f.call("POST", "/admin/offline-tests", f.teacher, {
       title: "Bosh sahifa",
       date: "2026-10-01",
       csv,
+      sections: [],
     });
     offlineIds.push(t.json().id);
 

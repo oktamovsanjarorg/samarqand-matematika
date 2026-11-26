@@ -219,7 +219,7 @@
 | T-178 | Ilova va admin Google natijalarida chiqmaydi: `X-Robots-Tag: noindex` (Caddy) va meta; ilova `robots.txt` sahifalarni yopmaydi, aks holda noindex o'qilmaydi                                             | ✅    |
 | T-179 | Zaxira bucket nomi server `.env` dagi `BACKUP_BUCKET` dan o'qiladi (akkaunt ko'chgach eski bucket'ga yozib, AccessDenied bo'lgan); yozilmagan bo'lsa zaxira xato xabari bilan to'xtaydi                  | ✅    |
 | T-180 | Offline test fayli (ona tili loyihasidagidek, essesiz): skaner (OMR) eksporti va Q1..Qn matritsa parseri, fan bo'limlari (`Nom: 1-10, 31`), Rasch bahosi                                                 | ✅    |
-| T-181 | Offline API qayta qurildi: har savol javobi, ball va daraja (faol shablon), fan bo'limlari tahriri, tahlil (mediana, taqsimot, har savol, Rasch), reyting, xabar yuborish                                | ⬜    |
+| T-181 | Offline API qayta qurildi: har savol javobi, ball va daraja (faol shablon), fan bo'limlari tahriri, tahlil (mediana, taqsimot, har savol, Rasch), reyting, xabar yuborish                                | ✅    |
 | T-182 | Admin offline: import (fayl, nom, sana, guruh, fan bo'limlari, oldindan ko'rish), testlar ro'yxati va reyting tabi                                                                                       | ⬜    |
 | T-183 | Admin offline test sahifasi: darajalar, bo'limlar o'rtachasi, eng ko'p xato savollar, har savol, Rasch jadvali, natijalar, natija kartasi, biriktirish                                                   | ⬜    |
 | T-184 | Mini App offline natija sahifasi: ball, daraja, o'rin, fan bo'limlari, eng zaif bo'lim, har savol; ota-ona ham ko'radi                                                                                   | ⬜    |

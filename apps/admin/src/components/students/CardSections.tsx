@@ -145,7 +145,10 @@ export function OfflineSection({ c }: { c: AdminStudentCard }) {
           <li key={o.id} className="flex items-center gap-2 py-1.5">
             <span className="min-w-0 flex-1 truncate">{o.title}</span>
             <span className="text-xs text-hint">{fmtDay(o.date)}</span>
-            <span className="font-bold tabular-nums">{o.total}</span>
+            <span className="font-bold tabular-nums">
+              {o.score}
+              {o.grade ? ` · ${o.grade}` : ""}
+            </span>
             <span className="text-xs text-hint">
               {o.place}/{o.participants}-oʻrin
             </span>

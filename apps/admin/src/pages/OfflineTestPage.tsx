@@ -38,7 +38,6 @@ export function OfflineTestPage() {
           </div>
           <section className="card">
             <ScoresTable
-              sections={t.data.sections}
               rows={t.data.rows.map((r) => ({ ...r, key: r.id }))}
               student={(r) => (
                 <AssignStudent testId={id} resultId={r.id} userName={r.userName} rowName={r.name} />

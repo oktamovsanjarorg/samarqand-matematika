@@ -151,8 +151,9 @@ function parseMatrix(t: Table): OfflineFile {
       .map((i) => {
         const v = cell(r.cells, i);
         if (!v) return "b";
-        if (v === "1") return "c";
-        if (v === "0") return "w";
+        const n = Number(v.replace(",", "."));
+        if (n === 1) return "c";
+        if (n === 0) return "w";
         throw new Error(`${r.line}-qator: katakda faqat 1, 0 yoki boʻsh boʻladi ("${v}")`);
       })
       .join("");

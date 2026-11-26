@@ -9,25 +9,20 @@ const day = (d: string) => d.split("-").reverse().join(".");
 
 function ResultCard({ r }: { r: StudentOfflineResult }) {
   return (
-    <li className="card space-y-2" data-testid="offline-result">
-      <div className="flex items-start gap-3">
-        <FileSpreadsheet size={22} className="mt-0.5 shrink-0 text-brand" />
-        <div className="min-w-0 flex-1">
-          <p className="font-bold">{r.title}</p>
-          <p className="text-xs text-hint">
-            {day(r.date)} · {r.place}-oʻrin, {r.participants} kishidan
-          </p>
-        </div>
-        <b className="text-lg tabular-nums">{num(r.total)}</b>
+    <li className="card flex items-start gap-3" data-testid="offline-result">
+      <FileSpreadsheet size={22} className="mt-0.5 shrink-0 text-brand" />
+      <div className="min-w-0 flex-1">
+        <p className="font-bold">{r.title}</p>
+        <p className="text-xs text-hint">
+          {day(r.date)} · {r.correct}/{r.questionCount} toʻgʻri · {r.place}-oʻrin, {r.participants} kishidan
+        </p>
       </div>
-      <ul className="divide-y divide-hint/10">
-        {r.sections.map((s, i) => (
-          <li key={s} className="flex items-center justify-between py-1.5 text-sm">
-            <span className="text-hint">{s}</span>
-            <b className="tabular-nums">{num(r.scores[i] ?? 0)}</b>
-          </li>
-        ))}
-      </ul>
+      <div className="text-right">
+        <b className="text-lg tabular-nums">{num(r.score)}</b>
+        <p className="text-xs text-hint">
+          {r.scaleMax} dan{r.grade ? ` · ${r.grade}` : ""}
+        </p>
+      </div>
     </li>
   );
 }

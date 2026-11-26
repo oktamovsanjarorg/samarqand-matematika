@@ -70,6 +70,8 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "offline.import": "Offline natijalarni yukladi",
   "offline.match": "Offline qatorni oʻquvchiga bogʻladi",
   "offline.delete": "Offline testni oʻchirdi",
+  "offline.sections": "Offline test fan boʻlimlarini oʻzgartirdi",
+  "offline.notify": "Offline natija xabarini yubordi",
 };
 
 export interface AuditActor {

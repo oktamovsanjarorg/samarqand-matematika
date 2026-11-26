@@ -143,6 +143,24 @@ export const mockParentReport = (
 ) =>
   `🎓 <b>${esc(child)}</b>, mock <b>${esc(title)}</b>: <b>${r.scaled}/${r.scaleMax}</b>${r.grade ? `, daraja <b>${esc(r.grade)}</b>` : ""}${r.approx ? " (taxminiy)" : ""}.`;
 
+type OfflineMsg = {
+  score: number;
+  scaleMax: number;
+  grade: string | null;
+  place: number;
+  participants: number;
+};
+const offlineLine = (r: OfflineMsg) =>
+  `<b>${r.score}/${r.scaleMax}</b>${r.grade ? `, daraja <b>${esc(r.grade)}</b>` : ""} · oʻrin: ${r.place}/${r.participants}`;
+
+/** O'quvchiga: offline test natijasi (T-181) */
+export const offlineResultText = (title: string, r: OfflineMsg) =>
+  `📝 Offline test <b>${esc(title)}</b> natijasi: ${offlineLine(r)}.\nFan boʻlimlari va har savol ilovada.`;
+
+/** Ota-onaga: farzandning offline test natijasi (T-181) */
+export const offlineParentReport = (child: string, title: string, r: OfflineMsg) =>
+  `📝 <b>${esc(child)}</b>, offline test <b>${esc(title)}</b>: ${offlineLine(r)}.`;
+
 const ATTENDANCE_TEXT = {
   LATE: "darsga kechikdi",
   ABSENT: "darsga kelmadi",

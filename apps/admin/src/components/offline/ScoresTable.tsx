@@ -5,16 +5,14 @@ export interface ScoreRow {
   key: string;
   line: number;
   name: string;
-  scores: number[];
-  total: number;
+  correct: number;
+  percent: number;
+  score: number;
+  grade: string | null;
 }
 
-/** Bo'limlar bo'yicha natija jadvali; oxirgi ustun: o'quvchi (moslash) */
-export function ScoresTable<T extends ScoreRow>(p: {
-  sections: string[];
-  rows: T[];
-  student: (r: T) => ReactNode;
-}) {
+/** Natija jadvali: to'g'ri javoblar, foiz, ball va daraja; o'quvchi ustuni moslash uchun */
+export function ScoresTable<T extends ScoreRow>(p: { rows: T[]; student: (r: T) => ReactNode }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm" data-testid="offline-table">
@@ -23,12 +21,10 @@ export function ScoresTable<T extends ScoreRow>(p: {
             <th className="py-2 pr-2">Qator</th>
             <th className="py-2 pr-2">Ism (fayldan)</th>
             <th className="py-2 pr-2">Oʻquvchi</th>
-            {p.sections.map((s) => (
-              <th key={s} className="py-2 pr-2 text-right">
-                {s}
-              </th>
-            ))}
-            <th className="py-2 pr-2 text-right">Jami</th>
+            <th className="py-2 pr-2 text-right">Toʻgʻri</th>
+            <th className="py-2 pr-2 text-right">Foiz</th>
+            <th className="py-2 pr-2 text-right">Ball</th>
+            <th className="py-2 pr-2 text-right">Daraja</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-hint/10">
@@ -37,12 +33,10 @@ export function ScoresTable<T extends ScoreRow>(p: {
               <td className="py-2 pr-2 text-hint">{r.line}</td>
               <td className="py-2 pr-2 font-semibold">{r.name}</td>
               <td className="py-2 pr-2">{p.student(r)}</td>
-              {r.scores.map((s, i) => (
-                <td key={i} className="py-2 pr-2 text-right tabular-nums">
-                  {fmtScore(s)}
-                </td>
-              ))}
-              <td className="py-2 pr-2 text-right font-bold tabular-nums">{fmtScore(r.total)}</td>
+              <td className="py-2 pr-2 text-right tabular-nums">{r.correct}</td>
+              <td className="py-2 pr-2 text-right tabular-nums">{fmtScore(r.percent)}%</td>
+              <td className="py-2 pr-2 text-right font-bold tabular-nums">{fmtScore(r.score)}</td>
+              <td className="py-2 pr-2 text-right">{r.grade ?? "—"}</td>
             </tr>
           ))}
         </tbody>

@@ -25,10 +25,10 @@ for i in range(600):
     ws.write(i, 1, i)
 wb.save("big.xls")
 
-# Brauzer testi uchun (e2e/fixtures/offline-results.xls): faqat ism va bo'lim ballari
+# Brauzer testi uchun (e2e/fixtures/offline-results.xls): ism va Q1..Q4 (1 to'g'ri, 0 xato, bo'sh)
 wb = xlwt.Workbook(encoding="utf-8")
 ws = wb.add_sheet("Natijalar")
-for r, row in enumerate([["F.I.O", "Algebra", "Geometriya"], ["Xls Sinovchi Bir", 12, 7.5], ["Xls Sinovchi Ikki", 3, None]]):
+for r, row in enumerate([["F.I.O", "Q1", "Q2", "Q3", "Q4"], ["Xls Sinovchi Bir", 1, 1, 0, 1], ["Xls Sinovchi Ikki", 0, None, 1, 0]]):
     for c, v in enumerate(row):
         if v is not None:
             ws.write(r, c, v)
