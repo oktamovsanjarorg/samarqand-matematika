@@ -1,34 +1,21 @@
-import type { AdminOfflineTestDetail, OfflinePreview } from "@samarqand/shared";
+import {
+  parseSectionsText,
+  sectionsToText,
+  type AdminOfflineTestDetail,
+  type OfflinePreview,
+  type OfflineSection,
+} from "@samarqand/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import { tashkentToday, useGroups } from "../../lib/groups";
-import { Badge, Button } from "../ui";
+import { Button } from "../ui";
 import { TablePicker } from "../TablePicker";
-import { ScoresTable } from "./ScoresTable";
+import { PreviewView } from "./PreviewView";
+import { SectionsField } from "./SectionsField";
 
 const field = "min-h-11 w-full rounded-xl border border-hint/25 bg-section px-3 text-sm";
-
-function PreviewView({ p }: { p: OfflinePreview }) {
-  const matched = p.rows.filter((r) => r.match).length;
-  return (
-    <div className="space-y-2" data-testid="offline-preview">
-      {p.rows.length > 0 && (
-        <p className="text-sm">
-          {p.rows.length} qator, {matched} tasi oʻquvchiga moslandi. Qolganini saqlagandan keyin biriktirasiz.
-        </p>
-      )}
-      <ScoresTable
-        rows={p.rows.map((r) => ({ ...r, key: String(r.line) }))}
-        student={(r) => {
-          const m = p.rows.find((x) => x.line === r.line)?.match;
-          return m ? <Badge tone="success">{m.name}</Badge> : <Badge>Moslanmadi</Badge>;
-        }}
-      />
-    </div>
-  );
-}
 
 type Head = { title: string; date: string; groupId: string };
 
@@ -68,30 +55,52 @@ function HeadFields({ v, set }: { v: Head; set: (h: Head) => void }) {
   );
 }
 
-/** Excel yoki CSV faylini tanlash → oldindan ko'rish → saqlash (T-056) */
-export function ImportForm() {
+/** Matndagi fan bo'limlari: xato bo'lsa sababi, bo'sh bo'lsa skaner bo'limlari olinadi */
+function readSections(text: string, n: number): { list: OfflineSection[] } | { error: string } {
+  try {
+    return { list: parseSectionsText(text, n) };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Boʻlimlar notoʻgʻri" };
+  }
+}
+
+function useImport() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [head, setHead] = useState<Head>({ title: "", date: tashkentToday(), groupId: "" });
-  const { title, date, groupId } = head;
   const [csv, setCsv] = useState("");
-  const body = { csv, groupId: groupId || null };
+  const [text, setText] = useState("");
+  const body = { csv, groupId: head.groupId || null };
   const preview = useMutation({
     mutationFn: () => api.post<OfflinePreview>("/admin/offline-tests/preview", body),
+    onSuccess: (p) => {
+      const suggested = p.savedSections ?? p.fileSections;
+      if (!text.trim() && suggested.length) setText(sectionsToText(suggested));
+      if (!head.title.trim() && p.exam) setHead({ ...head, title: p.exam });
+    },
   });
+  const p = preview.data;
+  const sections = p ? readSections(text, p.questionCount) : null;
   const save = useMutation({
     mutationFn: () =>
-      api.post<AdminOfflineTestDetail>("/admin/offline-tests", { ...body, title, date, sections: [] }),
+      api.post<AdminOfflineTestDetail>("/admin/offline-tests", {
+        ...body,
+        title: head.title,
+        date: head.date,
+        sections: sections && "list" in sections ? sections.list : [],
+      }),
     onSuccess: (t) => {
       void qc.invalidateQueries({ queryKey: ["offline"] });
       navigate(`/offline/${t.id}`);
     },
   });
-  const onText = (text: string) => {
-    setCsv(text);
-    preview.reset();
-  };
-  const ok = !!preview.data?.rows.length;
+  const ok = !!p?.rows.length && !!sections && "list" in sections && head.title.trim().length >= 2;
+  return { head, setHead, csv, setCsv, text, setText, preview, p, sections, save, ok };
+}
+
+/** Skaner eksporti yoki Q1..Qn jadval → oldindan ko'rish (ball, daraja, moslash) → fan bo'limlari → saqlash */
+export function ImportForm() {
+  const { head, setHead, csv, setCsv, text, setText, preview, p, sections, save, ok } = useImport();
   return (
     <section className="card space-y-3">
       <h2 className="font-bold">Natijalarni yuklash</h2>
@@ -100,19 +109,31 @@ export function ImportForm() {
         Q1, Q2 … ustunlarida 1 (toʻgʻri), 0 (xato) yoki boʻsh.
       </p>
       <HeadFields v={head} set={setHead} />
-      <TablePicker onText={onText} />
-      <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" onClick={() => preview.mutate()} busy={preview.isPending} disabled={!csv}>
-          Tekshirish
-        </Button>
-        <Button onClick={() => save.mutate()} busy={save.isPending} disabled={!ok || title.trim().length < 2}>
-          Saqlash
-        </Button>
-      </div>
-      {(preview.error ?? save.error) && (
-        <p className="text-sm text-danger">{(preview.error ?? save.error)?.message}</p>
+      <TablePicker
+        onText={(t) => {
+          setCsv(t);
+          preview.reset();
+        }}
+      />
+      <Button variant="secondary" onClick={() => preview.mutate()} busy={preview.isPending} disabled={!csv}>
+        Tekshirish
+      </Button>
+      {preview.error && <p className="text-sm text-danger">{preview.error.message}</p>}
+      {p && (
+        <>
+          <PreviewView p={p} />
+          <SectionsField
+            value={text}
+            onChange={setText}
+            questionCount={p.questionCount}
+            error={sections && "error" in sections ? sections.error : null}
+          />
+          <Button onClick={() => save.mutate()} busy={save.isPending} disabled={!ok}>
+            Saqlash
+          </Button>
+          {save.error && <p className="text-sm text-danger">{save.error.message}</p>}
+        </>
       )}
-      {preview.data && <PreviewView p={preview.data} />}
     </section>
   );
 }
