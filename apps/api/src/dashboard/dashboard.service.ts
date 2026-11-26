@@ -70,7 +70,7 @@ export class DashboardService {
     const [newStudents, pendingParents, pendingPayments, unmatchedOffline, review, backup] =
       await Promise.all([
         p.user.count({
-          where: { role: "STUDENT", OR: [{ student: null }, { student: { acceptedAt: null } }] },
+          where: { role: "STUDENT", ...filterWhere("new") },
         }),
         p.parentLink.count({ where: { status: "PENDING" } }),
         p.payment.count({ where: { status: "PENDING" } }),

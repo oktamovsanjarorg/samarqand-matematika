@@ -25,7 +25,7 @@ test("T-061, T-105: bosh sahifada kutayotgan ishlar, bosilsa bo'limga o'tadi", a
   await page.setViewportSize({ width: 1366, height: 860 });
   await page.screenshot({ path: "e2e/.results/admin-dashboard-desktop.png" });
   await card.click();
-  await expect(page).toHaveURL(/\/admin\/students$/);
+  await expect(page).toHaveURL(/\/admin\/students\?filter=new$/);
 });
 
 test("T-063, BR-R02: bosh sahifada e'tibor kerak o'quvchi sababi bilan", async ({ page, request }) => {

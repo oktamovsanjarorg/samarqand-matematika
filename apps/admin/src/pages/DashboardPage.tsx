@@ -31,10 +31,10 @@ interface Todo {
 const todos = (d: AdminDashboard): Todo[] =>
   [
     {
-      to: "/students",
+      to: "/students?filter=new",
       count: d.todo.newStudents,
       title: "Yangi oʻquvchilar",
-      hint: "Qabul qiling va kirish rejimini tanlang",
+      hint: "Guruhga qoʻshing yoki online oʻquvchi deb qabul qiling",
       Icon: UserPlus,
     },
     {

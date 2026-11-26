@@ -1,5 +1,11 @@
-import { Body, Controller, Get, HttpCode, Param, Patch, Post, Query } from "@nestjs/common";
-import { adminStudentPatch, STUDENT_FILTERS, type StudentFilter } from "@samarqand/shared";
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query } from "@nestjs/common";
+import {
+  adminStudentPatch,
+  STUDENT_FILTERS,
+  studentAcceptBody,
+  studentBlockBody,
+  type StudentFilter,
+} from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { AdminStudentsService } from "./admin-students.service";
@@ -14,9 +20,9 @@ export class AdminStudentsController {
   ) {}
 
   @Get()
-  list(@Query("filter") filter?: string, @Query("q") q?: string) {
+  list(@Query("filter") filter?: string, @Query("q") q?: string, @Query("group") group?: string) {
     const f = STUDENT_FILTERS.includes(filter as StudentFilter) ? (filter as StudentFilter) : "all";
-    return this.students.list(f, q?.slice(0, 100));
+    return this.students.list(f, q?.slice(0, 100), group?.slice(0, 40));
   }
 
   /** O'quvchi kartasi (T-068) */
@@ -27,8 +33,23 @@ export class AdminStudentsController {
 
   @Post(":id/accept")
   @HttpCode(200)
-  accept(@CurrentUser() u: JwtUser, @Param("id") id: string) {
-    return this.students.accept(u.sub, id);
+  accept(@CurrentUser() u: JwtUser, @Param("id") id: string, @Body() body: unknown) {
+    return this.students.accept(u.sub, id, parseBody(studentAcceptBody, body ?? {}).groupId);
+  }
+
+  @Post(":id/block")
+  @HttpCode(200)
+  block(@CurrentUser() u: JwtUser, @Param("id") id: string, @Body() body: unknown) {
+    const b = parseBody(studentBlockBody, body);
+    return this.students.block(u.sub, id, b.blocked, b.reason);
+  }
+
+  /** Begonani o'chirish: faqat ustoz va faqat qabul qilinmagan o'quvchi */
+  @Roles("TEACHER")
+  @Delete(":id")
+  @HttpCode(204)
+  remove(@CurrentUser() u: JwtUser, @Param("id") id: string) {
+    return this.students.remove(u.sub, id);
   }
 
   @Patch(":id")
