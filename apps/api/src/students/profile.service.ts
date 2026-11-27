@@ -11,6 +11,7 @@ import { isFullAccess } from "../access/access-rules";
 import { newStudentText } from "../notify/messages";
 import { NotifyService } from "../notify/notify.service";
 import { PrismaService } from "../prisma/prisma.service";
+import { ManualStudentsService } from "./manual-students.service";
 
 /** Telegram raqami "998901234567" yoki "+998 90..." ko'rinishida keladi: "+" va raqamlar qoladi */
 export const normalizePhone = (raw: string) => `+${raw.replace(/\D/g, "")}`;
@@ -22,6 +23,7 @@ export class ProfileService {
     private readonly prisma: PrismaService,
     private readonly access: AccessService,
     private readonly notify: NotifyService,
+    private readonly manual: ManualStudentsService,
   ) {}
 
   async my(userId: string, role: RoleName): Promise<MyProfile> {
@@ -80,16 +82,18 @@ export class ProfileService {
   /** BR-S02: faqat o'z raqami (Telegram tasdiqlagan contact.user_id = from.id) saqlanadi */
   async savePhone({ from, contact }: UserPhoneBody): Promise<{ status: "saved" | "foreign" | "unknown" }> {
     if (contact.user_id !== from.id) return { status: "foreign" };
+    const phone = normalizePhone(contact.phone_number);
     const res = await this.prisma.user.updateMany({
       where: { telegramId: BigInt(from.id) },
-      data: { phone: normalizePhone(contact.phone_number) },
+      data: { phone },
     });
     if (!res.count) return { status: "unknown" };
     const user = await this.prisma.user.findUnique({
       where: { telegramId: BigInt(from.id) },
       select: { id: true },
     });
-    if (user) await this.announce(user.id);
+    // T-186: ustoz qo'lda kiritgan bo'lsa shu hisobga bog'lanadi (qabul qilingan, xabar kerak emas)
+    if (user && !(await this.manual.linkByPhone(user.id, phone))) await this.announce(user.id);
     return { status: "saved" };
   }
 

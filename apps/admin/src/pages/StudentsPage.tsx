@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import { useDeferredValue, useState, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ExportButton } from "../components/ExportButton";
+import { ManualAdd } from "../components/students/ManualAdd";
 import { Inbox } from "../components/students/Inbox";
 import { StudentRow } from "../components/students/StudentRow";
 import { EmptyState, ErrorState, PageTitle, SkeletonList } from "../components/ui";
@@ -119,6 +120,7 @@ export function StudentsPage() {
       <PageTitle title="Oʻquvchilar">
         <FilterTabs value={filter} onChange={setFilter} />
       </PageTitle>
+      <ManualAdd groups={groups.data ?? []} />
       <Inbox groups={groups.data ?? []} open={asked === "new"} />
       <GroupChips value={group} onChange={(g) => setParams(g ? { group: g } : {}, { replace: true })} />
       <div className="flex items-center gap-2">

@@ -20,6 +20,7 @@ const SELECT = {
   phone: true,
   createdAt: true,
   lastSeenAt: true,
+  telegramId: true,
   isBlocked: true,
   blockedReason: true,
   student: {
@@ -76,6 +77,7 @@ const parentsBy = (u: Row, status: "APPROVED" | "PENDING") =>
 /** T-185: guruh, bloklash, kutilayotgan ota-ona va davomat */
 const extras = (u: Row, att: Attendance30) => ({
   groupId: u.student?.groupId ?? null,
+  linked: u.telegramId !== null,
   blocked: u.isBlocked,
   blockedReason: u.blockedReason,
   parentsPending: parentsBy(u, "PENDING").length,
@@ -227,11 +229,14 @@ export class AdminStudentsService {
     return this.get(id);
   }
 
-  /** Begonani o'chirish: faqat hali qabul qilinmagan o'quvchi (qabul qilingan bo'lsa bloklanadi) */
+  /**
+   * Begonani o'chirish: faqat hali qabul qilinmagan o'quvchi (qabul qilingan bo'lsa bloklanadi).
+   * Qo'lda kiritilgan, Telegram'ga ulanmagan yozuv ham o'chiriladi (T-186: xato kiritilgan bo'lsa).
+   */
   async remove(actorId: string, id: string) {
     await this.mustStudent(id);
     const accepted = await this.prisma.studentProfile.count({
-      where: { userId: id, acceptedAt: { not: null } },
+      where: { userId: id, acceptedAt: { not: null }, user: { telegramId: { not: null } } },
     });
     if (accepted) throw new ConflictException("Qabul qilingan oʻquvchi oʻchirilmaydi: bloklang");
     await this.prisma.user.delete({ where: { id } });

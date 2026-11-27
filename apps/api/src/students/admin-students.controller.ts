@@ -4,11 +4,13 @@ import {
   STUDENT_FILTERS,
   studentAcceptBody,
   studentBlockBody,
+  studentBulkInput,
   type StudentFilter,
 } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { AdminStudentsService } from "./admin-students.service";
+import { ManualStudentsService } from "./manual-students.service";
 import { StudentCardService } from "./student-card.service";
 
 @Roles("TEACHER", "ASSISTANT")
@@ -17,7 +19,15 @@ export class AdminStudentsController {
   constructor(
     private readonly students: AdminStudentsService,
     private readonly card: StudentCardService,
+    private readonly manual: ManualStudentsService,
   ) {}
+
+  /** Qo'lda kiritish (T-186): har qatorda "Ism Familiya, telefon" */
+  @Post("bulk")
+  @HttpCode(200)
+  bulk(@CurrentUser() u: JwtUser, @Body() body: unknown) {
+    return this.manual.bulk(u.sub, parseBody(studentBulkInput, body));
+  }
 
   @Get()
   list(@Query("filter") filter?: string, @Query("q") q?: string, @Query("group") group?: string) {

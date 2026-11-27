@@ -38,15 +38,17 @@ export class NotifyService {
   /** Barcha faol ustoz va yordamchilarga */
   async toStaff(html: string, button?: LinkButton): Promise<void> {
     const staff = await this.prisma.user.findMany({
-      where: { role: { in: ["TEACHER", "ASSISTANT"] }, isBlocked: false },
+      where: { role: { in: ["TEACHER", "ASSISTANT"] }, isBlocked: false, telegramId: { not: null } },
       select: { telegramId: true },
     });
-    await Promise.all(staff.map((s) => this.transport.send(s.telegramId, html, button)));
+    await Promise.all(
+      staff.flatMap((s) => (s.telegramId === null ? [] : [this.transport.send(s.telegramId, html, button)])),
+    );
   }
 
-  /** true: Telegram qabul qildi (bot bloklangan yoki foydalanuvchi yo'q bo'lsa false) */
+  /** true: Telegram qabul qildi (bot bloklangan, foydalanuvchi yo'q yoki hali Telegram'ga ulanmagan bo'lsa false) */
   async toUser(userId: string, html: string, button?: LinkButton): Promise<boolean> {
     const u = await this.prisma.user.findUnique({ where: { id: userId }, select: { telegramId: true } });
-    return u ? this.transport.send(u.telegramId, html, button) : false;
+    return u?.telegramId ? this.transport.send(u.telegramId, html, button) : false;
   }
 }

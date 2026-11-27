@@ -10,6 +10,7 @@ function Badges({ s }: { s: AdminStudentRow }) {
     <div className="flex flex-wrap items-center gap-1">
       {s.blocked && <Badge tone="danger">bloklangan</Badge>}
       {!s.acceptedAt && <Badge tone="brand">yangi</Badge>}
+      {!s.linked && <Badge tone="accent">Telegramʼga ulanmagan</Badge>}
       {s.accessMode !== "AUTO" && <Badge tone="accent">{ACCESS_LABELS[s.accessMode]}</Badge>}
       {s.parentPhones.length > 0 ? (
         <Badge tone="success">ota-ona ✓</Badge>

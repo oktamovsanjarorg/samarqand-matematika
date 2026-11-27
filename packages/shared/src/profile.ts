@@ -65,6 +65,8 @@ export interface AdminStudentRow {
   createdAt: string;
   lastSeenAt: string | null;
   groupId: string | null;
+  /** Telegram'ga ulangan; false: ustoz qo'lda kiritgan, botga hali kirmagan (T-186) */
+  linked: boolean;
   /** Bloklangan: ilovaga kira olmaydi (T-185) */
   blocked: boolean;
   blockedReason: string | null;

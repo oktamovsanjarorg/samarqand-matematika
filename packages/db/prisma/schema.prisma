@@ -18,7 +18,8 @@ enum Role {
 
 model User {
   id                String           @id @default(cuid())
-  telegramId        BigInt           @unique
+  /// Ustoz qo'lda kiritgan o'quvchida bo'sh: botda raqamini ulashganda bog'lanadi (T-186)
+  telegramId        BigInt?          @unique
   firstName         String
   lastName          String?
   username          String?
