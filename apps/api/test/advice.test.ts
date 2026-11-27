@@ -9,12 +9,14 @@ import {
   type AnswerRow,
 } from "../src/advisor/advice";
 
-/** n ta o'quvchi, har biri k ta javob, jami ok ta to'g'ri (birinchilari) */
+/** n ta o'quvchi, har biri k ta javob, jami ok ta to'g'ri (birinchi o'quvchilardan boshlab) */
 function answers(topicId: string, users: number, perUser: number, ok: number): AnswerRow[] {
-  const rows: AnswerRow[] = [];
-  for (let u = 0; u < users; u++)
-    for (let i = 0; i < perUser; i++) rows.push({ topicId, userId: `u${u}`, correct: rows.length < ok });
-  return rows;
+  return Array.from({ length: users }, (_, u) => ({
+    topicId,
+    userId: `u${u}`,
+    ok: Math.min(perUser, Math.max(0, ok - u * perUser)),
+    all: perUser,
+  }));
 }
 const titles = new Map([
   ["t1", "Kasrlar"],
@@ -38,7 +40,8 @@ describe("Maslahatchi qoidalari (T-161, BR-R03)", () => {
     expect(weakTopicAdvice(answers("t1", 4, 5, 10), titles)).toEqual([]);
     expect(weakTopicAdvice([...answers("t1", 4, 25, 49), ...answers("t1", 0, 0, 0)], titles)).toHaveLength(1);
     expect(weakTopicAdvice(answers("t1", 2, 10, 0), titles)).toEqual([]);
-    expect(weakTopicAdvice(answers("t1", 3, 5, 0).slice(1), titles)).toEqual([]);
+    const fourteen = answers("t1", 3, 5, 0).map((r, i) => (i ? r : { ...r, all: 4 }));
+    expect(weakTopicAdvice(fourteen, titles)).toEqual([]);
   });
 
   it("haftalik test rejalashtirilmagan: faqat o'quvchi bo'lsa va oldinda test yo'q bo'lsa", () => {

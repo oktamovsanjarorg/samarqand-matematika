@@ -1,3 +1,4 @@
+import { countMap } from "../common/count-map";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import type { AdminTutorChat, AdminTutorChatRow, TutorMode } from "@samarqand/shared";
 import { personName, PERSON_SELECT } from "../common/person";
@@ -22,14 +23,23 @@ export class AdminTutorService {
       where: { mode: q.mode, userId: q.userId, messages: { some: {} } },
       orderBy: { updatedAt: "desc" },
       take: 100,
-      select: { ...CHAT_SELECT, _count: { select: { messages: { where: { role: "USER" } } } } },
+      select: CHAT_SELECT,
     });
+    // T-189: faqat shu 100 ta suhbat xabarlari sanaladi (`_count` butun xabarlar jadvalini guruhlardi)
+    const asked = countMap(
+      await this.prisma.tutorMessage.groupBy({
+        by: ["chatId"],
+        where: { chatId: { in: rows.map((c) => c.id) }, role: "USER" },
+        _count: { _all: true },
+      }),
+      "chatId",
+    );
     return rows.map((c) => ({
       id: c.id,
       mode: c.mode,
       student: { userId: c.userId, name: personName(c.user) },
       question: c.question?.text ?? null,
-      asked: c._count.messages,
+      asked: asked.get(c.id) ?? 0,
       lastAt: c.updatedAt.toISOString(),
     }));
   }

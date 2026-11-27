@@ -1,3 +1,4 @@
+import { topicAnswersByUser } from "../common/answer-stats";
 import { Injectable } from "@nestjs/common";
 import { STATS_TOP_MIN_ANSWERS, type MonthStats } from "@samarqand/shared";
 import { PERSON_SELECT, personName } from "../common/person";
@@ -22,13 +23,14 @@ export class StatsService {
       this.attendance(month),
       this.weeks(now),
     ]);
-    const ok = answers.filter((a) => a.correct).length;
+    const ok = answers.reduce((n, a) => n + a.ok, 0);
+    const all = answers.reduce((n, a) => n + a.all, 0);
     const active = new Set([...topicAttempts, ...weekly.submitters]).size;
     return {
       month,
       students: { ...students, active },
       attendance,
-      topicTests: { attempts: topicAttempts.length, correctPercent: pct(ok, answers.length) },
+      topicTests: { attempts: topicAttempts.length, correctPercent: pct(ok, all) },
       weekly: weekly.summary,
       top: await this.named(topOf(answers, STATS_TOP_MIN_ANSWERS)),
       weeks,
@@ -43,16 +45,9 @@ export class StatsService {
     return { total, newThisMonth };
   }
 
-  private async answers(r: Range) {
-    const rows = await this.prisma.topicAnswer.findMany({
-      where: {
-        result: { in: ["CORRECT", "WRONG"] },
-        attempt: { submittedAt: { gte: r.from, lt: r.to }, mistakesOnly: false, ...RANKED },
-      },
-      select: { result: true, attempt: { select: { userId: true } } },
-      take: 100_000,
-    });
-    return rows.map((a) => ({ userId: a.attempt.userId, correct: a.result === "CORRECT" }));
+  /** T-189: o'quvchi va mavzu bo'yicha bazada sanalgan javoblar */
+  private answers(r: Range) {
+    return topicAnswersByUser(this.prisma, r.from, r.to);
   }
 
   /** Oyda topshirilgan mavzu testlari: har biri uchun o'quvchi id */

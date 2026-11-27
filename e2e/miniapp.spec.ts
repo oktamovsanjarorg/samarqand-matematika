@@ -50,11 +50,17 @@ test.describe("Mini App", () => {
     await expect(page.getByRole("navigation")).toBeVisible({ timeout: 10_000 });
   });
 
-  test("onboarding'dan o'tgan o'quvchi uchta tab orasida yuradi", async ({ page, request }) => {
+  test("T-189: onboarding'dan o'tgan o'quvchi uchta tab orasida yuradi", async ({ page, request }) => {
     const s = await createStudent(request, { fullName: "Brauzer Testov", phone: "998901112201" });
+    // T-189: profil kirish javobida keladi, ochilishda alohida /me/profile so'rovi yo'q
+    const profileCalls: string[] = [];
+    page.on("request", (r) => {
+      if (r.url().includes("/api/me/profile")) profileCalls.push(r.url());
+    });
     await openAsTelegram(page, { id: s.tg, first_name: "Oquvchi" });
     const nav = page.getByRole("navigation");
     await expect(nav.getByRole("link")).toHaveText(["Darslar", "Asosiy", "Profil"]);
+    expect(profileCalls).toEqual([]);
     // BR-A04: qabul qilinmagan o'quvchi nima yetishmayotganini ko'radi
     const access = page.getByTestId("access");
     await expect(access).toContainText("Ustoz qabul qildi");

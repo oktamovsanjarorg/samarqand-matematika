@@ -1,3 +1,5 @@
+import { topicAttemptChecks } from "../common/answer-stats";
+import { countMap } from "../common/count-map";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import {
   percentOf,
@@ -138,13 +140,23 @@ export class AdminReviewService {
           reviewedAt: new Date(),
         },
       });
-      const answers = await tx.weeklyAnswer.findMany({
-        where: { attemptId },
-        select: { teacherPoints: true, result: true, _count: { select: { photos: true } } },
-      });
+      const [answers, photoRows] = await Promise.all([
+        tx.weeklyAnswer.findMany({
+          where: { attemptId },
+          select: { questionId: true, teacherPoints: true, result: true },
+        }),
+        // T-189: faqat shu urinish rasmlari (`_count` butun rasmlar jadvalini guruhlardi)
+        tx.solutionPhoto.groupBy({ by: ["questionId"], where: { attemptId }, _count: { _all: true } }),
+      ]);
+      const photos = countMap(photoRows, "questionId");
       const score = answers.reduce(
         (sum, r) =>
-          sum + answerPoints({ teacherPoints: r.teacherPoints, result: r.result, photos: r._count.photos }),
+          sum +
+          answerPoints({
+            teacherPoints: r.teacherPoints,
+            result: r.result,
+            photos: photos.get(r.questionId) ?? 0,
+          }),
         0,
       );
       await tx.weeklyAttempt.update({ where: { id: attemptId }, data: { score } });
@@ -163,20 +175,14 @@ export class AdminReviewService {
   private async jumps(
     attempts: { userId: string; answers: { result: CheckResult | null; photos: unknown[] }[] }[],
   ) {
-    const userIds = attempts.map((a) => a.userId);
-    const topic = await this.prisma.topicAttempt.findMany({
-      where: { userId: { in: userIds }, submittedAt: { not: null }, mistakesOnly: false },
-      select: {
-        userId: true,
-        correct: true,
-        _count: { select: { answers: { where: { result: { in: ["CORRECT", "WRONG"] } } } } },
-      },
-    });
+    // T-189: urinishlar bazada sanaladi (`_count` butun javoblar jadvalini guruhlardi)
+    const topic = await topicAttemptChecks(
+      this.prisma,
+      attempts.map((a) => a.userId),
+    );
     const out = new Set<string>();
     for (const a of attempts) {
-      const mine = topic
-        .filter((t) => t.userId === a.userId)
-        .map((t) => ({ correct: t.correct ?? 0, checkable: t._count.answers }));
+      const mine = topic.get(a.userId) ?? [];
       const pts = a.answers.reduce(
         (s, x) => s + answerPoints({ teacherPoints: null, result: x.result, photos: x.photos.length }),
         0,

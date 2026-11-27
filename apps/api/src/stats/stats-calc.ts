@@ -63,12 +63,12 @@ export function attendanceOf(marks: Mark[], groups: Map<string, string>) {
 }
 
 /** Eng yaxshilar: kamida min javob, foiz kamayish tartibida, teng bo'lsa javobi ko'p birinchi */
-export function topOf(rows: { userId: string; correct: boolean }[], min: number, limit = 5) {
+export function topOf(rows: { userId: string; ok: number; all: number }[], min: number, limit = 5) {
   const by = new Map<string, { ok: number; all: number }>();
   for (const r of rows) {
     const u = by.get(r.userId) ?? { ok: 0, all: 0 };
-    u.all++;
-    if (r.correct) u.ok++;
+    u.all += r.all;
+    u.ok += r.ok;
     by.set(r.userId, u);
   }
   return [...by.entries()]

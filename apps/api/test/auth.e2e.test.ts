@@ -41,6 +41,8 @@ describe("POST /api/auth/telegram", () => {
     const body = res.json();
     expect(body.token).toEqual(expect.any(String));
     expect(body.user).toMatchObject({ firstName: "Ali", role: "STUDENT" });
+    // T-189: profil shu javobda, ilova /me/profile ni kutmaydi
+    expect(body.profile).toMatchObject({ fullName: null, needsOnboarding: true, hasPhone: false });
   });
 
   it("boshqa bot tokeni bilan imzolangan initData rad etiladi", async () => {
@@ -57,6 +59,8 @@ describe("POST /api/auth/telegram", () => {
   it("OWNER_USERNAMES dagi foydalanuvchi TEACHER boʻladi", async () => {
     const res = await login({ id: tgId(), first_name: "Ustoz", username: OWNER });
     expect(res.json().user.role).toBe("TEACHER");
+    // T-189: xodimga profil qo'shilmaydi (admin panelga o'tadi)
+    expect(res.json().profile).toBeUndefined();
   });
 
   it("OWNER_TELEGRAM_IDS dagi foydalanuvchi username'siz ham TEACHER boʻladi", async () => {

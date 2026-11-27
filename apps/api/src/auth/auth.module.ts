@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { JwtModule, type JwtSignOptions } from "@nestjs/jwt";
 import { ENV, type Env } from "../config/env";
+import { StudentsModule } from "../students/students.module";
 import { UsersModule } from "../users/users.module";
 import { AuthController } from "./auth.controller";
 import { AuthGuard } from "./auth.guard";
@@ -10,6 +11,7 @@ import { AuthService } from "./auth.service";
 @Module({
   imports: [
     UsersModule,
+    StudentsModule,
     JwtModule.registerAsync({
       global: true,
       inject: [ENV],
