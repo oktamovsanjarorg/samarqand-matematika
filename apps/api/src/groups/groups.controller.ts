@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query } from "@nestjs/common";
 import {
   attendanceBody,
   attendanceMonthQuery,
@@ -41,6 +41,14 @@ export class GroupsController {
   @Patch(":id")
   update(@CurrentUser() u: JwtUser, @Param("id") id: string, @Body() body: unknown) {
     return this.groups.update(u.sub, id, parseBody(groupPatch, body));
+  }
+
+  /** Guruhni o'chirish faqat ustozga (T-188) */
+  @Roles("TEACHER")
+  @Delete(":id")
+  @HttpCode(204)
+  destroy(@CurrentUser() u: JwtUser, @Param("id") id: string) {
+    return this.groups.destroy(u.sub, id);
   }
 
   @Post(":id/students")

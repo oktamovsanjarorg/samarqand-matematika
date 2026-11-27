@@ -121,4 +121,24 @@ export class GroupsService {
     });
     return this.get(id);
   }
+
+  /**
+   * Guruhni o'chirish (T-188): o'quvchilar guruhsiz (online) qoladi, offline testlar guruh nomisiz
+   * saqlanadi, davomat tarixi guruh bilan birga o'chadi. Audit'da nom va sonlar qoladi.
+   */
+  async destroy(actorId: string, id: string) {
+    const g = await this.prisma.group.findUnique({
+      where: { id },
+      select: { name: true, _count: { select: { students: true, attendance: true } } },
+    });
+    if (!g) throw new NotFoundException("Guruh topilmadi");
+    await this.prisma.group.delete({ where: { id } });
+    await this.audit.log({
+      actorId,
+      action: "group.delete",
+      entity: "Group",
+      entityId: id,
+      data: { name: g.name, students: g._count.students, attendance: g._count.attendance },
+    });
+  }
 }
