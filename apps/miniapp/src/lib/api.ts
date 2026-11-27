@@ -26,9 +26,20 @@ async function request(url: string, init?: RequestInit): Promise<Response> {
   }
 }
 
-/** initData orqali kirish: token va foydalanuvchi store'ga yoziladi */
-/** Kirish: token saqlanadi. T-189: o'quvchi profili ham shu javobda keladi (bo'lsa) */
-export async function loginFull(): Promise<AuthResponse> {
+let inflight: Promise<AuthResponse> | null = null;
+
+/**
+ * Kirish: token saqlanadi. T-189: o'quvchi profili ham shu javobda keladi (bo'lsa).
+ * T-191: bir vaqtdagi chaqiruvlar bitta so'rovni kutadi (keshdan chizilgan sahifa so'rovlari va kirish)
+ */
+export function loginFull(): Promise<AuthResponse> {
+  inflight ??= doLogin().finally(() => {
+    inflight = null;
+  });
+  return inflight;
+}
+
+async function doLogin(): Promise<AuthResponse> {
   const initData = getInitData();
   if (!initData) throw new ApiError(401, "Ilovani Telegram ichida oching");
   const res = await request("/api/auth/telegram", {
@@ -48,6 +59,8 @@ export async function login(): Promise<Me> {
 
 /** Token bilan so'rov; token eskirgan bo'lsa bir marta qayta kirib takrorlanadi */
 export async function api<T>(path: string, init: RequestInit = {}, retried = false): Promise<T> {
+  // T-191: sahifa keshdan chizilib so'rov kirishdan oldin ketsa, 401 kutmasdan kirish tugashini kutadi
+  if (!useAuth.getState().token && !retried) await login();
   const token = useAuth.getState().token;
   const res = await request(`/api${path}`, {
     ...init,

@@ -6,6 +6,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import { PageBoundary } from "./components/PageBoundary";
+import { persistQueries } from "./lib/query-cache";
 import { reportUncaught } from "./lib/report-error";
 import { reloadOnStaleChunks } from "./lib/stale-chunks";
 import { initTelegram } from "./lib/telegram";
@@ -17,6 +18,9 @@ reportUncaught();
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 60_000, retry: 1, refetchOnWindowFocus: false } },
 });
+
+// T-191: oxirgi ko'rilgan ma'lumot darhol, yangisi fonda
+persistQueries(queryClient);
 
 const root = document.getElementById("root");
 if (!root) throw new Error("#root topilmadi");

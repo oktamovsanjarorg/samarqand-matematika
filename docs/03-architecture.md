@@ -73,6 +73,7 @@ Har ish bazada `updateMany ... where: { closedAt: null }` kabi shart bilan "egal
 - **Ko'p qatorli statistika bazada sanaladi** (`common/answer-stats.ts`, `$queryRaw` + `GROUP BY`): har javobni JS'ga yuklab sanash taqiqlanadi.
 - **Postgres JIT o'chiq** (migratsiya `disable_jit`): qisqa so'rovlarda xarajat noto'g'ri baholansa kompilyatsiyaga 300 ms gacha ketardi.
 - **Front-end:** sahifalar `lazy`, KaTeX va zod alohida fayllarda, kutubxonalar `vendor` faylida (deploy'da brauzer keshida qoladi). `/assets/*` bir yilga keshlanadi.
+- **Oxirgi ma'lum holat (T-191):** Mini App `lib/query-cache.ts` orqali ro'yxatdagi so'rovlarni (profil, statistika, haftalik, reyting ...) `localStorage` da saqlaydi va qayta ochilganda kirishni kutmasdan chizadi, yangisi fonda keladi. Kesh Telegram ID bo'yicha alohida, versiyasi build'ga bog'langan (deploy'dan keyin eski shakl o'qilmaydi), 7 kundan eski bo'lsa tashlanadi. Test savollari, urinishlar, to'lov va AI suhbatlari keshlanmaydi. Kesh faqat ko'rsatish uchun: qarorlar serverda. Yangi so'rov kalitini ro'yxatga qo'shishdan oldin javobida maxfiy narsa yo'qligini tekshiring.
 - Tekshirish: lokal alohida bazada real hajm (400 o'quvchi, 160 ming javob) bilan endpoint vaqti va so'rovlar soni o'lchanadi.
 
 ## Nosozliklarni ko'rish (T-190)
