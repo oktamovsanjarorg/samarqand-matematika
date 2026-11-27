@@ -24,6 +24,7 @@ import { AiModule } from "./ai/ai.module";
 import { StudentsModule } from "./students/students.module";
 import { ParentsModule } from "./parents/parents.module";
 import { NotifyModule } from "./notify/notify.module";
+import { ClientErrorsController } from "./health/client-errors.controller";
 import { HealthController } from "./health/health.controller";
 import { PrismaModule } from "./prisma/prisma.module";
 import { StaffModule } from "./staff/staff.module";
@@ -74,7 +75,7 @@ export class AppModule {
         ParentsModule,
         NotifyModule,
       ],
-      controllers: [HealthController],
+      controllers: [HealthController, ClientErrorsController],
     };
   }
 }

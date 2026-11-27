@@ -4,6 +4,9 @@ import { THEME_VARS, themeOverrides, type ThemeKey } from "./theme";
 
 interface TgWebApp {
   initData: string;
+  /** android, ios, tdesktop, weba ... (T-190: xato xabarida) */
+  platform?: string;
+  version?: string;
   colorScheme: "light" | "dark";
   themeParams: Partial<Record<ThemeKey, string>>;
   ready(): void;

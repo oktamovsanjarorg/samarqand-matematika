@@ -1,4 +1,5 @@
 import { Component, type ReactNode } from "react";
+import { reportError } from "../lib/report-error";
 import { ErrorState } from "./ui";
 
 interface Props {
@@ -29,6 +30,7 @@ export class PageBoundary extends Component<Props, State> {
 
   componentDidCatch(error: unknown) {
     console.error("Sahifa xatosi", error);
+    reportError(error);
   }
 
   render() {

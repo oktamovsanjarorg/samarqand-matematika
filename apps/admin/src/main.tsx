@@ -4,9 +4,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
 import { PageBoundary } from "./components/PageBoundary";
+import { reportUncaught } from "./lib/report-error";
 import { reloadOnStaleChunks } from "./lib/stale-chunks";
 
 reloadOnStaleChunks();
+reportUncaught();
 
 const root = document.getElementById("root");
 if (!root) throw new Error("#root topilmadi");
