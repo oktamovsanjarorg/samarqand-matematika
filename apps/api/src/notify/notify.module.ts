@@ -1,5 +1,6 @@
 import { Global, Module } from "@nestjs/common";
 import { ENV, type Env } from "../config/env";
+import { AlertService } from "./alert.service";
 import { NotifyService } from "./notify.service";
 import { TELEGRAM_TRANSPORT, botApiTransport, rateLimited, silentTransport } from "./telegram-transport";
 
@@ -10,6 +11,7 @@ const SENDS_PER_SECOND = 25;
 @Module({
   providers: [
     NotifyService,
+    AlertService,
     {
       provide: TELEGRAM_TRANSPORT,
       inject: [ENV],
@@ -19,6 +21,6 @@ const SENDS_PER_SECOND = 25;
           : rateLimited(botApiTransport(env.BOT_TOKEN), SENDS_PER_SECOND),
     },
   ],
-  exports: [NotifyService],
+  exports: [NotifyService, AlertService],
 })
 export class NotifyModule {}

@@ -2,6 +2,7 @@ import rateLimit from "@fastify/rate-limit";
 import type { NestFastifyApplication } from "@nestjs/platform-fastify";
 import { MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "@samarqand/shared";
 import type { FastifyRequest } from "fastify";
+import { AlertService } from "./notify/alert.service";
 import { PrismaConflictFilter } from "./common/prisma-conflict.filter";
 import { SafeErrorsFilter } from "./common/safe-errors.filter";
 
@@ -12,8 +13,9 @@ export async function configureApp(
 ) {
   app.setGlobalPrefix("api");
   // Hammasini ushlovchi filtr birinchi (Nest qoidasi): aniq turdagi Prisma filtri undan oldin tanlanadi
+  const alerts = app.get(AlertService);
   app.useGlobalFilters(
-    new SafeErrorsFilter(app.getHttpAdapter()),
+    new SafeErrorsFilter(app.getHttpAdapter(), (d) => alerts.serverError(d)),
     new PrismaConflictFilter(app.getHttpAdapter()),
   );
   // Chek rasmi tanasi xom bayt bo'lib keladi (multipart'siz): turi baytlardan ham tekshiriladi

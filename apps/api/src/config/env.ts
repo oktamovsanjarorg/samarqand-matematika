@@ -23,6 +23,15 @@ const base = z.object({
       (v) => v.split(",").every((x) => /^\d*$/.test(x.trim())),
       "OWNER_TELEGRAM_IDS: faqat raqamlar, vergul bilan",
     ),
+  // T-190: ilova xatolari va server nosozliklari yuboriladigan Telegram ID'lar (dasturchi), vergul bilan.
+  // Bo'sh bo'lsa xatolar faqat server logiga yoziladi
+  ALERT_TELEGRAM_IDS: z
+    .string()
+    .default("")
+    .refine(
+      (v) => v.split(",").every((x) => /^\d*$/.test(x.trim())),
+      "ALERT_TELEGRAM_IDS: faqat raqamlar, vergul bilan",
+    ),
   // Admin panel manzili: bot yuboradigan bir martalik kirish havolasi uchun
   ADMIN_URL: z.string().url().default("http://127.0.0.1:5191/admin"),
   // Mini App manzili: o'quvchi xabarlaridagi "ilovada ochish" tugmasi uchun (T-093). Yo'q bo'lsa tugma qo'yilmaydi

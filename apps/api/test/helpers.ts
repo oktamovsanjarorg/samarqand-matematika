@@ -76,6 +76,7 @@ export async function createApp(extraControllers: Type[] = []) {
     JWT_SECRET: "e2e-secret-e2e-secret",
     OWNER_USERNAMES: OWNER,
     OWNER_TELEGRAM_IDS: `${OWNER_ID}, 8000000002`,
+    ALERT_TELEGRAM_IDS: String(ALERT_ID),
     // Cheklar vaqtinchalik papkaga: test repoga fayl yozmaydi
     MEDIA_DIR: TEST_MEDIA_DIR,
     // Rejalashtiruvchi testlarda o'zi ishlamaydi: tick() to'g'ridan-to'g'ri chaqiriladi
@@ -108,6 +109,8 @@ export function initData(user: object, botToken = BOT_TOKEN) {
 /** Har test uchun noyob Telegram ID: testlar bir-birining yozuvlariga tegmaydi */
 /** Ega ID si: tasodifiy tgId oralig'idan tashqarida */
 export const OWNER_ID = 8_000_000_001;
+/** T-190: dasturchi (ogohlantirishlar) */
+export const ALERT_ID = 8_000_000_099;
 export const tgId = () => 9_000_000_000 + Math.floor(Math.random() * 1_000_000_000);
 
 /** Telegram orqali kirib, Authorization sarlavhasini qaytaradi. owner: true bo'lsa TEACHER (OWNER_USERNAMES) */

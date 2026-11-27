@@ -33,9 +33,19 @@ export function describeError(e: unknown): string {
 export class SafeErrorsFilter extends BaseExceptionFilter implements ExceptionFilter {
   private readonly errors = new Logger("Xato");
 
+  /** T-190: kutilmagan xato dasturchiga ham yuboriladi (AlertService) */
+  constructor(
+    adapter: ConstructorParameters<typeof BaseExceptionFilter>[0],
+    private readonly onUnexpected?: (described: string) => void,
+  ) {
+    super(adapter);
+  }
+
   override catch(e: unknown, host: ArgumentsHost) {
     if (e instanceof HttpException) return super.catch(e, host);
-    this.errors.error(describeError(e));
+    const described = describeError(e);
+    this.errors.error(described);
+    this.onUnexpected?.(described);
     return super.catch(new InternalServerErrorException(), host);
   }
 }

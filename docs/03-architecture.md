@@ -75,6 +75,12 @@ Har ish bazada `updateMany ... where: { closedAt: null }` kabi shart bilan "egal
 - **Front-end:** sahifalar `lazy`, KaTeX va zod alohida fayllarda, kutubxonalar `vendor` faylida (deploy'da brauzer keshida qoladi). `/assets/*` bir yilga keshlanadi.
 - Tekshirish: lokal alohida bazada real hajm (400 o'quvchi, 160 ming javob) bilan endpoint vaqti va so'rovlar soni o'lchanadi.
 
+## Nosozliklarni ko'rish (T-190)
+
+- Klient xatosi (render, hodisa, ushlanmagan promise) `report-error.ts` orqali `POST client-errors` ga ketadi: ochiq endpoint, faqat yo'l (query va hash'siz), bir yuklanishda ko'pi bilan 3 ta, tarmoq uzilishi, eskirgan chunk va `ApiError` yuborilmaydi.
+- `AlertService` (global): dasturchiga (`ALERT_TELEGRAM_IDS`) Telegram xabari, `AlertGate` bilan shovqinsiz. `SafeErrorsFilter` 500 xatoni `describeError` ko'rinishida (xabar matnisiz) yuboradi.
+- `main.ts`: `unhandledRejection` jarayonni to'xtatmaydi (logga va dasturchiga), `uncaughtException` da jarayon chiqadi va Docker qayta ko'taradi.
+
 ## Kirish oqimlari
 
 - **Mini App:** Telegram `initData` → `POST auth/telegram` → JWT (`JWT_TTL`) va o'quvchi/ota-ona profili (T-189: ilova ochilishida `/me/profile` kutilmaydi). Har so'rovda `AuthGuard` foydalanuvchini va rolini bazadan oladi; bloklangan bo'lsa token ishlamaydi.
