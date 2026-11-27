@@ -55,6 +55,8 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "student.block": "Oʻquvchini blokladi",
   "student.unblock": "Oʻquvchini blokdan chiqardi",
   "student.delete": "Begona oʻquvchini oʻchirdi",
+  "student.create": "Oʻquvchilarni qoʻlda kiritdi",
+  "student.link": "Oʻquvchi Telegram'ga bogʻlandi",
   "parent.approve": "Ota-onani tasdiqladi",
   "parent.reject": "Ota-onani rad etdi",
   "payment.approve": "Toʻlovni tasdiqladi",

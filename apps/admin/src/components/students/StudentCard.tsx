@@ -51,6 +51,7 @@ function Header({ s, link }: { s: AdminStudentRow; link: boolean }) {
       <NameBlock s={s} link={link} />
       <div className="flex flex-wrap gap-1">
         {s.blocked && <Badge tone="danger">Bloklangan</Badge>}
+        {!s.linked && <Badge tone="accent">Telegramʼga ulanmagan</Badge>}
         {s.acceptedAt ? (
           <Badge tone="success">{`Qabul qilingan ${formatDate(s.acceptedAt).slice(0, 10)}`}</Badge>
         ) : (

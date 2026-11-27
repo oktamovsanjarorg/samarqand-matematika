@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { AdminStudentsController } from "./admin-students.controller";
 import { AdminStudentsService } from "./admin-students.service";
 import { ProfileController } from "./profile.controller";
+import { ManualStudentsService } from "./manual-students.service";
 import { MySchoolService } from "./my-school.service";
 import { ProfileService } from "./profile.service";
 import { StudentCardService } from "./student-card.service";
@@ -15,6 +16,7 @@ import { StatsService } from "../topic-tests/stats.service";
   providers: [
     ProfileService,
     AdminStudentsService,
+    ManualStudentsService,
     MySchoolService,
     StudentCardService,
     // Holatsiz, faqat Prisma/Access'ga bog'liq: kartada qayta ishlatiladi

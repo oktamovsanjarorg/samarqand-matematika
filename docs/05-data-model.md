@@ -6,7 +6,7 @@
 ## Odamlar va kirish
 
 ```
-User (role: STUDENT | PARENT | ASSISTANT | TEACHER, telegramId, phone, isBlocked, lastSeenAt)
+User (role: STUDENT | PARENT | ASSISTANT | TEACHER, telegramId (qo'lda kiritilgan o'quvchida bo'sh, T-186), phone, isBlocked, lastSeenAt)
  ├─ StudentProfile (fullName, accessMode AUTO|FREE|CLOSED, acceptedAt, parentCode, groupId)
  │    └─ ParentLink (parentId → User, status PENDING|APPROVED|REJECTED, phone, flags, rejectReason)
  ├─ Subscription (endsAt, reminderStage) ← Payment (status, amountUzs, receiptPath, submittedById: ota-ona yuborgan bo'lsa) ← Plan

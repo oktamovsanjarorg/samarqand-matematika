@@ -36,3 +36,4 @@ export * from "./agent";
 export * from "./advisor";
 export * from "./month-stats";
 export * from "./progress";
+export * from "./manual-students";
