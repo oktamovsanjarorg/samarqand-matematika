@@ -21,7 +21,6 @@ const RESULT = {
       date: true,
       questionCount: true,
       scaleMax: true,
-      _count: { select: { results: true } },
     },
   },
 } as const;
@@ -38,7 +37,6 @@ type Rec = {
     date: Date;
     questionCount: number;
     scaleMax: number;
-    _count: { results: number };
   };
 };
 
@@ -48,9 +46,11 @@ export class MyOfflineService {
   constructor(private readonly prisma: PrismaService) {}
 
   private async view(r: Rec): Promise<StudentOfflineResult> {
-    const above = await this.prisma.offlineResult.count({
-      where: { offlineTestId: r.offlineTestId, score: { gt: r.score } },
-    });
+    // T-189: ikkalasi ham shu test bo'yicha indeksdan sanaladi (`_count` butun natijalar jadvalini guruhlardi)
+    const [above, participants] = await Promise.all([
+      this.prisma.offlineResult.count({ where: { offlineTestId: r.offlineTestId, score: { gt: r.score } } }),
+      this.prisma.offlineResult.count({ where: { offlineTestId: r.offlineTestId } }),
+    ]);
     const t = r.offlineTest;
     return {
       id: r.id,
@@ -63,7 +63,7 @@ export class MyOfflineService {
       scaleMax: t.scaleMax,
       grade: r.grade,
       place: above + 1,
-      participants: t._count.results,
+      participants,
     };
   }
 

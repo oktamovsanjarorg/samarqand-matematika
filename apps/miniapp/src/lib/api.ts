@@ -27,7 +27,8 @@ async function request(url: string, init?: RequestInit): Promise<Response> {
 }
 
 /** initData orqali kirish: token va foydalanuvchi store'ga yoziladi */
-export async function login(): Promise<Me> {
+/** Kirish: token saqlanadi. T-189: o'quvchi profili ham shu javobda keladi (bo'lsa) */
+export async function loginFull(): Promise<AuthResponse> {
   const initData = getInitData();
   if (!initData) throw new ApiError(401, "Ilovani Telegram ichida oching");
   const res = await request("/api/auth/telegram", {
@@ -38,7 +39,11 @@ export async function login(): Promise<Me> {
   if (!res.ok) throw await parseError(res);
   const auth = (await res.json()) as AuthResponse;
   useAuth.getState().setSession(auth.token, auth.user);
-  return auth.user;
+  return auth;
+}
+
+export async function login(): Promise<Me> {
+  return (await loginFull()).user;
 }
 
 /** Token bilan so'rov; token eskirgan bo'lsa bir marta qayta kirib takrorlanadi */

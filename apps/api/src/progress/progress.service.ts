@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "@samarqand/db";
 import { PROGRESS_LOOKBACK_DAYS, type MyProgress } from "@samarqand/shared";
+import { countMap } from "../common/count-map";
 import { tashkentDayStart } from "../common/time";
 import { PrismaService } from "../prisma/prisma.service";
 import { StatsService } from "../topic-tests/stats.service";
@@ -11,7 +12,8 @@ const DAY_MS = 24 * 60 * 60_000;
 /** Javob berilgan savol: bo'sh qoldirilganlar sanalmaydi */
 const ANSWERED = { response: { not: Prisma.AnyNull } };
 const SUBMITTED_SINCE = (userId: string, since: Date) => ({ userId, submittedAt: { gte: since } });
-const ACTIVITY = { submittedAt: true, _count: { select: { answers: { where: ANSWERED } } } } as const;
+const ACTIVITY = { id: true, submittedAt: true } as const;
+const ids = (rows: { id: string }[]) => ({ in: rows.map((r) => r.id) });
 
 /**
  * O'quvchining yutuqlari (T-169, BR-R05). Faollik kuni: o'sha kuni topshirilgan mavzu testi, haftalik yoki mock
@@ -58,14 +60,40 @@ export class ProgressService {
     };
   }
 
+  /**
+   * T-189: javoblar faqat shu urinishlar bo'yicha sanaladi. Prisma'ning `_count` (where bilan) butun javoblar
+   * jadvalini guruhlaydi: o'quvchi ko'paygan sari hamma uchun sekinlashardi.
+   */
   private async activity(userId: string, since: Date): Promise<{ day: string; answers: number }[]> {
     const where = SUBMITTED_SINCE(userId, since);
-    const rows = await Promise.all([
+    const [topic, weekly, mock] = await Promise.all([
       this.prisma.topicAttempt.findMany({ where, select: ACTIVITY }),
       this.prisma.weeklyAttempt.findMany({ where, select: ACTIVITY }),
       this.prisma.mockAttempt.findMany({ where, select: ACTIVITY }),
     ]);
-    return rows.flat().map((r) => ({ day: dayKey(r.submittedAt ?? since), answers: r._count.answers }));
+    const _count = { _all: true } as const;
+    const [t, w, m] = await Promise.all([
+      this.prisma.topicAnswer.groupBy({
+        by: ["attemptId"],
+        where: { attemptId: ids(topic), ...ANSWERED },
+        _count,
+      }),
+      this.prisma.weeklyAnswer.groupBy({
+        by: ["attemptId"],
+        where: { attemptId: ids(weekly), ...ANSWERED },
+        _count,
+      }),
+      this.prisma.mockAnswer.groupBy({
+        by: ["attemptId"],
+        where: { attemptId: ids(mock), ...ANSWERED },
+        _count,
+      }),
+    ]);
+    const n = countMap([...t, ...w, ...m], "attemptId");
+    return [...topic, ...weekly, ...mock].map((r) => ({
+      day: dayKey(r.submittedAt ?? since),
+      answers: n.get(r.id) ?? 0,
+    }));
   }
 
   private async availableTopics(): Promise<Set<string>> {

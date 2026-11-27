@@ -25,5 +25,7 @@ import { StatsService } from "../topic-tests/stats.service";
     MyOfflineService,
     StatsService,
   ],
+  // T-189: kirish javobida profil (AuthModule)
+  exports: [ProfileService],
 })
 export class StudentsModule {}

@@ -1,3 +1,4 @@
+import { submittedCount } from "../weekly/submitted-count";
 import { filterWhere } from "../students/admin-students.service";
 import { backupStaleSince } from "./backup-status";
 import { retryGrowth } from "./retry-growth";
@@ -5,7 +6,6 @@ import { setupSteps } from "./setup-steps";
 import { Injectable } from "@nestjs/common";
 import type { AdminDashboard } from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
-import { RANKED } from "../common/ranked";
 import { tashkentDayStart } from "../common/time";
 import { PrismaService } from "../prisma/prisma.service";
 
@@ -93,15 +93,12 @@ export class DashboardService {
     const t = await this.prisma.weeklyTest.findFirst({
       where: { isPublished: true, closesAt: { lte: now } },
       orderBy: { closesAt: "desc" },
-      select: {
-        id: true,
-        title: true,
-        _count: { select: { attempts: { where: { submittedAt: { not: null }, ...RANKED } } } },
-      },
+      select: { id: true, title: true },
     });
     if (!t) return null;
     const eligible = (await this.access.fullAccessStudentIds()).length;
-    return { testId: t.id, title: t.title, submitted: t._count.attempts, eligible };
+    // T-189: faqat shu test urinishlari sanaladi (`_count` barcha urinishlarni guruhlardi)
+    return { testId: t.id, title: t.title, submitted: await submittedCount(this.prisma, t.id), eligible };
   }
 
   /** Yopilgan testlarda rasmli, lekin ustoz hali baholamagan javoblar */

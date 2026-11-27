@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { MyProfile } from "./profile";
 import { ROLES } from "./roles";
 
 export const authTelegramBody = z.object({ initData: z.string().min(1).max(4096) });
@@ -17,6 +18,8 @@ export interface AuthResponse {
   token: string;
   expiresIn: string;
   user: Me;
+  /** T-189: o'quvchi va ota-ona profili shu javobda: ilova ochilishida /me/profile kutilmaydi */
+  profile?: MyProfile;
 }
 
 export const ERROR_CODES = {

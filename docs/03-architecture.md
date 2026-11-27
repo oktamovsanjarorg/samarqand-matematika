@@ -67,9 +67,17 @@ Redis va BullMQ hozircha ishlatilmaydi (Redis konteyneri compose'da kelajak uchu
 
 Har ish bazada `updateMany ... where: { closedAt: null }` kabi shart bilan "egallanadi", shuning uchun ikki nusxa ishlasa ham xabar ikki marta ketmaydi. AI navbati (`AiReview`) yozuvlarni partiyalab oladi, 3 martagacha qayta uradi, 10 daqiqa osilib qolganini qaytadan oladi.
 
+## Unumdorlik (T-189)
+
+- **Prisma `_count` katta jadvalda ishlatilmaydi.** `_count: { select: { answers: ... } }` (where bilan ham, where'siz ham) bog'langan **butun** jadvalni `GROUP BY` qiladi: bitta o'quvchining 40 ta urinishi uchun ham platformadagi barcha javoblar sanaladi. Javoblar, urinishlar, natijalar, xabarlar, rasmlar uchun `groupBy({ by: [...], where: { id: { in: ids } } })` va `common/count-map.ts` ishlatiladi. Kichik jadvallar (savollar, ota-onalar, guruh a'zolari) va barcha qatorlar kerak bo'lgan ro'yxatlar bundan mustasno.
+- **Ko'p qatorli statistika bazada sanaladi** (`common/answer-stats.ts`, `$queryRaw` + `GROUP BY`): har javobni JS'ga yuklab sanash taqiqlanadi.
+- **Postgres JIT o'chiq** (migratsiya `disable_jit`): qisqa so'rovlarda xarajat noto'g'ri baholansa kompilyatsiyaga 300 ms gacha ketardi.
+- **Front-end:** sahifalar `lazy`, KaTeX va zod alohida fayllarda, kutubxonalar `vendor` faylida (deploy'da brauzer keshida qoladi). `/assets/*` bir yilga keshlanadi.
+- Tekshirish: lokal alohida bazada real hajm (400 o'quvchi, 160 ming javob) bilan endpoint vaqti va so'rovlar soni o'lchanadi.
+
 ## Kirish oqimlari
 
-- **Mini App:** Telegram `initData` → `POST auth/telegram` → JWT (`JWT_TTL`). Har so'rovda `AuthGuard` foydalanuvchini va rolini bazadan oladi; bloklangan bo'lsa token ishlamaydi.
+- **Mini App:** Telegram `initData` → `POST auth/telegram` → JWT (`JWT_TTL`) va o'quvchi/ota-ona profili (T-189: ilova ochilishida `/me/profile` kutilmaydi). Har so'rovda `AuthGuard` foydalanuvchini va rolini bazadan oladi; bloklangan bo'lsa token ishlamaydi.
 - **Admin:** botga `/admin` → bot `internal/admin-login-link` → 5 daqiqalik bir martalik havola → `auth/admin-link` → admin JWT (`ADMIN_JWT_TTL`, 12 soat).
 - **Bot → API:** `internal/*` endpoint'lari `InternalGuard` bilan: `x-internal-key` sarlavhasi bot tokenidan hosil qilingan kalit bilan solishtiriladi.
 

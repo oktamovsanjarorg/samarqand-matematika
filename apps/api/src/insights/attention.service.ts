@@ -1,3 +1,4 @@
+import { attemptPercents } from "../common/answer-stats";
 import { Injectable } from "@nestjs/common";
 import { ABSENT_WINDOW_DAYS, type AttentionRow } from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
@@ -63,27 +64,9 @@ export class AttentionService {
       .sort((a, b) => b.reasons.length - a.reasons.length || a.name.localeCompare(b.name));
   }
 
-  /** Oxirgi 60 kundagi mavzu testlari foizi (faqat avtomatik tekshirilganlar), eskidan yangiga */
-  private async percents(ids: string[], now: Date) {
-    const attempts = await this.prisma.topicAttempt.findMany({
-      where: {
-        userId: { in: ids },
-        submittedAt: { gte: new Date(now.getTime() - 60 * DAY) },
-        mistakesOnly: false,
-      },
-      orderBy: { submittedAt: "asc" },
-      select: {
-        userId: true,
-        answers: { where: { result: { in: ["CORRECT", "WRONG"] } }, select: { result: true } },
-      },
-    });
-    const out = new Map<string, number[]>();
-    for (const a of attempts) {
-      if (!a.answers.length) continue;
-      const p = Math.round((a.answers.filter((x) => x.result === "CORRECT").length / a.answers.length) * 100);
-      out.set(a.userId, [...(out.get(a.userId) ?? []), p]);
-    }
-    return out;
+  /** Oxirgi 60 kundagi mavzu testlari foizi (faqat avtomatik tekshirilganlar), eskidan yangiga; bazada sanaladi (T-189) */
+  private percents(ids: string[], now: Date) {
+    return attemptPercents(this.prisma, ids, new Date(now.getTime() - 60 * DAY));
   }
 
   private async absences(ids: string[], now: Date) {

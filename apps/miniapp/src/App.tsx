@@ -1,10 +1,10 @@
 import { STAFF_ROLES, type MyProfile } from "@samarqand/shared";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lazy, Suspense, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { ErrorState, Splash } from "./components/states";
-import { api, login } from "./lib/api";
+import { api, loginFull } from "./lib/api";
 import { adminLoginUrl } from "./lib/staff";
 import { getInitData } from "./lib/telegram";
 import { HomePage } from "./pages/HomePage";
@@ -51,8 +51,23 @@ export function App() {
   return <TelegramApp />;
 }
 
+/** Kirish. T-189: profil kirish javobida keladi, alohida /me/profile so'rovi kutilmaydi */
+function useSession() {
+  const qc = useQueryClient();
+  return useQuery({
+    queryKey: ["session"],
+    queryFn: async () => {
+      const auth = await loginFull();
+      if (auth.profile) qc.setQueryData(["profile"], auth.profile);
+      return auth.user;
+    },
+    staleTime: Infinity,
+    retry: false,
+  });
+}
+
 function TelegramApp() {
-  const session = useQuery({ queryKey: ["session"], queryFn: login, staleTime: Infinity, retry: false });
+  const session = useSession();
   // T-158, T-168: xodim Mini App'ni ochsa har doim admin panelga o'tadi
   const toAdmin = !!session.data && STAFF_ROLES.includes(session.data.role);
   useEffect(() => {

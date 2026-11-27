@@ -1,8 +1,9 @@
+import { submittedCount } from "../weekly/submitted-count";
+import { topicAnswersByUser } from "../common/answer-stats";
 import { Injectable } from "@nestjs/common";
 import { ADVICE, sortAdvice, type Advice } from "@samarqand/shared";
 import { AccessService } from "../access/access.service";
 import { AiHealth } from "../ai/ai-health";
-import { RANKED } from "../common/ranked";
 import { PrismaService } from "../prisma/prisma.service";
 import {
   aiAdvice,
@@ -46,29 +47,9 @@ export class AdvisorService {
     ]);
   }
 
-  /** Mavzu testlaridagi avtomatik tekshirilgan javoblar (xodim sinovi va "faqat xatolar" kirmaydi) */
-  private async answers(now: Date) {
-    const rows = await this.prisma.topicAnswer.findMany({
-      where: {
-        result: { in: ["CORRECT", "WRONG"] },
-        attempt: {
-          submittedAt: { gte: new Date(now.getTime() - ADVICE.days * DAY) },
-          mistakesOnly: false,
-          ...RANKED,
-        },
-      },
-      select: {
-        result: true,
-        question: { select: { topicId: true } },
-        attempt: { select: { userId: true } },
-      },
-      take: 50_000,
-    });
-    return rows.map((r) => ({
-      topicId: r.question.topicId,
-      userId: r.attempt.userId,
-      correct: r.result === "CORRECT",
-    }));
+  /** Mavzu testlaridagi avtomatik tekshirilgan javoblar (xodim sinovi va "faqat xatolar" kirmaydi), bazada sanalgan */
+  private answers(now: Date) {
+    return topicAnswersByUser(this.prisma, new Date(now.getTime() - ADVICE.days * DAY));
   }
 
   /** Nashr qilingan kurslardagi mavzular: nashr qilingan dars va savollar soni */
@@ -120,11 +101,9 @@ export class AdvisorService {
     const t = await this.prisma.weeklyTest.findFirst({
       where: { isPublished: true, closesAt: { lte: now } },
       orderBy: { closesAt: "desc" },
-      select: {
-        title: true,
-        _count: { select: { attempts: { where: { submittedAt: { not: null }, ...RANKED } } } },
-      },
+      select: { id: true, title: true },
     });
-    return t && { title: t.title, submitted: t._count.attempts };
+    // T-189: faqat shu test urinishlari sanaladi (`_count` barcha urinishlarni guruhlardi)
+    return t && { title: t.title, submitted: await submittedCount(this.prisma, t.id) };
   }
 }

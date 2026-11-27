@@ -64,8 +64,7 @@ describe("Oy statistikasi hisobi (T-162)", () => {
   });
 
   it("eng yaxshilar: kamida min javob; foiz bo'yicha, teng bo'lsa javobi ko'p birinchi; 5 tadan ko'p emas", () => {
-    const rows = (userId: string, ok: number, all: number) =>
-      Array.from({ length: all }, (_, i) => ({ userId, correct: i < ok }));
+    const rows = (userId: string, ok: number, all: number) => [{ userId, ok, all }];
     const r = topOf(
       [...rows("a", 9, 10), ...rows("b", 18, 20), ...rows("c", 10, 10), ...rows("d", 9, 9)],
       10,

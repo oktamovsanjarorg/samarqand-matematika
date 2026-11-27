@@ -4,10 +4,12 @@ import { aiErrorText } from "../ai/ai-health";
 const pct = (a: number, b: number) => (b ? Math.round((a / b) * 100) : 0);
 const plural = (n: number, word: string) => `${n} ta ${word}`;
 
+/** O'quvchi va mavzu bo'yicha javoblar soni (T-189: bazada sanaladi) */
 export interface AnswerRow {
   topicId: string;
   userId: string;
-  correct: boolean;
+  ok: number;
+  all: number;
 }
 
 /** Sinf bo'yicha qiyin mavzu: kamida 3 o'quvchi va 15 javob, to'g'ri ulush 50% dan past. Eng qiyin 2 tasi */
@@ -15,9 +17,9 @@ export function weakTopicAdvice(rows: AnswerRow[], titles: Map<string, string>):
   const by = new Map<string, { ok: number; all: number; users: Set<string> }>();
   for (const r of rows) {
     const t = by.get(r.topicId) ?? { ok: 0, all: 0, users: new Set<string>() };
-    t.all++;
-    if (r.correct) t.ok++;
-    t.users.add(r.userId);
+    t.all += r.all;
+    t.ok += r.ok;
+    if (r.all) t.users.add(r.userId);
     by.set(r.topicId, t);
   }
   return [...by.entries()]

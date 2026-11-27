@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import type { Prisma } from "@samarqand/db";
 import type { AttemptSummary, MyStats } from "@samarqand/shared";
+import { countMap } from "../common/count-map";
 import { PrismaService } from "../prisma/prisma.service";
 import { averagePercent, topicTable } from "./stats";
 
@@ -33,15 +34,23 @@ export class StatsService {
         submittedAt: true,
         correct: true,
         topic: { select: { title: true } },
-        _count: { select: { answers: { where: AUTO_CHECKED } } },
       },
     });
+    // T-189: faqat shu urinishlar javoblari sanaladi (`_count` butun javoblar jadvalini guruhlardi)
+    const checkable = countMap(
+      await this.prisma.topicAnswer.groupBy({
+        by: ["attemptId"],
+        where: { attemptId: { in: rows.map((r) => r.id) }, ...AUTO_CHECKED },
+        _count: { _all: true },
+      }),
+      "attemptId",
+    );
     return rows.map((r) => ({
       id: r.id,
       topicId: r.topicId,
       topicTitle: r.topic.title,
       correct: r.correct ?? 0,
-      checkable: r._count.answers,
+      checkable: checkable.get(r.id) ?? 0,
       submittedAt: (r.submittedAt ?? new Date()).toISOString(),
     }));
   }

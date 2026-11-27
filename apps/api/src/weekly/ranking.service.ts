@@ -49,24 +49,30 @@ export class RankingService {
     return toRanking(t.title, rows, userId);
   }
 
-  /** Umumiy: barcha yopilgan haftalik testlar ballari yig'indisi */
+  /**
+   * Umumiy: barcha yopilgan haftalik testlar ballari yig'indisi. T-189: bazada yig'iladi (avval har urinish
+   * JS'ga yuklanardi, har hafta yuzlab qator qo'shiladi). Ball scoreOf bilan bir xil: score, bo'lmasa topshirilgan
+   * bo'lsa to'g'ri javoblar soni.
+   */
   async overall(userId: string, now: Date): Promise<Ranking> {
-    const attempts = await this.prisma.weeklyAttempt.findMany({
-      where: { weeklyTest: { isPublished: true, closesAt: { lte: now } }, ...RANKED },
-      select: {
-        userId: true,
-        score: true,
-        submittedAt: true,
-        correct: true,
-        user: { select: PERSON_SELECT },
-      },
+    const sums = await this.prisma.$queryRaw<{ userId: string; score: number }[]>`
+      SELECT wa."userId",
+             SUM(COALESCE(wa."score", CASE WHEN wa."submittedAt" IS NOT NULL THEN COALESCE(wa."correct", 0) ELSE 0 END))::int AS score
+      FROM "WeeklyAttempt" wa
+      JOIN "WeeklyTest" wt ON wt."id" = wa."weeklyTestId"
+      JOIN "User" u ON u."id" = wa."userId"
+      WHERE wt."isPublished" = true AND wt."closesAt" <= ${now} AND u."role" = 'STUDENT'
+      GROUP BY wa."userId"`;
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: sums.map((r) => r.userId) } },
+      select: { id: true, ...PERSON_SELECT },
     });
-    const sums = new Map<string, Row>();
-    for (const a of attempts) {
-      const row = sums.get(a.userId) ?? { userId: a.userId, name: personName(a.user), score: 0 };
-      row.score += scoreOf(a);
-      sums.set(a.userId, row);
-    }
-    return toRanking("Umumiy reyting", [...sums.values()], userId);
+    const names = new Map(users.map((u) => [u.id, personName(u)]));
+    const rows = sums.map((r) => ({
+      userId: r.userId,
+      name: names.get(r.userId) ?? "Oʻquvchi",
+      score: r.score,
+    }));
+    return toRanking("Umumiy reyting", rows, userId);
   }
 }
