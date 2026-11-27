@@ -409,9 +409,12 @@ model WeeklyAttempt {
   correct      Int?
   /// Ball: oyna yopilganda qo'yiladi, topshirilmagan bo'lsa 0 (BR-W03). Keyin ustoz o'zgartiradi (BR-W06)
   score        Int?
+  /// T-193: test paytida ilovadan necha marta chiqqan va jami necha ms tashqarida (faqat ustozga signal)
+  awayCount    Int            @default(0)
+  awayMs       Int            @default(0)
   answers      WeeklyAnswer[]
 
-  @@unique([weeklyTestId, userId])  /// O'quvchi bo'yicha so'rovlar (T-172): statistika, tarix, yordamchida mock tekshiruvi
+  @@unique([weeklyTestId, userId]) /// O'quvchi bo'yicha so'rovlar (T-172): statistika, tarix, yordamchida mock tekshiruvi
   @@index([userId, submittedAt])
 }
 
@@ -507,14 +510,14 @@ model TutorChat {
 }
 
 model TutorMessage {
-  id        String    @id @default(cuid())
+  id        String      @id @default(cuid())
   chatId    String
-  chat      TutorChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chat      TutorChat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
   role      TutorRole
   text      String
   /// Javob bergan provayder (ASSISTANT)
   provider  String?
-  createdAt DateTime  @default(now()) @db.Timestamptz
+  createdAt DateTime    @default(now()) @db.Timestamptz
   photo     TutorPhoto?
 
   @@index([chatId, createdAt])
@@ -602,9 +605,12 @@ model MockAttempt {
   raw         Float?
   /// Shkala balli: yopilishda (Rasch yoki taxminiy) qo'yiladi
   scaled      Float?
+  /// T-193: test paytida ilovadan chiqish (faqat ustozga signal)
+  awayCount   Int          @default(0)
+  awayMs      Int          @default(0)
   answers     MockAnswer[]
 
-  @@unique([mockTestId, userId])  /// O'quvchi bo'yicha so'rovlar (T-172): statistika, tarix, yordamchida mock tekshiruvi
+  @@unique([mockTestId, userId]) /// O'quvchi bo'yicha so'rovlar (T-172): statistika, tarix, yordamchida mock tekshiruvi
   @@index([userId, submittedAt])
 }
 

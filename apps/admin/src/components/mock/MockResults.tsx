@@ -1,4 +1,4 @@
-import type { AdminMockResults } from "@samarqand/shared";
+import { awayLabel, type AdminMockResults } from "@samarqand/shared";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../lib/api";
 import { csvTime, downloadExcel } from "../../lib/download";
@@ -38,6 +38,7 @@ function ResultsTable({ d }: { d: AdminMockResults }) {
                 <p className="text-xs text-hint">
                   {row.submittedAt ? formatDate(row.submittedAt) : "yechmoqda"}
                 </p>
+                {row.away && <Badge tone="danger">Ilovadan chiqqan: {awayLabel(row.away)}</Badge>}
               </td>
               <td className="py-2 pr-2 text-right font-bold text-brand">
                 {row.scaled === null ? "—" : `${row.scaled}/${d.scaleMax}`}

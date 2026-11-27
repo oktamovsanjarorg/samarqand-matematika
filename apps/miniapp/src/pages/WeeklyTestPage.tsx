@@ -124,6 +124,7 @@ function WeeklyRunner({ v, testId }: { v: WeeklyOpen; testId: string }) {
     <Runner
       attempt={v}
       base="/weekly-attempts"
+      trackAway
       kicker="Haftalik test"
       title={v.title}
       banner={<Deadline closesAt={v.closesAt} />}

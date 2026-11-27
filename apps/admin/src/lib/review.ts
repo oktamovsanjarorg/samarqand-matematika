@@ -23,7 +23,7 @@ export type ReviewFilter = "ALL" | "TODO" | "FLAGGED";
 
 /** Shubhali yoki server signali bor (navbatda birinchi turadi) */
 export const isFlagged = (i: ReviewItem) =>
-  !!i.ai?.suspected || i.signals.sameWrong > 0 || i.signals.historyJump;
+  !!i.ai?.suspected || i.signals.sameWrong > 0 || i.signals.historyJump || !!i.signals.away;
 
 export function filterItems(items: ReviewItem[], f: ReviewFilter): ReviewItem[] {
   if (f === "TODO") return items.filter((i) => !i.decision);

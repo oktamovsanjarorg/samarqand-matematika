@@ -112,6 +112,17 @@ export class WeeklyService {
     return weeklyView(await this.own(userId, id), new Date());
   }
 
+  /**
+   * T-193: ilovadan chiqish (o'quvchi qaytganda). Faqat o'z urinishi va topshirilmagan bo'lsa yoziladi;
+   * boshqa holatda jim o'tkaziladi (signal, xato emas). O'quvchiga hech qayerda ko'rsatilmaydi
+   */
+  async away(userId: string, id: string, ms: number): Promise<void> {
+    await this.prisma.weeklyAttempt.updateMany({
+      where: { id, userId, submittedAt: null },
+      data: { awayCount: { increment: 1 }, awayMs: { increment: ms } },
+    });
+  }
+
   async save(userId: string, id: string, questionId: string, response: unknown): Promise<void> {
     const a = await this.ownOpen(userId, id);
     const item = a.answers.find((x) => x.question.id === questionId);

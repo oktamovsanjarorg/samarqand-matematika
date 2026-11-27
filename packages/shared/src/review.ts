@@ -1,3 +1,4 @@
+import type { AwaySignal } from "./away";
 import { z } from "zod";
 import type { SolutionVerdict } from "./ai";
 import type { CheckResult, QuestionView } from "./question";
@@ -33,7 +34,8 @@ export interface ReviewItem {
     verdict: SolutionVerdict | null;
     suggested: 0 | 1 | null;
   } | null;
-  signals: { sameWrong: number; historyJump: boolean };
+  /** away (T-193): test paytida ilovadan ko'p chiqqan (chegaradan oshganda), aks holda null */
+  signals: { sameWrong: number; historyJump: boolean; away: AwaySignal | null };
   decision: { points: number; note: string | null; reviewedAt: string; reviewer: string } | null;
 }
 

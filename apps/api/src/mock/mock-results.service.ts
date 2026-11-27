@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { approxScaled, examMaxRaw, gradeOf, type AdminMockResults } from "@samarqand/shared";
+import { approxScaled, awaySignal, examMaxRaw, gradeOf, type AdminMockResults } from "@samarqand/shared";
 import { personName, PERSON_SELECT } from "../common/person";
 import { PrismaService } from "../prisma/prisma.service";
 import { snapshotOf } from "./admin-mocks.service";
@@ -30,6 +30,8 @@ export class MockResultsService {
             submittedAt: true,
             raw: true,
             scaled: true,
+            awayCount: true,
+            awayMs: true,
             user: { select: PERSON_SELECT },
             answers: { select: { section: true, result: true } },
           },
@@ -50,6 +52,7 @@ export class MockResultsService {
         scaled,
         grade: scaled === null ? null : gradeOf(scaled, t.grades),
         sections: done ? sectionResults(t, a.answers).map((s) => s.raw) : [],
+        away: awaySignal(a.awayCount, a.awayMs),
       };
     });
     rows.sort((x, y) => (y.scaled ?? -1) - (x.scaled ?? -1) || x.name.localeCompare(y.name));

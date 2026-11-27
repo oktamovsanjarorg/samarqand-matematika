@@ -40,6 +40,7 @@ function MockRunner({ v, mockId }: { v: MockOpen; mockId: string }) {
     <Runner
       attempt={v}
       base="/mock-attempts"
+      trackAway
       kicker="Mock"
       title={v.title}
       banner={
