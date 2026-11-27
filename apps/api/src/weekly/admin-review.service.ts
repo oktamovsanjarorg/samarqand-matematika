@@ -2,6 +2,7 @@ import { topicAttemptChecks } from "../common/answer-stats";
 import { countMap } from "../common/count-map";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import {
+  awaySignal,
   percentOf,
   type CheckResult,
   suggestedPoints,
@@ -28,11 +29,17 @@ const ANSWER_INCLUDE = {
 
 /** Navbat tartibi: shubhali va hal qilinmagan birinchi, keyin hal qilinmagan, keyin hal qilingan */
 const rank = (i: ReviewItem) =>
-  i.decision ? 2 : i.ai?.suspected || i.signals.sameWrong > 0 || i.signals.historyJump ? 0 : 1;
+  i.decision
+    ? 2
+    : i.ai?.suspected || i.signals.sameWrong > 0 || i.signals.historyJump || i.signals.away
+      ? 0
+      : 1;
 
 type AttemptRow = {
   id: string;
   userId: string;
+  awayCount: number;
+  awayMs: number;
   user: { firstName: string; lastName: string | null; student: { fullName: string | null } | null };
 };
 type AnswerRow = Prisma.WeeklyAnswerGetPayload<{ include: typeof ANSWER_INCLUDE }>;
@@ -57,7 +64,11 @@ function toItem(a: AttemptRow, x: AnswerRow, sig: { group?: string[]; jump: bool
       verdict,
       suggested: verdict ? suggestedPoints(verdict) : null,
     },
-    signals: { sameWrong: sig.group ? sig.group.length - 1 : 0, historyJump: sig.jump },
+    signals: {
+      sameWrong: sig.group ? sig.group.length - 1 : 0,
+      historyJump: sig.jump,
+      away: awaySignal(a.awayCount, a.awayMs),
+    },
     decision:
       x.teacherPoints === null || !x.reviewedAt
         ? null
@@ -89,6 +100,8 @@ export class AdminReviewService {
       select: {
         id: true,
         userId: true,
+        awayCount: true,
+        awayMs: true,
         user: { select: PERSON_SELECT },
         answers: { orderBy: { order: "asc" }, include: ANSWER_INCLUDE },
       },

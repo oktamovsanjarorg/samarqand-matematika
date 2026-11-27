@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Put } from "@nestjs/common";
-import { saveAnswerBody } from "@samarqand/shared";
+import { awayBody, saveAnswerBody } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { MocksService } from "./mocks.service";
@@ -34,6 +34,13 @@ export class MocksController {
     @Body() body: unknown,
   ) {
     return this.mocks.save(u.sub, id, questionId, parseBody(saveAnswerBody, body).response);
+  }
+
+  /** T-193: test paytida ilovadan chiqish (ustozga signal) */
+  @Post("mock-attempts/:id/away")
+  @HttpCode(204)
+  away(@CurrentUser() u: JwtUser, @Param("id") id: string, @Body() body: unknown) {
+    return this.mocks.away(u.sub, id, parseBody(awayBody, body).ms);
   }
 
   @Post("mock-attempts/:id/submit")

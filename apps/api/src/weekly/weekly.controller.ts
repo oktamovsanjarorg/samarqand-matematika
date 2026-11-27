@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Res } from "@nestjs/common";
 import type { FastifyReply } from "fastify";
-import { saveAnswerBody } from "@samarqand/shared";
+import { awayBody, saveAnswerBody } from "@samarqand/shared";
 import { CurrentUser, JwtUser, Roles } from "../auth/decorators";
 import { parseBody } from "../common/zod";
 import { RankingService } from "./ranking.service";
@@ -53,6 +53,13 @@ export class WeeklyController {
     @Body() body: unknown,
   ) {
     return this.weekly.save(u.sub, id, questionId, parseBody(saveAnswerBody, body).response);
+  }
+
+  /** T-193: test paytida ilovadan chiqish (ustozga signal) */
+  @Post("weekly-attempts/:id/away")
+  @HttpCode(204)
+  away(@CurrentUser() u: JwtUser, @Param("id") id: string, @Body() body: unknown) {
+    return this.weekly.away(u.sub, id, parseBody(awayBody, body).ms);
   }
 
   @Post("weekly-attempts/:id/submit")

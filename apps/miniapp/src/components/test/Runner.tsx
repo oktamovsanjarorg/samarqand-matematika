@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { isAnswered } from "../../lib/answers";
+import { useAwayTracker } from "../../lib/away";
 import { useAnswers, type Answerable } from "../../lib/attempt";
 import { MathText } from "../MathText";
 import { AnswerInput } from "./AnswerInput";
@@ -38,6 +39,8 @@ export interface RunnerProps {
   extra?: (questionId: string, flush: () => Promise<void>) => ReactNode;
   /** Topshirishdan oldin qo'shimcha ogohlantirish */
   warning?: string;
+  /** T-193: ilovadan chiqish ustozga signal bo'ladi (haftalik va mock; mavzu testida yo'q) */
+  trackAway?: boolean;
   /** Topshirish: flush() dan keyin serverga yuboradi va keyingi ekranga o'tadi */
   onSubmit: (flush: () => Promise<void>) => Promise<void>;
 }
@@ -47,6 +50,7 @@ export function Runner(p: RunnerProps) {
   const [index, setIndex] = useState(0);
   const [confirming, setConfirming] = useState(false);
   const answers = useAnswers(p.attempt, p.base);
+  useAwayTracker(p.trackAway ? `${p.base}/${p.attempt.id}/away` : null);
   const submit = useMutation({ mutationFn: () => p.onSubmit(answers.flush) });
   const items = p.attempt.questions;
   const current = items[index]?.question;

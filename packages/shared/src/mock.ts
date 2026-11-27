@@ -1,3 +1,4 @@
+import type { AwaySignal } from "./away";
 import { z } from "zod";
 import type { ExamTemplateInput } from "./exam";
 import type { WeeklyQuestionRow, WeeklyStatus } from "./weekly";
@@ -56,6 +57,8 @@ export interface AdminMockResultRow {
   grade: string | null;
   /** Bo'limlar bo'yicha xom ball (shablon tartibida) */
   sections: number[];
+  /** T-193: test paytida ilovadan ko'p chiqqan (faqat ustozga signal) */
+  away: AwaySignal | null;
 }
 
 export interface AdminMockResults {

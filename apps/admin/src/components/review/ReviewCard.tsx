@@ -1,4 +1,4 @@
-import { describeResponse, type ReviewItem } from "@samarqand/shared";
+import { describeResponse, type ReviewItem, awayLabel } from "@samarqand/shared";
 import { useState } from "react";
 import { useGrade } from "../../lib/review";
 import { MathText } from "../MathText";
@@ -27,6 +27,7 @@ function Flags({ item }: { item: ReviewItem }) {
         <Badge tone="danger">Bir xil xato: yana {item.signals.sameWrong} kishi</Badge>
       )}
       {item.signals.historyJump && <Badge tone="danger">Tarixdan keskin farq</Badge>}
+      {item.signals.away && <Badge tone="danger">Ilovadan chiqqan: {awayLabel(item.signals.away)}</Badge>}
       {item.decision && <Badge tone="success">Ustoz: {item.decision.points} ball</Badge>}
     </div>
   );

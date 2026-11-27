@@ -14,7 +14,9 @@ interface TgWebApp {
   setHeaderColor(color: string): void;
   setBackgroundColor(color: string): void;
   isVersionAtLeast?(v: string): boolean;
-  onEvent(event: "themeChanged", cb: () => void): void;
+  /** activated/deactivated: Bot API 8.0+ (T-193) */
+  onEvent(event: "themeChanged" | "activated" | "deactivated", cb: () => void): void;
+  offEvent?(event: "themeChanged" | "activated" | "deactivated", cb: () => void): void;
   /** Bot API 6.1+: tepadagi "orqaga" tugmasi */
   BackButton?: { show(): void; hide(): void; onClick(cb: () => void): void; offClick(cb: () => void): void };
   /** Bot API 6.9+: raqamni botga ulashish oynasi. Raqam botga xabar bo'lib boradi */

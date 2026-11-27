@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "MockAttempt" ADD COLUMN     "awayCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "awayMs" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "WeeklyAttempt" ADD COLUMN     "awayCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "awayMs" INTEGER NOT NULL DEFAULT 0;
